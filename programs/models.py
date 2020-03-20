@@ -7,6 +7,10 @@ def program_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     return 'program_{0}/imgs/{1}'.format(instance.slug, filename)
 
+def member_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
+    return 'program_{0}/imgs/member_{1}/{2}'.format(instance.program.slug,instance.id, filename)
+
 def cgc_photo_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/cgc/imgs/<filename>
     return 'cgc/imgs/{0}'.format(filename)
@@ -33,6 +37,7 @@ ICON_CHOICES = (
     (ion_ios_medical_outline, 'ion-ios-medical-outline'),
 )
 
+# modelo de programas academicos
 class Program(models.Model):
     full_name=models.CharField(max_length=150, help_text='Nombre completo del programa', verbose_name='Nombre completo')
     short_name=models.CharField(max_length=40, help_text='Nombre corto del programa', verbose_name='Nombre Corto')
@@ -53,6 +58,7 @@ class Program(models.Model):
     def __str__(self):
         return self.full_name
 
+# modelo de miembros de la CGC
 class CGC_Member(models.Model):
     name=models.CharField(max_length=120, help_text='Nombre y apellidos', verbose_name='Nombre y apellidos')
     charge = models.CharField(max_length=50,choices=[('president','Presidente'),('secretary','Secretario'),('member','Miembro')], help_text='Cargo', verbose_name='Cargo')
@@ -70,3 +76,38 @@ class CGC_Member(models.Model):
     def __str__(self):
         return self.name
 
+# modelo de miembros de programas
+class ProgramMember(models.Model):
+
+    Masculino = 'm'
+    Femenino = 'f'
+
+    ROLE_CHOICES = [
+        ('Coordinador', 'Presidente'),
+        ('Secretario', 'Vicepresidente'),
+        ('Miembro', 'Miembro'),
+
+    ]
+    SEX_CHOICES = (
+        (Masculino, 'Masculino'),
+        (Femenino, 'Femenino'),
+    )
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES)
+    institution = models.CharField(max_length=100)
+    degree = models.TextField(max_length=300,
+                                   help_text='Grado cientifico')
+    picture = models.ImageField(null=True, upload_to=member_directory_path)
+    fb_contact = models.CharField(max_length=50, null=True, blank=True,
+                                  help_text='Contacto de Facebook del miembro del tribunal')
+    tw_contact = models.CharField(max_length=50, null=True, blank=True,
+                                  help_text='Contacto de Twitter del miembro del tribunal')
+    ln_contact = models.CharField(max_length=50, null=True, blank=True,
+                                  help_text='Contacto de Linkedin del miembro del tribunal')
+    init_date = models.DateField(default=now)
+    sex = models.CharField(max_length=2, choices=SEX_CHOICES, help_text='Sexo del miembro del tribunal')
+
+    def __str__(self):
+        return self.user.get_full_name
