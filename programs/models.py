@@ -111,3 +111,21 @@ class ProgramMember(models.Model):
 
     def __str__(self):
         return self.user.get_full_name
+
+class Student(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    request_date= models.DateField(default=now)
+    graduate_date = models.DateField(null=True)
+
+    def __str__(self):
+        return self.user.get_full_name
+
+class PhdStudent(models.Model):
+    student = models.OneToOneField(Student,on_delete=models.CASCADE)
+    status= models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'),('doctorando','Doctorando'), ('graduado', 'Graduado')])
+
+    def __str__(self):
+        return self.student.user.get_full_name
+
+
