@@ -128,4 +128,37 @@ class PhdStudent(models.Model):
     def __str__(self):
         return self.student.user.get_full_name
 
+# Modelo para verificar requisitos de ingreso al programa
+class ProgramInitRequirements(models.Model):
+    program= models.ForeignKey(Program, on_delete=models.CASCADE, help_text='Programa correspondiente')
+    name = models.CharField(max_length=50, help_text='Nombre del requisito')
+    description = models.TextField(max_length=150, help_text='Descripcion del requisito')
+
+    def __str__(self):
+        return self.name
+
+class ProgramFinishRequirements(models.Model):
+    program= models.ForeignKey(Program, on_delete=models.CASCADE, help_text='Programa correspondiente')
+    name = models.CharField(max_length=50, help_text='Nombre del requisito')
+    description = models.TextField(max_length=150, help_text='Descricpion del requisito')
+
+    def __str__(self):
+        return self.name
+
+class StudentInitRequirement(models.Model):
+    student= models.ForeignKey(Student, on_delete=models.CASCADE)
+    requirement= models.ForeignKey(ProgramInitRequirements, on_delete=models.CASCADE)
+    accomplished = models.BooleanField(default=False, help_text='Verdadero si esta satisfecho, Falso si lo contrario')
+
+    def __str__(self):
+        return self.accomplished
+
+
+class StudentFinishRequirement(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    requirement = models.ForeignKey(ProgramFinishRequirements, on_delete=models.CASCADE)
+    accomplished = models.BooleanField(default=False, help_text='Verdadero si esta satisfecho, Falso si lo contrario')
+
+    def __str__(self):
+        return self.accomplished
 
