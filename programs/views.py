@@ -19,10 +19,18 @@ def index(request, program_slug):
     return render(request,'programs/program_index.html', context)
 
 def home(request, program_slug):
-    context={
-        'program': Program.objects.get(slug=program_slug)
-    }
-    return render(request, 'programs/phd_home.html', context)
+    program = Program.objects.get(slug=program_slug)
+    if program.type == 'phd':
+        context={
+            'program': program,
+            'requesters': PhdStudent.objects.filter(student__program=program, status='solicitante').__len__(),
+            'doctorands': PhdStudent.objects.filter(student__program=program, status='doctorando').__len__(),
+            'graduated': PhdStudent.objects.filter(student__program=program, status='graduado').__len__(),
+
+        }
+        return render(request, 'programs/phd_home.html', context)
+    else:
+        pass
 
 # @login_required
 def create_student(request, program_slug):
