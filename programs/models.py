@@ -123,7 +123,7 @@ class Student(models.Model):
         return self.user.get_full_name()
 
 class PhdStudent(models.Model):
-    student = models.ForeignKey(Student,on_delete=models.CASCADE)
+    student = models.OneToOneField(Student,on_delete=models.CASCADE)
     status= models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'),('doctorando','Doctorando'), ('graduado', 'Graduado')])
 
     def __str__(self):

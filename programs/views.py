@@ -2,10 +2,11 @@ import random
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 # Create your views here.
+from django.urls import reverse
 from django.utils.text import slugify
 
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement
@@ -71,7 +72,7 @@ def create_student(request, program_slug):
                 new_student_requirement.save()
 
 
-        return HttpResponse('estudiante creado exitosamente')
+        return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug]))
     else:
         context={
             'program':program,
@@ -81,3 +82,12 @@ def create_student(request, program_slug):
             return render(request,'programs/create_phd_student.html', context)
         else:
             return HttpResponse('El programa no es un doctorado')
+
+
+def students_list(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    context={
+        'program': program,
+        'students': Student.objects.filter(program=program),
+    }
+    return render(request, 'programs/students_list.html', context)
