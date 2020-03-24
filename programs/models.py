@@ -117,16 +117,17 @@ class Student(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     request_date= models.DateField(default=now)
     graduate_date = models.DateField(null=True)
+    country=models.CharField(max_length=70, default='Cuba')
 
     def __str__(self):
-        return self.user.get_full_name
+        return self.user.get_full_name()
 
 class PhdStudent(models.Model):
-    student = models.OneToOneField(Student,on_delete=models.CASCADE)
+    student = models.ForeignKey(Student,on_delete=models.CASCADE)
     status= models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'),('doctorando','Doctorando'), ('graduado', 'Graduado')])
 
     def __str__(self):
-        return self.student.user.get_full_name
+        return self.student.user.username
 
 # Modelo para verificar requisitos de ingreso al programa
 class ProgramInitRequirements(models.Model):
@@ -151,7 +152,7 @@ class StudentInitRequirement(models.Model):
     accomplished = models.BooleanField(default=False, help_text='Verdadero si esta satisfecho, Falso si lo contrario')
 
     def __str__(self):
-        return self.accomplished
+        return 'Requirement'
 
 
 class StudentFinishRequirement(models.Model):
@@ -160,5 +161,5 @@ class StudentFinishRequirement(models.Model):
     accomplished = models.BooleanField(default=False, help_text='Verdadero si esta satisfecho, Falso si lo contrario')
 
     def __str__(self):
-        return self.accomplished
+        return 'Requirement'
 
