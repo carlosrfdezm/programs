@@ -11,30 +11,27 @@ def member_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     return 'program_{0}/imgs/member_{1}/{2}'.format(instance.program.slug,instance.id, filename)
 
+def background_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
+    return 'program_{0}/imgs/backgrounds/{1}'.format(instance.program.slug, filename)
+
 def cgc_photo_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/cgc/imgs/<filename>
     return 'cgc/imgs/{0}'.format(filename)
 
 # Create your models here.
 
-ion_ios_alarm_outline = 'ion-ios-alarm-outline'
-ion_ios_albums_outline = 'ion-ios-albums-outline'
-ion_ios_barcode_outline = 'ion-ios-barcode-outline'
-ion_ios_body_outline = 'ion-ios-body-outline'
-ion_ios_book_outline = 'ion-ios-book-outline'
-ion_ios_calculator_outline = 'ion-ios-calculator-outline'
-ion_ios_cloudy_outline = 'ion-ios-cloudy-outline'
-ion_ios_medical_outline = 'ion-ios-medical-outline'
+
 
 ICON_CHOICES = (
-    (ion_ios_alarm_outline, 'ion-ios-alarm-outline'),
-    (ion_ios_albums_outline, 'ion-ios-albums-outline'),
-    (ion_ios_barcode_outline, 'ion-ios-barcode-outline'),
-    (ion_ios_body_outline, 'ion-ios-body-outline'),
-    (ion_ios_book_outline, 'ion-ios-book-outline'),
-    (ion_ios_calculator_outline, 'ion-ios-calculator-outline'),
-    (ion_ios_cloudy_outline, 'ion-ios-cloudy-outline'),
-    (ion_ios_medical_outline, 'ion-ios-medical-outline'),
+    ('ion_ios_alarm_outline', 'ion-ios-alarm-outline'),
+    ('ion_ios_albums_outline', 'ion-ios-albums-outline'),
+    ('ion_ios_barcode_outline', 'ion-ios-barcode-outline'),
+    ('ion_ios_body_outline', 'ion-ios-body-outline'),
+    ('ion_ios_book_outline', 'ion-ios-book-outline'),
+    ('ion_ios_calculator_outline', 'ion-ios-calculator-outline'),
+    ('ion_ios_cloudy_outline', 'ion-ios-cloudy-outline'),
+    ('ion_ios_medical_outline', 'ion-ios-medical-outline'),
 )
 
 # modelo de programas academicos
@@ -57,6 +54,14 @@ class Program(models.Model):
 
     def __str__(self):
         return self.full_name
+
+class ProgramBackgrounds(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    background = models.ImageField(upload_to=background_directory_path)
+
+    class Meta:
+        verbose_name = 'Background'
+        verbose_name_plural = 'Backgrounds del index del programa'
 
 # modelo de miembros de la CGC
 class CGC_Member(models.Model):
