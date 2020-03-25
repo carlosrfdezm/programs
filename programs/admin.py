@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds
+from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember
 
 # Register your models here.
 
@@ -22,3 +22,8 @@ admin.site.register(CGC_Member, CGC_MemberAdmin)
 admin.site.register(ProgramInitRequirements)
 
 admin.site.register(ProgramFinishRequirements)
+
+class ProgramMemberAdmin(admin.ModelAdmin):
+    list_display = ['program','user','role']
+
+admin.site.register(ProgramMember, ProgramMemberAdmin)

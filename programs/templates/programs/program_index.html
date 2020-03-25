@@ -99,7 +99,7 @@
     <div class="intro-content">
         <h2>{{ program }}</h2>
         <div>
-            <a href="#about" class="btn-get-started scrollto">Iniciar sesion</a>
+            <a href="#contact" class="btn-get-started scrollto">Iniciar sesion</a>
             <a href="#team" class="btn-projects scrollto">Claustro</a>
         </div>
     </div>
@@ -350,15 +350,17 @@
                 <div class="form">
                     <div id="sendmessage">Your message has been sent. Thank you!</div>
                     <div id="errormessage"></div>
-                    <form action="" method="post" role="form" class="contactForm">
+                    <form action="{% url 'log:my_login' %}" method="post" role="form" class="contactForm">
+                        {% csrf_token %}
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <input type="text" name="username" class="form-control" id="name" placeholder="Nombre de usuario" data-rule="minlen:4" data-msg="Por favor, introduzca al menos 4 caracteres." />
                                 <div class="validation"></div>
                             </div>
                             <div class="form-group col-md-6">
-                                <input type="password" class="form-control" name="password" id="email" placeholder="Contrase;a" data-rule="password" data-msg="Porfavor introduzca una contrase;a valida" />
+                                <input type="password" class="form-control" name="password" id="email" placeholder="Contraseña" data-rule="password" data-msg="Por favor introduzca una contraseña válida." />
                                 <div class="validation"></div>
+                                <input type="hidden" name="program_slug" value="{{ program.slug }}">
                             </div>
                         </div>
 
@@ -447,7 +449,7 @@
 <script src="{% static 'programs/index/lib/sticky/sticky.js' %}"></script>
 
 <!-- Contact Form JavaScript File -->
-<script src="{% static 'programs/index/contactform/contactform.js' %}"></script>
+{#<script src="{% static 'programs/index/contactform/contactform.js' %}"></script>#}
 
 <!-- Template Main Javascript File -->
 <script src="{% static 'programs/index/js/main.js' %}"></script>

@@ -91,6 +91,8 @@ class ProgramMember(models.Model):
         ('Coordinador', 'Presidente'),
         ('Secretario', 'Vicepresidente'),
         ('Miembro', 'Miembro'),
+        ('Profesor', 'Profesor'),
+        ('Tutor', 'Tutor'),
 
     ]
     SEX_CHOICES = (
@@ -102,7 +104,7 @@ class ProgramMember(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     role = models.CharField(max_length=50, choices=ROLE_CHOICES)
     institution = models.CharField(max_length=100)
-    degree = models.TextField(max_length=300,
+    degree = models.CharField(max_length=100,
                                    help_text='Grado cientifico')
     picture = models.ImageField(null=True, upload_to=member_directory_path)
     fb_contact = models.CharField(max_length=50, null=True, blank=True,
@@ -114,8 +116,12 @@ class ProgramMember(models.Model):
     init_date = models.DateField(default=now)
     sex = models.CharField(max_length=2, choices=SEX_CHOICES, help_text='Sexo del miembro del tribunal')
 
+    class Meta:
+        verbose_name='Miembro del Programa'
+        verbose_name_plural='Miembros del programa'
+
     def __str__(self):
-        return self.user.get_full_name
+        return self.user.get_full_name()
 
 class Student(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -140,6 +146,10 @@ class ProgramInitRequirements(models.Model):
     name = models.CharField(max_length=50, help_text='Nombre del requisito')
     description = models.TextField(max_length=150, help_text='Descripcion del requisito')
 
+    class Meta:
+        verbose_name='Requerimiento de inicio de programa'
+        verbose_name_plural='Requerimientos de inicio de programa'
+
     def __str__(self):
         return self.name
 
@@ -147,6 +157,10 @@ class ProgramFinishRequirements(models.Model):
     program= models.ForeignKey(Program, on_delete=models.CASCADE, help_text='Programa correspondiente')
     name = models.CharField(max_length=50, help_text='Nombre del requisito')
     description = models.TextField(max_length=150, help_text='Descricpion del requisito')
+
+    class Meta:
+        verbose_name='Requerimiento de culminacion de programa'
+        verbose_name_plural='Requerimientos de culminacion de programa'
 
     def __str__(self):
         return self.name
