@@ -92,10 +92,27 @@ def create_student(request, program_slug):
             return HttpResponse('El programa no es un doctorado')
 
 
-def students_list(request, program_slug):
+def students_list(request, program_slug, scope):
     program=Program.objects.get(slug=program_slug)
-    context={
-        'program': program,
-        'students': Student.objects.filter(program=program),
-    }
+    if scope == 'all':
+        context={
+            'program': program,
+            'students': Student.objects.filter(program=program),
+        }
+    elif scope == 'requesters':
+        context={
+            'program': program,
+            'students': Student.objects.filter(program=program, phdstudent__status='solicitante'),
+        }
+    elif scope == 'aproved':
+        context = {
+            'program': program,
+            'students': Student.objects.filter(program=program, phdstudent__status = 'doctorando'),
+        }
+    elif scope == 'graduated':
+        context = {
+            'program': program,
+            'students': Student.objects.filter(program=program, phdstudent__status = 'graduado'),
+        }
+
     return render(request, 'programs/students_list.html', context)

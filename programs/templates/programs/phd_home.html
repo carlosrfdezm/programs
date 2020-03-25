@@ -29,7 +29,7 @@
               <span class="info-box-icon bg-info elevation-1"><i class="fas fa-check"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text"><a href="">Solicitantes</a></span>
+                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'requesters' %}">Solicitantes</a></span>
                 <span class="info-box-number">
                   {{ requesters }}
                 </span>
@@ -44,7 +44,7 @@
               <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text"><a href="">Doctorandos</a></span>
+                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'aproved' %}">Doctorandos</a></span>
                 <span class="info-box-number">{{ doctorands }}</span>
               </div>
               <!-- /.info-box-content -->
@@ -61,7 +61,7 @@
               <span class="info-box-icon bg-success elevation-1"><i class="fas fa-graduation-cap"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text"><a href="">Graduados</a></span>
+                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'graduated' %}">Graduados</a></span>
                 <span class="info-box-number">{{ graduated }}</span>
               </div>
               <!-- /.info-box-content -->
