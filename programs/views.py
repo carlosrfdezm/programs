@@ -13,11 +13,16 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
 
 
 def index(request, program_slug):
-    context={
-        'program': Program.objects.get(slug=program_slug)
-    }
-    return render(request,'programs/program_index.html', context)
+    if not request.user.is_authenticated :
+        context={
+            'program': Program.objects.get(slug=program_slug)
+        }
+        return render(request,'programs/program_index.html', context)
+    else:
+        return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
 
+
+@login_required
 def home(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     if program.type == 'phd':
@@ -32,7 +37,8 @@ def home(request, program_slug):
     else:
         pass
 
-# @login_required
+
+@login_required
 def create_student(request, program_slug):
     program=Program.objects.get(slug=program_slug)
     if request.method == 'POST':
@@ -92,6 +98,7 @@ def create_student(request, program_slug):
             return HttpResponse('El programa no es un doctorado')
 
 
+@login_required
 def students_list(request, program_slug, scope):
     program=Program.objects.get(slug=program_slug)
     if scope == 'all':
