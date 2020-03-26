@@ -88,8 +88,8 @@ class ProgramMember(models.Model):
     Femenino = 'f'
 
     ROLE_CHOICES = [
-        ('Coordinador', 'Presidente'),
-        ('Secretario', 'Vicepresidente'),
+        ('Coordinador', 'Coordinador'),
+        ('Secretario', 'Secretario'),
         ('Miembro', 'Miembro'),
         ('Profesor', 'Profesor'),
         ('Tutor', 'Tutor'),

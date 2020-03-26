@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils.text import slugify
 
-from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement
+from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, ProgramMember
 
 
 def index(request, program_slug):
@@ -123,3 +123,19 @@ def students_list(request, program_slug, scope):
         }
 
     return render(request, 'programs/students_list.html', context)
+
+@login_required
+def edit_student(request, program_slug, student_id):
+    print(ProgramMember.objects.get(user=request.user).role)
+    try:
+        if ProgramMember.objects.get(user=request.user).role=='Coordinador' or ProgramMember.objects.get(user=request.user).role=='Secretario':
+            if request.method=='POST':
+                pass
+            else:
+                context={
+                    'program': Program.objects.get(slug=program_slug),
+                    'student':Student.objects.get(student_id),
+                }
+                return render(request,'programs/edit_phd_student.html',context)
+    except:
+        return HttpResponse('Error')

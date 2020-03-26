@@ -71,8 +71,8 @@
                                     {% endif %} </td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-warning btn-sm"  title="Editar"> <i class="fa fa-edit"></i></button>
-                                            <button class="btn btn-danger btn-sm "  title="Eliminar"><i class="fa fa-eraser"></i></button>
+                                            <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_student' program.slug student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
+                                            <a class="btn btn-danger btn-sm text-white"  title="Eliminar"><i class="fa fa-eraser"></i></a>
                                         </div>
                                     </td>
                                 </tr>
