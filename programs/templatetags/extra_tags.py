@@ -59,4 +59,13 @@ def init_requirements_accomplished(student, program):
 
     return accomplished
 
+@register.simple_tag
+def student_init_requirement_accomplished(student, program_requirement):
+    student_requirement, created=StudentInitRequirement.objects.get_or_create(student=student, requirement=program_requirement)
+    if student_requirement.accomplished:
+        return True
+    else:
+        return False
+
+
 

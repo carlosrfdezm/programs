@@ -7,9 +7,10 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.urls import reverse
-from django.utils.text import slugify
+from django.utils.text import slugify, phone2numeric
 
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, ProgramMember
+from programs.utils import user_is_program_cs
 
 
 def index(request, program_slug):
@@ -126,16 +127,47 @@ def students_list(request, program_slug, scope):
 
 @login_required
 def edit_student(request, program_slug, student_id):
-    print(ProgramMember.objects.get(user=request.user).role)
-    try:
-        if ProgramMember.objects.get(user=request.user).role=='Coordinador' or ProgramMember.objects.get(user=request.user).role=='Secretario':
-            if request.method=='POST':
+    program= Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            user=Student.objects.get(pk=student_id).user
+            user.first_name=request.POST['student_name']
+            user.last_name=request.POST['student_surename']
+            user.email=request.POST['student_email']
+            user.save()
+
+            Student.objects.filter(pk=student_id).update(
+                phone=request.POST['student_phone'],
+                country=request.POST['student_country']
+                            )
+            try:
+                if request.FILES['student_picture']:
+                    Student.objects.filter(pk=student_id).update(
+                        picture=request.FILES['student_picture']
+                    )
+            except:
                 pass
-            else:
-                context={
-                    'program': Program.objects.get(slug=program_slug),
-                    'student':Student.objects.get(student_id),
-                }
-                return render(request,'programs/edit_phd_student.html',context)
-    except:
-        return HttpResponse('Error')
+
+            for requirement in ProgramInitRequirements.objects.filter(program=program):
+                if 'student_requirement_' + str(requirement.id) in request.POST:
+                    s_i_r=StudentInitRequirement.objects.get(student=Student.objects.get(pk=student_id), requirement=requirement)
+                    s_i_r.accomplished=True
+                    s_i_r.save()
+                else:
+                    s_i_r = StudentInitRequirement.objects.get(student=Student.objects.get(pk=student_id),
+                                                               requirement=requirement)
+                    s_i_r.accomplished = False
+                    s_i_r.save()
+
+            return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug,'all']))
+        else:
+            context = {
+                'program': program,
+                'student': Student.objects.get(pk=student_id),
+                'init_requirements': ProgramInitRequirements.objects.filter(program=program)
+            }
+            return render(request, 'programs/edit_phd_student.html', context)
+    else:
+        return HttpResponse('Error: Usuario no CS')
+
+
