@@ -5,157 +5,181 @@
 {% block content %}
     {% if student %}
         <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Editar estudiante</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Editar estudiante</li>
-                    </ol>
-                </div>
-            </div>
-        </div><!-- /.container-fluid -->
-    </section>
-
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <!-- left column -->
-                <div class="col-md-12">
-                    <!-- general form elements -->
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">Estudiante</h3>
-                        </div>
-                        <!-- /.card-header -->
-                        <!-- form start -->
-                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_student' program.slug student.id %}">
-                        {% csrf_token %}
-                            <div class="card-body">
-
-                                <div class="form-row">
-
-                                    <div class="form-group col-md-4">
-                                        <label for="inp_name">Nombre(s):</label>
-                                        <input type="text" class="form-control" id="inp_name" name="student_name" placeholder="Nombre(s)" value="{{ student.user.first_name }}" required>
-                                    </div>
-                                    <div class="form-group col-md-5">
-                                        <label for="inp_name">Apellidos:</label>
-                                        <input type="text" class="form-control" id="inp_surename" name="student_surename" placeholder="Apellidos" value="{{  student.user.last_name }}" required>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="slc_status">Estado:</label>
-                                        <select class="form-control" id="slc_status" name="student_status" required>
-                                            <option value="">Seleccione un estado</option>
-                                            <option value="solicitante" {% if student.phdstudent.status == 'solicitante' %}selected{% endif %}>Solicitante</option>
-                                            <option value="doctorando" {% if student.phdstudent.status == 'doctorando' %}selected{% endif %}>Doctorando</option>
-                                            <option value="graduado" {% if student.phdstudent.status == 'graduado' %}selected{% endif %}>Graduado</option>
-
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-4">
-                                        <label for="inp_email">Email:</label>
-                                        <input type="email" class="form-control" id="inp_email"  name="student_email" placeholder="Email" value="{{student.user.email }}" required>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="inp_phone">Teléfono:</label>
-                                        <input type="text" class="form-control" id="inp_phone"  name="student_phone"  value="{{ student.phone }}" placeholder="Telefono" >
-                                    </div>
-                                    <div class="form-group col-md-5">
-                                        <label for="slc_country">País:</label>
-                                        <select class="form-control" id="slc_country" name="student_country" required>
-                                        {% country_list as country_list%}
-                                            {% for country in country_list %}
-                                            <option value="{{ country }}" {% if student.country == country %}selected{% endif %}>{{ country }}</option>
-                                            {% endfor %}
-
-                                        </select>
-                                    </div>
-                                </div>
-                                <hr>
-                                <h5><strong>Requisitos</strong></h5>
-                                <div class="form-row">
-                                <div class="col-md-6">
-                                <h5>De ingreso:</h5>
-                                     <div class="form-group">
-                                        {% for requirement in init_requirements %}
-                                            {% student_init_requirement_accomplished student requirement as student_init_requirement_accomplished %}
-
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="inp_requirement_{{ requirement.id }}" name="student_requirement_{{ requirement.id }}" {% if student_init_requirement_accomplished %} checked {% endif %}>
-
-                                                <label class="form-check-label" for="inp_requirement_{{ requirement.id }}">{{ requirement.name }}</label>
-                                            </div>
-
-
-                                        {% endfor %}
-                                    <div class="help">
-                                        <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                <h5>De egreso:</h5>
-                                     <div class="form-group">
-                                        {% for requirement in finish_requirements %}
-                                            {% student_finish_requirement_accomplished student requirement as student_finish_requirement_accomplished %}
-
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="inp_f_requirement_{{ requirement.id }}" name="student_f_requirement_{{ requirement.id }}" {% if student_finish_requirement_accomplished %} checked {% endif %}>
-
-                                                <label class="form-check-label" for="inp_f_requirement_{{ requirement.id }}">{{ requirement.name }}</label>
-                                            </div>
-
-
-                                        {% endfor %}
-                                    <div class="help">
-                                        <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
-                                    </div>
-                                    </div>
-                                </div>
-
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="exampleInputFile">Foto: {{ student.picture }}</label>
-                                        <input type="file" class="form-control-file" id="exampleInputFile" name="student_picture" accept="image/*">
-                                    </div>
-                                </div>
-
-                            </div>
-                            <!-- /.card-body -->
-
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                            </div>
-                        </form>
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Editar estudiante</h1>
                     </div>
-                    <!-- /.card -->
-
-
-
-                    <!-- /.card -->
-
-                    <!-- Input addon -->
-                    <!-- /.card -->
-                    <!-- Horizontal Form -->
-                    <!-- /.card -->
-
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Editar estudiante</li>
+                        </ol>
+                    </div>
                 </div>
-                <!--/.col (left) -->
-                <!-- right column -->
-                <!--/.col (right) -->
-            </div>
-            <!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </section>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- left column -->
+                    <div class="col-md-12">
+                        <!-- general form elements -->
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Estudiante</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_student' program.slug student.id %}">
+                                {% csrf_token %}
+                                <div class="card-body">
+
+                                    <div class="form-row">
+
+                                        <div class="form-group col-md-4">
+                                            <label for="inp_name">Nombre(s):</label>
+                                            <input type="text" class="form-control" id="inp_name" name="student_name" placeholder="Nombre(s)" value="{{ student.user.first_name }}" required>
+                                        </div>
+                                        <div class="form-group col-md-5">
+                                            <label for="inp_name">Apellidos:</label>
+                                            <input type="text" class="form-control" id="inp_surename" name="student_surename" placeholder="Apellidos" value="{{  student.user.last_name }}" required>
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label for="slc_status">Estado:</label>
+                                            <select class="form-control" id="slc_status" name="student_status" required>
+                                                <option value="">Seleccione un estado</option>
+                                                <option value="solicitante" {% if student.phdstudent.status == 'solicitante' %}selected{% endif %}>Solicitante</option>
+                                                <option value="doctorando" {% if student.phdstudent.status == 'doctorando' %}selected{% endif %}>Doctorando</option>
+                                                <option value="graduado" {% if student.phdstudent.status == 'graduado' %}selected{% endif %}>Graduado</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="inp_email">Email:</label>
+                                            <input type="email" class="form-control" id="inp_email"  name="student_email" placeholder="Email" value="{{student.user.email }}" required>
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label for="inp_phone">Teléfono:</label>
+                                            <input type="text" class="form-control" id="inp_phone"  name="student_phone"  value="{{ student.phone }}" placeholder="Telefono" >
+                                        </div>
+                                        <div class="form-group col-md-5">
+                                            <label for="slc_country">País:</label>
+                                            <select class="form-control" id="slc_country" name="student_country" required>
+                                                {% country_list as country_list%}
+                                                {% for country in country_list %}
+                                                    <option value="{{ country }}" {% if student.country == country %}selected{% endif %}>{{ country }}</option>
+                                                {% endfor %}
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <h5><strong>Requisitos</strong></h5>
+                                    <div class="form-row">
+                                        <div class="col-md-4">
+                                            <h5>De ingreso:</h5>
+                                            <div class="form-group">
+                                                {% for requirement in init_requirements %}
+                                                    {% student_init_requirement_accomplished student requirement as student_init_requirement_accomplished %}
+
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" id="inp_requirement_{{ requirement.id }}" name="student_requirement_{{ requirement.id }}" {% if student_init_requirement_accomplished %} checked {% endif %}>
+
+                                                        <label class="form-check-label" for="inp_requirement_{{ requirement.id }}">{{ requirement.name }}</label>
+                                                    </div>
+
+
+                                                {% endfor %}
+                                                <div class="help">
+                                                    <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <h5>De egreso:</h5>
+                                            <div class="form-group">
+                                                {% for requirement in finish_requirements %}
+                                                    {% student_finish_requirement_accomplished student requirement as student_finish_requirement_accomplished %}
+
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" id="inp_f_requirement_{{ requirement.id }}" name="student_f_requirement_{{ requirement.id }}" {% if student_finish_requirement_accomplished %} checked {% endif %}>
+
+                                                        <label class="form-check-label" for="inp_f_requirement_{{ requirement.id }}">{{ requirement.name }}</label>
+                                                    </div>
+
+
+                                                {% endfor %}
+                                                <div class="help">
+                                                    <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-5" for="inp_request_date">Fecha de solicitud: </label>
+                                                    <div class="col-sm-7">
+                                                        <input type="date" class="form-control" id="inp_request_date" name="request_date" value="{{ student.request_date|date:'Y-m-d' }}" required>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-5" for="inp_init_date">Fecha de ingreso: </label>
+                                                    <div class="col-sm-7">
+                                                        <input type="date" class="form-control" id="inp_init_date" name="init_date" value="{{ student.init_date|date:'Y-m-d' }}">
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <label class="col-sm-5" for="inp_graduate_date">Fecha de egreso: </label>
+                                                    <div class="col-sm-7">
+                                                        <input type="date" class="form-control" id="inp_graduate_date" name="graduate_date" value="{{ student.graduate_date|date:'Y-m-d' }}">
+                                                    </div>
+                                                </div>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="exampleInputFile">Foto: {{ student.picture }}</label>
+                                            <input type="file" class="form-control-file" id="exampleInputFile" name="student_picture" accept="image/*">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!-- /.card-body -->
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- /.card -->
+
+
+
+                        <!-- /.card -->
+
+                        <!-- Input addon -->
+                        <!-- /.card -->
+                        <!-- Horizontal Form -->
+                        <!-- /.card -->
+
+                    </div>
+                    <!--/.col (left) -->
+                    <!-- right column -->
+                    <!--/.col (right) -->
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </section>
     {% endif %}
     <!-- /.content -->
 {% endblock %}

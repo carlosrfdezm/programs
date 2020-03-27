@@ -133,6 +133,7 @@ class Student(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     request_date= models.DateField(default=now)
     graduate_date = models.DateField(null=True)
+    init_date = models.DateField(null=True)
     country=models.CharField(max_length=70, default='Cuba')
     picture=models.ImageField(upload_to=student_directory_path, null=True)
 

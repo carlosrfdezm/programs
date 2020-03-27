@@ -7,6 +7,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.urls import reverse
+from django.utils import dateparse
 from django.utils.text import slugify, phone2numeric
 
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
@@ -151,6 +152,19 @@ def edit_student(request, program_slug, student_id):
                 country=request.POST['student_country'],
 
                             )
+            if 'request_date' in request.POST and not request.POST['request_date'] == '':
+                Student.objects.filter(pk=student_id).update(
+                    request_date=request.POST['request_date']
+                )
+            if 'init_date' in request.POST and not request.POST['init_date'] == '':
+                Student.objects.filter(pk=student_id).update(
+                    init_date=request.POST['init_date']
+                )
+            if 'graduate_date' in request.POST and not request.POST['graduate_date'] == '':
+                Student.objects.filter(pk=student_id).update(
+                    graduate_date=request.POST['graduate_date']
+                )
+
             PhdStudent.objects.filter(student=Student.objects.get(pk=student_id)).update(
                 status=request.POST['student_status']
             )
@@ -182,6 +196,9 @@ def edit_student(request, program_slug, student_id):
                                                                requirement=requirement)
                     s_f_r.accomplished = False
                     s_f_r.save()
+
+
+
 
             return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug,'all']))
         else:
