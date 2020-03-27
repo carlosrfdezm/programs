@@ -49,13 +49,12 @@ def country_list():
 
 @register.simple_tag
 def init_requirements_accomplished(student, program):
-    accomplished=False
+    accomplished=True
     for requirement in ProgramInitRequirements.objects.filter(program=program):
         for student_requirement in StudentInitRequirement.objects.filter(requirement__program=program, student=student):
-            if student_requirement.accomplished:
-                accomplished=True
-            else:
+            if not student_requirement.accomplished:
                 accomplished=False
+
 
     return accomplished
 

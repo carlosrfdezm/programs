@@ -47,9 +47,10 @@
                             <thead>
                             <tr>
                                 <th>Nombre y apellidos</th>
-                                <th>Fecha solicitud</th>
+                                <th>Fecha<br>(solicitud)</th>
                                 <th>Estado</th>
-                                <th class="text-center">Requisitos</th>
+                                <th class="text-center">Requisitos<br> (ingreso)</th>
+                                <th class="text-center">Requisitos<br> (egreso)</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -62,13 +63,14 @@
                                     <td>{{ student.phdstudent.status|capfirst }}</td>
                                     <td class="text-center">{% if init_requirements_accomplished %}
                                         <span class="text-success">
-                                             <i class="fas fa-check-double" title="Requisitos cumplidos"></i>
+                                             <i class="fas fa-check" title="Requisitos cumplidos"></i>
                                         </span>
                                     {% else %}
                                         <span class="text-warning">
-                                             <i class="fas fa-check" title="Faltan requisitos de ingreso"></i>
+                                             <i class="fa fa-exclamation-triangle" title="Faltan requisitos de ingreso"></i>
                                         </span>
                                     {% endif %} </td>
+                                    <td></td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
                                             <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_student' program.slug student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
