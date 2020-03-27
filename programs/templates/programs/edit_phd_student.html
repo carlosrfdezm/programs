@@ -44,9 +44,19 @@
                                         <label for="inp_name">Nombre(s):</label>
                                         <input type="text" class="form-control" id="inp_name" name="student_name" placeholder="Nombre(s)" value="{{ student.user.first_name }}" required>
                                     </div>
-                                    <div class="form-group col-md-8">
+                                    <div class="form-group col-md-5">
                                         <label for="inp_name">Apellidos:</label>
                                         <input type="text" class="form-control" id="inp_surename" name="student_surename" placeholder="Apellidos" value="{{  student.user.last_name }}" required>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="slc_status">Estado:</label>
+                                        <select class="form-control" id="slc_status" name="student_status" required>
+                                            <option value="">Seleccione un estado</option>
+                                            <option value="solicitante" {% if student.phdstudent.status == 'solicitante' %}selected{% endif %}>Solicitante</option>
+                                            <option value="doctorando" {% if student.phdstudent.status == 'doctorando' %}selected{% endif %}>Doctorando</option>
+                                            <option value="graduado" {% if student.phdstudent.status == 'graduado' %}selected{% endif %}>Graduado</option>
+
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-row">
