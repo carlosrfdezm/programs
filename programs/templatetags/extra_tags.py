@@ -7,7 +7,7 @@ from math import floor
 
 from django.utils.timezone import now
 
-from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember
+from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember, StudentFinishRequirement
 
 register = template.Library()
 
@@ -58,6 +58,7 @@ def init_requirements_accomplished(student, program):
 
     return accomplished
 
+
 @register.simple_tag
 def student_init_requirement_accomplished(student, program_requirement):
     student_requirement, created=StudentInitRequirement.objects.get_or_create(student=student, requirement=program_requirement)
@@ -65,6 +66,17 @@ def student_init_requirement_accomplished(student, program_requirement):
         return True
     else:
         return False
+
+
+@register.simple_tag
+def student_finish_requirement_accomplished(student, program_requirement):
+    student_requirement, created=StudentFinishRequirement.objects.get_or_create(student=student, requirement=program_requirement)
+    if student_requirement.accomplished:
+        return True
+    else:
+        return False
+
+
 @register.simple_tag
 def user_is_program_cs(user, program):
     try:

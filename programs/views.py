@@ -9,7 +9,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils.text import slugify, phone2numeric
 
-from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, ProgramMember
+from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
+    ProgramMember, ProgramFinishRequirements, StudentFinishRequirement
 from programs.utils import user_is_program_cs, user_is_program_member
 
 
@@ -109,21 +110,25 @@ def students_list(request, program_slug, scope):
             context = {
                 'program': program,
                 'students': Student.objects.filter(program=program),
+                'scope':'all',
             }
         elif scope == 'requesters':
             context = {
                 'program': program,
                 'students': Student.objects.filter(program=program, phdstudent__status='solicitante'),
+                'scope': 'Solicitantes',
             }
         elif scope == 'aproved':
             context = {
                 'program': program,
                 'students': Student.objects.filter(program=program, phdstudent__status='doctorando'),
+                'scope': 'Doctorandos',
             }
         elif scope == 'graduated':
             context = {
                 'program': program,
                 'students': Student.objects.filter(program=program, phdstudent__status='graduado'),
+                'scope': 'Graduados',
             }
 
         return render(request, 'programs/students_list.html', context)
@@ -167,13 +172,24 @@ def edit_student(request, program_slug, student_id):
                                                                requirement=requirement)
                     s_i_r.accomplished = False
                     s_i_r.save()
+            for requirement in ProgramFinishRequirements.objects.filter(program=program):
+                if 'student_f_requirement_' + str(requirement.id) in request.POST:
+                    s_f_r=StudentFinishRequirement.objects.get(student=Student.objects.get(pk=student_id), requirement=requirement)
+                    s_f_r.accomplished=True
+                    s_f_r.save()
+                else:
+                    s_f_r = StudentFinishRequirement.objects.get(student=Student.objects.get(pk=student_id),
+                                                               requirement=requirement)
+                    s_f_r.accomplished = False
+                    s_f_r.save()
 
             return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug,'all']))
         else:
             context = {
                 'program': program,
                 'student': Student.objects.get(pk=student_id),
-                'init_requirements': ProgramInitRequirements.objects.filter(program=program)
+                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
+                'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
             }
             return render(request, 'programs/edit_phd_student.html', context)
     else:

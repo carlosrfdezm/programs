@@ -150,7 +150,7 @@ class PhdStudent(models.Model):
 class ProgramInitRequirements(models.Model):
     program= models.ForeignKey(Program, on_delete=models.CASCADE, help_text='Programa correspondiente')
     name = models.CharField(max_length=50, help_text='Nombre del requisito')
-    description = models.TextField(max_length=150, help_text='Descripcion del requisito')
+    description = models.CharField(max_length=150, help_text='Descripcion del requisito')
 
     class Meta:
         verbose_name='Requerimiento de inicio de programa'
@@ -162,7 +162,7 @@ class ProgramInitRequirements(models.Model):
 class ProgramFinishRequirements(models.Model):
     program= models.ForeignKey(Program, on_delete=models.CASCADE, help_text='Programa correspondiente')
     name = models.CharField(max_length=50, help_text='Nombre del requisito')
-    description = models.TextField(max_length=150, help_text='Descricpion del requisito')
+    description = models.CharField(max_length=150, help_text='Descricpion del requisito')
 
     class Meta:
         verbose_name='Requerimiento de culminacion de programa'

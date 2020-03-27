@@ -3,6 +3,14 @@ from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitR
 
 # Register your models here.
 
+class ProgramInitRequirementsInline(admin.TabularInline):
+    model = ProgramInitRequirements
+    extra = 1
+
+class ProgramFinishRequirementsInline(admin.TabularInline):
+    model = ProgramFinishRequirements
+    extra = 1
+
 class ProgramBackgroundsInline(admin.StackedInline):
     model = ProgramBackgrounds
     extra = 3
@@ -10,7 +18,7 @@ class ProgramBackgroundsInline(admin.StackedInline):
 class ProgramAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("short_name",)}
     list_display = ('full_name','short_name','type')
-    inlines = [ProgramBackgroundsInline]
+    inlines = [ProgramInitRequirementsInline, ProgramFinishRequirementsInline, ProgramBackgroundsInline ]
 
 admin.site.register(Program, ProgramAdmin)
 
@@ -19,11 +27,7 @@ class CGC_MemberAdmin(admin.ModelAdmin):
 
 admin.site.register(CGC_Member, CGC_MemberAdmin)
 
-admin.site.register(ProgramInitRequirements)
-
-admin.site.register(ProgramFinishRequirements)
-
 class ProgramMemberAdmin(admin.ModelAdmin):
-    list_display = ['program','user','role']
+    list_display = ['user','program','role']
 
 admin.site.register(ProgramMember, ProgramMemberAdmin)

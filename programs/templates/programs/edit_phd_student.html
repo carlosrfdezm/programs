@@ -13,7 +13,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
                         <li class="breadcrumb-item active">Editar estudiante</li>
                     </ol>
                 </div>
@@ -80,9 +80,11 @@
                                     </div>
                                 </div>
                                 <hr>
-                                <hr4><strong>Requisitos de ingreso:</strong></hr4>
+                                <h5><strong>Requisitos</strong></h5>
                                 <div class="form-row">
-                                    <div class="form-group">
+                                <div class="col-md-6">
+                                <h5>De ingreso:</h5>
+                                     <div class="form-group">
                                         {% for requirement in init_requirements %}
                                             {% student_init_requirement_accomplished student requirement as student_init_requirement_accomplished %}
 
@@ -98,6 +100,27 @@
                                         <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
                                     </div>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
+                                <h5>De egreso:</h5>
+                                     <div class="form-group">
+                                        {% for requirement in finish_requirements %}
+                                            {% student_finish_requirement_accomplished student requirement as student_finish_requirement_accomplished %}
+
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="inp_f_requirement_{{ requirement.id }}" name="student_f_requirement_{{ requirement.id }}" {% if student_finish_requirement_accomplished %} checked {% endif %}>
+
+                                                <label class="form-check-label" for="inp_f_requirement_{{ requirement.id }}">{{ requirement.name }}</label>
+                                            </div>
+
+
+                                        {% endfor %}
+                                    <div class="help">
+                                        <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
+                                    </div>
+                                    </div>
+                                </div>
+
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group">

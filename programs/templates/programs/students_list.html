@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
                         <li class="breadcrumb-item active">Estudiantes</li>
                     </ol>
                 </div>
@@ -39,19 +39,25 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Estudiantes de {{  program }}</h3>
+                        <h3 class="card-title">{% if scope == 'all' %}Estudiantes {% else %}{{ scope }} {% endif %} de {{  program }}</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <table id="example1" class="table table-bordered table-striped">
                             <thead>
+                            {% user_is_program_cs user program as user_is_program_cs %}
+
                             <tr>
                                 <th>Nombre y apellidos</th>
                                 <th>Fecha<br>(solicitud)</th>
                                 <th>Estado</th>
                                 <th class="text-center">Requisitos<br> (ingreso)</th>
-                                <th class="text-center">Requisitos<br> (egreso)</th>
-                                <th></th>
+                                {% if scope == 'Doctorandos' %}
+                                    <th class="text-center">Requisitos<br> (egreso)</th>
+                                {% endif %}
+                                {% if user_is_program_cs %}
+                                    <th></th>
+                                {% endif %}
                             </tr>
                             </thead>
                             <tbody>
@@ -70,13 +76,19 @@
                                              <i class="fa fa-exclamation-triangle" title="Faltan requisitos de ingreso"></i>
                                         </span>
                                     {% endif %} </td>
-                                    <td></td>
-                                    <td class="text-center">
-                                        <div class="btn-group" role="group">
-                                            <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_student' program.slug student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
-                                            <a class="btn btn-danger btn-sm text-white"  title="Eliminar"><i class="fa fa-eraser"></i></a>
-                                        </div>
-                                    </td>
+                                    {% if scope == 'Doctorandos' %}
+                                        <td></td>
+                                    {% endif %}
+                                    {% if user_is_program_cs %}
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+
+                                                <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_student' program.slug student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar"><i class="fa fa-eraser"></i></a>
+
+                                            </div>
+                                        </td>
+                                    {% endif %}
                                 </tr>
                             {% endfor %}
 
@@ -85,13 +97,13 @@
 
                             </tbody>
                             <tfoot>
-{#                            <tr>#}
-{#                                <th>Nombre y apellidos</th>#}
-{#                                <th>Fecha solicitud</th>#}
-{#                                <th>Estado</th>#}
-{#                                <th class="text-center">Requisitos</th>#}
-{#                                <th></th>#}
-{#                            </tr>#}
+                            {#                            <tr>#}
+                            {#                                <th>Nombre y apellidos</th>#}
+                            {#                                <th>Fecha solicitud</th>#}
+                            {#                                <th>Estado</th>#}
+                            {#                                <th class="text-center">Requisitos</th>#}
+                            {#                                <th></th>#}
+                            {#                            </tr>#}
                             </tfoot>
                         </table>
                     </div>
