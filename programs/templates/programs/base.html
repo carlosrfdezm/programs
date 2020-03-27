@@ -1,4 +1,6 @@
 {% load static %}
+{% load extra_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -177,6 +179,8 @@
                             </p>
                         </a>
                     </li>
+                    {% user_is_program_cs user program as user_is_program_cs %}
+
 
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link" title="Estudiantes y solicitantes">
@@ -187,12 +191,14 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
+                            {% if user_is_program_cs %}
                             <li class="nav-item">
                                 <a href="{% url 'programs:create_student' program.slug %}" class="nav-link">
                                     <i class="fa fa-plus nav-icon"></i>
                                     <p>Nuevo</p>
                                 </a>
                             </li>
+                            {% endif %}
                             <li class="nav-item">
                                 <a href="{% url 'programs:students_list' program.slug 'requesters' %}" class="nav-link">
                                     <i class="fa fa-check nav-icon"></i>
@@ -229,12 +235,14 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
+                            {% if user_is_program_cs %}
                             <li class="nav-item">
                                 <a href="" class="nav-link">
                                     <i class="fa fa-plus"></i>
                                     <p>Nuevo</p>
                                 </a>
                             </li>
+                            {% endif %}
                             <li class="nav-item">
                                 <a href="" class="nav-link">
                                     <i class="fa fa-users"></i>

@@ -7,7 +7,7 @@ from math import floor
 
 from django.utils.timezone import now
 
-from programs.models import ProgramInitRequirements, StudentInitRequirement
+from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember
 
 register = template.Library()
 
@@ -64,6 +64,17 @@ def student_init_requirement_accomplished(student, program_requirement):
     if student_requirement.accomplished:
         return True
     else:
+        return False
+@register.simple_tag
+def user_is_program_cs(user, program):
+    try:
+        member=ProgramMember.objects.get(user=user, program=program)
+        if member.role == 'Coordinador' or member.role == 'Secretario':
+            return True
+        else:
+            return False
+
+    except:
         return False
 
 
