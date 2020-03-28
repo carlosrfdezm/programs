@@ -63,6 +63,7 @@ def create_student(request, program_slug):
             student = Student(
                 user=user,
                 program=program,
+                gender=request.POST['gender']
             )
             student.save()
 
@@ -150,6 +151,7 @@ def edit_student(request, program_slug, student_id):
             Student.objects.filter(pk=student_id).update(
                 phone=request.POST['student_phone'],
                 country=request.POST['student_country'],
+                gender=request.POST['gender']
 
                             )
             if 'request_date' in request.POST and not request.POST['request_date'] == '':
@@ -219,3 +221,42 @@ def error_500(request, program, error_message):
         'error_message':error_message,
     }
     return render(request,'programs/error_500.html', context)
+
+@login_required
+def create_professor(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method=='POST':
+            user, created = User.objects.get_or_create(
+                email=request.POST['email'],
+                username=str(request.POST['email']).split('@')[0],
+                first_name=request.POST['name'],
+                last_name=request.POST['surename'],
+                password='12345678',
+            )
+            professor = ProgramMember(
+                program=program,
+                user=user,
+                role=request.POST['role'],
+                institution=request.POST['institution'],
+                degree=request.POST['grade'],
+                phone=request.POST['phone'],
+                country=request.POST['country'],
+                fb_contact=request.POST['fb_contact'],
+                tw_contact=request.POST['tw_contact'],
+                ln_contact=request.POST['ln_contact'],
+                sex=request.POST['gender']
+
+            )
+            professor.save()
+            if request.FILES['picture']:
+                professor.picture=request.FILES['picture']
+                professor.save()
+
+            return HttpResponseRedirect(reverse('programs:create_professor',args=[program_slug]))
+        else:
+            context={
+                'program':program,
+
+            }
+            return render(request, 'programs/create_professor.html', context)

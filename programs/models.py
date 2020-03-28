@@ -107,6 +107,8 @@ class ProgramMember(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     role = models.CharField(max_length=50, choices=ROLE_CHOICES)
+    country = models.CharField(max_length=70, default='Cuba')
+    phone = models.CharField(max_length=50)
     institution = models.CharField(max_length=100)
     degree = models.CharField(max_length=100,
                                    help_text='Grado cientifico')
@@ -136,6 +138,7 @@ class Student(models.Model):
     init_date = models.DateField(null=True)
     country=models.CharField(max_length=70, default='Cuba')
     picture=models.ImageField(upload_to=student_directory_path, null=True)
+    gender=models.CharField(max_length=1, default='F')
 
     def __str__(self):
         return self.user.get_full_name()

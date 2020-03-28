@@ -238,7 +238,7 @@
                         <ul class="nav nav-treeview">
                             {% if user_is_program_cs %}
                                 <li class="nav-item">
-                                    <a href="" class="nav-link">
+                                    <a href="{% url 'programs:create_professor' program.slug %}" class="nav-link" title="Agregar profesor">
                                         <i class="fa fa-plus"></i>
                                         <p>Nuevo</p>
                                     </a>

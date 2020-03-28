@@ -11,6 +11,7 @@ urlpatterns = [
     path('students/create', views.create_student, name='create_student'),
     path('students/list/<str:scope>', views.students_list, name='students_list'),
     path('students/<int:student_id>/edit', views.edit_student, name='edit_student'),
+    path('professors/create', views.create_professor, name='create_professor'),
 
     # path('login', views.mylogin, name='my_login'),
     # path('logout/<str:court_slug>/', views.mylogout, name='my_logout'),
