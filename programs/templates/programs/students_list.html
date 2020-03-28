@@ -77,7 +77,19 @@
                                         </span>
                                     {% endif %} </td>
                                     {% if scope == 'Doctorandos' %}
-                                        <td></td>
+                                        {% finish_requirements_accomplished student program as finish_requirements_accomplished %}
+
+                                        <td class="text-center">
+                                            {% if finish_requirements_accomplished %}
+                                                <span class="text-success">
+                                             <i class="fas fa-check" title="Requisitos cumplidos"></i>
+                                        </span>
+                                            {% else %}
+                                                <span class="text-warning">
+                                             <i class="fa fa-exclamation-triangle" title="Faltan requisitos de egreso"></i>
+                                        </span>
+                                            {% endif %}
+                                        </td>
                                     {% endif %}
                                     {% if user_is_program_cs %}
                                         <td class="text-center">
