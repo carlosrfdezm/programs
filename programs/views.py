@@ -227,33 +227,47 @@ def create_professor(request, program_slug):
     program=Program.objects.get(slug=program_slug)
     if user_is_program_cs(request.user, program):
         if request.method=='POST':
-            user, created = User.objects.get_or_create(
+            try:
+                user=User.objects.get(email=request.POST['email'])
+            except User.DoesNotExist:
+                user=User.objects.create_user(
                 email=request.POST['email'],
-                username=str(request.POST['email']).split('@')[0],
-                first_name=request.POST['name'],
-                last_name=request.POST['surename'],
+                username=request.POST['email'],
                 password='12345678',
             )
-            professor = ProgramMember(
-                program=program,
-                user=user,
-                role=request.POST['role'],
-                institution=request.POST['institution'],
-                degree=request.POST['grade'],
-                phone=request.POST['phone'],
-                country=request.POST['country'],
-                fb_contact=request.POST['fb_contact'],
-                tw_contact=request.POST['tw_contact'],
-                ln_contact=request.POST['ln_contact'],
-                sex=request.POST['gender']
+            user.first_name = request.POST['name'],
+            user.last_name = request.POST['surename'],
 
-            )
-            professor.save()
-            if request.FILES['picture']:
-                professor.picture=request.FILES['picture']
+            try:
+                professor=ProgramMember.objects.get(user=user, program=program)
+                return error_500(request,program,'Ya existe un profesor con este email en el sistema, verifique que no lo intenta duplicar.')
+            except:
+                professor = ProgramMember(
+                    program=program,
+                    user=user,
+                    role=request.POST['role'],
+                    institution=request.POST['institution'],
+                    degree=request.POST['grade'],
+                    phone=request.POST['phone'],
+                    country=request.POST['country'],
+                    fb_contact=request.POST['fb_contact'],
+                    tw_contact=request.POST['tw_contact'],
+                    ln_contact=request.POST['ln_contact'],
+                    sex=request.POST['gender']
+
+                )
                 professor.save()
+                if request.FILES['picture']:
+                    professor.picture=request.FILES['picture']
 
-            return HttpResponseRedirect(reverse('programs:create_professor',args=[program_slug]))
+                try:
+                    professor.save()
+                    user.save()
+                    return HttpResponseRedirect(reverse('programs:create_professor',args=[program_slug]))
+                except:
+                    return error_500(request, program,
+                                     'Una excepción se ha lanzado al tratar de guardar lso datos del nuevo miembro.')
+
         else:
             context={
                 'program':program,
