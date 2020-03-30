@@ -1,3 +1,4 @@
+import json
 import random
 
 from django.contrib.auth.decorators import login_required
@@ -48,10 +49,10 @@ def create_student(request, program_slug):
         if request.method == 'POST':
             try:
                 user = User.objects.get(email=request.POST['student_email'])
-            except:
+            except User.DoesNotExist:
                 passwd = program_slug + str(random.randint(1000000, 9999999))
                 user = User.objects.create_user(
-                    slugify(request.POST['student_email'].split('@')[0]),
+                    request.POST['student_email'],
                     request.POST['student_email'],
                     '12345678',  # Cambiar despues por contrase;a generada
 
@@ -199,9 +200,6 @@ def edit_student(request, program_slug, student_id):
                     s_f_r.accomplished = False
                     s_f_r.save()
 
-
-
-
             return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug,'all']))
         else:
             context = {
@@ -230,10 +228,11 @@ def create_professor(request, program_slug):
             try:
                 user=User.objects.get(email=request.POST['email'])
             except User.DoesNotExist:
+                passwd = program_slug + str(random.randint(1000000, 9999999))
                 user=User.objects.create_user(
                 email=request.POST['email'],
                 username=request.POST['email'],
-                password='12345678',
+                password='12345678',  # Cambiar a password generada luego #
             )
             user.first_name = request.POST['name'],
             user.last_name = request.POST['surename'],
@@ -263,6 +262,7 @@ def create_professor(request, program_slug):
                 try:
                     professor.save()
                     user.save()
+                    # TODO: enviar email al profesor creado
                     return HttpResponseRedirect(reverse('programs:create_professor',args=[program_slug]))
                 except:
                     return error_500(request, program,
@@ -274,3 +274,36 @@ def create_professor(request, program_slug):
 
             }
             return render(request, 'programs/create_professor.html', context)
+
+
+#Devuelve 0 si el user no existe, 1 si existe pero no es miembro del programa, 2 si existe y es miembro del programa
+@login_required
+def ajx_usr_exists(request,program_slug):
+    program = Program.objects.get(slug=program_slug)
+
+    if request.method=='POST':
+
+        try:
+            user= User.objects.get(email=request.POST['email'])
+            if user_is_program_member(user, program ):
+                return HttpResponse(
+                    json.dumps([{'exists': 2}]),
+                    content_type="application/json"
+                )
+            else:
+                return HttpResponse(
+                    json.dumps([{'exists': 1}]),
+                    content_type="application/json"
+                )
+
+
+        except User.DoesNotExist:
+            return HttpResponse(
+                json.dumps([{'exists': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'exists': 0}]),
+            content_type="application/json"
+        )
