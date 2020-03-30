@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('lines/create', views.create_line, name='create_line'),
     path('lines/list', views.program_lines, name='program_lines'),
+    path('lines/<int:line_id>/students', views.students_by_line, name='students_by_line'),
 
 
     path('ajx/user/exists', views.ajx_usr_exists, name='ajx_usr_exists'),

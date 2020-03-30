@@ -18,12 +18,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Líneas de {{ program }}</h1>
+                    <h1>Estudiantes</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Líneas</li>
+                        <li class="breadcrumb-item active">Estudiantes por linea</li>
                     </ol>
                 </div>
             </div>
@@ -39,7 +39,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Líneas de investigación</h3>
+                        <h3 class="card-title">Estudiantes vinculados a {{ line|truncatewords:6 }}</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -48,29 +48,54 @@
                             {% user_is_program_cs user program as user_is_program_cs %}
 
                             <tr>
-                                <th>Nombre</th>
-                                <th class="text-center">Estudiantes <br>asociados</th>
-
+                                <th>Nombre y apellidos</th>
+                                <th>Fecha<br>(solicitud)</th>
+                                <th>Estado</th>
+                                <th class="text-center">Requisitos<br> (ingreso)</th>
+                                {% if scope == 'Doctorandos' %}
+                                    <th class="text-center">Requisitos<br> (egreso)</th>
+                                {% endif %}
                                 {% if user_is_program_cs %}
                                     <th></th>
                                 {% endif %}
                             </tr>
                             </thead>
                             <tbody>
-                            {% for line in lines %}
+                            {% for student in students %}
+                                {% init_requirements_accomplished student program as init_requirements_accomplished %}
                                 <tr>
-                                    <td><a href="{% url 'programs:students_by_line' program.slug line.id %}">{{ line.name|truncatewords:10 }}</a> </td>
-                                    <td class="text-center">
-                                        <span class="badge badge-info">
-                                            {{ line.phdstudenttheme_set.all.count }}
+                                    <td>{{ student.user.last_name|upper }}, {{ student.user.first_name }}</td>
+                                    <td>{{ student.request_date|date:'m/d/Y' }}</td>
+                                    <td>{{ student.phdstudent.status|capfirst }}</td>
+                                    <td class="text-center">{% if init_requirements_accomplished %}
+                                        <span class="text-success">
+                                             <i class="fas fa-check" title="Requisitos cumplidos"></i>
                                         </span>
-                                        </td>
+                                    {% else %}
+                                        <span class="text-warning">
+                                             <i class="fa fa-exclamation-triangle" title="Faltan requisitos de ingreso"></i>
+                                        </span>
+                                    {% endif %} </td>
+                                    {% if scope == 'Doctorandos' %}
+                                        {% finish_requirements_accomplished student program as finish_requirements_accomplished %}
 
+                                        <td class="text-center">
+                                            {% if finish_requirements_accomplished %}
+                                                <span class="text-success">
+                                             <i class="fas fa-check" title="Requisitos cumplidos"></i>
+                                        </span>
+                                            {% else %}
+                                                <span class="text-warning">
+                                             <i class="fa fa-exclamation-triangle" title="Faltan requisitos de egreso"></i>
+                                        </span>
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
                                     {% if user_is_program_cs %}
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
 
-                                                <a class="btn btn-warning btn-sm text-white" href="" title="Editar"> <i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_student' program.slug student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
                                                 <a class="btn btn-danger btn-sm text-white"  title="Eliminar"><i class="fa fa-eraser"></i></a>
 
                                             </div>

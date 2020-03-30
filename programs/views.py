@@ -434,3 +434,13 @@ def program_lines(request, program_slug):
     }
     return render(request, 'programs/lines_list.html', context)
 
+@login_required
+def students_by_line(request, program_slug, line_id):
+    program=Program.objects.get(slug=program_slug)
+    line=InvestigationLine.objects.get(pk=line_id)
+    context={
+        'program':program,
+        'line':line,
+        'students':Student.objects.filter(phdstudent__phdstudenttheme__line=line)
+    }
+    return render(request, 'programs/students_by_line.html', context)
