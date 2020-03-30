@@ -74,7 +74,7 @@
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label for="inp_phone">Teléfono:</label>
-                                            <input type="text" class="form-control" id="inp_phone"  name="student_phone"  value="{{ student.phone }}" placeholder="Telefono" >
+                                            <input type="text" class="form-control" id="inp_phone"  name="student_phone"  value="{% if student.phone %}{{ student.phone }}{% endif %}" placeholder="Teléfono" >
                                         </div>
                                         <div class="form-group col-md-5">
                                             <label for="slc_country">País:</label>
