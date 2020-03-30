@@ -34,7 +34,7 @@
                         <!-- /.card-header -->
                         <!-- form start -->
                         <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_student' program.slug %}">
-                        {% csrf_token %}
+                            {% csrf_token %}
                             <div class="card-body">
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
@@ -66,16 +66,40 @@
                                     <div class="form-group col-md-5">
                                         <label for="slc_country">País:</label>
                                         <select class="form-control" id="slc_country" name="student_country" required>
-                                        {% country_list as country_list%}
+                                            {% country_list as country_list%}
                                             {% for country in country_list %}
-                                            <option value="{{ country }}" {% if country == 'Cuba' %}selected{% endif %}>{{ country }}</option>
+                                                <option value="{{ country }}" {% if country == 'Cuba' %}selected{% endif %}>{{ country }}</option>
                                             {% endfor %}
 
                                         </select>
                                     </div>
                                 </div>
                                 <hr>
-                                <hr4><strong>Requisitos de ingreso:</strong></hr4>
+                                <h4><strong>Tema de investigación:</strong></h4>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="txt_theme">Tema:</label>
+                                        <textarea class="form-control" id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="5"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="slc_line">Línea asociada:</label>
+                                        <select class="form-control" id="slc_line" name="investigation_line" required>
+                                            <option value="" >Seleccione una opción</option>
+
+                                            {% for line in lines %}
+                                                <option value="{{ line.id }}" >{{ line.name|truncatewords:10 }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <hr>
+                                <h4><strong>Requisitos de ingreso:</strong></h4>
                                 <div class="form-row">
                                     <div class="form-group">
                                         {% for requirement in init_requirements %}
@@ -88,9 +112,9 @@
 
 
                                         {% endfor %}
-                                    <div class="help">
-                                        <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
-                                    </div>
+                                        <div class="help">
+                                            <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-row">

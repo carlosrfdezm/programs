@@ -192,3 +192,17 @@ class StudentFinishRequirement(models.Model):
     def __str__(self):
         return 'Requirement'
 
+class InvestigationLine(models.Model):
+    program=models.ForeignKey(Program, on_delete=models.CASCADE)
+    name=models.TextField(max_length=500, help_text='Nombre de la linea')
+
+    def __str__(self):
+        return self.name
+
+class PhdStudentTheme(models.Model):
+    phd_student=models.OneToOneField(PhdStudent, on_delete=models.CASCADE)
+    line=models.ForeignKey(InvestigationLine, null=True, on_delete=models.SET_NULL)
+    description=models.TextField(max_length=500, null=True)
+
+    def __str__(self):
+        return self.description

@@ -13,7 +13,7 @@ from django.utils import dateparse
 from django.utils.text import slugify, phone2numeric
 
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
-    ProgramMember, ProgramFinishRequirements, StudentFinishRequirement
+    ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme
 from programs.utils import user_is_program_cs, user_is_program_member
 
 
@@ -81,6 +81,12 @@ def create_student(request, program_slug):
                     status='solicitante',
                 )
                 new_student.save()
+                new_theme=PhdStudentTheme(
+                    phd_student=new_student,
+                    line=InvestigationLine.objects.get(pk=request.POST['investigation_line']),
+                    description=request.POST['theme'],
+                )
+                new_theme.save()
             else:
                 return HttpResponse('Tipo de programa aun por crear')
 
@@ -105,7 +111,8 @@ def create_student(request, program_slug):
         else:
             context = {
                 'program': program,
-                'init_requirements': ProgramInitRequirements.objects.filter(program=program)
+                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
+                'lines': InvestigationLine.objects.filter(program=program),
             }
             if Program.objects.get(slug=program_slug).type == 'phd':
                 return render(request, 'programs/create_phd_student.html', context)
@@ -211,6 +218,13 @@ def edit_student(request, program_slug, student_id):
             PhdStudent.objects.filter(student=Student.objects.get(pk=student_id)).update(
                 status=request.POST['student_status']
             )
+
+            student_theme, created = PhdStudentTheme.objects.get_or_create(
+                phd_student=PhdStudent.objects.get(student=Student.objects.get(pk=student_id)),
+                line= InvestigationLine.objects.get(pk=request.POST['investigation_line']),
+            )
+            student_theme.description = request.POST['theme']
+            student_theme.save()
             try:
                 if request.FILES['student_picture']:
                     student=Student.objects.get(pk=student_id)
@@ -247,6 +261,7 @@ def edit_student(request, program_slug, student_id):
                 'student': Student.objects.get(pk=student_id),
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
+                'lines': InvestigationLine.objects.filter(program=program),
             }
             return render(request, 'programs/edit_phd_student.html', context)
     else:
@@ -389,4 +404,33 @@ def ajx_usr_exists(request,program_slug):
             json.dumps([{'exists': 0}]),
             content_type="application/json"
         )
+
+@login_required
+def create_line(request, program_slug):
+    program= Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user,program):
+        if request.method=='POST':
+            new_line = InvestigationLine(
+                program=program,
+                name=request.POST['line_name']
+            )
+            new_line.save()
+            return HttpResponseRedirect(reverse('programs:program_lines', args=[program_slug]))
+
+        else:
+            context={
+                'program':program,
+            }
+            return render(request, 'programs/create_line.html', context)
+    else:
+        return error_500(request,program,'Usted no tiene privilegios para crear líneas.')
+
+
+@login_required
+def program_lines(request, program_slug):
+    context={
+        'program': Program.objects.get(slug=program_slug),
+        'lines': InvestigationLine.objects.filter(program=Program.objects.get(slug=program_slug)),
+    }
+    return render(request, 'programs/lines_list.html', context)
 

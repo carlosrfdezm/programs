@@ -15,6 +15,9 @@ urlpatterns = [
     path('professors/<int:member_id>/edit', views.edit_member, name='edit_member'),
     path('professors/<str:scope>/list', views.members_list, name='members_list'),
 
+    path('lines/create', views.create_line, name='create_line'),
+    path('lines/list', views.program_lines, name='program_lines'),
+
 
     path('ajx/user/exists', views.ajx_usr_exists, name='ajx_usr_exists'),
 
