@@ -69,11 +69,20 @@ def create_student(request, program_slug):
             )
             student.save()
 
-            new_student = PhdStudent(
-                student=student,
-                status='solicitante',
-            )
-            new_student.save()
+            try:
+                student.picture=request.FILES['picture']
+                student.save()
+            except:
+                pass
+
+            if program.type=='phd':
+                new_student = PhdStudent(
+                    student=student,
+                    status='solicitante',
+                )
+                new_student.save()
+            else:
+                return HttpResponse('Tipo de programa aun por crear')
 
             for requirement in ProgramInitRequirements.objects.filter(program=program):
 
@@ -139,7 +148,7 @@ def students_list(request, program_slug, scope):
     else:
         return error_500(request, program, 'Usted no tiene acceso a esta página')
 
-
+@login_required
 def members_list(request, program_slug, scope):
     program=Program.objects.get(slug=program_slug)
     if scope == 'all':
@@ -204,9 +213,9 @@ def edit_student(request, program_slug, student_id):
             )
             try:
                 if request.FILES['student_picture']:
-                    Student.objects.filter(pk=student_id).update(
-                        picture=request.FILES['student_picture']
-                    )
+                    student=Student.objects.get(pk=student_id)
+                    student.picture=request.FILES['student_picture']
+                    student.save()
             except:
                 pass
 
@@ -286,15 +295,17 @@ def create_professor(request, program_slug):
                     sex=request.POST['gender']
 
                 )
-                try:
-                    professor.picture=request.FILES['picture']
-                except:
-                    pass
 
                 try:
                     professor.save()
+                    try:
+                        professor.picture=request.FILES['picture']
+                        professor.save()
+                    except:
+                        pass
                     # TODO: enviar email al profesor creado
                     return HttpResponseRedirect(reverse('programs:members_list',args=[program_slug, 'all']))
+
                 except:
                     if not ProgramMember.objects.filter(user=user) and not Student.objects.filter(user=user):
                         user.delete()
@@ -307,6 +318,44 @@ def create_professor(request, program_slug):
 
             }
             return render(request, 'programs/create_professor.html', context)
+
+@login_required
+def edit_member(request, program_slug, member_id):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            user=ProgramMember.objects.get(pk=member_id).user
+            user.first_name=request.POST['name']
+            user.last_name=request.POST['surename']
+            user.email=request.POST['email']
+            user.save()
+            ProgramMember.objects.filter(pk=member_id).update(
+                role=request.POST['role'],
+                institution=request.POST['institution'],
+                degree=request.POST['grade'],
+                phone=request.POST['phone'],
+                country=request.POST['country'],
+                fb_contact=request.POST['fb_contact'],
+                tw_contact=request.POST['tw_contact'],
+                ln_contact=request.POST['ln_contact'],
+                sex=request.POST['gender'],
+            )
+            professor=ProgramMember.objects.get(pk=member_id)
+            try:
+                professor.picture=request.FILES['picture']
+                professor.save()
+            except:
+                print('Excepcion sin foto')
+
+            return HttpResponseRedirect(reverse('programs:members_list',args=[program_slug, 'all']))
+        else:
+            context={
+                'program':program,
+                'member':ProgramMember.objects.get(pk=member_id)
+            }
+            return render(request,'programs/edit_professor.html',context)
+    else:
+        return error_500(request,program,'Usted no tiene privilegios para editar miembros de este programa.')
 
 
 #Devuelve 0 si el user no existe, 1 si existe pero no es miembro del programa, 2 si existe y es miembro del programa
@@ -340,3 +389,4 @@ def ajx_usr_exists(request,program_slug):
             json.dumps([{'exists': 0}]),
             content_type="application/json"
         )
+

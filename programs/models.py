@@ -9,7 +9,7 @@ def program_directory_path(instance, filename):
 
 def member_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
-    return 'program_{0}/imgs/member_{1}/{2}'.format(instance.program.slug,instance.id, filename)
+    return 'program_{0}/members/{1}/{2}'.format(instance.program.slug,instance.id, filename)
 
 def student_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>

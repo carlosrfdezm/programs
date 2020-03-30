@@ -156,8 +156,11 @@
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group">
-                                            <label for="exampleInputFile">Foto: {{ student.picture }}</label>
+                                            <label for="exampleInputFile">Foto: </label>
                                             <input type="file" class="form-control-file" id="exampleInputFile" name="student_picture" accept="image/*">
+                                            <div class="help text-sm text-gray">
+                                            {{ student.picture }}
+                                        </div>
                                         </div>
                                     </div>
 
