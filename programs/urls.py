@@ -12,6 +12,7 @@ urlpatterns = [
     path('students/list/<str:scope>', views.students_list, name='students_list'),
     path('students/<int:student_id>/edit', views.edit_student, name='edit_student'),
     path('professors/create', views.create_professor, name='create_professor'),
+    path('professors/<str:scope>/list', views.members_list, name='members_list'),
 
 
     path('ajx/user/exists', views.ajx_usr_exists, name='ajx_usr_exists'),

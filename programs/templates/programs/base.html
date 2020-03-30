@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/fontawesome.css' %}">
     <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/brands.css' %}">
     <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/solid.css' %}">
-{#    <i class="fa fa-graduation-cap" rel="icon"></i>#}
+    {#    <i class="fa fa-graduation-cap" rel="icon"></i>#}
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{% static 'programs/plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}" >
     <!-- Theme style -->
@@ -245,15 +245,21 @@
                                 </li>
                             {% endif %}
                             <li class="nav-item">
-                                <a href="" class="nav-link">
+                                <a href="{% url 'programs:members_list' program.slug 'comite' %}" class="nav-link">
                                     <i class="fa fa-users"></i>
                                     <p>Comité</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="" class="nav-link">
+                                <a href="{% url 'programs:members_list' program.slug 'professors' %}" class="nav-link">
                                     <i class="fa fa-chalkboard-teacher"></i>
                                     <p>Profesores</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'programs:members_list' program.slug 'tutors' %}" class="nav-link">
+                                    <i class="fa fa-directions"></i>
+                                    <p>Tutores</p>
                                 </a>
                             </li>
 

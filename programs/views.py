@@ -3,6 +3,7 @@ import random
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
@@ -91,7 +92,7 @@ def create_student(request, program_slug):
                     )
                     new_student_requirement.save()
 
-            return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug]))
+            return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug, 'all']))
         else:
             context = {
                 'program': program,
@@ -138,6 +139,36 @@ def students_list(request, program_slug, scope):
     else:
         return error_500(request, program, 'Usted no tiene acceso a esta página')
 
+
+def members_list(request, program_slug, scope):
+    program=Program.objects.get(slug=program_slug)
+    if scope == 'all':
+        context = {
+            'program': program,
+            'members': ProgramMember.objects.filter(program=program),
+            'scope': 'all',
+        }
+    elif scope == 'comite':
+        context = {
+            'program': program,
+            'members': ProgramMember.objects.filter(Q(role='Miembro')|Q(role='Coordinador')|Q(role='Secretario'), program=program),
+            'scope': 'Comité académico',
+        }
+    elif scope == 'professors':
+        context = {
+            'program': program,
+            'members': ProgramMember.objects.filter(program=program, role='Profesor'),
+            'scope': 'Profesores',
+        }
+    elif scope == 'tutors':
+        context = {
+            'program': program,
+            'members': ProgramMember.objects.filter(program=program, role='Tutor'),
+            'scope': 'Tutores',
+        }
+
+    return render(request, 'programs/members_list.html', context)
+
 @login_required
 def edit_student(request, program_slug, student_id):
     program= Program.objects.get(slug=program_slug)
@@ -154,7 +185,7 @@ def edit_student(request, program_slug, student_id):
                 country=request.POST['student_country'],
                 gender=request.POST['gender']
 
-                            )
+            )
             if 'request_date' in request.POST and not request.POST['request_date'] == '':
                 Student.objects.filter(pk=student_id).update(
                     request_date=request.POST['request_date']
@@ -196,7 +227,7 @@ def edit_student(request, program_slug, student_id):
                     s_f_r.save()
                 else:
                     s_f_r = StudentFinishRequirement.objects.get(student=Student.objects.get(pk=student_id),
-                                                               requirement=requirement)
+                                                                 requirement=requirement)
                     s_f_r.accomplished = False
                     s_f_r.save()
 
@@ -224,19 +255,19 @@ def error_500(request, program, error_message):
 def create_professor(request, program_slug):
     program=Program.objects.get(slug=program_slug)
     if user_is_program_cs(request.user, program):
-        if request.method=='POST':
+        if request.method == 'POST':
             try:
-                user=User.objects.get(email=request.POST['email'])
+                user = User.objects.get(email=request.POST['email'])
             except User.DoesNotExist:
                 passwd = program_slug + str(random.randint(1000000, 9999999))
-                user=User.objects.create_user(
-                email=request.POST['email'],
-                username=request.POST['email'],
-                password='12345678',  # Cambiar a password generada luego #
-            )
-            user.first_name = request.POST['name'],
-            user.last_name = request.POST['surename'],
-
+                user = User.objects.create_user(
+                    request.POST['email'],
+                    request.POST['email'],
+                    '12345678',  # Cambiar a password generada luego #
+                )
+                user.first_name = request.POST['name']
+                user.last_name = request.POST['surename']
+                user.save()
             try:
                 professor=ProgramMember.objects.get(user=user, program=program)
                 return error_500(request,program,'Ya existe un profesor con este email en el sistema, verifique que no lo intenta duplicar.')
@@ -255,16 +286,18 @@ def create_professor(request, program_slug):
                     sex=request.POST['gender']
 
                 )
-                professor.save()
-                if request.FILES['picture']:
+                try:
                     professor.picture=request.FILES['picture']
+                except:
+                    pass
 
                 try:
                     professor.save()
-                    user.save()
                     # TODO: enviar email al profesor creado
-                    return HttpResponseRedirect(reverse('programs:create_professor',args=[program_slug]))
+                    return HttpResponseRedirect(reverse('programs:members_list',args=[program_slug, 'all']))
                 except:
+                    if not ProgramMember.objects.filter(user=user) and not Student.objects.filter(user=user):
+                        user.delete()
                     return error_500(request, program,
                                      'Una excepción se ha lanzado al tratar de guardar lso datos del nuevo miembro.')
 

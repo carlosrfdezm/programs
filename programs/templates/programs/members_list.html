@@ -1,0 +1,132 @@
+{% extends 'programs/base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+
+{% block extra_css %}
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' %}">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
+{% endblock %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Claustro</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Profesores y tutores</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+
+                <!-- /.card -->
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">{% if scope == 'all' %}Miembros del claustro {% else %}{{ scope }} {% endif %} de {{  program }}</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            {% user_is_program_cs user program as user_is_program_cs %}
+
+                            <tr>
+                                <th>Nombre y apellidos</th>
+                                <th>Rol</th>
+                                <th>Pais</th>
+                                <th></th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for member in members %}
+                                <tr>
+                                    <td>{{ member.user.last_name|upper }}, {{ member.user.first_name }}</td>
+                                    <td>{{ member.role }}</td>
+                                    <td>{{ member.country }}</td>
+
+                                    {% if user_is_program_cs %}
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+
+                                                <a class="btn btn-warning btn-sm text-white" href="" title="Editar"> <i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar"><i class="fa fa-eraser"></i></a>
+
+                                            </div>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+
+
+
+
+                            </tbody>
+                            <tfoot>
+                            {#                            <tr>#}
+                            {#                                <th>Nombre y apellidos</th>#}
+                            {#                                <th>Fecha solicitud</th>#}
+                            {#                                <th>Estado</th>#}
+                            {#                                <th class="text-center">Requisitos</th>#}
+                            {#                                <th></th>#}
+                            {#                            </tr>#}
+                            </tfoot>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <!-- jQuery -->
+    <script src="{% static 'programs/plugins/jquery/jquery.min.js' %}"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{% static 'programs/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- DataTables -->
+    <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'programs/dist/js/adminlte.min.js' %}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="{% static 'programs/dist/js/demo.js' %}"></script>
+    <!-- page script -->
+    <script>
+        $(function () {
+            $("#example1").DataTable();
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+            });
+        });
+    </script>
+{% endblock %}
+
