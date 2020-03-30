@@ -1,4 +1,6 @@
 from django.contrib import admin
+
+from programs.models import InvestigationLine
 from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember
 
 # Register your models here.
@@ -31,3 +33,5 @@ class ProgramMemberAdmin(admin.ModelAdmin):
     list_display = ['user','program','role']
 
 admin.site.register(ProgramMember, ProgramMemberAdmin)
+
+admin.site.register(InvestigationLine)

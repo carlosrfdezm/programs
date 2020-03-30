@@ -425,6 +425,26 @@ def create_line(request, program_slug):
     else:
         return error_500(request,program,'Usted no tiene privilegios para crear líneas.')
 
+@login_required
+def edit_line(request, program_slug, line_id):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            InvestigationLine.objects.filter(pk=line_id).update(
+                name=request.POST['line_name']
+            )
+            return HttpResponseRedirect(reverse('programs:program_lines', args=[program_slug]))
+        else:
+            context={
+                'program':program,
+                'line':InvestigationLine.objects.get(pk=line_id),
+            }
+            return render(request, 'programs/edit_line.html', context)
+    else:
+        return error_500(request,program,'Usted no tiene privilegios para editar esta linea')
+
+
+
 
 @login_required
 def program_lines(request, program_slug):
