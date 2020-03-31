@@ -8,12 +8,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Agregar proyecto</h1>
+                    <h1>Editar proyecto</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Crear proyecto</li>
+                        <li class="breadcrumb-item active">Editar proyecto</li>
                     </ol>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
-                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_project' program.slug %}">
+                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_project' program.slug project.id %}">
                             {% csrf_token %}
                             <div class="card-body">
                                 <div class="form-row">
@@ -42,7 +42,7 @@
                                         <select class="form-control" id="slc_lines" name="line">
                                             <option value="" selected>Seleccione una opción</option>
                                             {% for line in lines %}
-                                                <option value="{{ line.id }}" >{{ line|truncatewords:10 }}</option>
+                                                <option value="{{ line.id }}" {% if project.line.id == line.id%}selected{% endif %} >{{ line|truncatewords:10 }}</option>
 
                                             {% endfor %}
                                         </select>
@@ -53,22 +53,22 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
                                         <label for="inp_name">Nombre:</label>
-                                        <textarea class="form-control" id="inp_name" name="project_name" placeholder="Nombre del proyecto de investigación" maxlength="500" rows="5" required></textarea>
+                                        <textarea class="form-control" id="inp_name" name="project_name" placeholder="Nombre del proyecto de investigación" maxlength="500" rows="5" required>{{ project.name }}</textarea>
                                     </div>
 
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="inp_institution">Insitución coordinadora:</label>
-                                        <input type="text" class="form-control" id="inp_institution" name="project_institution" placeholder="Nombre de la institución coordinadora" maxlength="120" required>
+                                        <input type="text" class="form-control" id="inp_institution" name="project_institution" placeholder="Nombre de la institución coordinadora" maxlength="120" value="{{ project.institution }}" required>
                                     </div>
                                     <div class="form-group col-md-3">
                                         <label for="inp_init_date">Fecha de inicio:</label>
-                                        <input type="date" class="form-control" id="inp_init_date" name="project_init_date" placeholder="Fecha de inicio del proyecto" required>
+                                        <input type="date" class="form-control" id="inp_init_date" name="project_init_date" placeholder="Fecha de inicio del proyecto" value="{{ project.init_date|date:'Y-m-d' }}" required>
                                     </div>
                                     <div class="form-group col-md-3">
                                         <label for="inp_end_date">Fecha de fin:</label>
-                                        <input type="date" class="form-control" id="inp_end_date" name="project_end_date" placeholder="Fecha de fin del proyecto" required>
+                                        <input type="date" class="form-control" id="inp_end_date" name="project_end_date" placeholder="Fecha de fin del proyecto" value="{{ project.end_date|date:'Y-m-d' }}" required>
                                     </div>
 
                                 </div>

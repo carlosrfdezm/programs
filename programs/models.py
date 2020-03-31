@@ -199,8 +199,20 @@ class InvestigationLine(models.Model):
     def __str__(self):
         return self.name
 
+class InvestigationProject(models.Model):
+    program=models.ForeignKey(Program,null=True, on_delete=models.SET_NULL)
+    line=models.ForeignKey(InvestigationLine,null=True, on_delete=models.SET_NULL)
+    name=models.TextField(max_length=500)
+    institution=models.CharField(max_length=120, help_text='Insitucion coordinadora')
+    init_date =models.DateField(default=now, help_text='Fecha de inicio del proyecto')
+    end_date =models.DateField(default=now, help_text='Fecha de fin del proyecto')
+
+    def __str__(self):
+        return self.name
+
 class PhdStudentTheme(models.Model):
     phd_student=models.OneToOneField(PhdStudent, on_delete=models.CASCADE)
+    project=models.ForeignKey(InvestigationProject, null=True, on_delete=models.SET_NULL)
     line=models.ForeignKey(InvestigationLine, null=True, on_delete=models.SET_NULL)
     description=models.TextField(max_length=500, null=True)
 
@@ -208,10 +220,3 @@ class PhdStudentTheme(models.Model):
         return self.description
 
 
-class InvestigationProject(models.Model):
-    program=models.ForeignKey(Program,null=True, on_delete=models.SET_NULL)
-    line=models.ForeignKey(InvestigationLine,null=True, on_delete=models.SET_NULL)
-    name=models.TextField(max_length=500)
-
-    def __str__(self):
-        return self.name

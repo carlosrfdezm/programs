@@ -84,9 +84,15 @@ def create_student(request, program_slug):
                 new_student.save()
                 new_theme=PhdStudentTheme(
                     phd_student=new_student,
-                    line=InvestigationLine.objects.get(pk=request.POST['investigation_line']),
                     description=request.POST['theme'],
                 )
+                try:
+                    new_theme.project=InvestigationProject.objects.get(pk=request.POST['investigation_project'])
+                    new_theme.line=InvestigationProject.objects.get(pk=request.POST['investigation_project']).line,
+
+                except:
+                    pass
+
                 new_theme.save()
             else:
                 return HttpResponse('Tipo de programa aun por crear')
@@ -113,7 +119,7 @@ def create_student(request, program_slug):
             context = {
                 'program': program,
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
-                'lines': InvestigationLine.objects.filter(program=program),
+                'projects': InvestigationProject.objects.filter(program=program),
             }
             if Program.objects.get(slug=program_slug).type == 'phd':
                 return render(request, 'programs/create_phd_student.html', context)
@@ -222,10 +228,17 @@ def edit_student(request, program_slug, student_id):
 
             student_theme, created = PhdStudentTheme.objects.get_or_create(
                 phd_student=PhdStudent.objects.get(student=Student.objects.get(pk=student_id)),
-                line= InvestigationLine.objects.get(pk=request.POST['investigation_line']),
             )
             student_theme.description = request.POST['theme']
+
             student_theme.save()
+            try:
+                student_theme.project = InvestigationProject.objects.get(pk=request.POST['investigation_project'])
+                student_theme.line = InvestigationProject.objects.get(pk=request.POST['investigation_project']).line
+                student_theme.save()
+            except:
+                pass
+
             try:
                 if request.FILES['student_picture']:
                     student=Student.objects.get(pk=student_id)
@@ -262,7 +275,7 @@ def edit_student(request, program_slug, student_id):
                 'student': Student.objects.get(pk=student_id),
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
-                'lines': InvestigationLine.objects.filter(program=program),
+                'projects': InvestigationProject.objects.filter(program=program),
             }
             return render(request, 'programs/edit_phd_student.html', context)
     else:
@@ -474,7 +487,10 @@ def create_project(request, program_slug):
             new_project=InvestigationProject(
                 program=program,
                 line=InvestigationLine.objects.get(pk=request.POST['line']),
-                name=request.POST['project_name']
+                name=request.POST['project_name'],
+                institution=request.POST['project_institution'],
+                init_date=request.POST['project_init_date'],
+                end_date=request.POST['project_end_date'],
             )
             new_project.save()
             return HttpResponseRedirect(reverse('programs:projects_list', args=[program_slug]))
@@ -484,6 +500,8 @@ def create_project(request, program_slug):
                 'lines':InvestigationLine.objects.filter(program=program),
             }
             return render(request, 'programs/create_project.html', context)
+    else:
+        return error_500(request,program,'Usted no tiene proivilegios para crear proyectos')
 
 
 @login_required
@@ -494,3 +512,27 @@ def projects_list(request, program_slug):
         'projects':InvestigationProject.objects.filter(program=program)
     }
     return render(request, 'programs/projects_list.html',context)
+
+@login_required
+def edit_project(request, program_slug, project_id):
+    program=Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method=='POST':
+            InvestigationProject.objects.filter(pk=project_id).update(
+                line=InvestigationLine.objects.get(pk=request.POST['line']),
+                name=request.POST['project_name'],
+                institution=request.POST['project_institution'],
+                init_date=request.POST['project_init_date'],
+                end_date=request.POST['project_end_date'],
+            )
+
+            return HttpResponseRedirect(reverse('programs:projects_list', args=[program_slug]))
+        else:
+            context={
+                'program':program,
+                'lines':InvestigationLine.objects.filter(program=program),
+                'project':  InvestigationProject.objects.get(pk=project_id),
+            }
+            return render(request, 'programs/edit_project.html', context)
+    else:
+        return error_500(request,program,'Usted no tiene privilegios para editar proyectos')

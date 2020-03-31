@@ -21,6 +21,7 @@ urlpatterns = [
     path('lines/<int:line_id>/edit', views.edit_line, name='edit_line'),
 
     path('projects/create', views.create_project, name='create_project'),
+    path('projects/<int:project_id>/edit', views.edit_project, name='edit_project'),
     path('projects/list', views.projects_list, name='projects_list'),
 
 

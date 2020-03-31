@@ -50,6 +50,7 @@
                             <tr>
                                 <th>Nombre</th>
                                 <th class="text-center">Estudiantes <br>asociados</th>
+                                <th class="text-center">Proyectos <br>asociados</th>
 
                                 {% if user_is_program_cs %}
                                     <th></th>
@@ -60,11 +61,16 @@
                             {% for line in lines %}
                                 <tr>
                                     <td><a href="{% url 'programs:students_by_line' program.slug line.id %}">{{ line.name|truncatewords:10 }}</a> </td>
-                                    <td class="text-center">
+                                    <td class="text-center text-lg">
                                         <span class="badge badge-info">
                                             {{ line.phdstudenttheme_set.all.count }}
                                         </span>
-                                        </td>
+                                    </td>
+                                    <td class="text-center text-lg">
+                                        <span class="badge badge-info">
+                                            {{ line.investigationproject_set.all.count }}
+                                        </span>
+                                    </td>
 
                                     {% if user_is_program_cs %}
                                         <td class="text-center">

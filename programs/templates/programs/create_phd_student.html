@@ -85,12 +85,12 @@
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
-                                        <label for="slc_line">Línea asociada:</label>
-                                        <select class="form-control" id="slc_line" name="investigation_line" required>
+                                        <label for="slc_project">Proyecto asociado:</label>
+                                        <select class="form-control" id="slc_project" name="investigation_project" >
                                             <option value="" >Seleccione una opción</option>
 
-                                            {% for line in lines %}
-                                                <option value="{{ line.id }}" >{{ line.name|truncatewords:10 }}</option>
+                                            {% for project in projects %}
+                                                <option value="{{ project.id }}" >{{ project|truncatewords:10 }}</option>
                                             {% endfor %}
 
                                         </select>

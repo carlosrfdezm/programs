@@ -50,6 +50,8 @@
                             <tr>
                                 <th>Nombre</th>
                                 <th class="text-center">Linea</th>
+                                <th class="text-center">Fecha<br>inicio</th>
+                                <th class="text-center">Fecha<br>fin</th>
                                 <th class="text-center">Tesis<br>asociadas</th>
 
                                 {% if user_is_program_cs %}
@@ -60,11 +62,13 @@
                             <tbody>
                             {% for project in projects %}
                                 <tr>
-                                    <td><a href="">{{ project|truncatewords:10 }}</a> </td>
-                                    <td><a href="{% url 'programs:students_by_line' program.slug project.line.id %}">{{ project.line|truncatewords:10 }}</td>>
+                                    <td><a href="" title="{{ project }}">{{ project|truncatewords:10 }}</a> </td>
+                                    <td><a href="{% url 'programs:students_by_line' program.slug project.line.id %}" title="{{ project.line }}">{{ project.line|truncatewords:10 }}</td>>
+                                    <td>{{ project.init_date|date:'Y/m/d' }}</td>
+                                    <td>{{ project.end_date|date:'Y/m/d' }}</td>
                                     <td class="text-center">
                                         <span class="badge badge-info">
-                                            {{ project.line.phdstudenttheme_set.all.count }}
+                                            {{ project.phdstudenttheme_set.all.count }}
                                         </span>
                                         </td>
 
@@ -72,7 +76,7 @@
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
 
-                                                <a class="btn btn-warning btn-sm text-white" href="" title="Editar"> <i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_project' program.slug project.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
                                                 <a class="btn btn-danger btn-sm text-white"  title="Eliminar"><i class="fa fa-eraser"></i></a>
 
                                             </div>
@@ -105,7 +109,6 @@
         <!-- /.row -->
     </section>
     <!-- /.content -->
-    </div>
 {% endblock %}
 {% block extra_scripts %}
     <!-- jQuery -->
@@ -134,5 +137,3 @@
         });
     </script>
 {% endblock %}
-</body>
-</html>
