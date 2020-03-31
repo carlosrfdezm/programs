@@ -206,3 +206,12 @@ class PhdStudentTheme(models.Model):
 
     def __str__(self):
         return self.description
+
+
+class InvestigationProject(models.Model):
+    program=models.ForeignKey(Program,null=True, on_delete=models.SET_NULL)
+    line=models.ForeignKey(InvestigationLine,null=True, on_delete=models.SET_NULL)
+    name=models.TextField(max_length=500)
+
+    def __str__(self):
+        return self.name

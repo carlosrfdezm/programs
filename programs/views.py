@@ -13,7 +13,8 @@ from django.utils import dateparse
 from django.utils.text import slugify, phone2numeric
 
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
-    ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme
+    ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
+    InvestigationProject
 from programs.utils import user_is_program_cs, user_is_program_member
 
 
@@ -464,3 +465,32 @@ def students_by_line(request, program_slug, line_id):
         'students':Student.objects.filter(phdstudent__phdstudenttheme__line=line)
     }
     return render(request, 'programs/students_by_line.html', context)
+
+@login_required
+def create_project(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method=='POST':
+            new_project=InvestigationProject(
+                program=program,
+                line=InvestigationLine.objects.get(pk=request.POST['line']),
+                name=request.POST['project_name']
+            )
+            new_project.save()
+            return HttpResponseRedirect(reverse('programs:projects_list', args=[program_slug]))
+        else:
+            context={
+                'program':program,
+                'lines':InvestigationLine.objects.filter(program=program),
+            }
+            return render(request, 'programs/create_project.html', context)
+
+
+@login_required
+def projects_list(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    context={
+        'program':program,
+        'projects':InvestigationProject.objects.filter(program=program)
+    }
+    return render(request, 'programs/projects_list.html',context)
