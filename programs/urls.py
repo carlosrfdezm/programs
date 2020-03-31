@@ -26,7 +26,8 @@ urlpatterns = [
 
 
     path('ajx/user/exists', views.ajx_usr_exists, name='ajx_usr_exists'),
-    path('ajx/student/delete', views.ajx_delete_student, name='ajx_delete_student')
+    path('ajx/student/delete', views.ajx_delete_student, name='ajx_delete_student'),
+    path('ajx/member/delete', views.ajx_delete_member, name='ajx_delete_member'),
 
 
     # path('login', views.mylogin, name='my_login'),

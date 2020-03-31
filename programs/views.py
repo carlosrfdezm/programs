@@ -551,7 +551,6 @@ def ajx_delete_student(request, program_slug):
                     content_type="application/json"
                 )
             except:
-                Student.objects.get(pk=student_id).delete()
                 return HttpResponse(
                     json.dumps([{'deleted': 0}]),
                     content_type="application/json"
@@ -567,4 +566,32 @@ def ajx_delete_student(request, program_slug):
             content_type="application/json"
         )
 
+@login_required
+def ajx_delete_member(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+
+    if user_is_program_cs(request.user,program ):
+        if request.method=='POST':
+            member_id=request.POST['member_id']
+            try:
+                ProgramMember.objects.get(pk=member_id).delete()
+                return HttpResponse(
+                    json.dumps([{'deleted': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                return HttpResponse(
+                    json.dumps([{'deleted': 0}]),
+                    content_type="application/json"
+                )
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'deleted': 0}]),
+            content_type="application/json"
+        )
 
