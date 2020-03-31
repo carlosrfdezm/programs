@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
+    <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+
 {% endblock %}
 
 {% block content %}
@@ -59,7 +61,7 @@
                             </thead>
                             <tbody>
                             {% for line in lines %}
-                                <tr>
+                                <tr id="tr_line_{{ line.id }}">
                                     <td><a href="{% url 'programs:students_by_line' program.slug line.id %}">{{ line.name|truncatewords:10 }}</a> </td>
                                     <td class="text-center text-lg">
                                         <span class="badge badge-info">
@@ -77,12 +79,43 @@
                                             <div class="btn-group" role="group">
 
                                                 <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_line' program.slug line.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
-                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar"><i class="fa fa-eraser"></i></a>
+                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_line_{{ line.id }}"><i class="fa fa-eraser"></i></a>
 
                                             </div>
                                         </td>
                                     {% endif %}
                                 </tr>
+                                <div class="modal fade" id="modal_rm_line_{{ line.id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Eliminar línea</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <p class="text-center">¿Seguro que desea eliminar esta línea:<br><strong>{{ line|truncatewords:5 }}</strong>?<br>Esto no se puede deshacer&hellip;</p>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_line_{{ line.id }}">Eliminar</button>
+                                            </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+
                             {% endfor %}
 
 
@@ -106,16 +139,19 @@
             </div>
             <!-- /.col -->
         </div>
+        {% csrf_token %}
         <!-- /.row -->
     </section>
     <!-- /.content -->
-    </div>
 {% endblock %}
 {% block extra_scripts %}
+    <!-- jQuery -->
     <!-- jQuery -->
     <script src="{% static 'programs/plugins/jquery/jquery.min.js' %}"></script>
     <!-- Bootstrap 4 -->
     <script src="{% static 'programs/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'programs/plugins/toastr/toastr.min.js' %}"></script>
+    <script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
     <!-- DataTables -->
     <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
     <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
@@ -125,7 +161,14 @@
     <script src="{% static 'programs/dist/js/demo.js' %}"></script>
     <!-- page script -->
     <script>
-        $(function () {
+        $(document).ready(function () {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+
             $("#example1").DataTable();
             $('#example2').DataTable({
                 "paging": true,
@@ -135,8 +178,64 @@
                 "info": true,
                 "autoWidth": false,
             });
+
+
+
+            {% for line in lines %}
+                $('#btn_rm_line_{{ line.id }}').click(function () {
+                    var line_id={{ line.id }};
+                    var url = "{% url 'programs:ajx_delete_line' program.slug %}";
+
+                    {#$('#modal_rm_line_{{ line.id }}').modal('hide');#}
+
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'line_id':line_id,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].deleted == 1) {
+
+                                $('#tr_line_{{ line.id }}').remove();
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Linea eliminada exitosamente'
+                                });
+
+                            } else if(json[0].deleted == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar la linea seleccionada.'
+                                })
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
+                });
+            {% endfor %}
+
         });
     </script>
 {% endblock %}
-</body>
-</html>
