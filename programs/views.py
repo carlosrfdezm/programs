@@ -536,3 +536,35 @@ def edit_project(request, program_slug, project_id):
             return render(request, 'programs/edit_project.html', context)
     else:
         return error_500(request,program,'Usted no tiene privilegios para editar proyectos')
+
+@login_required
+def ajx_delete_student(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+
+    if user_is_program_cs(request.user,program ):
+        if request.method=='POST':
+            student_id=request.POST['student_id']
+            try:
+                Student.objects.get(pk=student_id).delete()
+                return HttpResponse(
+                    json.dumps([{'deleted': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                Student.objects.get(pk=student_id).delete()
+                return HttpResponse(
+                    json.dumps([{'deleted': 0}]),
+                    content_type="application/json"
+                )
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'deleted': 0}]),
+            content_type="application/json"
+        )
+
+
