@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
+    <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+
 {% endblock %}
 
 {% block content %}
@@ -61,28 +63,59 @@
                             </thead>
                             <tbody>
                             {% for project in projects %}
-                                <tr>
+                                <tr id="tr_project_{{ project.id }}">
                                     <td><a href="" title="{{ project }}">{{ project|truncatewords:10 }}</a> </td>
                                     <td><a href="{% url 'programs:students_by_line' program.slug project.line.id %}" title="{{ project.line }}">{{ project.line|truncatewords:10 }}</td>>
                                     <td>{{ project.init_date|date:'Y/m/d' }}</td>
                                     <td>{{ project.end_date|date:'Y/m/d' }}</td>
-                                    <td class="text-center">
+                                    <td class="text-center text-lg">
                                         <span class="badge badge-info">
                                             {{ project.phdstudenttheme_set.all.count }}
                                         </span>
-                                        </td>
+                                    </td>
 
                                     {% if user_is_program_cs %}
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
 
                                                 <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_project' program.slug project.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
-                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar"><i class="fa fa-eraser"></i></a>
+                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_project_{{ project.id }}"><i class="fa fa-eraser"></i></a>
 
                                             </div>
                                         </td>
                                     {% endif %}
                                 </tr>
+                                <div class="modal fade" id="modal_rm_project_{{ project.id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Eliminar proyecto</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <p class="text-center">¿Seguro que desea eliminar el proyectoa:<br><strong>{{ project|truncatewords:5 }}</strong>?<br>Esto no se puede deshacer&hellip;</p>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_project_{{ project.id }}">Eliminar</button>
+                                            </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+
                             {% endfor %}
 
 
@@ -106,15 +139,18 @@
             </div>
             <!-- /.col -->
         </div>
+    {% csrf_token %}
         <!-- /.row -->
     </section>
     <!-- /.content -->
 {% endblock %}
 {% block extra_scripts %}
     <!-- jQuery -->
+    <!-- jQuery -->
     <script src="{% static 'programs/plugins/jquery/jquery.min.js' %}"></script>
     <!-- Bootstrap 4 -->
     <script src="{% static 'programs/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
     <!-- DataTables -->
     <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
     <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
@@ -124,7 +160,14 @@
     <script src="{% static 'programs/dist/js/demo.js' %}"></script>
     <!-- page script -->
     <script>
-        $(function () {
+        $(document).ready(function () {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+
             $("#example1").DataTable();
             $('#example2').DataTable({
                 "paging": true,
@@ -134,6 +177,64 @@
                 "info": true,
                 "autoWidth": false,
             });
+
+
+
+            {% for project in projects %}
+                $('#btn_rm_project_{{ project.id }}').click(function () {
+                    var project_id={{ project.id }};
+                    var url = "{% url 'programs:ajx_delete_project' program.slug %}";
+
+
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'project_id':project_id,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].deleted == 1) {
+
+                                $('#tr_project_{{ project.id }}').remove();
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Proyecto eliminado exitosamente'
+                                });
+
+                            } else if(json[0].deleted == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar el proyecto seleccionado.'
+                                })
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
+                });
+            {% endfor %}
+
         });
     </script>
 {% endblock %}
+
