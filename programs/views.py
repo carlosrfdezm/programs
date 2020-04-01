@@ -1,5 +1,7 @@
 import json
 import random
+import calendar, locale
+
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -11,6 +13,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils import dateparse
 from django.utils.text import slugify, phone2numeric
+from django.utils.timezone import now
 
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
@@ -655,3 +658,27 @@ def ajx_delete_project(request, program_slug):
             json.dumps([{'deleted': 0}]),
             content_type="application/json"
         )
+
+@login_required
+def ajx_this_year_requests(request, program_slug):
+    response_data=[]
+    labels = []
+    data = []
+    meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+             8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for i in range(1,now().month+1):
+        labels.append(meses[i])
+        data.append(Student.objects.filter(request_date__year=now().year,request_date__month=i).__len__())
+
+    response_data.append(labels)
+    response_data.append(data)
+
+    print(response_data)
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )

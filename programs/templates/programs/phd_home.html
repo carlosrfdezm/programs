@@ -3,195 +3,352 @@
 
 {% block content %}
     <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0 text-dark">{{ program.full_name }}</h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item active"><a href="">Dashboard</a></li>
-{#              <li class="breadcrumb-item active">{{ program}}</li>#}
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">{{ program.full_name }}</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item active"><a href="">Dashboard</a></li>
+                        {#              <li class="breadcrumb-item active">{{ program}}</li>#}
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
 
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <!-- Info boxes -->
-        <div class="row">
-          <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box">
-              <span class="info-box-icon bg-info elevation-1"><i class="fas fa-check"></i></span>
+        <div class="container-fluid">
+            <!-- Info boxes -->
+            <div class="row">
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-check"></i></span>
 
-              <div class="info-box-content">
-                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'requesters' %}">Solicitantes</a></span>
-                <span class="info-box-number">
+                        <div class="info-box-content">
+                            <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'requesters' %}">Solicitantes</a></span>
+                            <span class="info-box-number">
                   {{ requesters }}
                 </span>
-              </div>
-              <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-          </div>
-          <!-- /.col -->
-          <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box mb-3">
-              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
-
-              <div class="info-box-content">
-                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'aproved' %}">Doctorandos</a></span>
-                <span class="info-box-number">{{ doctorands }}</span>
-              </div>
-              <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-          </div>
-          <!-- /.col -->
-
-          <!-- fix for small devices only -->
-          <div class="clearfix hidden-md-up"></div>
-
-          <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box mb-3">
-              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-graduation-cap"></i></span>
-
-              <div class="info-box-content">
-                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'graduated' %}">Graduados</a></span>
-                <span class="info-box-number">{{ graduated }}</span>
-              </div>
-              <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-          </div>
-          <!-- /.col -->
-          <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box mb-3">
-              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
-
-              <div class="info-box-content">
-                <span class="info-box-text"><a href="{% url 'programs:members_list' program.slug 'all' %}">Miembros</a></span>
-                <span class="info-box-number">{{program.programmember_set.all.count}}</span>
-              </div>
-              <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-          </div>
-          <!-- /.col -->
-        </div>
-        <!-- /.row -->
-
-        <div class="row">
-          <div class="col-md-12">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-title">Resumen estadístico</h5>
-
-                <div class="card-tools">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                      <i class="fas fa-wrench"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" role="menu">
-                      <a href="#" class="dropdown-item">Action</a>
-                      <a href="#" class="dropdown-item">Another action</a>
-                      <a href="#" class="dropdown-item">Something else here</a>
-                      <a class="dropdown-divider"></a>
-                      <a href="#" class="dropdown-item">Separated link</a>
+                        </div>
+                        <!-- /.info-box-content -->
                     </div>
-                  </div>
-{#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
-{#                    <i class="fas fa-times"></i>#}
-{#                  </button>#}
+                    <!-- /.info-box -->
                 </div>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-8">
-                    <p class="text-center">
-                      <strong>Solicitudes de ingreso</strong>
-                    </p>
+                <!-- /.col -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
 
-                    <div class="chart">
-                      <!-- Sales Chart Canvas -->
-                      <canvas id="salesChart" height="280" style="height: 230px;"></canvas>
+                        <div class="info-box-content">
+                            <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'aproved' %}">Doctorandos</a></span>
+                            <span class="info-box-number">{{ doctorands }}</span>
+                        </div>
+                        <!-- /.info-box-content -->
                     </div>
-                    <!-- /.chart-responsive -->
-                  </div>
-                  <!-- /.col -->
-                  <div class="col-md-4">
-                    <p class="text-center">
-                      <strong>Estudiantes(x estado)</strong>
-                    </p>
-
-                    <div class="chart-responsive">
-                      <canvas id="pieChart" height="150"></canvas>
-                    </div>
-                    <!-- /.progress-group -->
-                  </div>
-                  <!-- /.col -->
+                    <!-- /.info-box -->
                 </div>
-                <!-- /.row -->
-              </div>
-              <!-- ./card-body -->
-{#              <div class="card-footer">#}
-{#                <div class="row">#}
-{#                  <div class="col-sm-3 col-6">#}
-{#                    <div class="description-block border-right">#}
-{#                      <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>#}
-{#                      <h5 class="description-header">$35,210.43</h5>#}
-{#                      <span class="description-text">TOTAL REVENUE</span>#}
-{#                    </div>#}
-{#                    <!-- /.description-block -->#}
-{#                  </div>#}
-{#                  <!-- /.col -->#}
-{#                  <div class="col-sm-3 col-6">#}
-{#                    <div class="description-block border-right">#}
-{#                      <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>#}
-{#                      <h5 class="description-header">$10,390.90</h5>#}
-{#                      <span class="description-text">TOTAL COST</span>#}
-{#                    </div>#}
-{#                    <!-- /.description-block -->#}
-{#                  </div>#}
-{#                  <!-- /.col -->#}
-{#                  <div class="col-sm-3 col-6">#}
-{#                    <div class="description-block border-right">#}
-{#                      <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>#}
-{#                      <h5 class="description-header">$24,813.53</h5>#}
-{#                      <span class="description-text">TOTAL PROFIT</span>#}
-{#                    </div>#}
-{#                    <!-- /.description-block -->#}
-{#                  </div>#}
-{#                  <!-- /.col -->#}
-{#                  <div class="col-sm-3 col-6">#}
-{#                    <div class="description-block">#}
-{#                      <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>#}
-{#                      <h5 class="description-header">1200</h5>#}
-{#                      <span class="description-text">GOAL COMPLETIONS</span>#}
-{#                    </div>#}
-{#                    <!-- /.description-block -->#}
-{#                  </div>#}
-{#                </div>#}
-{#                <!-- /.row -->#}
-{#              </div>#}
-              <!-- /.card-footer -->
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-        </div>
-        <!-- /.row -->
+                <!-- /.col -->
 
-        <!-- Main row -->
-        <!-- /.row -->
-      </div><!--/. container-fluid -->
+                <!-- fix for small devices only -->
+                <div class="clearfix hidden-md-up"></div>
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-graduation-cap"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'graduated' %}">Graduados</a></span>
+                            <span class="info-box-number">{{ graduated }}</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text"><a href="{% url 'programs:members_list' program.slug 'all' %}">Miembros</a></span>
+                            <span class="info-box-number">{{program.programmember_set.all.count}}</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+
+            <div class="row">
+                <div class="col-md-8 col-sm-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Resumen estadístico</h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                                        <i class="fas fa-wrench"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                        <a href="#" class="dropdown-item">Action</a>
+                                        <a href="#" class="dropdown-item">Another action</a>
+                                        <a href="#" class="dropdown-item">Something else here</a>
+                                        <a class="dropdown-divider"></a>
+                                        <a href="#" class="dropdown-item">Separated link</a>
+                                    </div>
+                                </div>
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <p class="text-center">
+                                        <strong>Solicitudes de ingreso</strong>
+                                    </p>
+
+                                    <div class="chart">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="requestChart" height="280" style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Resumen estadístico</h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                                        <i class="fas fa-wrench"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                        <a href="#" class="dropdown-item">Action</a>
+                                        <a href="#" class="dropdown-item">Another action</a>
+                                        <a href="#" class="dropdown-item">Something else here</a>
+                                        <a class="dropdown-divider"></a>
+                                        <a href="#" class="dropdown-item">Separated link</a>
+                                    </div>
+                                </div>
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- /.col -->
+                                <div class="col-md-12 col-sm-12">
+                                    <p class="text-center">
+                                        <strong>Estudiantes(x estado)</strong>
+                                    </p>
+
+                                    <div class="chart-responsive">
+                                        <canvas id="donutChart" height="187"></canvas>
+                                    </div>
+                                    <div class="mt-4 text-center small">
+                                    <span class="mr-2">
+                                      <i class="fas fa-exclamation-triangle text-warning"></i> Mueva el cursor sobre las lineas
+                                    </span>
+
+                                    </div>
+                                    <!-- /.progress-group -->
+                                </div>
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                        <!-- ./card-body -->
+                        {#              <div class="card-footer">#}
+                        {#                <div class="row">#}
+                        {#                  <div class="col-sm-3 col-6">#}
+                        {#                    <div class="description-block border-right">#}
+                        {#                      <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>#}
+                        {#                      <h5 class="description-header">$35,210.43</h5>#}
+                        {#                      <span class="description-text">TOTAL REVENUE</span>#}
+                        {#                    </div>#}
+                        {#                    <!-- /.description-block -->#}
+                        {#                  </div>#}
+                        {#                  <!-- /.col -->#}
+                        {#                  <div class="col-sm-3 col-6">#}
+                        {#                    <div class="description-block border-right">#}
+                        {#                      <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>#}
+                        {#                      <h5 class="description-header">$10,390.90</h5>#}
+                        {#                      <span class="description-text">TOTAL COST</span>#}
+                        {#                    </div>#}
+                        {#                    <!-- /.description-block -->#}
+                        {#                  </div>#}
+                        {#                  <!-- /.col -->#}
+                        {#                  <div class="col-sm-3 col-6">#}
+                        {#                    <div class="description-block border-right">#}
+                        {#                      <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>#}
+                        {#                      <h5 class="description-header">$24,813.53</h5>#}
+                        {#                      <span class="description-text">TOTAL PROFIT</span>#}
+                        {#                    </div>#}
+                        {#                    <!-- /.description-block -->#}
+                        {#                  </div>#}
+                        {#                  <!-- /.col -->#}
+                        {#                  <div class="col-sm-3 col-6">#}
+                        {#                    <div class="description-block">#}
+                        {#                      <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>#}
+                        {#                      <h5 class="description-header">1200</h5>#}
+                        {#                      <span class="description-text">GOAL COMPLETIONS</span>#}
+                        {#                    </div>#}
+                        {#                    <!-- /.description-block -->#}
+                        {#                  </div>#}
+                        {#                </div>#}
+                        {#                <!-- /.row -->#}
+                        {#              </div>#}
+                        <!-- /.card-footer -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+
+            <!-- Main row -->
+            <!-- /.row -->
+        </div><!--/. container-fluid -->
     </section>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url : "{% url 'programs:ajx_this_year_requests' program.slug %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json[1].length;i++){
+                        total = total+json[1][i];
+                    }
+                    if(total>0){
+                        var areaChartData = {
+                            labels  : json[0],
+                            datasets: [
+                                {
+                                    label               : 'Solicitudes de ingreso',
+                                    backgroundColor     : 'rgba(60,141,188,0.9)',
+                                    borderColor         : 'rgba(60,141,188,0.8)',
+                                    pointRadius          : false,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[1],
+                                },
+
+                            ]
+                        };
+
+                        var areaChartOptions = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: false
+                            },
+                            scales: {
+                                xAxes: [{
+                                    gridLines : {
+                                        display : false,
+                                    }
+                                }],
+                                yAxes: [{
+
+                                    gridLines : {
+                                        display : false,
+                                    },
+
+                                }]
+                            }
+                        };
+                        var areaChartCanvas=$('#requestChart');
+                        var areaChart       = new Chart(areaChartCanvas, {
+                            type: 'line',
+                            data: areaChartData,
+                            options: areaChartOptions
+                        });
+                    }
+                    else {
+                        var div_court='<div id="div_pie" class="card-body"><div class="alert alert-warning"><h5 class="text-center">No hay datos disponibles.</h5></div></div>'
+                        $('#div_pie').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+
+
+            var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
+            var donutData        = {
+                labels: [ 'Graduados', 'Solicitantes', 'Doctorandos'
+
+                ],
+                datasets: [
+                    {
+                        data: [700,500,400],
+                        backgroundColor : ['#f56954', '#00a65a', '#0000ff'],
+                    }
+                ]
+            };
+            var donutOptions     = {
+                maintainAspectRatio : false,
+                responsive : true,
+                legend: {
+                    display: false,
+                },
+
+            };
+            //Create pie or douhnut chart
+            // You can switch between pie and douhnut using the method below.
+            var donutChart = new Chart(donutChartCanvas, {
+                type: 'doughnut',
+                data: donutData,
+                options: donutOptions
+            });
+
+        });
+    </script>
 {% endblock %}
