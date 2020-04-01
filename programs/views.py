@@ -676,8 +676,18 @@ def ajx_this_year_requests(request, program_slug):
     response_data.append(labels)
     response_data.append(data)
 
-    print(response_data)
 
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+def ajx_students_by_state(request, program_slug):
+    response_data=[]
+    program=Program.objects.get(slug=program_slug)
+    response_data.append(PhdStudent.objects.filter(student__program=program, status='Graduado').__len__())
+    response_data.append(PhdStudent.objects.filter(student__program=program, status='Solicitante').__len__())
+    response_data.append(PhdStudent.objects.filter(student__program=program, status='Doctorando').__len__())
     return HttpResponse(
         json.dumps(response_data),
         content_type="application/json"

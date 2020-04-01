@@ -31,6 +31,7 @@ urlpatterns = [
     path('ajx/line/delete', views.ajx_delete_line, name='ajx_delete_line'),
     path('ajx/project/delete', views.ajx_delete_project, name='ajx_delete_project'),
     path('ajx/statistics/year/requests', views.ajx_this_year_requests, name='ajx_this_year_requests'),
+    path('ajx/statistics/students/status', views.ajx_students_by_state, name='ajx_students_by_state'),
 
 
     # path('login', views.mylogin, name='my_login'),
