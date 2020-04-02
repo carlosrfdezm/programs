@@ -28,14 +28,14 @@ def cgc_photo_directory_path(instance, filename):
 
 
 ICON_CHOICES = (
-    ('ion_ios_alarm_outline', 'ion-ios-alarm-outline'),
-    ('ion_ios_albums_outline', 'ion-ios-albums-outline'),
-    ('ion_ios_barcode_outline', 'ion-ios-barcode-outline'),
-    ('ion_ios_body_outline', 'ion-ios-body-outline'),
-    ('ion_ios_book_outline', 'ion-ios-book-outline'),
-    ('ion_ios_calculator_outline', 'ion-ios-calculator-outline'),
-    ('ion_ios_cloudy_outline', 'ion-ios-cloudy-outline'),
-    ('ion_ios_medical_outline', 'ion-ios-medical-outline'),
+    ('ion-ios-alarm-outline', 'ion-ios-alarm-outline'),
+    ('ion-ios-albums-outline', 'ion-ios-albums-outline'),
+    ('ion-ios-barcode-outline', 'ion-ios-barcode-outline'),
+    ('ion-ios-body-outline', 'ion-ios-body-outline'),
+    ('ion-ios-book-outline', 'ion-ios-book-outline'),
+    ('ion-ios-calculator-outline', 'ion-ios-calculator-outline'),
+    ('ion-ios-cloudy-outline', 'ion-ios-cloudy-outline'),
+    ('ion-ios-medical-outline', 'ion-ios-medical-outline'),
 )
 
 # modelo de programas academicos
