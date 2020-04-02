@@ -121,6 +121,7 @@ class ProgramMember(models.Model):
                                   help_text='Contacto de Linkedin del miembro del tribunal')
     init_date = models.DateField(default=now)
     sex = models.CharField(max_length=2, choices=SEX_CHOICES, help_text='Sexo del miembro del tribunal')
+    weight=models.SmallIntegerField(help_text="Peso del Cargo", choices=[(1,'1'),(2,'2'),(3,'3'),(4,'4'),(5,'5')])
 
     class Meta:
         verbose_name='Miembro del Programa'

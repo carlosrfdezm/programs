@@ -331,6 +331,17 @@ def create_professor(request, program_slug):
                     sex=request.POST['gender']
 
                 )
+                if professor.role=='Coordinador':
+                    professor.weight=1
+                elif professor.role=='Secretario':
+                    professor.weight=2
+                elif professor.role=='Miembro':
+                    professor.weight=3
+                elif professor.role=='Profesor':
+                    professor.weight=4
+                elif professor.role=='Tutor':
+                    professor.weight=5
+
 
                 try:
                     professor.save()
@@ -377,6 +388,17 @@ def edit_member(request, program_slug, member_id):
                 sex=request.POST['gender'],
             )
             professor=ProgramMember.objects.get(pk=member_id)
+            if request.POST['role'] == 'Coordinador':
+                professor.weight = 1
+            elif request.POST['role'] == 'Secretario':
+                professor.weight = 2
+            elif request.POST['role'] == 'Miembro':
+                professor.weight = 3
+            elif request.POST['role'] == 'Profesor':
+                professor.weight = 4
+            elif request.POST['role'] == 'Tutor':
+                professor.weight = 5
+            professor.save()
             try:
                 professor.picture=request.FILES['picture']
                 professor.save()

@@ -30,7 +30,7 @@ class CGC_MemberAdmin(admin.ModelAdmin):
 admin.site.register(CGC_Member, CGC_MemberAdmin)
 
 class ProgramMemberAdmin(admin.ModelAdmin):
-    list_display = ['user','program','role']
+    list_display = ['user','program','role','weight']
 
 admin.site.register(ProgramMember, ProgramMemberAdmin)
 
