@@ -69,7 +69,9 @@ def create_student(request, program_slug):
             student = Student(
                 user=user,
                 program=program,
-                gender=request.POST['gender']
+                gender=request.POST['gender'],
+                dni=request.POST['student_dni'],
+                birth_date=request.POST['student_birth_date'],
             )
             student.save()
 
@@ -209,7 +211,9 @@ def edit_student(request, program_slug, student_id):
             Student.objects.filter(pk=student_id).update(
                 phone=request.POST['student_phone'],
                 country=request.POST['student_country'],
-                gender=request.POST['gender']
+                gender=request.POST['gender'],
+                dni=request.POST['student_dni'],
+                birth_date=request.POST['student_birth_date']
 
             )
             if 'request_date' in request.POST and not request.POST['request_date'] == '':

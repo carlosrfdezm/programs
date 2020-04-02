@@ -48,7 +48,11 @@
                                             <label for="inp_name">Apellidos:</label>
                                             <input type="text" class="form-control" id="inp_surename" name="student_surename" placeholder="Apellidos" value="{{  student.user.last_name }}" required>
                                         </div>
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-2">
+                                            <label for="inp_dni">DNI:</label>
+                                            <input type="text" class="form-control" id="inp_dni" name="student_dni" placeholder="DNI o pasaporte" maxlength="11" value="{{ student.dni }}" required>
+                                        </div>
+                                        <div class="form-group col-md-2">
                                             <label for="slc_gender">Género:</label>
                                             <select class="form-control" id="slc_gender" name="gender" required>
                                                 <option value="" >Seleccione una opción</option>
@@ -56,7 +60,7 @@
                                                 <option value="m" {% if student.gender == 'm' %}selected{% endif %}>Masculino</option>
                                             </select>
                                         </div>
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-2">
                                             <label for="slc_status">Estado:</label>
                                             <select class="form-control" id="slc_status" name="student_status" required>
                                                 <option value="">Seleccione un estado</option>
@@ -68,7 +72,11 @@
                                         </div>
                                     </div>
                                     <div class="form-row">
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-2">
+                                            <label for="inp_birth_date">Fecha de nacimiento:</label>
+                                            <input type="date" class="form-control" id="inp_birth_date"  name="student_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" value="{{ student.birth_date|date:'Y-m-d' }}" required>
+                                        </div>
+                                        <div class="form-group col-md-3">
                                             <label for="inp_email">Email:</label>
                                             <input type="email" class="form-control" id="inp_email"  name="student_email" placeholder="Email" value="{{student.user.email }}" required>
                                         </div>
@@ -76,7 +84,7 @@
                                             <label for="inp_phone">Teléfono:</label>
                                             <input type="text" class="form-control" id="inp_phone"  name="student_phone"  value="{% if student.phone %}{{ student.phone }}{% endif %}" placeholder="Teléfono" >
                                         </div>
-                                        <div class="form-group col-md-5">
+                                        <div class="form-group col-md-4">
                                             <label for="slc_country">País:</label>
                                             <select class="form-control" id="slc_country" name="student_country" required>
                                                 {% country_list as country_list%}

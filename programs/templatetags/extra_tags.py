@@ -101,5 +101,9 @@ def user_is_program_cs(user, program):
     except:
         return False
 
+@register.simple_tag
+def max_year_birth_date():
+    return now().year-20
+
 
 

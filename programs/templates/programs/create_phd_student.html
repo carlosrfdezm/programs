@@ -42,13 +42,17 @@
                             {% csrf_token %}
                             <div class="card-body">
                                 <div class="form-row">
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-md-3">
                                         <label for="inp_name">Nombre(s):</label>
                                         <input type="text" class="form-control" id="inp_name" name="student_name" placeholder="Nombre(s)" required>
                                     </div>
-                                    <div class="form-group col-md-5">
+                                    <div class="form-group col-md-4">
                                         <label for="inp_name">Apellidos:</label>
                                         <input type="text" class="form-control" id="inp_surename" name="student_surename" placeholder="Apellidos" required>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="inp_dni">DNI:</label>
+                                        <input type="text" class="form-control" id="inp_dni" name="student_dni" placeholder="DNI o pasaporte" maxlength="11" required>
                                     </div>
                                     <div class="form-group col-md-3">
                                         <label for="slc_gender">Género:</label>
@@ -60,7 +64,11 @@
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-md-2">
+                                        <label for="inp_birth_date">Fecha de nacimiento:</label>
+                                        <input type="date" class="form-control" id="inp_birth_date"  name="student_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" required>
+                                    </div>
+                                    <div class="form-group col-md-3">
                                         <label for="inp_email">Email:</label>
                                         <input type="email" class="form-control" id="inp_email"  name="student_email" placeholder="Email" required>
                                     </div>
@@ -68,7 +76,7 @@
                                         <label for="inp_phone">Teléfono:</label>
                                         <input type="text" class="form-control" id="inp_phone"  name="student_phone" placeholder="Teléfono" >
                                     </div>
-                                    <div class="form-group col-md-5">
+                                    <div class="form-group col-md-4">
                                         <label for="slc_country">País:</label>
                                         <select class="form-control" id="slc_country" name="student_country" required>
                                             {% country_list as country_list%}

@@ -138,7 +138,9 @@ class Student(models.Model):
     init_date = models.DateField(null=True)
     country=models.CharField(max_length=70, default='Cuba')
     picture=models.ImageField(upload_to=student_directory_path, null=True)
-    gender=models.CharField(max_length=1, default='F')
+    gender=models.CharField(max_length=1, default='f')
+    birth_date=models.DateField(default=now)
+    dni=models.CharField(max_length=11, default='12345678901')
 
     def __str__(self):
         return self.user.get_full_name()
