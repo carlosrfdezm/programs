@@ -13,6 +13,7 @@ urlpatterns = [
     path('students/<int:student_id>/edit', views.edit_student, name='edit_student'),
     path('professors/create', views.create_professor, name='create_professor'),
     path('professors/<int:member_id>/edit', views.edit_member, name='edit_member'),
+    path('professors/<int:member_id>/picture', views.program_member_picture, name='program_member_picture'),
     path('professors/<str:scope>/list', views.members_list, name='members_list'),
 
     path('lines/create', views.create_line, name='create_line'),

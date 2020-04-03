@@ -5,6 +5,7 @@ import calendar, locale
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -724,3 +725,14 @@ def ajx_students_by_state(request, program_slug):
         json.dumps(response_data),
         content_type="application/json"
     )
+
+def program_member_picture(request, program_slug, member_id):
+    fs = FileSystemStorage()
+    # filename = Papers.objects.get(pk=paper_id).file_url +  str(Papers.objects.get(pk=paper_id).file)
+    filename = ProgramMember.objects.get(pk=member_id).picture.url
+    if fs.exists(filename):
+        with fs.open(filename) as img:
+            response = HttpResponse(img, content_type='image/jpeg')
+            return response
+    else:
+        return HttpResponse('Error')
