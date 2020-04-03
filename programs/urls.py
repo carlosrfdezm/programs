@@ -11,6 +11,8 @@ urlpatterns = [
     path('students/create', views.create_student, name='create_student'),
     path('students/list/<str:scope>', views.students_list, name='students_list'),
     path('students/<int:student_id>/edit', views.edit_student, name='edit_student'),
+    path('students/<int:student_id>/picture', views.program_student_picture, name='program_student_picture'),
+
     path('professors/create', views.create_professor, name='create_professor'),
     path('professors/<int:member_id>/edit', views.edit_member, name='edit_member'),
     path('professors/<int:member_id>/picture', views.program_member_picture, name='program_member_picture'),
