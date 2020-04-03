@@ -227,7 +227,54 @@
                 });
 
 
-            })
+            });
+            $(document).on('change','#exampleInputFile', function () {
+                var fileUpload = this;
+                var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
+                if (regex.test(fileUpload.value.toLowerCase())) {
+                    if (typeof (fileUpload.files) != "undefined") {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(fileUpload.files[0]);
+                        reader.onload = function (e) {
+                            var image = new Image();
+                            image.src = e.target.result;
+                            image.onload = function () {
+                                var height = this.height;
+                                var width = this.width;
+                                if (height < 400 || width < 400) {
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada es muy pequeña, debe tener al menos 400px x 400 px'
+                                    });
+                                    $('#exampleInputFile').val('');
+                                    return false;
+                                }else
+                                if(height != width ){
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada debe ser cuadrada y de dimensión 400px, o superior.'
+                                    });
+                                    $('#exampleInputFile').val('');
+                                    return false;
+                                }
+                            };
+                        }
+                    } else {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Este navegador no soporta HTML5, debe actualizarlo.'
+                        });
+                        return false;
+                    }
+                } else {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Por favor seleccione una imagen.'
+                    });
+                    return false;
+                }
+            });
+
         });
     </script>
 {% endblock %}
