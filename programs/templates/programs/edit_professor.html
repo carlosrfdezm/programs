@@ -118,7 +118,10 @@
 
 
                                 <div class="form-row">
-                                    <div class="form-group">
+                                    <div class="col-md-1">
+                                        <img class="rounded" src="{% url 'programs:program_member_picture' program.slug member.id %}" style="width: 100px;">
+                                    </div>
+                                    <div class="form-group col-md-11">
                                         <label for="exampleInputFile">Foto:</label>
                                         <input type="file" class="form-control-file" id="exampleInputFile" name="picture" accept="image/*">
                                         <div class="help text-sm text-gray">
