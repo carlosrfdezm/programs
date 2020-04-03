@@ -177,7 +177,7 @@
                 {% for member in program.programmember_set.all %}
                 <div class="col-lg-3 col-md-6">
                     <div class="member">
-                        <div class="pic" style="height: 180px; width: 100%" >{% if member.picture %}<img src="{% url 'programs:program_member_picture' program.slug member.id %}" alt="">{% elif member.sex == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="">{% elif member.sex == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="">{% endif %}</div>
+                        <div class="pic" >{% if member.picture %}<img src="{% url 'programs:program_member_picture' program.slug member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.sex == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="">{% elif member.sex == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="">{% endif %}</div>
                         <div class="details">
                             <h6 class="text-bold">{{member|truncatewords:3}}</h6>
                             <span>{{ member.role }}</span>
