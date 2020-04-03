@@ -52,6 +52,8 @@
                                 <th>Nombre y apellidos</th>
                                 <th>Fecha<br>(solicitud)</th>
                                 <th>Estado</th>
+                                <th>Fecha de <br>nacimiento</th>
+                                <th>Número de <br>identidad</th>
                                 <th class="text-center">Requisitos<br> (ingreso)</th>
                                 {% if scope == 'Doctorandos' %}
                                     <th class="text-center">Requisitos<br> (egreso)</th>
@@ -66,8 +68,10 @@
                                 {% init_requirements_accomplished student program as init_requirements_accomplished %}
                                 <tr id="tr_student_{{ student.id }}">
                                     <td>{{ student.user.last_name|upper }}, {{ student.user.first_name }}</td>
-                                    <td>{{ student.request_date|date:'m/d/Y' }}</td>
+                                    <td>{{ student.request_date|date:'Y-m-d' }}</td>
                                     <td>{{ student.phdstudent.status|capfirst }}</td>
+                                    <td>{{ student.birth_date|date:'Y-m-d'}}</td>
+                                    <td>{{ student.dni }}</td>
                                     <td class="text-center">{% if init_requirements_accomplished %}
                                         <span class="text-success">
                                              <i class="fas fa-check" title="Requisitos cumplidos"></i>
