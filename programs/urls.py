@@ -8,6 +8,8 @@ app_name = 'programs'
 urlpatterns = [
     path('', views.index, name='index'),
     path('home/', views.home, name='home'),
+    path('background/<int:background_id>', views.program_background, name='program_background'),
+
     path('students/create', views.create_student, name='create_student'),
     path('students/list/<str:scope>', views.students_list, name='students_list'),
     path('students/<int:student_id>/edit', views.edit_student, name='edit_student'),

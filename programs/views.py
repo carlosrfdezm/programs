@@ -18,7 +18,7 @@ from django.utils.timezone import now
 
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
-    InvestigationProject
+    InvestigationProject, ProgramBackgrounds
 from programs.utils import user_is_program_cs, user_is_program_member
 
 
@@ -741,6 +741,17 @@ def program_student_picture(request, program_slug, student_id):
     fs = FileSystemStorage()
     # filename = Papers.objects.get(pk=paper_id).file_url +  str(Papers.objects.get(pk=paper_id).file)
     filename = Student.objects.get(pk=student_id).picture.url
+    if fs.exists(filename):
+        with fs.open(filename) as img:
+            response = HttpResponse(img, content_type='image/jpeg')
+            return response
+    else:
+        return HttpResponse('Error')
+
+def program_background(request, program_slug, background_id):
+    fs = FileSystemStorage()
+    # filename = Papers.objects.get(pk=paper_id).file_url +  str(Papers.objects.get(pk=paper_id).file)
+    filename = ProgramBackgrounds.objects.get(pk=background_id).background.url
     if fs.exists(filename):
         with fs.open(filename) as img:
             response = HttpResponse(img, content_type='image/jpeg')

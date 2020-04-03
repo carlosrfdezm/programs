@@ -105,11 +105,17 @@
     </div>
 
     <div id="intro-carousel" class="owl-carousel" >
-        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/1.jpg' %});"></div>
-        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/2.jpg' %});"></div>
-        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/3.jpg' %});"></div>
-        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/4.jpg' %});"></div>
-        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/5.jpg' %});"></div>
+        {% if program.programbackgrounds_set.all.count > 0 %}
+            {% for background in program.programbackgrounds_set.all %}
+                <div class="item" style="background-image: url({% url 'programs:program_background' program.slug background.id %});"></div>
+            {% endfor %}
+        {% else %}
+            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/1.jpg' %});"></div>
+            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/2.jpg' %});"></div>
+            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/3.jpg' %});"></div>
+            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/4.jpg' %});"></div>
+            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/5.jpg' %});"></div>
+        {% endif %}
     </div>
 
 </section><!-- #intro -->
@@ -175,20 +181,20 @@
 
             <div class="row">
                 {% for member in program.programmember_set.all %}
-                <div class="col-lg-3 col-md-6">
-                    <div class="member">
-                        <div class="pic" >{% if member.picture %}<img src="{% url 'programs:program_member_picture' program.slug member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.sex == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="">{% elif member.sex == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="">{% endif %}</div>
-                        <div class="details">
-                            <h6 class="text-bold">{{member|truncatewords:3}}</h6>
-                            <span>{{ member.role }}</span>
-                            <div class="social">
-                                <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
-                                <a href="{{ member.fb_contact }}"><i class="fa fa-facebook"></i></a>
-                                <a href="{{ member.ln_contact }}"><i class="fa fa-linkedin"></i></a>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="member">
+                            <div class="pic" >{% if member.picture %}<img src="{% url 'programs:program_member_picture' program.slug member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.sex == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="">{% elif member.sex == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="">{% endif %}</div>
+                            <div class="details">
+                                <h6 class="text-bold">{{member|truncatewords:3}}</h6>
+                                <span>{{ member.role }}</span>
+                                <div class="social">
+                                    <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
+                                    <a href="{{ member.fb_contact }}"><i class="fa fa-facebook"></i></a>
+                                    <a href="{{ member.ln_contact }}"><i class="fa fa-linkedin"></i></a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 {% endfor %}
 
             </div>
