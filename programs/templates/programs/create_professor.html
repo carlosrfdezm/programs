@@ -255,11 +255,17 @@
                             };
                         }
                     } else {
-                        alert("This browser does not support HTML5.");
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Este navegador no soporta HTML5, debe actualizarlo.'
+                        });
                         return false;
                     }
                 } else {
-                    alert("Please select a valid Image file.");
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Por favor seleccione una imagen.'
+                    });
                     return false;
                 }
             });
