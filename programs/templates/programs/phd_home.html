@@ -92,9 +92,9 @@
                             <h5 class="card-title">Resumen estadístico</h5>
 
                             <div class="card-tools">
-{#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
-{#                                    <i class="fas fa-minus"></i>#}
-{#                                </button>#}
+                                {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                                {#                                    <i class="fas fa-minus"></i>#}
+                                {#                                </button>#}
                                 {#                                <div class="btn-group">#}
                                 {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
                                 {#                                        <i class="fas fa-wrench"></i>#}
@@ -143,9 +143,9 @@
                             <h5 class="card-title">Resumen estadístico</h5>
 
                             <div class="card-tools">
-{#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
-{#                                    <i class="fas fa-minus"></i>#}
-{#                                </button>#}
+                                {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                                {#                                    <i class="fas fa-minus"></i>#}
+                                {#                                </button>#}
                                 {#                                <div class="btn-group">#}
                                 {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
                                 {#                                        <i class="fas fa-wrench"></i>#}
@@ -199,214 +199,211 @@
             <div class="row">
                 <div class="col-md-4">
 
-                <!-- USERS LIST -->
-                <div class="card">
-                  <div class="card-header">
-                    <h3 class="card-title">Últimos solicitantes</h3>
+                    <!-- USERS LIST -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Últimos solicitantes</h3>
 
-                    <div class="card-tools">
-                      <span class="badge badge-danger">8 Nuevas solicitudes</span>
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                      </button>
-{#                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>#}
-{#                      </button>#}
+                            <div class="card-tools">
+                                <span class="badge badge-info">Total: {{ requesters }} solicitante{{ requesters|pluralize }}</span>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                                </button>
+                                {#                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>#}
+                                {#                      </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body p-0">
+                            {% if last_requesters.count > 0 %}
+                                <ul class="users-list clearfix">
+                                {% for requester in last_requesters %}
+                                    <li>
+                                    {% if requester.student.picture %}
+                                        <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
+                                        {% else %}
+                                        <i class="text-info fa fa-user fa-5x" ></i>
+                                        {% endif %}
+                                        <a class="users-list-name" href="#">{{ requester.student}}</a>
+                                        <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
+                                    </li>
+                                {% endfor %}
+
+                                </ul>
+
+                            {% else %}
+                                <ul class="users-list clearfix">
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user1-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Alexander Pierce</a>
+                                        <span class="users-list-date">Today</span>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Norman</a>
+                                        <span class="users-list-date">Yesterday</span>
+                                    </li>
+
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user4-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Nora</a>
+                                        <span class="users-list-date">15 Jan</span>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user3-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Nadia</a>
+                                        <span class="users-list-date">15 Jan</span>
+                                    </li>
+                                </ul>
+                            {% endif %}
+                            <!-- /.users-list -->
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer text-center">
+                            <a href="{% url 'programs:students_list' program.slug 'requesters' %}">Ver todos los solicitantes</a>
+                        </div>
+                        <!-- /.card-footer -->
                     </div>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body p-0">
-                    <ul class="users-list clearfix">
-                      <li>
-                        <img src="{% static 'programs/dist/img/user1-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Alexander Pierce</a>
-                        <span class="users-list-date">Today</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Norman</a>
-                        <span class="users-list-date">Yesterday</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Jane</a>
-                        <span class="users-list-date">12 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user6-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">John</a>
-                        <span class="users-list-date">12 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user2-160x160.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Alexander</a>
-                        <span class="users-list-date">13 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user5-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Sarah</a>
-                        <span class="users-list-date">14 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user4-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Nora</a>
-                        <span class="users-list-date">15 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user3-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Nadia</a>
-                        <span class="users-list-date">15 Jan</span>
-                      </li>
-                    </ul>
-                    <!-- /.users-list -->
-                  </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer text-center">
-                    <a href="{% url 'programs:students_list' program.slug 'requesters' %}">Ver todos los solicitantes</a>
-                  </div>
-                  <!-- /.card-footer -->
-                </div>
-                <!--/.card -->
-              
+                    <!--/.card -->
+
                 </div>
 
-                 <div class="col-md-4">
+                <div class="col-md-4">
 
-                <!-- USERS LIST -->
-                <div class="card">
-                  <div class="card-header">
-                    <h3 class="card-title">Últimos ingresos</h3>
+                    <!-- USERS LIST -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Últimos ingresos</h3>
 
-                    <div class="card-tools">
-                      <span class="badge badge-danger">8 Nuevos ingresos</span>
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                      </button>
-{#                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>#}
-{#                      </button>#}
+                            <div class="card-tools">
+                                <span class="badge badge-danger">Total: {{ doctorands }} doctorando{{ doctorands|pluralize }}</span>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                                </button>
+                                {#                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>#}
+                                {#                      </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body p-0">
+                           {% if last_aproved.count > 0 %}
+                                <ul class="users-list clearfix">
+                                {% for requester in last_aproved %}
+                                    <li>
+                                    {% if requester.student.picture %}
+                                        <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
+                                        {% else %}
+                                        <i class="text-danger fa fa-user fa-5x" ></i>
+                                        {% endif %}
+                                        <a class="users-list-name" href="#">{{ requester.student}}</a>
+                                        <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
+                                    </li>
+                                {% endfor %}
+
+                                </ul>
+
+                            {% else %}
+                                <ul class="users-list clearfix">
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user1-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Alexander Pierce</a>
+                                        <span class="users-list-date">Today</span>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Norman</a>
+                                        <span class="users-list-date">Yesterday</span>
+                                    </li>
+
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user4-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Nora</a>
+                                        <span class="users-list-date">15 Jan</span>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user3-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Nadia</a>
+                                        <span class="users-list-date">15 Jan</span>
+                                    </li>
+                                </ul>
+                            {% endif %}
+                            <!-- /.users-list -->
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer text-center">
+                            <a href="{% url 'programs:students_list' program.slug 'aproved' %}">Ver todos los doctorandos</a>
+                        </div>
+                        <!-- /.card-footer -->
                     </div>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body p-0">
-                    <ul class="users-list clearfix">
-                      <li>
-                        <img src="{% static 'programs/dist/img/user1-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Alexander Pierce</a>
-                        <span class="users-list-date">Today</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Norman</a>
-                        <span class="users-list-date">Yesterday</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Jane</a>
-                        <span class="users-list-date">12 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user6-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">John</a>
-                        <span class="users-list-date">12 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user2-160x160.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Alexander</a>
-                        <span class="users-list-date">13 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user5-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Sarah</a>
-                        <span class="users-list-date">14 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user4-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Nora</a>
-                        <span class="users-list-date">15 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user3-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Nadia</a>
-                        <span class="users-list-date">15 Jan</span>
-                      </li>
-                    </ul>
-                    <!-- /.users-list -->
-                  </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer text-center">
-                    <a href="{% url 'programs:students_list' program.slug 'aproved' %}">Ver todos los doctorandos</a>
-                  </div>
-                  <!-- /.card-footer -->
-                </div>
-                <!--/.card -->
+                    <!--/.card -->
 
                 </div>
 
-                 <div class="col-md-4">
+                <div class="col-md-4">
 
-                <!-- USERS LIST -->
-                <div class="card">
-                  <div class="card-header">
-                    <h3 class="card-title">Últimos graduados</h3>
+                    <!-- USERS LIST -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Últimos graduados</h3>
 
-                    <div class="card-tools">
-                      <span class="badge badge-danger">8 Recién graduados</span>
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                      </button>
-{#                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>#}
-{#                      </button>#}
+                            <div class="card-tools">
+                                <span class="badge badge-success">Total: {{ graduated }} graduado{{ graduated|pluralize }}</span>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                                </button>
+                                {#                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>#}
+                                {#                      </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body p-0">
+                           {% if last_graduated.count > 0 %}
+                                <ul class="users-list clearfix">
+                                {% for requester in last_graduated %}
+                                    <li>
+                                    {% if requester.student.picture %}
+                                        <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
+                                        {% else %}
+                                        <i class="text-success fa fa-user fa-5x" ></i>
+                                        {% endif %}
+                                        <a class="users-list-name" href="#">{{ requester.student}}</a>
+                                        <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
+                                    </li>
+                                {% endfor %}
+
+                                </ul>
+
+                            {% else %}
+                                <ul class="users-list clearfix">
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user1-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Alexander Pierce</a>
+                                        <span class="users-list-date">Today</span>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Norman</a>
+                                        <span class="users-list-date">Yesterday</span>
+                                    </li>
+
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user4-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Nora</a>
+                                        <span class="users-list-date">15 Jan</span>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user3-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Nadia</a>
+                                        <span class="users-list-date">15 Jan</span>
+                                    </li>
+                                </ul>
+                            {% endif %}
+                            <!-- /.users-list -->
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer text-center">
+                            <a href="{% url 'programs:students_list' program.slug 'graduated' %}">Ver todos los graduados</a>
+                        </div>
+                        <!-- /.card-footer -->
                     </div>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body p-0">
-                    <ul class="users-list clearfix">
-                      <li>
-                        <img src="{% static 'programs/dist/img/user1-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Alexander Pierce</a>
-                        <span class="users-list-date">Today</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Norman</a>
-                        <span class="users-list-date">Yesterday</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Jane</a>
-                        <span class="users-list-date">12 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user6-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">John</a>
-                        <span class="users-list-date">12 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user2-160x160.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Alexander</a>
-                        <span class="users-list-date">13 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user5-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Sarah</a>
-                        <span class="users-list-date">14 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user4-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Nora</a>
-                        <span class="users-list-date">15 Jan</span>
-                      </li>
-                      <li>
-                        <img src="{% static 'programs/dist/img/user3-128x128.jpg' %}" alt="User Image">
-                        <a class="users-list-name" href="#">Nadia</a>
-                        <span class="users-list-date">15 Jan</span>
-                      </li>
-                    </ul>
-                    <!-- /.users-list -->
-                  </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer text-center">
-                    <a href="{% url 'programs:students_list' program.slug 'graduated' %}">Ver todos los graduados</a>
-                  </div>
-                  <!-- /.card-footer -->
-                </div>
-                <!--/.card -->
+                    <!--/.card -->
 
                 </div>
             </div>
@@ -432,7 +429,7 @@
                     var total = 0;
                     for(var i=0;i<json[1][0].length;i++){
 
-                            total = total + json[1][0][i]+json[1][1][i];
+                        total = total + json[1][0][i]+json[1][1][i];
 
                     }
                     if(total>0){

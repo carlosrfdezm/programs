@@ -24,8 +24,11 @@ from programs.utils import user_is_program_cs, user_is_program_member
 
 def index(request, program_slug):
     if not request.user.is_authenticated :
-        context={
-            'program': Program.objects.get(slug=program_slug)
+        program = Program.objects.get(slug=program_slug)
+
+        context = {
+            'program': program,
+
         }
         return render(request,'programs/program_index.html', context)
     else:
@@ -41,6 +44,9 @@ def home(request, program_slug):
             'requesters': PhdStudent.objects.filter(student__program=program, status='solicitante').__len__(),
             'doctorands': PhdStudent.objects.filter(student__program=program, status='doctorando').__len__(),
             'graduated': PhdStudent.objects.filter(student__program=program, status='graduado').__len__(),
+            'last_requesters': PhdStudent.objects.filter(student__program=program, status='solicitante').order_by('-student__request_date')[:4],
+            'last_aproved': PhdStudent.objects.filter(student__program=program, status='doctorando').order_by('-student__request_date')[:4],
+            'last_graduated': PhdStudent.objects.filter(student__program=program, status='graduado').order_by('-student__request_date')[:4],
 
         }
         return render(request, 'programs/phd_home.html', context)
