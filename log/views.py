@@ -13,6 +13,7 @@ from programs.models import Program, ProgramMember, CGC_Member
 def index(request):
     context={
         'programs': Program.objects.all(),
+        'cgc_members':CGC_Member.objects.all().order_by('priority'),
     }
     return render(request,'log/index.html', context)
 

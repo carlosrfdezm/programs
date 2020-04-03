@@ -69,14 +69,16 @@ class ProgramBackgrounds(models.Model):
 
 # modelo de miembros de la CGC
 class CGC_Member(models.Model):
-    name=models.CharField(max_length=120, help_text='Nombre y apellidos', verbose_name='Nombre y apellidos')
-    charge = models.CharField(max_length=50,choices=[('president','Presidente'),('secretary','Secretario'),('member','Miembro')], help_text='Cargo', verbose_name='Cargo')
+    name=models.CharField(max_length=50, help_text='Nombre', verbose_name='Nombre')
+    lastname=models.CharField(max_length=70, help_text='Apellidos', verbose_name='Apellidos')
+    charge = models.CharField(max_length=50,choices=[('Presidente','Presidente'),('Secretario','Secretario'),('Miembro','Miembro')], help_text='Cargo', verbose_name='Cargo')
     priority= models.SmallIntegerField(help_text="Prioridad del Cargo", choices=[(1,'1'),(2,'2'),(3,'3')])
-    fb_contact = models.URLField(help_text='URL del contacto de Facebook')
-    tw_contact = models.URLField(help_text='URL del contacto de Twitter')
-    in_contact = models.URLField(help_text='URL del contacto de Linkedin')
-    gp_contact = models.URLField(help_text='URL del contacto de Google+')
-    picture= models.ImageField(help_text='Foto', upload_to=cgc_photo_directory_path)
+    fb_contact = models.URLField(help_text='URL del contacto de Facebook',default='https://www.facebook.com',  blank=True)
+    tw_contact = models.URLField(help_text='URL del contacto de Twitter',default='https://www.twitter.com',  blank=True)
+    in_contact = models.URLField(help_text='URL del contacto de Linkedin',default='https://www.linkedin.com',  blank=True)
+    gp_contact = models.URLField(help_text='URL del contacto de Google+',default='https://plus.google.com', blank=True)
+    picture= models.ImageField(help_text='Foto', upload_to=cgc_photo_directory_path, null=True, blank=True)
+    gender=models.CharField(max_length=1, choices=[('f','Femenino'),('m','Masculino')], help_text='Género')
 
     class Meta:
         verbose_name = 'Miembro de la CGC'
