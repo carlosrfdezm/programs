@@ -162,7 +162,7 @@
                     <img src="{% static 'programs/dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">
                 </div>
                 <div class="info">
-                    <a href="#" class="d-block" title="{{ user.get_full_name }}">{{ user.get_full_name| truncatewords:2}}</a>
+                    <a href="#" class="d-block" title="{{ user.get_full_name }}">{{ user.first_name}}</a>
                 </div>
             </div>
 

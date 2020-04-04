@@ -6,6 +6,7 @@ import calendar, locale
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
+from django.core.mail import send_mail
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -66,7 +67,7 @@ def create_student(request, program_slug):
                 user = User.objects.create_user(
                     request.POST['student_email'],
                     request.POST['student_email'],
-                    '12345678',  # Cambiar despues por contrase;a generada
+                    passwd,  # Cambiar despues por contrase;a generada
 
                 )
                 user.first_name = request.POST['student_name']
@@ -82,11 +83,13 @@ def create_student(request, program_slug):
             )
             student.save()
 
+            utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+
             try:
                 student.picture=request.FILES['picture']
                 student.save()
-                member=student
-                utils_send_email(request, 'wm', program.email, member, '', '', program, passwd)
+
+
 
             except:
                 pass
@@ -318,7 +321,7 @@ def create_professor(request, program_slug):
                 user = User.objects.create_user(
                     request.POST['email'],
                     request.POST['email'],
-                    '12345678',  # Cambiar a password generada luego #
+                    passwd,  # Cambiar a password generada luego #
                 )
                 user.first_name = request.POST['name']
                 user.last_name = request.POST['surename']
@@ -355,8 +358,8 @@ def create_professor(request, program_slug):
 
                 try:
                     professor.save()
-                    member=professor
-                    utils_send_email(request, 'wm', program.email, member, '', '', program, passwd)
+                    # send_mail('Hola','Usuario creado',program.email,[professor.user.email,'boris_perez@unah.edu.cu'], fail_silently=False)
+                    utils_send_email(request, 'wm', program.email, professor, '', '', program, passwd)
                     try:
                         professor.picture=request.FILES['picture']
                         professor.save()

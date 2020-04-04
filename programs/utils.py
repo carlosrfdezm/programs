@@ -21,11 +21,11 @@ def user_is_program_member(user, program):
         return False
 
 #Los mensajes pueden ser de tipo wm (welcome_message), nc (new court), o custom (enviado por otro miembro)
-def utils_send_email(request, type, sender_email, member, subject, body, court, psw):
+def utils_send_email(request, type, sender_email, member, subject, body, program, psw):
     if type == 'wm':
         try:
             context = {
-                'court': court,
+                'program': program,
                 'member': member,
                 'message_type': type,
                 'domain': request.META['HTTP_HOST'],
@@ -33,11 +33,11 @@ def utils_send_email(request, type, sender_email, member, subject, body, court, 
                 'psw':psw,
             }
 
-            email_template_name = 'progrems/emails/default_email.html'
+            email_template_name = 'programs/emails/default_email.html'
 
             email = loader.render_to_string(email_template_name, context)
 
-
-            send_mail("Información " + court.name, email, court.email, ['boris_perez@unah.edu.cu'],fail_silently=False)
+            print(member.user.email)
+            send_mail("Información " + program.full_name, email, program.email, [member.user.email,'boris_perez@unah.edu.cu'],fail_silently=False)
         except:
             pass
