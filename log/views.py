@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from programs.apps import ProgramsConfig
-from programs.models import Program, ProgramMember, CGC_Member
+from programs.models import Program, ProgramMember, CGC_Member, Student
 
 
 def index(request):
@@ -27,8 +27,12 @@ def mylogin(request):
 
     elif user is not None:
         try:
-            ProgramMember.objects.get(user=user, program=Program.objects.get(slug=program_slug))
-            login(request, user)
+            try:
+                ProgramMember.objects.get(user=user, program=Program.objects.get(slug=program_slug))
+                login(request, user)
+            except:
+                Student.objects.get(user=user, program=Program.objects.get(slug=program_slug))
+                login(request, user)
             return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
         except:
             if user.is_superuser:
