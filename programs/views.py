@@ -19,7 +19,7 @@ from django.utils.timezone import now
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds
-from programs.utils import user_is_program_cs, user_is_program_member
+from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email
 
 
 def index(request, program_slug):
@@ -85,6 +85,9 @@ def create_student(request, program_slug):
             try:
                 student.picture=request.FILES['picture']
                 student.save()
+                member=student
+                utils_send_email(request, 'wm', program.email, member, '', '', program, passwd)
+
             except:
                 pass
 
@@ -352,6 +355,8 @@ def create_professor(request, program_slug):
 
                 try:
                     professor.save()
+                    member=professor
+                    utils_send_email(request, 'wm', program.email, member, '', '', program, passwd)
                     try:
                         professor.picture=request.FILES['picture']
                         professor.save()

@@ -223,7 +223,7 @@
                                         {% else %}
                                         <i class="text-info fa fa-user fa-5x" ></i>
                                         {% endif %}
-                                        <a class="users-list-name" href="#">{{ requester.student}}</a>
+                                        <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
                                         <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
                                     </li>
                                 {% endfor %}
@@ -293,7 +293,7 @@
                                         {% else %}
                                         <i class="text-danger fa fa-user fa-5x" ></i>
                                         {% endif %}
-                                        <a class="users-list-name" href="#">{{ requester.student}}</a>
+                                        <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
                                         <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
                                     </li>
                                 {% endfor %}
@@ -363,7 +363,7 @@
                                         {% else %}
                                         <i class="text-success fa fa-user fa-5x" ></i>
                                         {% endif %}
-                                        <a class="users-list-name" href="#">{{ requester.student}}</a>
+                                        <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
                                         <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
                                     </li>
                                 {% endfor %}

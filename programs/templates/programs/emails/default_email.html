@@ -1,0 +1,18 @@
+
+{% block author %}
+    Estimad@ {{ member.user.get_full_name }}:
+{% endblock %}
+{% block message %}
+    {% if message_type == 'wm' %}
+        Se ha creado su cuenta en {{ protocol }}://{{ domain }}/{{ program.slug }}. El usuario es "{{ member.user.username }}" y la contraseña es "{{ psw }}".
+        Le sugerimos cambie su contraseña inmmediatamente accediendo a {{ protocol }}://{{ domain }}/{{ program.slug }}/pswchange
+
+    {% endif %}
+{% endblock %}
+{% block information %}
+    Para más información, acceda el sitio {{ protocol }}://{{ domain }}/{{ program.slug }}
+    Atentamente, Comité Académico de {{ program.name }}.
+
+{% endblock %}
+
+
