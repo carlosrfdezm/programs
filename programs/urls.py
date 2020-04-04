@@ -38,6 +38,8 @@ urlpatterns = [
     path('ajx/statistics/year/requests', views.ajx_this_year_requests, name='ajx_this_year_requests'),
     path('ajx/statistics/students/status', views.ajx_students_by_state, name='ajx_students_by_state'),
 
+    path('statistics', views.program_statistics, name='program_statistics'),
+
 
     # path('login', views.mylogin, name='my_login'),
     # path('logout/<str:court_slug>/', views.mylogout, name='my_logout'),

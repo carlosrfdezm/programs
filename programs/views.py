@@ -772,3 +772,12 @@ def program_background(request, program_slug, background_id):
             return response
     else:
         return HttpResponse('Error')
+
+@login_required
+def program_statistics(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        context={
+            'program':program,
+        }
+        return render(request, 'programs/statistics.html', context)
