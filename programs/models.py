@@ -112,6 +112,7 @@ class ProgramMember(models.Model):
     country = models.CharField(max_length=70, default='Cuba')
     phone = models.CharField(max_length=50)
     institution = models.CharField(max_length=100)
+    birth_date = models.DateField(default='1960-01-01', help_text='Fecha de nacimiento')
     degree = models.CharField(max_length=100,
                                    help_text='Grado cientifico')
     picture = models.ImageField(null=True, upload_to=member_directory_path)

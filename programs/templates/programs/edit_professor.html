@@ -98,7 +98,11 @@
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group col-md-6">
+                                <div class="form-group col-md-2">
+                                            <label for="inp_birth_date">Fecha de nacimiento:</label>
+                                            <input type="date" class="form-control" id="inp_birth_date"  name="member_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" value="{{member.birth_date|date:'Y-m-d' }}" required>
+                                        </div>
+                                    <div class="form-group col-md-4">
                                         <label for="inp_grade">Grado científico:</label>
                                         <input type="text" class="form-control" id="inp_grade"  name="grade" value="{{  member.degree }}" placeholder="p.e:Doctor en Ciencias de la Educación" required>
                                     </div>

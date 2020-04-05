@@ -341,7 +341,9 @@ def create_professor(request, program_slug):
                     fb_contact=request.POST['fb_contact'],
                     tw_contact=request.POST['tw_contact'],
                     ln_contact=request.POST['ln_contact'],
-                    sex=request.POST['gender']
+                    sex=request.POST['gender'],
+                    birth_date=request.POST['member_birth_date'],
+
 
                 )
                 if professor.role=='Coordinador':
@@ -401,6 +403,7 @@ def edit_member(request, program_slug, member_id):
                 tw_contact=request.POST['tw_contact'],
                 ln_contact=request.POST['ln_contact'],
                 sex=request.POST['gender'],
+                birth_date=request.POST['member_birth_date'],
             )
             professor=ProgramMember.objects.get(pk=member_id)
             if request.POST['role'] == 'Coordinador':
@@ -833,6 +836,32 @@ def ajx_students_by_age(request, program_slug):
         content_type="application/json"
     )
 
+
+
+@login_required
+def ajx_members_by_age(request, program_slug):
+    response_data=[]
+    labels = ['<30 años','30-40','40-50','>50 años']
+    data = []
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+    i=0
+    data.append(ProgramMember.objects.filter(program=Program.objects.get(slug=program_slug ),birth_date__year__gt=now().year-30 ).__len__())
+    data.append(ProgramMember.objects.filter(program=Program.objects.get(slug=program_slug ),birth_date__year__gt=now().year-40, birth_date__year__lt=now().year-30 ).__len__() )
+    data.append(ProgramMember.objects.filter(program=Program.objects.get(slug=program_slug ),birth_date__year__gt=now().year-50, birth_date__year__lt=now().year-40 ).__len__() )
+    data.append(ProgramMember.objects.filter(program=Program.objects.get(slug=program_slug ), birth_date__year__lt=now().year-50 ).__len__() )
+
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+
 @login_required
 def ajx_students_by_state(request, program_slug):
     response_data=[]
@@ -840,6 +869,29 @@ def ajx_students_by_state(request, program_slug):
     response_data.append(PhdStudent.objects.filter(student__program=program, status='Graduado').__len__())
     response_data.append(PhdStudent.objects.filter(student__program=program, status='Solicitante').__len__())
     response_data.append(PhdStudent.objects.filter(student__program=program, status='Doctorando').__len__())
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+
+@login_required
+def ajx_members_by_grade(request, program_slug):
+    response_data=[]
+    grades=[]
+    data=[]
+
+    program = Program.objects.get(slug=program_slug)
+    for member in ProgramMember.objects.filter(program=program):
+        if not member.degree in grades:
+            grades.append(member.degree)
+
+    for degree in grades:
+        data.append(ProgramMember.objects.filter(program=program, degree=degree).__len__())
+
+    response_data.append(grades)
+    response_data.append(data)
+
     return HttpResponse(
         json.dumps(response_data),
         content_type="application/json"
