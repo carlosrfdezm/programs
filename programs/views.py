@@ -729,12 +729,129 @@ def ajx_this_year_requests(request, program_slug):
         content_type="application/json"
     )
 
+
+@login_required
+def ajx_by_year_requests(request, program_slug):
+    year=request.POST['year']
+    response_data=[]
+    labels = []
+    data = []
+    data_1=[]
+    data_2=[]
+    meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+             8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for i in range(1,13):
+        labels.append(meses[i])
+        data_1.append(Student.objects.filter(request_date__year=year,request_date__month=i).__len__())
+        data_2.append(Student.objects.filter(init_date__year=year,init_date__month=i).__len__())
+
+    data.append(data_1)
+    data.append(data_2)
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_last_years_requests(request, program_slug):
+    response_data=[]
+    labels = []
+    data = []
+    data_1=[]
+    data_2=[]
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for i in range(now().year-4,now().year+1):
+        labels.append(i)
+        data_1.append(Student.objects.filter(request_date__year=i).__len__())
+        data_2.append(Student.objects.filter(init_date__year=i).__len__())
+
+    data.append(data_1)
+    data.append(data_2)
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_students_by_line(request, program_slug):
+    response_data=[]
+    labels = []
+    data = []
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+    i=0
+    for line in InvestigationLine.objects.filter(program=Program.objects.get(slug=program_slug)):
+        i += 1
+        labels.append(line.name.split()[0])
+        data.append(PhdStudentTheme.objects.filter(line=line).__len__())
+
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_students_by_age(request, program_slug):
+    response_data=[]
+    labels = ['<30 años','30-40','40-50','>50 años']
+    data = []
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+    i=0
+    data.append(Student.objects.filter(program=Program.objects.get(slug=program_slug ),birth_date__year__gt=now().year-30 ).__len__())
+    data.append(Student.objects.filter(program=Program.objects.get(slug=program_slug ),birth_date__year__gt=now().year-40, birth_date__year__lt=now().year-30 ).__len__() )
+    data.append(Student.objects.filter(program=Program.objects.get(slug=program_slug ),birth_date__year__gt=now().year-50, birth_date__year__lt=now().year-40 ).__len__() )
+    data.append(Student.objects.filter(program=Program.objects.get(slug=program_slug ), birth_date__year__lt=now().year-50 ).__len__() )
+
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
 def ajx_students_by_state(request, program_slug):
     response_data=[]
     program=Program.objects.get(slug=program_slug)
     response_data.append(PhdStudent.objects.filter(student__program=program, status='Graduado').__len__())
     response_data.append(PhdStudent.objects.filter(student__program=program, status='Solicitante').__len__())
     response_data.append(PhdStudent.objects.filter(student__program=program, status='Doctorando').__len__())
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+
+@login_required
+def ajx_students_by_sex(request, program_slug):
+    response_data=[]
+    program=Program.objects.get(slug=program_slug)
+    response_data.append(PhdStudent.objects.filter(student__program=program, student__gender='f').__len__())
+    response_data.append(PhdStudent.objects.filter(student__program=program, student__gender='m').__len__())
     return HttpResponse(
         json.dumps(response_data),
         content_type="application/json"

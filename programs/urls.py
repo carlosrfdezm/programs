@@ -36,7 +36,12 @@ urlpatterns = [
     path('ajx/line/delete', views.ajx_delete_line, name='ajx_delete_line'),
     path('ajx/project/delete', views.ajx_delete_project, name='ajx_delete_project'),
     path('ajx/statistics/year/requests', views.ajx_this_year_requests, name='ajx_this_year_requests'),
+    path('ajx/statistics/byyear/requests', views.ajx_by_year_requests, name='ajx_by_year_requests'),
+    path('ajx/statistics/lastyear/requests', views.ajx_last_years_requests, name='ajx_last_years_requests'),
     path('ajx/statistics/students/status', views.ajx_students_by_state, name='ajx_students_by_state'),
+    path('ajx/statistics/students/gender', views.ajx_students_by_sex, name='ajx_students_by_sex'),
+    path('ajx/statistics/students/line', views.ajx_students_by_line, name='ajx_students_by_line'),
+    path('ajx/statistics/students/age', views.ajx_students_by_age, name='ajx_students_by_age'),
 
     path('statistics', views.program_statistics, name='program_statistics'),
 
