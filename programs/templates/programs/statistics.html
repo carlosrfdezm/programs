@@ -28,7 +28,7 @@
                 <div class="col-md-8 col-sm-8">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">Resumen estadístico</h5>
+                            <h5 class="card-title"><strong>Solicitudes de ingreso vs Ingresos</strong></h5>
 
                             <div class="card-tools">
                                 {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
@@ -51,9 +51,6 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
-                                    <p class="text-center">
-                                        <strong>Solicitudes de ingreso vs Ingresos</strong>
-                                    </p>
 
                                     <div class="chart">
                                         <!-- Sales Chart Canvas -->
@@ -75,7 +72,7 @@
                 <div class="col-md-4 col-sm-4">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">Resumen estadístico</h5>
+                            <h5 class="card-title"><strong>Estudiantes por género</strong></h5>
 
                             <div class="card-tools">
                                 {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
@@ -103,17 +100,13 @@
                             <div class="row">
                                 <!-- /.col -->
                                 <div class="col-md-12 col-sm-12">
-                                    <p class="text-center">
-                                        <strong>Estudiantes por género</strong>
-                                    </p>
+
 
                                     <div class="chart-responsive">
-                                        <canvas id="donutChartGender" height="187"></canvas>
+                                        <canvas id="donutChartGender"  height="209px"></canvas>
                                     </div>
                                     <div class="mt-4 text-center small">
-                                    <span class="mr-2">
-                                      <i class="fas fa-exclamation-triangle text-warning"></i> Mueva el cursor sobre las lineas
-                                    </span>
+
 
                                     </div>
                                     <!-- /.progress-group -->
@@ -136,7 +129,7 @@
                 <div class="col-md-6 col-sm-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">Resumen estadístico</h5>
+                            <h5 class="card-title"><strong>Estudiantes por Línea de investigación</strong></h5>
 
                             <div class="card-tools">
                                                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -159,9 +152,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
-                                    <p class="text-center">
-                                        <strong>Estudiantes por Línea de investigación</strong>
-                                    </p>
+
 
                                     <div class="chart">
                                         <!-- Sales Chart Canvas -->
@@ -183,7 +174,7 @@
                 <div class="col-md-6 col-sm-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">Resumen estadístico</h5>
+                            <h5 class="card-title"><strong>Estudiantes por rango etario</strong></h5>
 
                             <div class="card-tools">
                                                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -206,9 +197,6 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
-                                    <p class="text-center">
-                                        <strong>Estudiantes por rango etario</strong>
-                                    </p>
 
                                     <div class="chart">
                                         <!-- Sales Chart Canvas -->
@@ -235,7 +223,7 @@
                 <div class="col-md-4 col-sm-4">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">Resumen estadístico</h5>
+                            <h5 class="card-title"><strong>Profesores por grado cientifico</strong></h5>
 
                             <div class="card-tools">
                                                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -258,9 +246,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
-                                    <p class="text-center">
-                                        <strong>Profesores por grado cientifico</strong>
-                                    </p>
+
 
                                     <div class="chart">
                                         <!-- Sales Chart Canvas -->
@@ -282,7 +268,7 @@
                 <div class="col-md-8 col-sm-8">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">Resumen estadístico</h5>
+                            <h5 class="card-title"><strong>Profesores por rango etario</strong></h5>
 
                             <div class="card-tools">
                                                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -305,9 +291,6 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
-                                    <p class="text-center">
-                                        <strong>Profesores por rango etario</strong>
-                                    </p>
 
                                     <div class="chart">
                                         <!-- Sales Chart Canvas -->
@@ -395,7 +378,7 @@
                             maintainAspectRatio : false,
                             responsive : true,
                             legend: {
-                                display: false
+                                display: true
                             },
                             scales: {
                                 xAxes: [{
@@ -457,7 +440,7 @@
                             datasets: [
                                 {
                                     label               : 'Estudiantes vinculados',
-                                    backgroundColor     : 'rgba(55,66,255,0.6)',
+                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
                                     borderColor         : 'rgba(11,15,255,0.8)',
                                     pointRadius          : 2,
                                     pointColor          : '#3b8bba',
@@ -537,7 +520,7 @@
                             datasets: [
                                 {
                                     label               : 'Estudiantes en el rango',
-                                    backgroundColor     : 'rgba(255,36,36,0.67)',
+                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
                                     borderColor         : 'rgba(11,15,255,0.8)',
                                     pointRadius          : 2,
                                     pointColor          : '#3b8bba',
@@ -617,7 +600,7 @@
                             datasets: [
                                 {
                                     label               : 'Profesores en el rango',
-                                    backgroundColor     : 'rgba(255,36,36,0.67)',
+                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
                                     borderColor         : 'rgba(11,15,255,0.8)',
                                     pointRadius          : 2,
                                     pointColor          : '#3b8bba',
@@ -706,7 +689,7 @@
                             maintainAspectRatio : false,
                             responsive : true,
                             legend: {
-                                display: false,
+                                display: true,
                             },
 
                         };
@@ -760,7 +743,7 @@
                             maintainAspectRatio : false,
                             responsive : true,
                             legend: {
-                                display: false,
+                                display: true,
                             },
 
                         };
@@ -839,7 +822,7 @@
                                 maintainAspectRatio : false,
                                 responsive : true,
                                 legend: {
-                                    display: false
+                                    display: true
                                 },
                                 scales: {
                                     xAxes: [{
