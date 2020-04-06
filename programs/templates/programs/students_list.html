@@ -58,9 +58,9 @@
                                 {% if scope == 'Doctorandos' %}
                                     <th class="text-center">Requisitos<br> (egreso)</th>
                                 {% endif %}
-                                {% if user_is_program_cs %}
+
                                     <th></th>
-                                {% endif %}
+
                             </tr>
                             </thead>
                             <tbody>
@@ -102,6 +102,14 @@
 
                                                 <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_student' program.slug student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
                                                 <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_student_{{ student.id }}"><i class="fa fa-eraser"></i></a>
+
+                                            </div>
+                                        </td>
+                                        {% else %}
+                                         <td class="text-center">
+                                            <div class="btn-group" role="group">
+
+                                                <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje"> <i class="fa fa-envelope"></i></a>
 
                                             </div>
                                         </td>

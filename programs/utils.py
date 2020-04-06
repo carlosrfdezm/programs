@@ -37,7 +37,6 @@ def utils_send_email(request, type, sender_email, member, subject, body, program
 
             email = loader.render_to_string(email_template_name, context)
 
-            print(member.user.email)
             send_mail("Información " + program.full_name, email, program.email, [member.user.email,'boris_perez@unah.edu.cu'],fail_silently=False)
         except:
             pass
