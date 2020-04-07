@@ -865,6 +865,34 @@ def ajx_member_personal_msg(request, program_slug ):
         )
 
 @login_required
+def ajx_student_personal_msg(request, program_slug ):
+    program=Program.objects.get(slug=program_slug)
+    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 500:
+        try:
+            send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
+                      [Student.objects.get(pk=request.POST['student_id']).user.email,'boris_perez@unah.edu.cu'],
+                      fail_silently=False,html_message=request.POST['msg_body'])
+            return HttpResponse(
+                json.dumps([{'sended': 1}]),
+                content_type="application/json"
+            )
+        except:
+            return HttpResponse(
+                json.dumps([{'sended': 0}]),
+                content_type="application/json"
+            )
+    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 500:
+        return HttpResponse(
+            json.dumps([{'sended': 2}]),
+            content_type="application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps([{'sended': 0}]),
+            content_type="application/json"
+        )
+
+@login_required
 def ajx_members_by_age(request, program_slug):
     response_data=[]
     labels = ['<30 años','30-40','40-50','>50 años']

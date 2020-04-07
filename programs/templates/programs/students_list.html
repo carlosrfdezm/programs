@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
+    <link rel="stylesheet" href="{% static 'programs/plugins/summernote/summernote-bs4.css'  %}">
     <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
 {% endblock %}
 
@@ -59,7 +60,7 @@
                                     <th class="text-center">Requisitos<br> (egreso)</th>
                                 {% endif %}
 
-                                    <th></th>
+                                <th></th>
 
                             </tr>
                             </thead>
@@ -105,11 +106,11 @@
 
                                             </div>
                                         </td>
-                                        {% else %}
-                                         <td class="text-center">
+                                    {% else %}
+                                        <td class="text-center">
                                             <div class="btn-group" role="group">
 
-                                                <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje"> <i class="fa fa-envelope"></i></a>
+                                                <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
 
                                             </div>
                                         </td>
@@ -145,6 +146,45 @@
                                     </div>
                                     <!-- /.modal-dialog -->
                                 </div>
+                                <div class="modal fade" id="modal_msg_student_{{ student.id }}">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Enviar mensaje a {{ student }}</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form id="frm_msg_student_{{ student.id }}" method="post">
+                                                <div class="modal-body alert alert-success">
+
+                                                    <div class="form-row ">
+                                                        <div class="col-md-12">
+                                                            <input class="form-control" id="inp_msg_subject_{{ student.id }}" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
+
+                                                            <textarea class="form-control textarea col-md-12" id="txt_msg_body_{{ student.id }}"
+                                                                      name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
+                                                        </div>
+                                                        <div class="col-xs-12 text-right">
+                                                            <span id="total-characters"></span>
+                                                        </div>
+
+                                                    </div>
+
+
+
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+
                             {% endfor %}
 
 
@@ -181,10 +221,15 @@
     <!-- DataTables -->
     <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
     <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
+
+    <script src="{% static 'programs/plugins/summernote/summernote-bs4.js'  %}"></script>
+
+    <script src="{% static 'programs/plugins/summernote/lang/summernote-es-ES.js'  %}"></script>
+
     <!-- AdminLTE App -->
-{#    <script src="{% static 'programs/dist/js/adminlte.min.js' %}"></script>#}
+    {#    <script src="{% static 'programs/dist/js/adminlte.min.js' %}"></script>#}
     <!-- AdminLTE for demo purposes -->
-{#    <script src="{% static 'programs/dist/js/demo.js' %}"></script>#}
+    {#    <script src="{% static 'programs/dist/js/demo.js' %}"></script>#}
     <!-- page script -->
     <script>
         $(function () {
@@ -232,32 +277,114 @@
                                     title: 'Estudiante eliminado exitosamente'
                                 })
 
-                    } else if(json[0].deleted == 0){
-                Toast.fire({
-                    type: 'error',
-                    title: 'No se ha podido eliminar al estudiante seleccionado.'
-                })
+                            } else if(json[0].deleted == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar al estudiante seleccionado.'
+                                })
 
-            }
-                console.log(json); // log the returned json to the console
-                console.log("success"); // another sanity check
-
-
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
 
 
-                {#$('#div_by_workshop').removeClass('hidden')#}
 
-                },
 
-                // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                Toast.fire({
-                    type: 'error',
-                    title: 'Uff, ha ocurrido algo desconocido.'
-                })
-            }
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
                 });
 
+                $('#txt_msg_body_{{ student.id }}').summernote({
+                    lang: 'es-Es',
+                    placeholder: 'Escribe el mensaje aquí',
+                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                    dialogsInBody: true,
+                    dialogsFade: true,
+                    height: 200,
+                    toolbar: [
+                        // [groupName, [list of button]]
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                        {#['fontname', ['fontname']],#}
+                        {#['fontsize', ['fontsize']],#}
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['table', ['table']],
+                    ],
+
+                });
+
+
+                $('#frm_msg_student_{{ student.id }}').on('submit', function (e) {
+                    e.preventDefault();
+                    $('#modal_msg_student_{{ student.id }}').modal('hide');
+                    var url = "{% url 'programs:ajx_student_personal_msg' program.slug %}";
+
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'student_id': {{ student.id }},
+                            'msg_subject': $('#inp_msg_subject_{{ student.id }}').val(),
+                            'msg_body': $('#txt_msg_body_{{ student.id }}').val(),
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].sended == 1) {
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Mensaje enviado exitósamente'
+                                })
+
+                            }
+                            else if(json[0].sended == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido enviar el mensaje.'
+                                })
+
+                            }
+                            else if(json[0].sended == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'El texto del mensaje es muy largo.'
+                                })
+
+                            }
+                            console.log(json); // log the returned json to the console
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
+                    $('#frm_msg_student_{{ student.id }}')[0].reset();
+
+
+                });
+                $(document).on('hidden.bs.modal','#modal_msg_student_{{ student.id }}', function () {
+                    $('#frm_msg_student_{{ student.id }}')[0].reset();
+                    $('#txt_msg_body_{{ student.id }}').summernote('code', '');
                 })
             {% endfor %}
 
