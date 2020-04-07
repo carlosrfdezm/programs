@@ -134,6 +134,9 @@
                                                             <textarea class="form-control textarea col-md-12" id="txt_msg_body_{{ member.id }}"
                                                                       name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
                                                         </div>
+                                                        <div class="col-xs-12 text-right">
+                                                            <span id="total-characters"></span>
+                                                        </div>
 
                                                     </div>
 
@@ -223,7 +226,9 @@
 
     <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
 
-    <script src="{% static 'programs/plugins/summernote/summernote-bs4.min.js'  %}"></script>
+    <script src="{% static 'programs/plugins/summernote/summernote-bs4.js'  %}"></script>
+
+    <script src="{% static 'programs/plugins/summernote/lang/summernote-es-ES.js'  %}"></script>
 
 
 
@@ -231,10 +236,11 @@
     <script>
         $(document).ready(function () {
 
-            $('.textarea').summernote();
-            $('.textarea').summernote({
-                placeholder: 'Escribe el mensaje aqui'
-            });
+
+            let charLimit = 400;
+
+            {#$('.textarea').summernote();#}
+
 
             const Toast = Swal.mixin({
                 toast: true,
@@ -254,9 +260,27 @@
             });
 
 
-
-
             {% for member in members %}
+
+
+                $('#txt_msg_body_{{ member.id }}').summernote({
+                    lang: 'es-Es',
+                    placeholder: 'Escribe el mensaje aquí',
+                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                    dialogsInBody: true,
+                    dialogsFade: true,
+                    height: 200,
+                    toolbar: [
+                        // [groupName, [list of button]]
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                        {#['fontname', ['fontname']],#}
+                        ['fontsize', ['fontsize']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                    ],
+
+                });
 
                 $('#btn_rm_member_{{ member.id }}').click(function () {
                     var member_id={{ member.id }};
@@ -334,10 +358,18 @@
                                     title: 'Mensaje enviado exitósamente'
                                 })
 
-                            } else if(json[0].sended == 0){
+                            }
+                            else if(json[0].sended == 0){
                                 Toast.fire({
                                     type: 'error',
                                     title: 'No se ha podido enviar el mensaje.'
+                                })
+
+                            }
+                            else if(json[0].sended == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'El texto del mensaje es muy largo.'
                                 })
 
                             }
@@ -360,6 +392,7 @@
                 });
                 $(document).on('hidden.bs.modal','#modal_msg_member_{{ member.id }}', function () {
                     $('#frm_msg_member_{{ member.id }}')[0].reset();
+                    $('#txt_msg_body_{{ member.id }}').summernote('code', '');
                 })
             {% endfor %}
         });
