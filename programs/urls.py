@@ -44,6 +44,7 @@ urlpatterns = [
     path('ajx/statistics/students/age', views.ajx_students_by_age, name='ajx_students_by_age'),
     path('ajx/statistics/members/degree', views.ajx_members_by_grade, name='ajx_members_by_grade'),
     path('ajx/statistics/members/age', views.ajx_members_by_age, name='ajx_members_by_age'),
+    path('ajx/messages/members/personal', views.ajx_member_personal_msg, name='ajx_member_personal_msg'),
 
     path('statistics', views.program_statistics, name='program_statistics'),
 

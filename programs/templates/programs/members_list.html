@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
+    <link rel="stylesheet" href="{% static 'programs/plugins/summernote/summernote-bs4.css'  %}">
 
     <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
 {% endblock %}
@@ -73,6 +74,15 @@
 
                                             </div>
                                         </td>
+                                    {% else %}
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+
+                                                <button class="btn btn-success btn-sm text-white {% if member.user == user %} disabled {% endif %}"
+                                                        title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_member_{{ member.id }}"> <i class="fa fa-envelope"></i></button>
+                                            </div>
+                                        </td>
+
                                     {% endif %}
                                 </tr>
                                 <div class="modal fade" id="modal_rm_member_{{ member.id }}">
@@ -105,6 +115,41 @@
                                     </div>
                                     <!-- /.modal-dialog -->
                                 </div>
+                                <div class="modal fade" id="modal_msg_member_{{ member.id }}">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Enviar mensaje</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form id="frm_msg_member_{{ member.id }}" method="post">
+                                                <div class="modal-body alert alert-success">
+
+                                                    <div class="form-row ">
+                                                        <div class="col-md-12">
+                                                            <input class="form-control" id="inp_msg_subject_{{ member.id }}" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
+
+                                                            <textarea class="form-control textarea col-md-12" id="txt_msg_body_{{ member.id }}"
+                                                                      name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
+                                                        </div>
+
+                                                    </div>
+
+
+
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
 
                             {% endfor %}
 
@@ -129,7 +174,41 @@
             </div>
             <!-- /.col -->
         </div>
-    {% csrf_token %}
+        {#        <div class="row">#}
+        {#            <div class="col-md-12">#}
+        {#                <div class="card card-outline card-info">#}
+        {#                    <div class="card-header">#}
+        {#                        <h3 class="card-title">#}
+        {#                            Bootstrap WYSIHTML5#}
+        {#                            <small>Simple and fast</small>#}
+        {#                        </h3>#}
+        {#                        <!-- tools box -->#}
+        {#                        <div class="card-tools">#}
+        {#                            <button type="button" class="btn btn-tool btn-sm" data-card-widget="collapse" data-toggle="tooltip"#}
+        {#                                    title="Collapse">#}
+        {#                                <i class="fas fa-minus"></i></button>#}
+        {#                            <button type="button" class="btn btn-tool btn-sm" data-card-widget="remove" data-toggle="tooltip"#}
+        {#                                    title="Remove">#}
+        {#                                <i class="fas fa-times"></i></button>#}
+        {#                        </div>#}
+        {#                        <!-- /. tools -->#}
+        {#                    </div>#}
+        {#                    <!-- /.card-header -->#}
+        {#                    <div class="card-body pad">#}
+        {#                        <div class="mb-3">#}
+        {#                <textarea class="textarea" placeholder="Place some text here"#}
+        {#                          style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>#}
+        {#                        </div>#}
+        {#                        <p class="text-sm mb-0">#}
+        {#                            Editor <a href="https://github.com/bootstrap-wysiwyg/bootstrap3-wysiwyg">Documentation and license#}
+        {#                            information.</a>#}
+        {#                        </p>#}
+        {#                    </div>#}
+        {#                </div>#}
+        {#            </div>#}
+        {#            <!-- /.col-->#}
+        {#        </div>#}
+        {% csrf_token %}
         <!-- /.row -->
     </section>
     <!-- /.content -->
@@ -137,23 +216,33 @@
 {% endblock %}
 
 {% block extra_scripts %}
-     <!-- jQuery -->
-   <script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+    <!-- jQuery -->
+    <script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
     <!-- DataTables -->
     <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
+
     <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
+
+    <script src="{% static 'programs/plugins/summernote/summernote-bs4.min.js'  %}"></script>
+
+
 
 
     <script>
         $(document).ready(function () {
-            
+
+            $('.textarea').summernote();
+            $('.textarea').summernote({
+                placeholder: 'Escribe el mensaje aqui'
+            });
+
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
                 timer: 7000
             });
-            
+
             $("#example1").DataTable();
             $('#example2').DataTable({
                 "paging": true,
@@ -165,62 +254,114 @@
             });
 
 
-            
 
-           {% for member in members %}
-               $('#btn_rm_member_{{ member.id }}').click(function () {
-                   var member_id={{ member.id }};
-                   var url = "{% url 'programs:ajx_delete_member' program.slug %}";
+
+            {% for member in members %}
+
+                $('#btn_rm_member_{{ member.id }}').click(function () {
+                    var member_id={{ member.id }};
+                    var url = "{% url 'programs:ajx_delete_member' program.slug %}";
 
                     $('#modal_rm_member_{{ member.id }}').modal('hide');
 
-                   $.ajax({
-                       url : url,
-                       type : "POST", // http method
-                       data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                           'member_id':member_id,
-                       }, // data sent with the post request
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'member_id':member_id,
+                        }, // data sent with the post request
 
-                       // handle a successful response
-                       success : function(json) {
+                        // handle a successful response
+                        success : function(json) {
 
-                           if (json[0].deleted == 1) {
+                            if (json[0].deleted == 1) {
 
-                               $('#tr_member_{{ member.id }}').remove();
+                                $('#tr_member_{{ member.id }}').remove();
 
-                               Toast.fire({
-                                   type: 'success',
-                                   title: 'Profesor eliminado exitósamente'
-                               })
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Profesor eliminado exitósamente'
+                                })
 
-                   } else if(json[0].deleted == 0){
-               Toast.fire({
-                   type: 'error',
-                   title: 'No se ha podido eliminar al profesor seleccionado.'
-               })
+                            } else if(json[0].deleted == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar al profesor seleccionado.'
+                                })
 
-           }
-               console.log(json); // log the returned json to the console
-               console.log("success"); // another sanity check
-
-
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
 
 
-                $('#div_by_workshop').removeClass('hidden')
 
-               },
 
-               // handle a non-successful response
-               error : function(xhr,errmsg,err) {
-               Toast.fire({
-                   type: 'error',
-                   title: 'Uff, ha ocurrido algo desconocido.'
-               })
-           }
-               });
+                            $('#div_by_workshop').removeClass('hidden')
 
-               });
-           {% endfor %}
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
+                });
+                $('#frm_msg_member_{{ member.id }}').on('submit', function (e) {
+                    e.preventDefault();
+                    $('#modal_msg_member_{{ member.id }}').modal('hide');
+                    var url = "{% url 'programs:ajx_member_personal_msg' program.slug %}";
+
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'member_id': {{ member.id }},
+                            'msg_subject': $('#inp_msg_subject_{{ member.id }}').val(),
+                            'msg_body': $('#txt_msg_body_{{ member.id }}').val(),
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].sended == 1) {
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Mensaje enviado exitósamente'
+                                })
+
+                            } else if(json[0].sended == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido enviar el mensaje.'
+                                })
+
+                            }
+                            console.log(json); // log the returned json to the console
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
+                    $('#frm_msg_member_{{ member.id }}')[0].reset();
+
+
+                });
+                $(document).on('hidden.bs.modal','#modal_msg_member_{{ member.id }}', function () {
+                    $('#frm_msg_member_{{ member.id }}')[0].reset();
+                })
+            {% endfor %}
         });
     </script>
 {% endblock %}

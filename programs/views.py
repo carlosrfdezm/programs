@@ -836,7 +836,28 @@ def ajx_students_by_age(request, program_slug):
         content_type="application/json"
     )
 
-
+@login_required
+def ajx_member_personal_msg(request, program_slug ):
+    program=Program.objects.get(slug=program_slug)
+    if request.method == 'POST':
+        try:
+            send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
+                      [ProgramMember.objects.get(pk=request.POST['member_id']).user.email],
+                      fail_silently=False,html_message=request.POST['msg_body'])
+            return HttpResponse(
+                json.dumps([{'sended': 1}]),
+                content_type="application/json"
+            )
+        except:
+            return HttpResponse(
+                json.dumps([{'sended': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'sended': 0}]),
+            content_type="application/json"
+        )
 
 @login_required
 def ajx_members_by_age(request, program_slug):
