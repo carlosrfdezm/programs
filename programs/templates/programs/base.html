@@ -226,12 +226,14 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
+                            {% if user_is_program_cs %}
                             <li class="nav-item">
                                 <a href="{% url 'programs:create_line' program.slug %}" class="nav-link">
                                     <i class="fa fa-plus"></i>
                                     <p>Nueva</p>
                                 </a>
                             </li>
+                            {% endif %}
                             <li class="nav-item">
                                 <a href="{% url 'programs:program_lines' program.slug %}" class="nav-link">
                                     <i class="fa fa-list"></i>
@@ -251,12 +253,16 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{% url 'programs:create_project' program.slug %}" class="nav-link">
-                                    <i class="fa fa-plus nav-icon"></i>
-                                    <p>Nuevo</p>
-                                </a>
-                            </li>
+                            {% if user_is_program_cs %}
+
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:create_project' program.slug %}" class="nav-link">
+                                        <i class="fa fa-plus nav-icon"></i>
+                                        <p>Nuevo</p>
+                                    </a>
+
+                                </li>
+                            {% endif %}
                             <li class="nav-item">
                                 <a href="{% url 'programs:projects_list' program.slug %}" class="nav-link">
                                     <i class="fa fa-list nav-icon"></i>
@@ -433,7 +439,7 @@
             <b>Version</b> 3.0.2
         </div>
     </footer>
-{% csrf_token %}
+    {% csrf_token %}
 
 
 </div>
@@ -472,249 +478,249 @@
 <script>
     $(document).ready(function () {
         const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 7000
-            });
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 7000
+        });
         $('#txt_msg_body_members').summernote({
-                    lang: 'es-Es',
-                    placeholder: 'Escribe el mensaje aquí (lo recibirá el grupo de profesores seleccionado).',
-                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
-                    dialogsInBody: true,
-                    dialogsFade: true,
-                    height: 200,
-                    toolbar: [
-                        // [groupName, [list of button]]
-                        ['style', ['bold', 'italic', 'underline', 'clear']],
-                        ['font', ['strikethrough', 'superscript', 'subscript']],
-                        {#['fontname', ['fontname']],#}
-                        {#['fontsize', ['fontsize']],#}
-                        ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['table', ['table']],
-                    ],
+            lang: 'es-Es',
+            placeholder: 'Escribe el mensaje aquí (lo recibirá el grupo de profesores seleccionado).',
+            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+            dialogsInBody: true,
+            dialogsFade: true,
+            height: 200,
+            toolbar: [
+                // [groupName, [list of button]]
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                {#['fontname', ['fontname']],#}
+                {#['fontsize', ['fontsize']],#}
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+            ],
 
-                });
+        });
         $('#txt_msg_body_students').summernote({
-                    lang: 'es-Es',
-                    placeholder: 'Escribe el mensaje aquí (lo recibirá el grupo de estudiantes seleccionado)',
-                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
-                    dialogsInBody: true,
-                    dialogsFade: true,
-                    height: 200,
-                    toolbar: [
-                        // [groupName, [list of button]]
-                        ['style', ['bold', 'italic', 'underline', 'clear']],
-                        ['font', ['strikethrough', 'superscript', 'subscript']],
-                        {#['fontname', ['fontname']],#}
-                        {#['fontsize', ['fontsize']],#}
-                        ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['table', ['table']],
-                    ],
+            lang: 'es-Es',
+            placeholder: 'Escribe el mensaje aquí (lo recibirá el grupo de estudiantes seleccionado)',
+            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+            dialogsInBody: true,
+            dialogsFade: true,
+            height: 200,
+            toolbar: [
+                // [groupName, [list of button]]
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                {#['fontname', ['fontname']],#}
+                {#['fontsize', ['fontsize']],#}
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+            ],
 
-                });
+        });
         $('#txt_msg_body_all').summernote({
-                    lang: 'es-Es',
-                    placeholder: 'Escribe el mensaje aquí (lo recibirán todos los profesores y estudiantes del programa). ',
-                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
-                    dialogsInBody: true,
-                    dialogsFade: true,
-                    height: 200,
-                    toolbar: [
-                        // [groupName, [list of button]]
-                        ['style', ['bold', 'italic', 'underline', 'clear']],
-                        ['font', ['strikethrough', 'superscript', 'subscript']],
-                        {#['fontname', ['fontname']],#}
-                        {#['fontsize', ['fontsize']],#}
-                        ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['table', ['table']],
-                    ],
+            lang: 'es-Es',
+            placeholder: 'Escribe el mensaje aquí (lo recibirán todos los profesores y estudiantes del programa). ',
+            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+            dialogsInBody: true,
+            dialogsFade: true,
+            height: 200,
+            toolbar: [
+                // [groupName, [list of button]]
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                {#['fontname', ['fontname']],#}
+                {#['fontsize', ['fontsize']],#}
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+            ],
 
-                });
+        });
 
         $('#frm_msg_member').on('submit', function (e) {
-                    e.preventDefault();
-                    $('#modal_msg_members').modal('hide');
-                    var url = "{% url 'programs:ajx_member_massive_msg' program.slug %}";
+            e.preventDefault();
+            $('#modal_msg_members').modal('hide');
+            var url = "{% url 'programs:ajx_member_massive_msg' program.slug %}";
 
-                    $.ajax({
-                        url : url,
-                        type : "POST", // http method
-                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                            'msg_subject': $('#inp_msg_subject_members').val(),
-                            'msg_body': $('#txt_msg_body_members').val(),
-                            'msg_scope':$('#slc_msg_scope').val(),
-                        }, // data sent with the post request
+            $.ajax({
+                url : url,
+                type : "POST", // http method
+                data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                    'msg_subject': $('#inp_msg_subject_members').val(),
+                    'msg_body': $('#txt_msg_body_members').val(),
+                    'msg_scope':$('#slc_msg_scope').val(),
+                }, // data sent with the post request
 
-                        // handle a successful response
-                        success : function(json) {
+                // handle a successful response
+                success : function(json) {
 
-                            if (json[0].sended == 1) {
+                    if (json[0].sended == 1) {
 
-                                Toast.fire({
-                                    type: 'success',
-                                    title: 'Mensaje enviado exitosamente'
-                                })
+                        Toast.fire({
+                            type: 'success',
+                            title: 'Mensaje enviado exitosamente'
+                        })
 
-                            }
-                            else if(json[0].sended == 0){
-                                Toast.fire({
-                                    type: 'error',
-                                    title: 'No se ha podido enviar el mensaje.'
-                                })
+                    }
+                    else if(json[0].sended == 0){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'No se ha podido enviar el mensaje.'
+                        })
 
-                            }
-                            else if(json[0].sended == 2){
-                                Toast.fire({
-                                    type: 'error',
-                                    title: 'El texto del mensaje es muy largo.'
-                                })
+                    }
+                    else if(json[0].sended == 2){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'El texto del mensaje es muy largo.'
+                        })
 
-                            }
-                            console.log(json); // log the returned json to the console
+                    }
+                    console.log(json); // log the returned json to the console
 
-                        },
+                },
 
-                        // handle a non-successful response
-                        error : function(xhr,errmsg,err) {
-                            Toast.fire({
-                                type: 'error',
-                                title: 'Uff, ha ocurrido algo desconocido.'
-                            })
-                        }
-                    });
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Uff, ha ocurrido algo desconocido.'
+                    })
+                }
+            });
 
-                    $('#frm_msg_members')[0].reset();
+            $('#frm_msg_members')[0].reset();
 
 
-                });
+        });
         $('#frm_msg_students').on('submit', function (e) {
-                    e.preventDefault();
-                    $('#modal_msg_students').modal('hide');
-                    var url = "{% url 'programs:ajx_phd_students_massive_msg' program.slug %}";
+            e.preventDefault();
+            $('#modal_msg_students').modal('hide');
+            var url = "{% url 'programs:ajx_phd_students_massive_msg' program.slug %}";
 
-                    $.ajax({
-                        url : url,
-                        type : "POST", // http method
-                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                            'msg_subject': $('#inp_msg_subject_students').val(),
-                            'msg_body': $('#txt_msg_body_students').val(),
-                            'msg_scope':$('#slc_msg_scope_students').val(),
-                        }, // data sent with the post request
+            $.ajax({
+                url : url,
+                type : "POST", // http method
+                data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                    'msg_subject': $('#inp_msg_subject_students').val(),
+                    'msg_body': $('#txt_msg_body_students').val(),
+                    'msg_scope':$('#slc_msg_scope_students').val(),
+                }, // data sent with the post request
 
-                        // handle a successful response
-                        success : function(json) {
+                // handle a successful response
+                success : function(json) {
 
-                            if (json[0].sended == 1) {
+                    if (json[0].sended == 1) {
 
-                                Toast.fire({
-                                    type: 'success',
-                                    title: 'Mensaje enviado exitosamente'
-                                })
+                        Toast.fire({
+                            type: 'success',
+                            title: 'Mensaje enviado exitosamente'
+                        })
 
-                            }
-                            else if(json[0].sended == 0){
-                                Toast.fire({
-                                    type: 'error',
-                                    title: 'No se ha podido enviar el mensaje.'
-                                })
+                    }
+                    else if(json[0].sended == 0){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'No se ha podido enviar el mensaje.'
+                        })
 
-                            }
-                            else if(json[0].sended == 2){
-                                Toast.fire({
-                                    type: 'error',
-                                    title: 'El texto del mensaje es muy largo.'
-                                })
+                    }
+                    else if(json[0].sended == 2){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'El texto del mensaje es muy largo.'
+                        })
 
-                            }
-                            console.log(json); // log the returned json to the console
+                    }
+                    console.log(json); // log the returned json to the console
 
-                        },
+                },
 
-                        // handle a non-successful response
-                        error : function(xhr,errmsg,err) {
-                            Toast.fire({
-                                type: 'error',
-                                title: 'Uff, ha ocurrido algo desconocido.'
-                            })
-                        }
-                    });
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Uff, ha ocurrido algo desconocido.'
+                    })
+                }
+            });
 
-                    $('#frm_msg_students')[0].reset();
+            $('#frm_msg_students')[0].reset();
 
 
-                });
+        });
         $('#frm_msg_all').on('submit', function (e) {
-                    e.preventDefault();
-                    $('#modal_msg_all').modal('hide');
-                    var url = "{% url 'programs:ajx_everybody_massive_msg' program.slug %}";
+            e.preventDefault();
+            $('#modal_msg_all').modal('hide');
+            var url = "{% url 'programs:ajx_everybody_massive_msg' program.slug %}";
 
-                    $.ajax({
-                        url : url,
-                        type : "POST", // http method
-                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                            'msg_subject': $('#inp_msg_subject_all').val(),
-                            'msg_body': $('#txt_msg_body_all').val(),
-                        }, // data sent with the post request
+            $.ajax({
+                url : url,
+                type : "POST", // http method
+                data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                    'msg_subject': $('#inp_msg_subject_all').val(),
+                    'msg_body': $('#txt_msg_body_all').val(),
+                }, // data sent with the post request
 
-                        // handle a successful response
-                        success : function(json) {
+                // handle a successful response
+                success : function(json) {
 
-                            if (json[0].sended == 1) {
+                    if (json[0].sended == 1) {
 
-                                Toast.fire({
-                                    type: 'success',
-                                    title: 'Mensaje enviado exitosamente'
-                                })
+                        Toast.fire({
+                            type: 'success',
+                            title: 'Mensaje enviado exitosamente'
+                        })
 
-                            }
-                            else if(json[0].sended == 0){
-                                Toast.fire({
-                                    type: 'error',
-                                    title: 'No se ha podido enviar el mensaje.'
-                                })
+                    }
+                    else if(json[0].sended == 0){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'No se ha podido enviar el mensaje.'
+                        })
 
-                            }
-                            else if(json[0].sended == 2){
-                                Toast.fire({
-                                    type: 'error',
-                                    title: 'El texto del mensaje es muy largo.'
-                                })
+                    }
+                    else if(json[0].sended == 2){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'El texto del mensaje es muy largo.'
+                        })
 
-                            }
-                            console.log(json); // log the returned json to the console
+                    }
+                    console.log(json); // log the returned json to the console
 
-                        },
+                },
 
-                        // handle a non-successful response
-                        error : function(xhr,errmsg,err) {
-                            Toast.fire({
-                                type: 'error',
-                                title: 'Uff, ha ocurrido algo desconocido.'
-                            })
-                        }
-                    });
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Uff, ha ocurrido algo desconocido.'
+                    })
+                }
+            });
 
-                    $('#frm_msg_all')[0].reset();
+            $('#frm_msg_all')[0].reset();
 
 
-                });
+        });
 
         $(document).on('hidden.bs.modal','#modal_msg_members', function () {
-                    $('#frm_msg_member')[0].reset();
-                    $('#txt_msg_body_members').summernote('code', '');
-                });
+            $('#frm_msg_member')[0].reset();
+            $('#txt_msg_body_members').summernote('code', '');
+        });
         $(document).on('hidden.bs.modal','#modal_msg_students', function () {
-                    $('#frm_msg_students')[0].reset();
-                    $('#txt_msg_body_students').summernote('code', '');
-                });
+            $('#frm_msg_students')[0].reset();
+            $('#txt_msg_body_students').summernote('code', '');
+        });
         $(document).on('hidden.bs.modal','#modal_msg_all', function () {
-                    $('#frm_msg_all')[0].reset();
-                    $('#txt_msg_body_all').summernote('code', '');
-                });
+            $('#frm_msg_all')[0].reset();
+            $('#txt_msg_body_all').summernote('code', '');
+        });
 
 
     })

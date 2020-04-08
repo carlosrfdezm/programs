@@ -109,7 +109,8 @@
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
 
-                                                <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
+
+                                                <a class="btn btn-success btn-sm text-white  {% if user == student.user %}disabled{% endif %}" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
 
                                             </div>
                                         </td>

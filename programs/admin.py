@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from programs.models import InvestigationLine
+from programs.models import InvestigationLine, Student
 from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember
 
 # Register your models here.
@@ -35,3 +35,4 @@ class ProgramMemberAdmin(admin.ModelAdmin):
 admin.site.register(ProgramMember, ProgramMemberAdmin)
 
 admin.site.register(InvestigationLine)
+admin.site.register(Student)

@@ -20,7 +20,7 @@ from django.utils.timezone import now
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds
-from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email
+from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student
 
 
 def index(request, program_slug):
@@ -150,7 +150,7 @@ def create_student(request, program_slug):
 @login_required
 def students_list(request, program_slug, scope):
     program=Program.objects.get(slug=program_slug)
-    if user_is_program_member(request.user, program):
+    if user_is_program_member(request.user, program) or user_is_program_student(request.user,program):
         if scope == 'all':
             context = {
                 'program': program,
