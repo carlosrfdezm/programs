@@ -128,158 +128,473 @@
                     </li>
                     {% user_is_program_cs user program as user_is_program_cs %}
 
+{# Opciones para doctorados#}
 
-                    <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link" title="Estudiantes y solicitantes">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>
-                                Estudiantes
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            {% if user_is_program_cs %}
+                    {% if program.type == 'phd' %}
+
+
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Estudiantes y solicitantes">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>
+                                    Estudiantes
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {% if user_is_program_cs %}
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_student' program.slug %}" class="nav-link">
+                                            <i class="fa fa-plus nav-icon"></i>
+                                            <p>Nuevo</p>
+                                        </a>
+                                    </li>
+                                {% endif %}
                                 <li class="nav-item">
-                                    <a href="{% url 'programs:create_student' program.slug %}" class="nav-link">
-                                        <i class="fa fa-plus nav-icon"></i>
-                                        <p>Nuevo</p>
+                                    <a href="{% url 'programs:students_list' program.slug 'requesters' %}" class="nav-link">
+                                        <i class="fa fa-check nav-icon"></i>
+                                        <p>Solicitantes</p>
                                     </a>
                                 </li>
-                            {% endif %}
-                            <li class="nav-item">
-                                <a href="{% url 'programs:students_list' program.slug 'requesters' %}" class="nav-link">
-                                    <i class="fa fa-check nav-icon"></i>
-                                    <p>Solicitantes</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'programs:students_list' program.slug 'aproved' %}" class="nav-link">
-                                    <i class="fa fa-thumbs-up nav-icon"></i>
-                                    <p>Doctorandos</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'programs:students_list' program.slug 'graduated' %}" class="nav-link">
-                                    <i class="fa fa-graduation-cap nav-icon"></i>
-                                    <p>Graduados</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'programs:students_list' program.slug 'all' %}" class="nav-link">
-                                    <i class="fa fa-list-ul nav-icon"></i>
-                                    <p>Todos</p>
-                                </a>
-                            </li>
-
-                        </ul>
-                    </li>
-                    <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link" title="Profesores y tutores del programa">
-                            <i class="nav-icon fas fa-user-check"></i>
-                            <p>
-                                Claustro
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            {% if user_is_program_cs %}
                                 <li class="nav-item">
-                                    <a href="{% url 'programs:create_professor' program.slug %}" class="nav-link" title="Agregar profesor">
-                                        <i class="fa fa-plus"></i>
-                                        <p>Nuevo</p>
+                                    <a href="{% url 'programs:students_list' program.slug 'aproved' %}" class="nav-link">
+                                        <i class="fa fa-thumbs-up nav-icon"></i>
+                                        <p>Doctorandos</p>
                                     </a>
                                 </li>
-                            {% endif %}
-                            <li class="nav-item">
-                                <a href="{% url 'programs:members_list' program.slug 'comite' %}" class="nav-link">
-                                    <i class="fa fa-users"></i>
-                                    <p>Comité</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'programs:members_list' program.slug 'professors' %}" class="nav-link">
-                                    <i class="fa fa-chalkboard-teacher"></i>
-                                    <p>Profesores</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'programs:members_list' program.slug 'tutors' %}" class="nav-link">
-                                    <i class="fa fa-book-open"></i>
-                                    <p>Tutores</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'programs:members_list' program.slug 'all' %}" class="nav-link">
-                                    <i class="fa fa-list"></i>
-                                    <p>Todos</p>
-                                </a>
-                            </li>
-
-                        </ul>
-                    </li>
-                    <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link" title="Líneas de investigación del programa">
-                            <i class="nav-icon fas fa-project-diagram"></i>
-                            <p>
-                                Líneas
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            {% if user_is_program_cs %}
-                            <li class="nav-item">
-                                <a href="{% url 'programs:create_line' program.slug %}" class="nav-link">
-                                    <i class="fa fa-plus"></i>
-                                    <p>Nueva</p>
-                                </a>
-                            </li>
-                            {% endif %}
-                            <li class="nav-item">
-                                <a href="{% url 'programs:program_lines' program.slug %}" class="nav-link">
-                                    <i class="fa fa-list"></i>
-                                    <p>Ver líneas</p>
-                                </a>
-                            </li>
-
-
-                        </ul>
-                    </li>
-                    <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link" title="Proyectos asociados al programa">
-                            <i class="nav-icon fas fa-edit"></i>
-                            <p>
-                                Proyectos
-                                <i class="fas fa-angle-left right"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            {% if user_is_program_cs %}
-
                                 <li class="nav-item">
-                                    <a href="{% url 'programs:create_project' program.slug %}" class="nav-link">
-                                        <i class="fa fa-plus nav-icon"></i>
-                                        <p>Nuevo</p>
+                                    <a href="{% url 'programs:students_list' program.slug 'graduated' %}" class="nav-link">
+                                        <i class="fa fa-graduation-cap nav-icon"></i>
+                                        <p>Graduados</p>
                                     </a>
-
                                 </li>
-                            {% endif %}
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:students_list' program.slug 'all' %}" class="nav-link">
+                                        <i class="fa fa-list-ul nav-icon"></i>
+                                        <p>Todos</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Profesores y tutores del programa">
+                                <i class="nav-icon fas fa-user-check"></i>
+                                <p>
+                                    Claustro
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {% if user_is_program_cs %}
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_professor' program.slug %}" class="nav-link" title="Agregar profesor">
+                                            <i class="fa fa-plus"></i>
+                                            <p>Nuevo</p>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:members_list' program.slug 'comite' %}" class="nav-link">
+                                        <i class="fa fa-users"></i>
+                                        <p>Comité</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:members_list' program.slug 'professors' %}" class="nav-link">
+                                        <i class="fa fa-chalkboard-teacher"></i>
+                                        <p>Profesores</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:members_list' program.slug 'tutors' %}" class="nav-link">
+                                        <i class="fa fa-book-open"></i>
+                                        <p>Tutores</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:members_list' program.slug 'all' %}" class="nav-link">
+                                        <i class="fa fa-list"></i>
+                                        <p>Todos</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Líneas de investigación del programa">
+                                <i class="nav-icon fas fa-project-diagram"></i>
+                                <p>
+                                    Líneas
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {% if user_is_program_cs %}
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_line' program.slug %}" class="nav-link">
+                                            <i class="fa fa-plus"></i>
+                                            <p>Nueva</p>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:program_lines' program.slug %}" class="nav-link">
+                                        <i class="fa fa-list"></i>
+                                        <p>Ver líneas</p>
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Proyectos asociados al programa">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>
+                                    Proyectos
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {% if user_is_program_cs %}
+
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_project' program.slug %}" class="nav-link">
+                                            <i class="fa fa-plus nav-icon"></i>
+                                            <p>Nuevo</p>
+                                        </a>
+
+                                    </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:projects_list' program.slug %}" class="nav-link">
+                                        <i class="fa fa-list nav-icon"></i>
+                                        <p>Ver lista</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        {%  if user_is_program_cs %}
                             <li class="nav-item">
-                                <a href="{% url 'programs:projects_list' program.slug %}" class="nav-link">
-                                    <i class="fa fa-list nav-icon"></i>
-                                    <p>Ver lista</p>
+                                <a href="{% url 'programs:program_statistics' program.slug %}" class="nav-link" title="Estadísticas del programa">
+                                    <i class="fa fa-chart-line nav-icon"></i>
+                                    <p>Estadísticas</p>
+                                </a>
+                            </li>
+                        {% endif %}
+{#                        Opciones para Maestrias#}
+                    {% elif program.type == 'msc' %}
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Estudiantes y solicitantes">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>
+                                    Estudiantes
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {% if user_is_program_cs %}
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_student' program.slug %}" class="nav-link">
+                                            <i class="fa fa-plus nav-icon"></i>
+                                            <p>Nuevo</p>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:students_list' program.slug 'requesters' %}" class="nav-link">
+                                        <i class="fa fa-check nav-icon"></i>
+                                        <p>Solicitantes</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:students_list' program.slug 'aproved' %}" class="nav-link">
+                                        <i class="fa fa-thumbs-up nav-icon"></i>
+                                        <p>Doctorandos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:students_list' program.slug 'graduated' %}" class="nav-link">
+                                        <i class="fa fa-graduation-cap nav-icon"></i>
+                                        <p>Graduados</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:students_list' program.slug 'all' %}" class="nav-link">
+                                        <i class="fa fa-list-ul nav-icon"></i>
+                                        <p>Todos</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Profesores y tutores del programa">
+                                <i class="nav-icon fas fa-user-check"></i>
+                                <p>
+                                    Claustro
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {% if user_is_program_cs %}
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_professor' program.slug %}" class="nav-link" title="Agregar profesor">
+                                            <i class="fa fa-plus"></i>
+                                            <p>Nuevo</p>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:members_list' program.slug 'comite' %}" class="nav-link">
+                                        <i class="fa fa-users"></i>
+                                        <p>Comité</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:members_list' program.slug 'professors' %}" class="nav-link">
+                                        <i class="fa fa-chalkboard-teacher"></i>
+                                        <p>Profesores</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:members_list' program.slug 'tutors' %}" class="nav-link">
+                                        <i class="fa fa-book-open"></i>
+                                        <p>Tutores</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:members_list' program.slug 'all' %}" class="nav-link">
+                                        <i class="fa fa-list"></i>
+                                        <p>Todos</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Líneas de investigación del programa">
+                                <i class="nav-icon fas fa-project-diagram"></i>
+                                <p>
+                                    Líneas
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {% if user_is_program_cs %}
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_line' program.slug %}" class="nav-link">
+                                            <i class="fa fa-plus"></i>
+                                            <p>Nueva</p>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:program_lines' program.slug %}" class="nav-link">
+                                        <i class="fa fa-list"></i>
+                                        <p>Ver líneas</p>
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Proyectos asociados al programa">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>
+                                    Proyectos
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {% if user_is_program_cs %}
+
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_project' program.slug %}" class="nav-link">
+                                            <i class="fa fa-plus nav-icon"></i>
+                                            <p>Nuevo</p>
+                                        </a>
+
+                                    </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:projects_list' program.slug %}" class="nav-link">
+                                        <i class="fa fa-list nav-icon"></i>
+                                        <p>Ver lista</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        {%  if user_is_program_cs %}
+                            <li class="nav-item">
+                                <a href="{% url 'programs:program_statistics' program.slug %}" class="nav-link" title="Estadísticas del programa">
+                                    <i class="fa fa-chart-line nav-icon"></i>
+                                    <p>Estadísticas</p>
                                 </a>
                             </li>
 
-                        </ul>
-                    </li>
-                {%  if user_is_program_cs %}
-                    <li class="nav-item">
-                        <a href="{% url 'programs:program_statistics' program.slug %}" class="nav-link" title="Estadísticas del programa">
-                            <i class="fa fa-chart-line nav-icon"></i>
-                            <p>Estadísticas</p>
-                        </a>
-                    </li>
-                {% endif %}
+                        {% endif %}
+
+{#                        Opciones para diplomados#}
+
+                     {% elif program.type == 'dip' %}
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Estudiantes y solicitantes">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>
+                                    Estudiantes
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {% if user_is_program_cs %}
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_student' program.slug %}" class="nav-link">
+                                            <i class="fa fa-plus nav-icon"></i>
+                                            <p>Nuevo</p>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:students_list' program.slug 'requesters' %}" class="nav-link">
+                                        <i class="fa fa-check nav-icon"></i>
+                                        <p>Solicitantes</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:students_list' program.slug 'aproved' %}" class="nav-link">
+                                        <i class="fa fa-thumbs-up nav-icon"></i>
+                                        <p>Doctorandos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:students_list' program.slug 'graduated' %}" class="nav-link">
+                                        <i class="fa fa-graduation-cap nav-icon"></i>
+                                        <p>Graduados</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:students_list' program.slug 'all' %}" class="nav-link">
+                                        <i class="fa fa-list-ul nav-icon"></i>
+                                        <p>Todos</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Profesores y tutores del programa">
+                                <i class="nav-icon fas fa-user-check"></i>
+                                <p>
+                                    Claustro
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {% if user_is_program_cs %}
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_professor' program.slug %}" class="nav-link" title="Agregar profesor">
+                                            <i class="fa fa-plus"></i>
+                                            <p>Nuevo</p>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:members_list' program.slug 'comite' %}" class="nav-link">
+                                        <i class="fa fa-users"></i>
+                                        <p>Comité</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:members_list' program.slug 'professors' %}" class="nav-link">
+                                        <i class="fa fa-chalkboard-teacher"></i>
+                                        <p>Profesores</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:members_list' program.slug 'tutors' %}" class="nav-link">
+                                        <i class="fa fa-book-open"></i>
+                                        <p>Tutores</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:members_list' program.slug 'all' %}" class="nav-link">
+                                        <i class="fa fa-list"></i>
+                                        <p>Todos</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Líneas de investigación del programa">
+                                <i class="nav-icon fas fa-project-diagram"></i>
+                                <p>
+                                    Líneas
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {% if user_is_program_cs %}
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_line' program.slug %}" class="nav-link">
+                                            <i class="fa fa-plus"></i>
+                                            <p>Nueva</p>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:program_lines' program.slug %}" class="nav-link">
+                                        <i class="fa fa-list"></i>
+                                        <p>Ver líneas</p>
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Proyectos asociados al programa">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>
+                                    Proyectos
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                {% if user_is_program_cs %}
+
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_project' program.slug %}" class="nav-link">
+                                            <i class="fa fa-plus nav-icon"></i>
+                                            <p>Nuevo</p>
+                                        </a>
+
+                                    </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:projects_list' program.slug %}" class="nav-link">
+                                        <i class="fa fa-list nav-icon"></i>
+                                        <p>Ver lista</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        {%  if user_is_program_cs %}
+                            <li class="nav-item">
+                                <a href="{% url 'programs:program_statistics' program.slug %}" class="nav-link" title="Estadísticas del programa">
+                                    <i class="fa fa-chart-line nav-icon"></i>
+                                    <p>Estadísticas</p>
+                                </a>
+                            </li>
+
+                        {% endif %}
+                    {% endif %}
 
 
                 </ul>
@@ -303,6 +618,7 @@
         <!-- Control sidebar content goes here -->
     </aside>
     <!-- /.control-sidebar -->
+
     <div class="modal fade" id="modal_msg_members">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
