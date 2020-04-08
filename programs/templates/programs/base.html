@@ -272,12 +272,14 @@
 
                         </ul>
                     </li>
+                {%  if user_is_program_cs %}
                     <li class="nav-item">
                         <a href="{% url 'programs:program_statistics' program.slug %}" class="nav-link" title="Estadísticas del programa">
                             <i class="fa fa-chart-line nav-icon"></i>
                             <p>Estadísticas</p>
                         </a>
                     </li>
+                {% endif %}
 
 
                 </ul>
