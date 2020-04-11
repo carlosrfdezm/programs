@@ -142,13 +142,24 @@
             <div class="row">
                 {% for program in programs %}
 
+
                     <div class="col-md-6 col-lg-5 {% cycle 'offset-lg-1 wow' 'wow' %} bounceInUp" data-wow-duration="1.4s" >
-                        <div class="box" style="height: 165px">
-                            <div class="icon"><i class="{{ program.icon }}" style="color: #ff689b;"></i></div>
-                            <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
-                            <p class="description">{{ program.description }}</p>
-                        </div>
+                        {% if program.type == 'phd' %}
+                            <div class="box" style="height: 165px">
+                                <div class="icon"><i class="{{ program.icon }}" style="color: #ff689b;"></i></div>
+                                <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
+                                <p class="description">{{ program.description }}</p>
+                            </div>
+                        {% elif program.type == 'msc' %}
+
+                            <div class="box" style="height: 165px">
+                                <div class="icon"><i class="{{ program.icon }}" style="color: #14bc12;"></i></div>
+                                <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
+                                <p class="description">{{ program.description }}</p>
+                            </div>
+                        {% endif %}
                     </div>
+
                 {% endfor %}
                 {% resetcycle %}
 
@@ -169,29 +180,29 @@
             <div class="row">
                 {% for member in cgc_members %}
 
-                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.{{forloop.counter0}}s">
-                    <div class="member">
-                        {% if member.picture %}
-                        <img src="{% url 'log:cgc_member_picture' member.id %}" class="img-fluid" style="width: 400px; height: auto;" alt="">
+                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.{{forloop.counter0}}s">
+                        <div class="member">
+                            {% if member.picture %}
+                                <img src="{% url 'log:cgc_member_picture' member.id %}" class="img-fluid" style="width: 400px; height: auto;" alt="">
                             {% elif member.gender == 'f' %}
-                            <img src="{% static 'log/img/team-2.jpg' %}" class="img-fluid" alt="">
+                                <img src="{% static 'log/img/team-2.jpg' %}" class="img-fluid" alt="">
                             {% elif member.gender == 'm' %}
-                            <img src="{% static 'log/img/team-1.jpg' %}" class="img-fluid" alt="">
-                        {% endif %}
-                        <div class="member-info">
-                            <div class="member-info-content">
-                                <h4>{{member.name}} {{ member.lastname|truncatewords:1 }}</h4>
-                                <span>{{member.charge}}</span>
-                                <div class="social">
-                                    <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
-                                    <a href="{{ member.fb_contact }}"><i class="fa fa-facebook"></i></a>
-                                    <a href="{{ member.gp_contact }}"><i class="fa fa-google-plus"></i></a>
-                                    <a href="{{ member.in_contact }}"><i class="fa fa-linkedin"></i></a>
+                                <img src="{% static 'log/img/team-1.jpg' %}" class="img-fluid" alt="">
+                            {% endif %}
+                            <div class="member-info">
+                                <div class="member-info-content">
+                                    <h4>{{member.name}} {{ member.lastname|truncatewords:1 }}</h4>
+                                    <span>{{member.charge}}</span>
+                                    <div class="social">
+                                        <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
+                                        <a href="{{ member.fb_contact }}"><i class="fa fa-facebook"></i></a>
+                                        <a href="{{ member.gp_contact }}"><i class="fa fa-google-plus"></i></a>
+                                        <a href="{{ member.in_contact }}"><i class="fa fa-linkedin"></i></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 {% endfor %}
 
 
