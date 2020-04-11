@@ -120,7 +120,8 @@
                                         <strong>Solicitudes de ingreso vs Ingresos</strong>
                                     </p>
 
-                                    <div class="chart">
+
+                                    <div class="chart" id="div_requestChart">
                                         <!-- Sales Chart Canvas -->
                                         <canvas id="requestChart" height="280" style="height: 230px;"></canvas>
                                     </div>
@@ -172,10 +173,10 @@
                                         <strong>Estudiantes por estado</strong>
                                     </p>
 
-                                    <div class="chart-responsive">
+                                    <div class="chart-responsive" id="div_donutChart">
                                         <canvas id="donutChart" height="187"></canvas>
                                     </div>
-                                    <div class="mt-4 text-center small">
+                                    <div class="mt-4 text-center small" id="div_legend">
                                     <span class="mr-2">
                                       <i class="fas fa-exclamation-triangle text-warning"></i> Mueva el cursor sobre las lineas
                                     </span>
@@ -418,6 +419,10 @@
 {% block extra_scripts %}
     <script>
         $(document).ready(function () {
+            var div_court='<div class="jumbotron" style="height: 205px;">'+
+                                        '<h3 class="text-center"><i class="text-warning fas fa-exclamation-triangle"></i> No hay datos disponibles. </h3>'+
+                                    '</div>';
+
             $.ajax({
                 url : "{% url 'programs:ajx_this_year_requests' program.slug %}", // the endpoint
                 type : "GET", // http method
@@ -493,8 +498,8 @@
                     }
 
                     else {
-                        var div_court='<div id="div_pie" class="card-body"><div class="alert alert-warning"><h5 class="text-center">No hay datos disponibles.</h5></div></div>'
-                        $('#div_pie').replaceWith(div_court);
+
+                        $('#div_requestChart').replaceWith(div_court);
 
                     }
 
@@ -550,8 +555,8 @@
                         });
                     }
                     else {
-                        var div_court='<div id="div_pie" class="card-body"><div class="alert alert-warning"><h5 class="text-center">No hay datos disponibles.</h5></div></div>'
-                        $('#div_pie').replaceWith(div_court);
+                        $('#div_donutChart').replaceWith(div_court);
+                        $('#div_legend').remove();
 
                     }
 
