@@ -157,6 +157,13 @@
                                 <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
                                 <p class="description">{{ program.description }}</p>
                             </div>
+                        {% elif program.type == 'dip' %}
+
+                            <div class="box" style="height: 165px">
+                                <div class="icon"><i class="{{ program.icon }}" style="color: #0b0fff;"></i></div>
+                                <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
+                                <p class="description">{{ program.description }}</p>
+                            </div>
                         {% endif %}
                     </div>
 
