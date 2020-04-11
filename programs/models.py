@@ -149,6 +149,24 @@ class Student(models.Model):
     def __str__(self):
         return self.user.get_full_name()
 
+class MscStudent(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20,null=True, blank=True)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    request_date= models.DateField(default=now)
+    graduate_date = models.DateField(null=True)
+    init_date = models.DateField(null=True)
+    country=models.CharField(max_length=70, default='Cuba')
+    picture=models.ImageField(upload_to=student_directory_path, null=True)
+    gender=models.CharField(max_length=1, default='f')
+    birth_date=models.DateField(default=now)
+    dni=models.CharField(max_length=11, default='12345678901')
+    status = models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'), ('maestrante', 'Maestrante'),
+                                                      ('graduado', 'Graduado')])
+
+    def __str__(self):
+        return self.user.get_full_name()
+
 class PhdStudent(models.Model):
     student = models.OneToOneField(Student,on_delete=models.CASCADE)
     status= models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'),('doctorando','Doctorando'), ('graduado', 'Graduado')])
@@ -182,7 +200,8 @@ class ProgramFinishRequirements(models.Model):
         return self.name
 
 class StudentInitRequirement(models.Model):
-    student= models.ForeignKey(Student, on_delete=models.CASCADE)
+    student= models.ForeignKey(Student, null=True, on_delete=models.CASCADE)
+    msc_student= models.ForeignKey(MscStudent, null=True, on_delete=models.CASCADE)
     requirement= models.ForeignKey(ProgramInitRequirements, on_delete=models.CASCADE)
     accomplished = models.BooleanField(default=False, help_text='Verdadero si esta satisfecho, Falso si lo contrario')
 
