@@ -115,7 +115,7 @@ class ProgramMember(models.Model):
     birth_date = models.DateField(default='1960-01-01', help_text='Fecha de nacimiento')
     degree = models.CharField(max_length=100,
                                    help_text='Grado cientifico')
-    picture = models.ImageField(null=True, upload_to=member_directory_path)
+    picture = models.ImageField(null=True, blank=True, upload_to=member_directory_path)
     fb_contact = models.CharField(max_length=50, null=True, blank=True,
                                   help_text='Contacto de Facebook del miembro del tribunal')
     tw_contact = models.CharField(max_length=50, null=True, blank=True,

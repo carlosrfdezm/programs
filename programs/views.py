@@ -19,7 +19,7 @@ from django.utils.timezone import now
 
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
-    InvestigationProject, ProgramBackgrounds
+    InvestigationProject, ProgramBackgrounds, MscStudent
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student
 
 
@@ -40,16 +40,34 @@ def index(request, program_slug):
 def home(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     if program.type == 'phd':
-        context={
+        context = {
             'program': program,
             'requesters': PhdStudent.objects.filter(student__program=program, status='solicitante').__len__(),
             'doctorands': PhdStudent.objects.filter(student__program=program, status='doctorando').__len__(),
             'graduated': PhdStudent.objects.filter(student__program=program, status='graduado').__len__(),
-            'last_requesters': PhdStudent.objects.filter(student__program=program, status='solicitante').order_by('-student__request_date')[:4],
-            'last_aproved': PhdStudent.objects.filter(student__program=program, status='doctorando').order_by('-student__request_date')[:4],
-            'last_graduated': PhdStudent.objects.filter(student__program=program, status='graduado').order_by('-student__request_date')[:4],
+            'last_requesters': PhdStudent.objects.filter(student__program=program, status='solicitante').order_by(
+                '-student__request_date')[:4],
+            'last_aproved': PhdStudent.objects.filter(student__program=program, status='doctorando').order_by(
+                '-student__request_date')[:4],
+            'last_graduated': PhdStudent.objects.filter(student__program=program, status='graduado').order_by(
+                '-student__request_date')[:4],
 
         }
+        return render(request, 'programs/phd_home.html', context)
+    elif program.type == 'msc':
+        context = {
+            'program': program,
+            'requesters': MscStudent.objects.filter(program=program, status='solicitante').__len__(),
+            'doctorands': MscStudent.objects.filter(program=program, status='maestrante').__len__(),
+            'graduated': MscStudent.objects.filter(program=program, status='graduado').__len__(),
+            'last_requesters': MscStudent.objects.filter(program=program, status='solicitante').order_by(
+                '-request_date')[:4],
+            'last_aproved': MscStudent.objects.filter(program=program, status='doctorando').order_by('-init_date')[:4],
+            'last_graduated': MscStudent.objects.filter(program=program, status='graduado').order_by('-graduate_date')[
+                              :4],
+
+        }
+
         return render(request, 'programs/phd_home.html', context)
     else:
         pass
