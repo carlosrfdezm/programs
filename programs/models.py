@@ -106,7 +106,7 @@ class ProgramMember(models.Model):
         (Femenino, 'Femenino'),
     )
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     role = models.CharField(max_length=50, choices=ROLE_CHOICES)
     country = models.CharField(max_length=70, default='Cuba')
