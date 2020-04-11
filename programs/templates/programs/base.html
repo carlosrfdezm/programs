@@ -288,6 +288,32 @@
                     {% elif program.type == 'msc' %}
                         <li class="nav-item has-treeview">
                             <a href="#" class="nav-link" title="Estudiantes y solicitantes">
+                                <i class="nav-icon fas fa-book-reader"></i>
+                                <p>
+                                    Ediciones
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+
+
+                                <li class="nav-item">
+                                    <a href="" class="nav-link">
+                                        <i class="fa fa-plus nav-icon"></i>
+                                        <p>Nueva</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:students_list' program.slug 'all' %}" class="nav-link">
+                                        <i class="fa fa-list-ul nav-icon"></i>
+                                        <p>Ver ediciones</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Estudiantes y solicitantes">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>
                                     Estudiantes
@@ -295,14 +321,7 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
-                                {% if user_is_program_cs %}
-                                    <li class="nav-item">
-                                        <a href="{% url 'programs:create_student' program.slug %}" class="nav-link">
-                                            <i class="fa fa-plus nav-icon"></i>
-                                            <p>Nuevo</p>
-                                        </a>
-                                    </li>
-                                {% endif %}
+
                                 <li class="nav-item">
                                     <a href="{% url 'programs:students_list' program.slug 'requesters' %}" class="nav-link">
                                         <i class="fa fa-check nav-icon"></i>
@@ -312,7 +331,7 @@
                                 <li class="nav-item">
                                     <a href="{% url 'programs:students_list' program.slug 'aproved' %}" class="nav-link">
                                         <i class="fa fa-thumbs-up nav-icon"></i>
-                                        <p>Doctorandos</p>
+                                        <p>Maestrantes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
