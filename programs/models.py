@@ -211,6 +211,7 @@ class StudentInitRequirement(models.Model):
 
 class StudentFinishRequirement(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    msc_student= models.ForeignKey(MscStudent, null=True, on_delete=models.CASCADE)
     requirement = models.ForeignKey(ProgramFinishRequirements, on_delete=models.CASCADE)
     accomplished = models.BooleanField(default=False, help_text='Verdadero si esta satisfecho, Falso si lo contrario')
 
