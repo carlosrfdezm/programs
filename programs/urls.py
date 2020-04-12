@@ -29,6 +29,9 @@ urlpatterns = [
     path('projects/<int:project_id>/edit', views.edit_project, name='edit_project'),
     path('projects/list', views.projects_list, name='projects_list'),
 
+    path('editions/create',views.create_program_edition, name='create_program_edition'),
+    path('editions/list',views.editions_list, name='editions_list'),
+
 
     path('ajx/user/exists', views.ajx_usr_exists, name='ajx_usr_exists'),
     path('ajx/student/delete', views.ajx_delete_student, name='ajx_delete_student'),

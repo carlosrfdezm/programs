@@ -19,7 +19,7 @@ from django.utils.timezone import now
 
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
-    InvestigationProject, ProgramBackgrounds, MscStudent
+    InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student
 
 
@@ -211,7 +211,7 @@ def students_list(request, program_slug, scope):
                 context = {
                     'program': program,
                     'students': MscStudent.objects.filter(program=program, status='maestrante'),
-                    'scope': 'Doctorandos',
+                    'scope': 'Maestrantes',
                 }
             elif scope == 'graduated':
                 context = {
@@ -1251,3 +1251,42 @@ def program_statistics(request, program_slug):
             'program':program,
         }
         return render(request, 'programs/statistics.html', context)
+
+@login_required
+def create_program_edition(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user,program):
+        if program.type != 'phd':
+            if request.method == 'POST':
+                new_edition= ProgramEdition(
+                    program=program,
+                    init_date=request.POST['init_date'],
+                    end_date=request.POST['end_date'],
+                    observations=request.POST['observations'],
+
+                )
+                try:
+                    new_edition.order = ProgramEdition.objects.filter(program=program).__len__()+1
+                except:
+                    pass
+                new_edition.save()
+                return HttpResponseRedirect(reverse('programs:editions_list', args=[program_slug]))
+            else:
+                context={
+                    'program': program,
+                }
+                return render(request, 'programs/create_edition.html', context)
+        else:
+            return  error_500(request,program,'Los programas doctorales de nuevo tipo no tienen ediciones')
+    else:
+        return error_500(request, program, 'Usted no tiene privilegios para agregar ediciones')
+
+
+@login_required
+def editions_list(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    context = {
+        'program': program,
+        'editions': ProgramEdition.objects.filter(program=program)
+    }
+    return render(request, 'programs/editions_list.html', context)

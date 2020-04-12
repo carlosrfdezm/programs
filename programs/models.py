@@ -149,6 +149,17 @@ class Student(models.Model):
     def __str__(self):
         return self.user.get_full_name()
 
+class ProgramEdition(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    order = models.SmallIntegerField(default=1)
+    init_date = models.DateField(default=now)
+    end_date = models.DateField()
+    observations = models.TextField(max_length=250, null=True)
+
+    def __str__(self):
+        return self.order
+
+
 class MscStudent(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=20,null=True, blank=True)
@@ -163,6 +174,7 @@ class MscStudent(models.Model):
     dni=models.CharField(max_length=11, default='12345678901')
     status = models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'), ('maestrante', 'Maestrante'),
                                                       ('graduado', 'Graduado')])
+    edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.get_full_name()
