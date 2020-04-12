@@ -169,32 +169,61 @@ def create_student(request, program_slug):
 def students_list(request, program_slug, scope):
     program=Program.objects.get(slug=program_slug)
     if user_is_program_member(request.user, program) or user_is_program_student(request.user,program):
-        if scope == 'all':
-            context = {
-                'program': program,
-                'students': Student.objects.filter(program=program),
-                'scope':'all',
-            }
-        elif scope == 'requesters':
-            context = {
-                'program': program,
-                'students': Student.objects.filter(program=program, phdstudent__status='solicitante'),
-                'scope': 'Solicitantes',
-            }
-        elif scope == 'aproved':
-            context = {
-                'program': program,
-                'students': Student.objects.filter(program=program, phdstudent__status='doctorando'),
-                'scope': 'Doctorandos',
-            }
-        elif scope == 'graduated':
-            context = {
-                'program': program,
-                'students': Student.objects.filter(program=program, phdstudent__status='graduado'),
-                'scope': 'Graduados',
-            }
+        if program.type == 'phd':
+            if scope == 'all':
+                context = {
+                    'program': program,
+                    'students': Student.objects.filter(program=program),
+                    'scope': 'all',
+                }
+            elif scope == 'requesters':
+                context = {
+                    'program': program,
+                    'students': Student.objects.filter(program=program, phdstudent__status='solicitante'),
+                    'scope': 'Solicitantes',
+                }
+            elif scope == 'aproved':
+                context = {
+                    'program': program,
+                    'students': Student.objects.filter(program=program, phdstudent__status='doctorando'),
+                    'scope': 'Doctorandos',
+                }
+            elif scope == 'graduated':
+                context = {
+                    'program': program,
+                    'students': Student.objects.filter(program=program, phdstudent__status='graduado'),
+                    'scope': 'Graduados',
+                }
+        elif program.type == 'msc':
+            if scope == 'all':
+                context = {
+                    'program': program,
+                    'students': MscStudent.objects.filter(program=program),
+                    'scope': 'all',
+                }
+            elif scope == 'requesters':
+                context = {
+                    'program': program,
+                    'students': MscStudent.objects.filter(program=program, status='solicitante'),
+                    'scope': 'Solicitantes',
+                }
+            elif scope == 'aproved':
+                context = {
+                    'program': program,
+                    'students': MscStudent.objects.filter(program=program, status='maestrante'),
+                    'scope': 'Doctorandos',
+                }
+            elif scope == 'graduated':
+                context = {
+                    'program': program,
+                    'students': MscStudent.objects.filter(program=program, status='graduado'),
+                    'scope': 'Graduados',
+                }
 
-        return render(request, 'programs/students_list.html', context)
+            return render(request, 'programs/students_list.html', context)
+        elif program.type == 'dip':
+            return HttpResponse('Aun no se implementa este tipo de programas')
+
     else:
         return error_500(request, program, 'Usted no tiene acceso a esta página')
 
