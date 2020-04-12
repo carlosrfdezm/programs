@@ -42,11 +42,24 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
+                        {% if program.type == 'phd' %}
 
-                        <div class="info-box-content">
-                            <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'aproved' %}">Doctorandos</a></span>
-                            <span class="info-box-number">{{ doctorands }}</span>
-                        </div>
+                            <div class="info-box-content">
+                                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'aproved' %}">Doctorandos</a></span>
+                                <span class="info-box-number">{{ doctorands }}</span>
+                            </div>
+                        {% elif program.type == 'msc' %}
+                            <div class="info-box-content">
+                                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'aproved' %}">Maestrantes</a></span>
+                                <span class="info-box-number">{{ masters }}</span>
+                            </div>
+
+                        {% elif program.type == 'dip' %}
+                            <div class="info-box-content">
+                                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'aproved' %}">Diplomantes</a></span>
+                                <span class="info-box-number">{{ masters }}</span>
+                            </div>
+                        {% endif %}
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
@@ -217,17 +230,17 @@
                         <div class="card-body p-0">
                             {% if last_requesters.count > 0 %}
                                 <ul class="users-list clearfix">
-                                {% for requester in last_requesters %}
-                                    <li>
-                                    {% if requester.student.picture %}
-                                        <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
-                                        {% else %}
-                                        <i class="text-info fa fa-user fa-5x" ></i>
-                                        {% endif %}
-                                        <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
-                                        <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
-                                    </li>
-                                {% endfor %}
+                                    {% for requester in last_requesters %}
+                                        <li>
+                                            {% if requester.student.picture %}
+                                                <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
+                                            {% else %}
+                                                <i class="text-info fa fa-user fa-5x" ></i>
+                                            {% endif %}
+                                            <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
+                                            <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
+                                        </li>
+                                    {% endfor %}
 
                                 </ul>
 
@@ -276,7 +289,13 @@
                             <h3 class="card-title">Últimos ingresos</h3>
 
                             <div class="card-tools">
-                                <span class="badge badge-danger">Total: {{ doctorands }} doctorando{{ doctorands|pluralize }}</span>
+                                {% if program.type == 'phd' %}
+                                    <span class="badge badge-danger">Total: {{ doctorands }} doctorando{{ doctorands|pluralize }}</span>
+                                {% elif program.type == 'msc' %}
+                                    <span class="badge badge-danger">Total: {{ masters }} maestrante{{ masters|pluralize }}</span>
+                                {% elif program.type == 'msc' %}
+                                    <span class="badge badge-danger">Total: {{ diplomants }} diplomante{{ doctorands|pluralize }}</span>
+                                {% endif %}
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
                                 </button>
                                 {#                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>#}
@@ -285,19 +304,32 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body p-0">
-                           {% if last_aproved.count > 0 %}
+                            {% if last_aproved.count > 0 %}
                                 <ul class="users-list clearfix">
-                                {% for requester in last_aproved %}
-                                    <li>
-                                    {% if requester.student.picture %}
-                                        <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
+                                    {% for requester in last_aproved %}
+                                        {% if program.type == 'phd' %}
+                                            <li>
+                                                {% if requester.student.picture %}
+                                                    <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
+                                                {% else %}
+                                                    <i class="text-danger fa fa-user fa-5x" ></i>
+                                                {% endif %}
+                                                <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
+                                                <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
+                                            </li>
                                         {% else %}
-                                        <i class="text-danger fa fa-user fa-5x" ></i>
+                                            <li>
+                                                {% if requester.picture %}
+                                                    <img src="{% url 'programs:program_student_picture' program.slug requester.id %}" alt="User Image">
+                                                {% elif program.type == 'msc' %}
+                                                    <i class="text-danger fa fa-user fa-5x" ></i>
+                                                {% endif %}
+                                                <a class="users-list-name" href="">{{ requester }}</a>
+                                                <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
+                                            </li>
+
                                         {% endif %}
-                                        <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
-                                        <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
-                                    </li>
-                                {% endfor %}
+                                    {% endfor %}
 
                                 </ul>
 
@@ -330,7 +362,15 @@
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer text-center">
-                            <a href="{% url 'programs:students_list' program.slug 'aproved' %}">Ver todos los doctorandos</a>
+                            <a href="{% url 'programs:students_list' program.slug 'aproved' %}">
+                                {% if program.type == 'phd' %}
+                                    Ver todos los doctorandos
+                                {% elif program.type == 'msc' %}
+                                    Ver todos los maestrantes
+                                {% elif program.type == 'dip' %}
+                                    Ver todos los diplomantes
+                                {% endif %}
+                            </a>
                         </div>
                         <!-- /.card-footer -->
                     </div>
@@ -355,19 +395,19 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body p-0">
-                           {% if last_graduated.count > 0 %}
+                            {% if last_graduated.count > 0 %}
                                 <ul class="users-list clearfix">
-                                {% for requester in last_graduated %}
-                                    <li>
-                                    {% if requester.student.picture %}
-                                        <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
-                                        {% else %}
-                                        <i class="text-success fa fa-user fa-5x" ></i>
-                                        {% endif %}
-                                        <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
-                                        <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
-                                    </li>
-                                {% endfor %}
+                                    {% for requester in last_graduated %}
+                                        <li>
+                                            {% if requester.student.picture %}
+                                                <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
+                                            {% else %}
+                                                <i class="text-success fa fa-user fa-5x" ></i>
+                                            {% endif %}
+                                            <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
+                                            <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
+                                        </li>
+                                    {% endfor %}
 
                                 </ul>
 
@@ -420,8 +460,8 @@
     <script>
         $(document).ready(function () {
             var div_court='<div class="jumbotron" style="height: 205px;">'+
-                                        '<h3 class="text-center"><i class="text-warning fas fa-exclamation-triangle"></i> No hay datos disponibles. </h3>'+
-                                    '</div>';
+                '<h3 class="text-center"><i class="text-warning fas fa-exclamation-triangle"></i> No hay datos disponibles. </h3>'+
+                '</div>';
 
             $.ajax({
                 url : "{% url 'programs:ajx_this_year_requests' program.slug %}", // the endpoint

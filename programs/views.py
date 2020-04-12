@@ -58,7 +58,7 @@ def home(request, program_slug):
         context = {
             'program': program,
             'requesters': MscStudent.objects.filter(program=program, status='solicitante').__len__(),
-            'doctorands': MscStudent.objects.filter(program=program, status='maestrante').__len__(),
+            'masters': MscStudent.objects.filter(program=program, status='maestrante').__len__(),
             'graduated': MscStudent.objects.filter(program=program, status='graduado').__len__(),
             'last_requesters': MscStudent.objects.filter(program=program, status='solicitante').order_by(
                 '-request_date')[:4],
@@ -723,6 +723,7 @@ def ajx_delete_project(request, program_slug):
 
 @login_required
 def ajx_this_year_requests(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
     response_data=[]
     labels = []
     data = []
@@ -735,8 +736,14 @@ def ajx_this_year_requests(request, program_slug):
 
     for i in range(1,now().month+1):
         labels.append(meses[i])
-        data_1.append(Student.objects.filter(request_date__year=now().year,request_date__month=i).__len__())
-        data_2.append(Student.objects.filter(init_date__year=now().year,init_date__month=i).__len__())
+        if program.type == 'phd':
+            data_1.append(Student.objects.filter(request_date__year=now().year,request_date__month=i).__len__())
+            data_2.append(Student.objects.filter(init_date__year=now().year,init_date__month=i).__len__())
+        elif program.type == 'msc':
+            data_1.append(MscStudent.objects.filter(request_date__year=now().year, request_date__month=i).__len__())
+            data_2.append(MscStudent.objects.filter(init_date__year=now().year, init_date__month=i).__len__())
+        elif program.type == 'dip':
+            pass
 
     data.append(data_1)
     data.append(data_2)
@@ -1112,10 +1119,28 @@ def ajx_members_by_age(request, program_slug):
 @login_required
 def ajx_students_by_state(request, program_slug):
     response_data=[]
+    data = []
     program=Program.objects.get(slug=program_slug)
-    response_data.append(PhdStudent.objects.filter(student__program=program, status='Graduado').__len__())
-    response_data.append(PhdStudent.objects.filter(student__program=program, status='Solicitante').__len__())
-    response_data.append(PhdStudent.objects.filter(student__program=program, status='Doctorando').__len__())
+
+    if program.type == 'phd':
+        labels = ['Graduados', 'Soicitantes', 'Doctorandos']
+        data.append(PhdStudent.objects.filter(student__program=program, status='Graduado').__len__())
+        data.append(PhdStudent.objects.filter(student__program=program, status='Solicitante').__len__())
+        data.append(PhdStudent.objects.filter(student__program=program, status='Doctorando').__len__())
+
+        response_data.append(labels)
+        response_data.append(data)
+    elif program.type == 'msc':
+        labels = ['Graduados', 'Soicitantes', 'Maestrantes']
+        data.append(MscStudent.objects.filter(program=program, status='graduado').__len__())
+        data.append(MscStudent.objects.filter(program=program, status='solicitante').__len__())
+        data.append(MscStudent.objects.filter(program=program, status='maestrante').__len__())
+
+        response_data.append(labels)
+        response_data.append(data)
+    elif program.type == 'dip':
+        return HttpResponse('Aun no esta listo este tipo de programa')
+
     return HttpResponse(
         json.dumps(response_data),
         content_type="application/json"
