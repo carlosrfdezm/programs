@@ -257,4 +257,13 @@ class PhdStudentTheme(models.Model):
     def __str__(self):
         return self.description
 
+class MscStudentTheme(models.Model):
+    student=models.OneToOneField(MscStudent, on_delete=models.CASCADE)
+    project=models.ForeignKey(InvestigationProject, null=True, on_delete=models.SET_NULL)
+    line=models.ForeignKey(InvestigationLine, null=True, on_delete=models.SET_NULL)
+    description=models.TextField(max_length=500, null=True)
+
+    def __str__(self):
+        return self.description
+
 

@@ -166,6 +166,93 @@ def create_student(request, program_slug):
 
 
 @login_required
+def create_msc_student(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            try:
+                user = User.objects.get(email=request.POST['student_email'])
+            except User.DoesNotExist:
+                passwd = program_slug + str(random.randint(1000000, 9999999))
+                user = User.objects.create_user(
+                    request.POST['student_email'],
+                    request.POST['student_email'],
+                    passwd,  # Cambiar despues por contrase;a generada
+
+                )
+                user.first_name = request.POST['student_name']
+                user.last_name = request.POST['student_surename']
+                user.save()
+
+            student = MscStudent(
+                user=user,
+                program=program,
+                gender=request.POST['gender'],
+                dni=request.POST['student_dni'],
+                birth_date=request.POST['student_birth_date'],
+                country=request.POST['student_country']
+            )
+            student.save()
+
+            utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+
+            try:
+                student.picture=request.FILES['picture']
+                student.save()
+
+            except:
+                pass
+
+            if program.type=='msc':
+
+                new_theme=MscStudentTheme(
+                    phd_student=new_student,
+                    description=request.POST['theme'],
+                )
+                try:
+                    new_theme.project=InvestigationProject.objects.get(pk=request.POST['investigation_project'])
+                    new_theme.line=InvestigationProject.objects.get(pk=request.POST['investigation_project']).line,
+
+                except:
+                    pass
+
+                new_theme.save()
+            else:
+                return HttpResponse('Tipo de programa aun por crear')
+
+            for requirement in ProgramInitRequirements.objects.filter(program=program):
+
+                if 'student_requirement_' + str(requirement.id) in request.POST:
+                    new_student_requirement = StudentInitRequirement(
+                        student=student,
+                        requirement=requirement,
+                        accomplished=True,
+                    )
+                    new_student_requirement.save()
+
+                else:
+                    new_student_requirement = StudentInitRequirement(
+                        student=student,
+                        requirement=requirement,
+                    )
+                    new_student_requirement.save()
+
+            return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug, 'all']))
+        else:
+            context = {
+                'program': program,
+                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
+                'projects': InvestigationProject.objects.filter(program=program),
+            }
+            if Program.objects.get(slug=program_slug).type == 'phd':
+                return render(request, 'programs/create_phd_student.html', context)
+            else:
+                return HttpResponse('El programa no es un doctorado')
+    else:
+        return HttpResponse('Error, acceso solo a coordinadores y secretarios')
+
+
+@login_required
 def students_list(request, program_slug, scope):
     program=Program.objects.get(slug=program_slug)
     if user_is_program_member(request.user, program) or user_is_program_student(request.user,program):
