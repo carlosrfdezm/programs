@@ -31,6 +31,7 @@ urlpatterns = [
 
     path('editions/create',views.create_program_edition, name='create_program_edition'),
     path('editions/list',views.editions_list, name='editions_list'),
+    path('editions/<int:edition_id>/edit',views.edit_program_edition, name='edit_program_edition'),
 
 
     path('ajx/user/exists', views.ajx_usr_exists, name='ajx_usr_exists'),

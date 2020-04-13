@@ -1290,3 +1290,27 @@ def editions_list(request, program_slug):
         'editions': ProgramEdition.objects.filter(program=program)
     }
     return render(request, 'programs/editions_list.html', context)
+
+@login_required
+def edit_program_edition(request, program_slug, edition_id):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if program.type == 'msc' or program.type == 'dip':
+            if request.method == 'POST':
+                ProgramEdition.objects.filter(pk=edition_id).update(
+                    init_date = request.POST['init_date'],
+                    end_date = request.POST['end_date'],
+                    observations= request.POST['observations'],
+
+                )
+                return HttpResponseRedirect(reverse('programs:editions_list', args=[program_slug]))
+            else:
+                context={
+                    'program':program,
+                    'edition': ProgramEdition.objects.get(pk=edition_id)
+                }
+                return render(request, 'programs/edit_edition.html', context)
+        else:
+            return error_500(request,program, 'Este tipo de programas no tiene ediciones.')
+    else:
+        return error_500(request, program, 'Usted no tiene privilegios para modificar ediciones en este programa.')
