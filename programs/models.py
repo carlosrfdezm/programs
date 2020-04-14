@@ -157,7 +157,7 @@ class ProgramEdition(models.Model):
     observations = models.TextField(max_length=250, null=True)
 
     def __str__(self):
-        return self.order
+        return str(self.order)
 
 
 class MscStudent(models.Model):
@@ -165,14 +165,14 @@ class MscStudent(models.Model):
     phone = models.CharField(max_length=20,null=True, blank=True)
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     request_date= models.DateField(default=now)
-    graduate_date = models.DateField(null=True)
-    init_date = models.DateField(null=True)
+    graduate_date = models.DateField(null=True, blank=True)
+    init_date = models.DateField(null=True, blank=True)
     country=models.CharField(max_length=70, default='Cuba')
-    picture=models.ImageField(upload_to=student_directory_path, null=True)
+    picture=models.ImageField(upload_to=student_directory_path, null=True, blank=True)
     gender=models.CharField(max_length=1, default='f')
     birth_date=models.DateField(default=now)
     dni=models.CharField(max_length=11, default='12345678901')
-    status = models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'), ('maestrante', 'Maestrante'),
+    status = models.CharField(max_length=15,default='solicitante', choices=[('solicitante', 'Solicitante'), ('maestrante', 'Maestrante'),
                                                       ('graduado', 'Graduado')])
     edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
 

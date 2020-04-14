@@ -65,7 +65,7 @@
                             {% for project in projects %}
                                 <tr id="tr_project_{{ project.id }}">
                                     <td><a href="" title="{{ project }}">{{ project|truncatewords:10 }}</a> </td>
-                                    <td><a href="{% url 'programs:students_by_line' program.slug project.line.id %}" title="{{ project.line }}">{{ project.line|truncatewords:10 }}</td>>
+                                    <td><a href="{% url 'programs:students_by_line' program.slug project.line.id %}" title="{{ project.line }}">{{ project.line|truncatewords:10 }}</td>
                                     <td>{{ project.init_date|date:'Y/m/d' }}</td>
                                     <td>{{ project.end_date|date:'Y/m/d' }}</td>
                                     <td class="text-center text-lg">

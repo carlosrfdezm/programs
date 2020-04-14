@@ -80,6 +80,71 @@ def create_student(request, program_slug):
         if request.method == 'POST':
             try:
                 user = User.objects.get(email=request.POST['student_email'])
+                try:
+                    student= Student.objects.get(user=user, program=program)
+                    return error_500(request, program, 'El estudiante ya existe en este programa')
+                except Student.DoesNotExist:
+                    student = Student(
+                        user=user,
+                        program=program,
+                        gender=request.POST['gender'],
+                        dni=request.POST['student_dni'],
+                        birth_date=request.POST['student_birth_date'],
+                    )
+                    student.save()
+
+                    utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
+
+                    try:
+                        student.picture = request.FILES['picture']
+                        student.save()
+
+
+
+                    except:
+                        pass
+
+                    if program.type == 'phd':
+                        new_student = PhdStudent(
+                            student=student,
+                            status='solicitante',
+                        )
+                        new_student.save()
+                        new_theme = PhdStudentTheme(
+                            phd_student=new_student,
+                            description=request.POST['theme'],
+                        )
+                        try:
+                            new_theme.project = InvestigationProject.objects.get(
+                                pk=request.POST['investigation_project'])
+                            new_theme.line = InvestigationProject.objects.get(
+                                pk=request.POST['investigation_project']).line,
+
+                        except:
+                            pass
+
+                        new_theme.save()
+                    else:
+                        return HttpResponse('Tipo de programa aun por crear')
+
+                    for requirement in ProgramInitRequirements.objects.filter(program=program):
+
+                        if 'student_requirement_' + str(requirement.id) in request.POST:
+                            new_student_requirement = StudentInitRequirement(
+                                student=student,
+                                requirement=requirement,
+                                accomplished=True,
+                            )
+                            new_student_requirement.save()
+
+                        else:
+                            new_student_requirement = StudentInitRequirement(
+                                student=student,
+                                requirement=requirement,
+                            )
+                            new_student_requirement.save()
+
+                    return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug, 'all']))
             except User.DoesNotExist:
                 passwd = program_slug + str(random.randint(1000000, 9999999))
                 user = User.objects.create_user(
@@ -190,7 +255,7 @@ def create_msc_student(request, program_slug, edition_id):
                     )
                     student.save()
 
-                    utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+                    utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
 
                     try:
                         student.picture = request.FILES['picture']
@@ -202,7 +267,7 @@ def create_msc_student(request, program_slug, edition_id):
                     if program.type == 'msc':
 
                         new_theme = MscStudentTheme(
-                            msc_student=student,
+                            student=student,
                             description=request.POST['theme'],
                         )
                         try:
@@ -273,7 +338,7 @@ def create_msc_student(request, program_slug, edition_id):
             if program.type=='msc':
 
                 new_theme=MscStudentTheme(
-                    msc_student=student,
+                    student=student,
                     description=request.POST['theme'],
                 )
                 try:
@@ -308,7 +373,7 @@ def create_msc_student(request, program_slug, edition_id):
         else:
             context = {
                 'program': program,
-                'edition':
+                'edition': edition,
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
                 'projects': InvestigationProject.objects.filter(program=program),
             }
@@ -349,6 +414,8 @@ def students_list(request, program_slug, scope):
                     'students': Student.objects.filter(program=program, phdstudent__status='graduado'),
                     'scope': 'Graduados',
                 }
+
+            return render(request, 'programs/students_list.html', context)
         elif program.type == 'msc':
             if scope == 'all':
                 context = {

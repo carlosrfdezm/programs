@@ -202,19 +202,20 @@
                                 {#                            </tr>#}
                                 </tfoot>
                             </table>
-                        {% elif program.type == 'phd' %}
+                        {% elif program.type == 'msc' %}
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                 {% user_is_program_cs user program as user_is_program_cs %}
 
                                 <tr>
+                                    <th class="text-center">Edición</th>
                                     <th>Nombre y apellidos</th>
                                     <th>Fecha<br>(solicitud)</th>
                                     <th>Estado</th>
                                     <th>Fecha de <br>nacimiento</th>
                                     <th>Número de <br>identidad</th>
                                     <th class="text-center">Requisitos<br> (ingreso)</th>
-                                    {% if scope == 'Doctorandos' %}
+                                    {% if scope == 'Maestrantes' %}
                                         <th class="text-center">Requisitos<br> (egreso)</th>
                                     {% endif %}
 
@@ -226,9 +227,10 @@
                                 {% for student in students %}
                                     {% init_requirements_accomplished student program as init_requirements_accomplished %}
                                     <tr id="tr_student_{{ student.id }}">
+                                        <td class="text-center">{{ student.edition }}</td>
                                         <td>{{ student.user.last_name|upper }}, {{ student.user.first_name }}</td>
                                         <td>{{ student.request_date|date:'Y-m-d' }}</td>
-                                        <td>{{ student.phdstudent.status|capfirst }}</td>
+                                        <td>{{ student.status|capfirst }}</td>
                                         <td>{{ student.birth_date|date:'Y-m-d'}}</td>
                                         <td>{{ student.dni }}</td>
                                         <td class="text-center">{% if init_requirements_accomplished %}
@@ -240,7 +242,7 @@
                                              <i class="fa fa-exclamation-triangle" title="Faltan requisitos de ingreso"></i>
                                         </span>
                                         {% endif %} </td>
-                                        {% if scope == 'Doctorandos' %}
+                                        {% if scope == 'Maestrantes' %}
                                             {% finish_requirements_accomplished student program as finish_requirements_accomplished %}
 
                                             <td class="text-center">

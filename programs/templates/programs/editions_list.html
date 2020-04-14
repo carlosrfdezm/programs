@@ -78,7 +78,7 @@
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
 
-                                                <a class="btn btn-primary btn-sm text-white" href="" title="Agregar estudiante"> <i class="fa fa-users"></i></a>
+                                                <a class="btn btn-primary btn-sm text-white" href="{% url 'programs:create_msc_student' program.slug edition.id %}" title="Agregar estudiante"> <i class="fa fa-users"></i></a>
                                                 <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_program_edition' program.slug edition.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
                                                 <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_edition_{{ edition.id }}"><i class="fa fa-eraser"></i></a>
 

@@ -9,11 +9,13 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('home/', views.home, name='home'),
     path('background/<int:background_id>', views.program_background, name='program_background'),
-
+    #Path de estudiantes de doctorados, excepto la lista
     path('students/create', views.create_student, name='create_student'),
     path('students/list/<str:scope>', views.students_list, name='students_list'),
     path('students/<int:student_id>/edit', views.edit_student, name='edit_student'),
     path('students/<int:student_id>/picture', views.program_student_picture, name='program_student_picture'),
+    #Paths de estudiantes de maestria
+    path('msc/students/<int:edition_id>/create', views.create_msc_student, name='create_msc_student'),
 
     path('professors/create', views.create_professor, name='create_professor'),
     path('professors/<int:member_id>/edit', views.edit_member, name='edit_member'),
