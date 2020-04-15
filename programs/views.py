@@ -1611,10 +1611,18 @@ def ajx_members_by_grade(request, program_slug):
 
 @login_required
 def ajx_students_by_sex(request, program_slug):
+
     response_data=[]
     program=Program.objects.get(slug=program_slug)
-    response_data.append(PhdStudent.objects.filter(student__program=program, student__gender='f').__len__())
-    response_data.append(PhdStudent.objects.filter(student__program=program, student__gender='m').__len__())
+    if program.type == 'phd':
+        response_data.append(PhdStudent.objects.filter(student__program=program, student__gender='f').__len__())
+        response_data.append(PhdStudent.objects.filter(student__program=program, student__gender='m').__len__())
+    elif program.type == 'msc':
+        response_data.append(MscStudent.objects.filter(program=program, gender='f').__len__())
+        response_data.append(MscStudent.objects.filter(program=program,gender='m').__len__())
+    elif program.type == 'dip':
+        pass
+
     return HttpResponse(
         json.dumps(response_data),
         content_type="application/json"
