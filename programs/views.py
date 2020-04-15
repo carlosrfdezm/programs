@@ -300,7 +300,7 @@ def create_msc_student(request, program_slug, edition_id):
                             )
                             new_student_requirement.save()
 
-                    return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug, 'all']))
+                    return HttpResponseRedirect(reverse('programs:msc_students_list', args=[program_slug, edition_id, 'all']))
 
 
             except User.DoesNotExist:
@@ -449,6 +449,86 @@ def students_list(request, program_slug, scope):
     else:
         return error_500(request, program, 'Usted no tiene acceso a esta página')
 
+
+@login_required
+def msc_edition_students_list(request, program_slug, edition_id, scope):
+    program=Program.objects.get(slug=program_slug)
+    edition=ProgramEdition.objects.get(pk=edition_id)
+    if user_is_program_member(request.user, program) or user_is_program_student(request.user,program):
+        if program.type == 'msc':
+            if scope == 'all':
+                context = {
+                    'program': program,
+                    'students': MscStudent.objects.filter(program=program),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'all',
+                }
+            elif scope == 'requesters':
+                context = {
+                    'program': program,
+                    'students': MscStudent.objects.filter(program=program, status='solicitante'),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'Solicitantes',
+                }
+            elif scope == 'aproved':
+                context = {
+                    'program': program,
+                    'students': MscStudent.objects.filter(program=program, status='maestrante'),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'Maestrantes',
+                }
+            elif scope == 'graduated':
+                context = {
+                    'program': program,
+                    'students': MscStudent.objects.filter(program=program, status='graduado'),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'Graduados',
+                }
+
+            return render(request, 'programs/msc_students_list.html', context)
+        else:
+            return error_500(request, program, 'El programa debe ser una maestria')
+
+    else:
+        return error_500(request, program, 'Usted no tiene acceso a esta página')
+
+@login_required
+def msc_all_students_list(request, program_slug, scope):
+    program=Program.objects.get(slug=program_slug)
+    if user_is_program_member(request.user, program) or user_is_program_student(request.user,program):
+        if program.type == 'msc':
+            if scope == 'all':
+                context = {
+                    'program': program,
+                    'students': MscStudent.objects.filter(program=program),
+                    'scope': 'all',
+                }
+            elif scope == 'requesters':
+                context = {
+                    'program': program,
+                    'students': MscStudent.objects.filter(program=program, status='solicitante'),
+                    'scope': 'Solicitantes',
+                }
+            elif scope == 'aproved':
+                context = {
+                    'program': program,
+                    'students': MscStudent.objects.filter(program=program, status='maestrante'),
+                    'scope': 'Maestrantes',
+                }
+            elif scope == 'graduated':
+                context = {
+                    'program': program,
+                    'students': MscStudent.objects.filter(program=program, status='graduado'),
+                    'scope': 'Graduados',
+                }
+
+            return render(request, 'programs/msc_students_list.html', context)
+        else:
+            return error_500(request, program, 'El programa debe ser una maestria')
+
+    else:
+        return error_500(request, program, 'Usted no tiene acceso a esta página')
+
 @login_required
 def members_list(request, program_slug, scope):
     program=Program.objects.get(slug=program_slug)
@@ -567,6 +647,99 @@ def edit_student(request, program_slug, student_id):
                 'projects': InvestigationProject.objects.filter(program=program),
             }
             return render(request, 'programs/edit_phd_student.html', context)
+    else:
+        return error_500(request,program,'Usted no tiene privilegios para editar estudiantes de este programa.')
+
+@login_required
+def edit_msc_student(request, program_slug, edition_id, student_id):
+    program= Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            user=MscStudent.objects.get(pk=student_id).user
+            user.first_name=request.POST['student_name']
+            user.last_name=request.POST['student_surename']
+            user.email=request.POST['student_email']
+            user.save()
+
+            MscStudent.objects.filter(pk=student_id).update(
+                phone=request.POST['student_phone'],
+                country=request.POST['student_country'],
+                gender=request.POST['gender'],
+                dni=request.POST['student_dni'],
+                birth_date=request.POST['student_birth_date']
+
+            )
+            if 'request_date' in request.POST and not request.POST['request_date'] == '':
+                MscStudent.objects.filter(pk=student_id).update(
+                    request_date=request.POST['request_date']
+                )
+            if 'init_date' in request.POST and not request.POST['init_date'] == '':
+                MscStudent.objects.filter(pk=student_id).update(
+                    init_date=request.POST['init_date']
+                )
+            if 'graduate_date' in request.POST and not request.POST['graduate_date'] == '':
+                MscStudent.objects.filter(pk=student_id).update(
+                    graduate_date=request.POST['graduate_date']
+                )
+
+            MscStudent.objects.filter(student=Student.objects.get(pk=student_id)).update(
+                status=request.POST['student_status']
+            )
+
+            student_theme, created = MscStudentTheme.objects.get_or_create(
+                student=MscStudent.objects.get(pk=student_id),
+
+            )
+            student_theme.description = request.POST['theme']
+
+            student_theme.save()
+            try:
+                student_theme.project = InvestigationProject.objects.get(pk=request.POST['investigation_project'])
+                student_theme.line = InvestigationProject.objects.get(pk=request.POST['investigation_project']).line
+                student_theme.save()
+            except:
+                pass
+
+            try:
+                if request.FILES['student_picture']:
+                    student=MscStudent.objects.get(pk=student_id)
+                    student.picture=request.FILES['student_picture']
+                    student.save()
+            except:
+                pass
+
+            for requirement in ProgramInitRequirements.objects.filter(program=program):
+                if 'student_requirement_' + str(requirement.id) in request.POST:
+                    s_i_r=StudentInitRequirement.objects.get(msc_student=MscStudent.objects.get(pk=student_id), requirement=requirement)
+                    s_i_r.accomplished=True
+                    s_i_r.save()
+                else:
+                    s_i_r = StudentInitRequirement.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
+                                                               requirement=requirement)
+                    s_i_r.accomplished = False
+                    s_i_r.save()
+            for requirement in ProgramFinishRequirements.objects.filter(program=program):
+                if 'student_f_requirement_' + str(requirement.id) in request.POST:
+                    s_f_r=StudentFinishRequirement.objects.get(msc_student=MscStudent.objects.get(pk=student_id), requirement=requirement)
+                    s_f_r.accomplished=True
+                    s_f_r.save()
+                else:
+                    s_f_r = StudentFinishRequirement.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
+                                                                 requirement=requirement)
+                    s_f_r.accomplished = False
+                    s_f_r.save()
+
+            return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug,'all']))
+        else:
+            context = {
+                'program': program,
+                'edition': ProgramEdition.objects.get(pk=edition_id),
+                'student': Student.objects.get(pk=student_id),
+                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
+                'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
+                'projects': InvestigationProject.objects.filter(program=program),
+            }
+            return render(request, 'programs/edit_msc_student.html', context)
     else:
         return error_500(request,program,'Usted no tiene privilegios para editar estudiantes de este programa.')
 
