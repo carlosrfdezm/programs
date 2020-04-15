@@ -46,7 +46,7 @@
                     <!-- /.card-header -->
                     <div class="card-body">
 
-                        {% if program.type == 'msc' %}
+
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                 {% user_is_program_cs user program as user_is_program_cs %}
@@ -106,7 +106,7 @@
                                                 <div class="btn-group" role="group">
                                                     <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
 
-                                                    <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_msc_student' program.slug edition.id student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
+                                                    <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_msc_student' program.slug student.edition.id student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
                                                     <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_student_{{ student.id }}"><i class="fa fa-eraser"></i></a>
 
                                                 </div>
@@ -208,7 +208,7 @@
                                 </tfoot>
                             </table>
 
-                        {% endif %}
+
                     </div>
                     <!-- /.card-body -->
                 </div>

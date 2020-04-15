@@ -682,7 +682,7 @@ def edit_msc_student(request, program_slug, edition_id, student_id):
                     graduate_date=request.POST['graduate_date']
                 )
 
-            MscStudent.objects.filter(student=Student.objects.get(pk=student_id)).update(
+            MscStudent.objects.filter(pk=student_id).update(
                 status=request.POST['student_status']
             )
 
@@ -729,12 +729,12 @@ def edit_msc_student(request, program_slug, edition_id, student_id):
                     s_f_r.accomplished = False
                     s_f_r.save()
 
-            return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug,'all']))
+            return HttpResponseRedirect(reverse('programs:msc_all_students_list', args=[program_slug,'all']))
         else:
             context = {
                 'program': program,
                 'edition': ProgramEdition.objects.get(pk=edition_id),
-                'student': Student.objects.get(pk=student_id),
+                'student': MscStudent.objects.get(pk=student_id),
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
                 'projects': InvestigationProject.objects.filter(program=program),

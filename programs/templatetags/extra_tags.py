@@ -85,7 +85,11 @@ def finish_requirements_accomplished(student, program):
 
 @register.simple_tag
 def student_init_requirement_accomplished(student, program_requirement):
-    student_requirement, created=StudentInitRequirement.objects.get_or_create(student=student, requirement=program_requirement)
+    if program_requirement.program.type == 'phd':
+        student_requirement, created=StudentInitRequirement.objects.get_or_create(student=student, requirement=program_requirement)
+    elif program_requirement.program.type == 'msc':
+        student_requirement, created=StudentInitRequirement.objects.get_or_create(msc_student=student, requirement=program_requirement)
+
     if student_requirement.accomplished:
         return True
     else:
@@ -94,7 +98,12 @@ def student_init_requirement_accomplished(student, program_requirement):
 
 @register.simple_tag
 def student_finish_requirement_accomplished(student, program_requirement):
-    student_requirement, created=StudentFinishRequirement.objects.get_or_create(student=student, requirement=program_requirement)
+    if program_requirement.program.type == 'phd':
+        student_requirement, created=StudentFinishRequirement.objects.get_or_create(student=student, requirement=program_requirement)
+    elif program_requirement.program.type == 'msc':
+        student_requirement, created = StudentFinishRequirement.objects.get_or_create(msc_student=student,
+                                                                                      requirement=program_requirement)
+
     if student_requirement.accomplished:
         return True
     else:
