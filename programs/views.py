@@ -1555,7 +1555,7 @@ def ajx_students_by_state(request, program_slug):
         response_data.append(labels)
         response_data.append(data)
     elif program.type == 'msc':
-        labels = ['Graduados', 'Soicitantes', 'Maestrantes']
+        labels = ['Graduados', 'Solicitantes', 'Maestrantes']
         data.append(MscStudent.objects.filter(program=program, status='graduado').__len__())
         data.append(MscStudent.objects.filter(program=program, status='solicitante').__len__())
         data.append(MscStudent.objects.filter(program=program, status='maestrante').__len__())
