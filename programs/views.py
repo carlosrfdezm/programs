@@ -1245,6 +1245,7 @@ def ajx_last_years_requests(request, program_slug):
 
 @login_required
 def ajx_students_by_line(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
     response_data=[]
     labels = []
     data = []
@@ -1254,7 +1255,11 @@ def ajx_students_by_line(request, program_slug):
     for line in InvestigationLine.objects.filter(program=Program.objects.get(slug=program_slug)):
         i += 1
         labels.append(line.name.split()[0])
-        data.append(PhdStudentTheme.objects.filter(line=line).__len__())
+        if program.type == 'phd':
+            data.append(PhdStudentTheme.objects.filter(line=line).__len__())
+        elif program.type == 'msc':
+            data.append(MscStudentTheme.objects.filter(line=line).__len__())
+
 
 
     response_data.append(labels)
