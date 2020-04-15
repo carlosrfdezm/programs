@@ -68,7 +68,7 @@ def home(request, program_slug):
 
         }
 
-        return render(request, 'programs/phd_home.html', context)
+        return render(request, 'programs/msc_home.html', context)
     else:
         pass
 
@@ -1617,9 +1617,16 @@ def program_member_picture(request, program_slug, member_id):
         return HttpResponse('Error')
 
 def program_student_picture(request, program_slug, student_id):
+    program = Program.objects.get(slug=program_slug)
     fs = FileSystemStorage()
     # filename = Papers.objects.get(pk=paper_id).file_url +  str(Papers.objects.get(pk=paper_id).file)
-    filename = Student.objects.get(pk=student_id).picture.url
+    if program.type == 'phd':
+        filename = Student.objects.get(pk=student_id).picture.url
+    elif program.type == 'msc':
+        filename = MscStudent.objects.get(pk=student_id).picture.url
+    elif program.type == 'dip':
+        pass
+
     if fs.exists(filename):
         with fs.open(filename) as img:
             response = HttpResponse(img, content_type='image/jpeg')

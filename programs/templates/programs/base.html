@@ -287,7 +287,7 @@
 {#                        Opciones para Maestrias#}
                     {% elif program.type == 'msc' %}
                         <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link" title="Estudiantes y solicitantes">
+                            <a href="#" class="nav-link" title="Ediciones del programa">
                                 <i class="nav-icon fas fa-book-reader"></i>
                                 <p>
                                     Ediciones
@@ -323,25 +323,25 @@
                             <ul class="nav nav-treeview">
 
                                 <li class="nav-item">
-                                    <a href="{% url 'programs:students_list' program.slug 'requesters' %}" class="nav-link">
+                                    <a href="{% url 'programs:msc_all_students_list' program.slug 'requesters' %}" class="nav-link">
                                         <i class="fa fa-check nav-icon"></i>
                                         <p>Solicitantes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{% url 'programs:students_list' program.slug 'aproved' %}" class="nav-link">
+                                    <a href="{% url 'programs:msc_all_students_list' program.slug 'aproved' %}" class="nav-link">
                                         <i class="fa fa-thumbs-up nav-icon"></i>
                                         <p>Maestrantes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{% url 'programs:students_list' program.slug 'graduated' %}" class="nav-link">
+                                    <a href="{% url 'programs:msc_all_students_list' program.slug 'graduated' %}" class="nav-link">
                                         <i class="fa fa-graduation-cap nav-icon"></i>
                                         <p>Graduados</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{% url 'programs:students_list' program.slug 'all' %}" class="nav-link">
+                                    <a href="{% url 'programs:msc_all_students_list' program.slug 'all' %}" class="nav-link">
                                         <i class="fa fa-list-ul nav-icon"></i>
                                         <p>Todos</p>
                                     </a>

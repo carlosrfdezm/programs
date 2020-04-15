@@ -29,12 +29,7 @@
                         <span class="info-box-icon bg-info elevation-1"><i class="fas fa-check"></i></span>
 
                         <div class="info-box-content">
-                            {% if program.type == 'phd' %}
-                                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'requesters' %}">Solicitantes</a></span>
-                            {% elif program.type == 'msc' %}
-                                <span class="info-box-text"><a href="{% url 'programs:msc_all_students_list' program.slug 'requesters' %}">Solicitantes</a></span>
-
-                            {% endif %}
+                            <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'requesters' %}">Solicitantes</a></span>
                             <span class="info-box-number">
                   {{ requesters }}
                 </span>
@@ -55,7 +50,7 @@
                             </div>
                         {% elif program.type == 'msc' %}
                             <div class="info-box-content">
-                                <span class="info-box-text"><a href="{% url 'programs:msc_all_students_list' program.slug 'aproved' %}">Maestrantes</a></span>
+                                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'aproved' %}">Maestrantes</a></span>
                                 <span class="info-box-number">{{ masters }}</span>
                             </div>
 
@@ -79,13 +74,7 @@
                         <span class="info-box-icon bg-success elevation-1"><i class="fas fa-graduation-cap"></i></span>
 
                         <div class="info-box-content">
-                            {% if program.type == 'phd' %}
-                                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'graduated' %}">Graduados</a></span>
-                            {% elif program.type == 'msc' %}
-                                <span class="info-box-text"><a href="{% url 'programs:msc_all_students_list' program.slug 'graduated' %}">Graduados</a></span>
-                            {% elif program.type == 'dip' %}
-                                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'graduated' %}">Graduados</a></span>
-                            {% endif %}
+                            <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'graduated' %}">Graduados</a></span>
                             <span class="info-box-number">{{ graduated }}</span>
                         </div>
                         <!-- /.info-box-content -->
@@ -284,11 +273,7 @@
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer text-center">
-                            {% if program.type == 'phd' %}
-                                <a href="{% url 'programs:students_list' program.slug 'requesters' %}">Ver todos los solicitantes</a>
-                            {% elif program.type == 'msc' %}
-                                <a href="{% url 'programs:msc_all_students_list' program.slug 'requesters' %}">Ver todos los solicitantes</a>
-                            {% endif %}
+                            <a href="{% url 'programs:students_list' program.slug 'requesters' %}">Ver todos los solicitantes</a>
                         </div>
                         <!-- /.card-footer -->
                     </div>

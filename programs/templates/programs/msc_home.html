@@ -29,12 +29,9 @@
                         <span class="info-box-icon bg-info elevation-1"><i class="fas fa-check"></i></span>
 
                         <div class="info-box-content">
-                            {% if program.type == 'phd' %}
-                                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'requesters' %}">Solicitantes</a></span>
-                            {% elif program.type == 'msc' %}
+
                                 <span class="info-box-text"><a href="{% url 'programs:msc_all_students_list' program.slug 'requesters' %}">Solicitantes</a></span>
 
-                            {% endif %}
                             <span class="info-box-number">
                   {{ requesters }}
                 </span>
@@ -47,24 +44,13 @@
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
                         <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
-                        {% if program.type == 'phd' %}
 
-                            <div class="info-box-content">
-                                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'aproved' %}">Doctorandos</a></span>
-                                <span class="info-box-number">{{ doctorands }}</span>
-                            </div>
-                        {% elif program.type == 'msc' %}
+
                             <div class="info-box-content">
                                 <span class="info-box-text"><a href="{% url 'programs:msc_all_students_list' program.slug 'aproved' %}">Maestrantes</a></span>
                                 <span class="info-box-number">{{ masters }}</span>
                             </div>
 
-                        {% elif program.type == 'dip' %}
-                            <div class="info-box-content">
-                                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'aproved' %}">Diplomantes</a></span>
-                                <span class="info-box-number">{{ masters }}</span>
-                            </div>
-                        {% endif %}
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
@@ -79,13 +65,7 @@
                         <span class="info-box-icon bg-success elevation-1"><i class="fas fa-graduation-cap"></i></span>
 
                         <div class="info-box-content">
-                            {% if program.type == 'phd' %}
-                                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'graduated' %}">Graduados</a></span>
-                            {% elif program.type == 'msc' %}
                                 <span class="info-box-text"><a href="{% url 'programs:msc_all_students_list' program.slug 'graduated' %}">Graduados</a></span>
-                            {% elif program.type == 'dip' %}
-                                <span class="info-box-text"><a href="{% url 'programs:students_list' program.slug 'graduated' %}">Graduados</a></span>
-                            {% endif %}
                             <span class="info-box-number">{{ graduated }}</span>
                         </div>
                         <!-- /.info-box-content -->
@@ -244,11 +224,11 @@
                                     {% for requester in last_requesters %}
                                         <li>
                                             {% if requester.student.picture %}
-                                                <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
+                                                <img src="{% url 'programs:program_student_picture' program.slug requester.id %}" alt="User Image">
                                             {% else %}
                                                 <i class="text-info fa fa-user fa-5x" ></i>
                                             {% endif %}
-                                            <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
+                                            <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id %}">{{ requester}}</a>
                                             <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
                                         </li>
                                     {% endfor %}
@@ -284,11 +264,9 @@
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer text-center">
-                            {% if program.type == 'phd' %}
-                                <a href="{% url 'programs:students_list' program.slug 'requesters' %}">Ver todos los solicitantes</a>
-                            {% elif program.type == 'msc' %}
+
                                 <a href="{% url 'programs:msc_all_students_list' program.slug 'requesters' %}">Ver todos los solicitantes</a>
-                            {% endif %}
+
                         </div>
                         <!-- /.card-footer -->
                     </div>
@@ -304,13 +282,10 @@
                             <h3 class="card-title">Últimos ingresos</h3>
 
                             <div class="card-tools">
-                                {% if program.type == 'phd' %}
-                                    <span class="badge badge-danger">Total: {{ doctorands }} doctorando{{ doctorands|pluralize }}</span>
-                                {% elif program.type == 'msc' %}
+
+
                                     <span class="badge badge-danger">Total: {{ masters }} maestrante{{ masters|pluralize }}</span>
-                                {% elif program.type == 'msc' %}
-                                    <span class="badge badge-danger">Total: {{ diplomants }} diplomante{{ doctorands|pluralize }}</span>
-                                {% endif %}
+
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
                                 </button>
                                 {#                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>#}
@@ -322,28 +297,18 @@
                             {% if last_aproved.count > 0 %}
                                 <ul class="users-list clearfix">
                                     {% for requester in last_aproved %}
-                                        {% if program.type == 'phd' %}
-                                            <li>
-                                                {% if requester.student.picture %}
-                                                    <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
-                                                {% else %}
-                                                    <i class="text-danger fa fa-user fa-5x" ></i>
-                                                {% endif %}
-                                                <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
-                                                <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
-                                            </li>
-                                        {% else %}
+
                                             <li>
                                                 {% if requester.picture %}
                                                     <img src="{% url 'programs:program_student_picture' program.slug requester.id %}" alt="User Image">
-                                                {% elif program.type == 'msc' %}
+                                                {% else %}
                                                     <i class="text-danger fa fa-user fa-5x" ></i>
                                                 {% endif %}
-                                                <a class="users-list-name" href="">{{ requester }}</a>
+                                                <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id  %}">{{ requester }}</a>
                                                 <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
                                             </li>
 
-                                        {% endif %}
+
                                     {% endfor %}
 
                                 </ul>
@@ -377,14 +342,10 @@
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer text-center">
-                            <a href="{% url 'programs:students_list' program.slug 'aproved' %}">
-                                {% if program.type == 'phd' %}
-                                    Ver todos los doctorandos
-                                {% elif program.type == 'msc' %}
+                            <a href="{% url 'programs:msc_all_students_list' program.slug 'aproved' %}">
+
                                     Ver todos los maestrantes
-                                {% elif program.type == 'dip' %}
-                                    Ver todos los diplomantes
-                                {% endif %}
+
                             </a>
                         </div>
                         <!-- /.card-footer -->
@@ -414,13 +375,13 @@
                                 <ul class="users-list clearfix">
                                     {% for requester in last_graduated %}
                                         <li>
-                                            {% if requester.student.picture %}
-                                                <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
+                                            {% if requester.picture %}
+                                                <img src="{% url 'programs:program_student_picture' program.slug requester.id %}" alt="User Image">
                                             {% else %}
                                                 <i class="text-success fa fa-user fa-5x" ></i>
                                             {% endif %}
-                                            <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
-                                            <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
+                                            <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id %}">{{ requester.student}}</a>
+                                            <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
                                         </li>
                                     {% endfor %}
 
