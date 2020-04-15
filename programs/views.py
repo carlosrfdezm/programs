@@ -1268,16 +1268,27 @@ def ajx_students_by_line(request, program_slug):
 
 @login_required
 def ajx_students_by_age(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
     response_data=[]
     labels = ['<30 años','30-40','40-50','>50 años']
     data = []
 
     # locale.setlocale(locale.LC_ALL, 'es-ES')
     i=0
-    data.append(Student.objects.filter(program=Program.objects.get(slug=program_slug ),birth_date__year__gt=now().year-30 ).__len__())
-    data.append(Student.objects.filter(program=Program.objects.get(slug=program_slug ),birth_date__year__gt=now().year-40, birth_date__year__lt=now().year-30 ).__len__() )
-    data.append(Student.objects.filter(program=Program.objects.get(slug=program_slug ),birth_date__year__gt=now().year-50, birth_date__year__lt=now().year-40 ).__len__() )
-    data.append(Student.objects.filter(program=Program.objects.get(slug=program_slug ), birth_date__year__lt=now().year-50 ).__len__() )
+    if program.type == 'phd':
+        data.append(Student.objects.filter(program=program,birth_date__year__gt=now().year-30 ).__len__())
+        data.append(Student.objects.filter(program=program,birth_date__year__gt=now().year-40, birth_date__year__lt=now().year-30 ).__len__() )
+        data.append(Student.objects.filter(program=program,birth_date__year__gt=now().year-50, birth_date__year__lt=now().year-40 ).__len__() )
+        data.append(Student.objects.filter(program=program, birth_date__year__lt=now().year-50 ).__len__() )
+    elif program.type == 'msc':
+        data.append(MscStudent.objects.filter(program=program, birth_date__year__gt=now().year - 30).__len__())
+        data.append(MscStudent.objects.filter(program=program, birth_date__year__gt=now().year - 40,
+                                           birth_date__year__lt=now().year - 30).__len__())
+        data.append(MscStudent.objects.filter(program=program, birth_date__year__gt=now().year - 50,
+                                           birth_date__year__lt=now().year - 40).__len__())
+        data.append(MscStudent.objects.filter(program=program, birth_date__year__lt=now().year - 50).__len__())
+    elif program.type == 'dip':
+        pass
 
 
     response_data.append(labels)
