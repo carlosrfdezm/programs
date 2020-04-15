@@ -31,7 +31,11 @@ def index(request, program_slug):
             'program': program,
 
         }
-        return render(request,'programs/program_index.html', context)
+        if program.type == 'phd':
+            return render(request, 'programs/phd_index.html', context)
+        elif program.type == 'msc':
+            return render(request, 'programs/msc_index.html', context)
+
     else:
         return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
 
