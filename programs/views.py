@@ -1531,9 +1531,17 @@ def ajx_student_personal_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
     if request.method == 'POST' and request.POST['msg_body'].__len__() <= 500:
         try:
-            send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
+            if program.type == 'phd':
+                send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
                       [Student.objects.get(pk=request.POST['student_id']).user.email,'boris_perez@unah.edu.cu'],
                       fail_silently=False,html_message=request.POST['msg_body'])
+            elif program.type == 'msc':
+                send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
+                          [MscStudent.objects.get(pk=request.POST['student_id']).user.email, 'boris_perez@unah.edu.cu'],
+                          fail_silently=False, html_message=request.POST['msg_body'])
+            elif program.type == 'dip':
+                pass
+
             return HttpResponse(
                 json.dumps([{'sended': 1}]),
                 content_type="application/json"
