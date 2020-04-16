@@ -73,11 +73,10 @@
                                         <i class="fas fa-wrench"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                        <a href="#" class="dropdown-item">Action</a>
-                                        <a href="#" class="dropdown-item">Another action</a>
-                                        <a href="#" class="dropdown-item">Something else here</a>
-                                        <a class="dropdown-divider"></a>
-                                        <a href="#" class="dropdown-item">Separated link</a>
+                                        {% for edition in editions %}
+                                        <a href="{% url 'programs:msc_edition_students_list' program.slug edition.id 'all' %}" class="dropdown-item">Edición {{ edition.order }} </a>
+                                        {% endfor %}
+
                                     </div>
                                 </div>
                                 {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}

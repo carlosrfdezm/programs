@@ -504,24 +504,28 @@ def msc_all_students_list(request, program_slug, scope):
             if scope == 'all':
                 context = {
                     'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
                     'students': MscStudent.objects.filter(program=program),
                     'scope': 'all',
                 }
             elif scope == 'requesters':
                 context = {
                     'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
                     'students': MscStudent.objects.filter(program=program, status='solicitante'),
                     'scope': 'Solicitantes',
                 }
             elif scope == 'aproved':
                 context = {
                     'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
                     'students': MscStudent.objects.filter(program=program, status='maestrante'),
                     'scope': 'Maestrantes',
                 }
             elif scope == 'graduated':
                 context = {
                     'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
                     'students': MscStudent.objects.filter(program=program, status='graduado'),
                     'scope': 'Graduados',
                 }
