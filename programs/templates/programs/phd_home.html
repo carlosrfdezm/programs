@@ -235,7 +235,7 @@
                                             {% if requester.student.picture %}
                                                 <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
                                             {% else %}
-                                                <i class="text-info fa fa-user fa-5x" ></i>
+                                                <i class="text-info fa fa-user fa-5x" style="margin-top: 6px" ></i>
                                             {% endif %}
                                             <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
                                             <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
@@ -289,13 +289,9 @@
                             <h3 class="card-title">Últimos ingresos</h3>
 
                             <div class="card-tools">
-                                {% if program.type == 'phd' %}
+
                                     <span class="badge badge-danger">Total: {{ doctorands }} doctorando{{ doctorands|pluralize }}</span>
-                                {% elif program.type == 'msc' %}
-                                    <span class="badge badge-danger">Total: {{ masters }} maestrante{{ masters|pluralize }}</span>
-                                {% elif program.type == 'msc' %}
-                                    <span class="badge badge-danger">Total: {{ diplomants }} diplomante{{ doctorands|pluralize }}</span>
-                                {% endif %}
+
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
                                 </button>
                                 {#                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>#}
@@ -307,28 +303,17 @@
                             {% if last_aproved.count > 0 %}
                                 <ul class="users-list clearfix">
                                     {% for requester in last_aproved %}
-                                        {% if program.type == 'phd' %}
+
                                             <li>
                                                 {% if requester.student.picture %}
                                                     <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
                                                 {% else %}
-                                                    <i class="text-danger fa fa-user fa-5x" ></i>
+                                                    <i class="text-danger fa fa-user fa-5x" style="margin-top: 6px" ></i>
                                                 {% endif %}
                                                 <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
                                                 <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
                                             </li>
-                                        {% else %}
-                                            <li>
-                                                {% if requester.picture %}
-                                                    <img src="{% url 'programs:program_student_picture' program.slug requester.id %}" alt="User Image">
-                                                {% elif program.type == 'msc' %}
-                                                    <i class="text-danger fa fa-user fa-5x" ></i>
-                                                {% endif %}
-                                                <a class="users-list-name" href="">{{ requester }}</a>
-                                                <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
-                                            </li>
 
-                                        {% endif %}
                                     {% endfor %}
 
                                 </ul>
@@ -402,7 +387,7 @@
                                             {% if requester.student.picture %}
                                                 <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
                                             {% else %}
-                                                <i class="text-success fa fa-user fa-5x" ></i>
+                                                <i class="text-success fa fa-user fa-5x" style="margin-top: 6px" ></i>
                                             {% endif %}
                                             <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
                                             <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
