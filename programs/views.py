@@ -1451,7 +1451,7 @@ def ajx_students_massive_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
     if request.method == 'POST' and request.POST['msg_body'].__len__() <= 500:
         try:
-            email_list = []
+            email_list = ['boris_perez@unah.edu.cu']
             if program.type == 'phd':
                 if request.POST['msg_scope'] == 'requesters':
                     for student in PhdStudent.objects.filter(program=program ,status='solicitante' ):
@@ -1476,7 +1476,7 @@ def ajx_students_massive_msg(request, program_slug ):
                         email_list.append(student.user.email)
 
                 elif request.POST['msg_scope'] == 'graduated':
-                    for student in MscStudent.objects.filter(program=program, status='Graduado'):
+                    for student in MscStudent.objects.filter(program=program, status='graduado'):
                         email_list.append(student.user.email)
 
                 elif request.POST['msg_scope'] == 'all':
@@ -1486,7 +1486,7 @@ def ajx_students_massive_msg(request, program_slug ):
                 pass
 
             if email_list.__len__()<=10:
-                send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.get_full_name + request.user.email,
+                send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
                           email_list, fail_silently=False, html_message=request.POST['msg_body'])
             else:
                 count = email_list.__len__() // 10
@@ -1495,12 +1495,12 @@ def ajx_students_massive_msg(request, program_slug ):
                 for i in range(count):
                     print(i)
                     send_mail(request.POST['msg_subject'], request.POST['msg_body'],
-                              request.user.get_full_name + request.user.email,
+                              request.user.email,
                               email_list[10 * i:10 * (i + 1)], fail_silently=False, html_message=request.POST['msg_body'])
 
                     if rest != 0:
                         send_mail(request.POST['msg_subject'], request.POST['msg_body'],
-                                  request.user.get_full_name + request.user.email,
+                                  request.user.email,
                                   email_list[10 * count:10 * count + rest], fail_silently=False,
                                   html_message=request.POST['msg_body'])
 
