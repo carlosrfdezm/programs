@@ -304,7 +304,7 @@ def create_msc_student(request, program_slug, edition_id):
                             )
                             new_student_requirement.save()
 
-                    return HttpResponseRedirect(reverse('programs:msc_students_list', args=[program_slug, edition_id, 'all']))
+                    return HttpResponseRedirect(reverse('programs:msc_edition_students_list', args=[program_slug, edition_id, 'all']))
 
 
             except User.DoesNotExist:
@@ -373,7 +373,7 @@ def create_msc_student(request, program_slug, edition_id):
                     )
                     new_student_requirement.save()
 
-            return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug, 'all']))
+            return HttpResponseRedirect(reverse('programs:msc_edition_students_list', args=[program_slug, edition_id, 'all']))
         else:
             context = {
                 'program': program,
@@ -463,28 +463,28 @@ def msc_edition_students_list(request, program_slug, edition_id, scope):
             if scope == 'all':
                 context = {
                     'program': program,
-                    'students': MscStudent.objects.filter(program=program),
+                    'students': MscStudent.objects.filter(program=program, edition=edition),
                     'edition': ProgramEdition.objects.get(pk=edition_id),
                     'scope': 'all',
                 }
             elif scope == 'requesters':
                 context = {
                     'program': program,
-                    'students': MscStudent.objects.filter(program=program, status='solicitante'),
+                    'students': MscStudent.objects.filter(program=program, edition=edition, status='solicitante'),
                     'edition': ProgramEdition.objects.get(pk=edition_id),
                     'scope': 'Solicitantes',
                 }
             elif scope == 'aproved':
                 context = {
                     'program': program,
-                    'students': MscStudent.objects.filter(program=program, status='maestrante'),
+                    'students': MscStudent.objects.filter(program=program, edition=edition, status='maestrante'),
                     'edition': ProgramEdition.objects.get(pk=edition_id),
                     'scope': 'Maestrantes',
                 }
             elif scope == 'graduated':
                 context = {
                     'program': program,
-                    'students': MscStudent.objects.filter(program=program, status='graduado'),
+                    'students': MscStudent.objects.filter(program=program, edition=edition, status='graduado'),
                     'edition': ProgramEdition.objects.get(pk=edition_id),
                     'scope': 'Graduados',
                 }
