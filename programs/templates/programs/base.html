@@ -700,7 +700,11 @@
                                 <select class="form-control" id="slc_msg_scope_students" name="msg_scope">
                                     <option value="" selected>Seleccione un contexto</option>
                                     <option value="requesters">A solicitantes</option>
+                                    {% if program.type == 'phd' %}
                                     <option value="aproved">A doctorandos</option>
+                                        {% elif program.type == 'msc' %}
+                                    <option value="aproved">A maestrantes</option>
+                                    {% endif %}
                                     <option value="graduated">A graduados</option>
                                     <option value="all">A todos</option>
                                 </select>
@@ -937,7 +941,7 @@
         $('#frm_msg_students').on('submit', function (e) {
             e.preventDefault();
             $('#modal_msg_students').modal('hide');
-            var url = "{% url 'programs:ajx_phd_students_massive_msg' program.slug %}";
+            var url = "{% url 'programs:ajx_students_massive_msg' program.slug %}";
 
             $.ajax({
                 url : url,

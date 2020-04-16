@@ -1447,25 +1447,43 @@ def ajx_everybody_massive_msg(request, program_slug ):
         )
 
 @login_required
-def ajx_phd_students_massive_msg(request, program_slug ):
+def ajx_students_massive_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
     if request.method == 'POST' and request.POST['msg_body'].__len__() <= 500:
         try:
             email_list = []
-            if request.POST['msg_scope'] == 'requesters':
-                for student in PhdStudent.objects.filter(program=program ,status='Solicitante' ):
-                    email_list.append(student.user.email)
-            elif request.POST['msg_scope']=='aproved':
-                for student in PhdStudent.objects.filter(program=program ,status='Doctorando' ):
-                    email_list.append(student.user.email)
+            if program.type == 'phd':
+                if request.POST['msg_scope'] == 'requesters':
+                    for student in PhdStudent.objects.filter(program=program ,status='solicitante' ):
+                        email_list.append(student.user.email)
+                elif request.POST['msg_scope']=='aproved':
+                    for student in PhdStudent.objects.filter(program=program ,status='doctorando' ):
+                        email_list.append(student.user.email)
+    
+                elif request.POST['msg_scope']=='graduated':
+                    for student in PhdStudent.objects.filter(program=program, status='graduado'):
+                        email_list.append(student.user.email)
+    
+                elif request.POST['msg_scope']=='all':
+                    for student in PhdStudent.objects.filter(program=program):
+                        email_list.append(student.user.email)
+            elif program.type == 'msc':
+                if request.POST['msg_scope'] == 'requesters':
+                    for student in MscStudent.objects.filter(program=program, status='solicitante'):
+                        email_list.append(student.user.email)
+                elif request.POST['msg_scope'] == 'aproved':
+                    for student in MscStudent.objects.filter(program=program, status='maestrante'):
+                        email_list.append(student.user.email)
 
-            elif request.POST['msg_scope']=='graduated':
-                for student in PhdStudent.objects.filter(program=program, status='Graduado'):
-                    email_list.append(student.user.email)
+                elif request.POST['msg_scope'] == 'graduated':
+                    for student in MscStudent.objects.filter(program=program, status='Graduado'):
+                        email_list.append(student.user.email)
 
-            elif request.POST['msg_scope']=='all':
-                for student in PhdStudent.objects.filter(program=program):
-                    email_list.append(student.user.email)
+                elif request.POST['msg_scope'] == 'all':
+                    for student in MscStudent.objects.filter(program=program):
+                        email_list.append(student.user.email)
+            elif program.type == 'dip':
+                pass
 
             if email_list.__len__()<=10:
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.get_full_name + request.user.email,
