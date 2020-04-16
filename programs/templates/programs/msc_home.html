@@ -223,13 +223,13 @@
                                 <ul class="users-list clearfix">
                                     {% for requester in last_requesters %}
                                         <li>
-                                            {% if requester.student.picture %}
+                                            {% if requester.picture %}
                                                 <img src="{% url 'programs:program_student_picture' program.slug requester.id %}" alt="User Image">
                                             {% else %}
-                                                <i class="text-info fa fa-user fa-5x" ></i>
+                                                <i class="text-info fa fa-user fa-5x" style="margin-top: 6px" ></i>
                                             {% endif %}
                                             <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id %}">{{ requester}}</a>
-                                            <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
+                                            <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
                                         </li>
                                     {% endfor %}
 
@@ -302,7 +302,7 @@
                                                 {% if requester.picture %}
                                                     <img src="{% url 'programs:program_student_picture' program.slug requester.id %}" alt="User Image">
                                                 {% else %}
-                                                    <i class="text-danger fa fa-user fa-5x" ></i>
+                                                    <i class="text-danger fa fa-user fa-5x" style="margin-top: 6px" ></i>
                                                 {% endif %}
                                                 <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id  %}">{{ requester }}</a>
                                                 <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
@@ -378,9 +378,9 @@
                                             {% if requester.picture %}
                                                 <img src="{% url 'programs:program_student_picture' program.slug requester.id %}" alt="User Image">
                                             {% else %}
-                                                <i class="text-success fa fa-user fa-5x" ></i>
+                                                <i class="text-success fa fa-user fa-5x" style="margin-top: 6px"></i>
                                             {% endif %}
-                                            <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id %}">{{ requester.student}}</a>
+                                            <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id %}">{{ requester}}</a>
                                             <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
                                         </li>
                                     {% endfor %}

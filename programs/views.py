@@ -66,7 +66,7 @@ def home(request, program_slug):
             'graduated': MscStudent.objects.filter(program=program, status='graduado').__len__(),
             'last_requesters': MscStudent.objects.filter(program=program, status='solicitante').order_by(
                 '-request_date')[:4],
-            'last_aproved': MscStudent.objects.filter(program=program, status='doctorando').order_by('-init_date')[:4],
+            'last_aproved': MscStudent.objects.filter(program=program, status='maestrante').order_by('-init_date')[:4],
             'last_graduated': MscStudent.objects.filter(program=program, status='graduado').order_by('-graduate_date')[
                               :4],
 
