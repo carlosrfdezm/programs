@@ -1354,7 +1354,7 @@ def ajx_member_massive_msg(request, program_slug ):
                     email_list.append(member.user.email)
 
             if email_list.__len__()<=10:
-                send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.get_full_name + request.user.email,
+                send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
                           email_list, fail_silently=False, html_message=request.POST['msg_body'])
             else:
                 count = email_list.__len__() // 10
@@ -1363,12 +1363,12 @@ def ajx_member_massive_msg(request, program_slug ):
                 for i in range(count):
                     print(i)
                     send_mail(request.POST['msg_subject'], request.POST['msg_body'],
-                              request.user.get_full_name + request.user.email,
+                              request.user.email,
                               email_list[10 * i:10 * (i + 1)], fail_silently=False, html_message=request.POST['msg_body'])
 
                     if rest != 0:
                         send_mail(request.POST['msg_subject'], request.POST['msg_body'],
-                                  request.user.get_full_name + request.user.email,
+                                  request.user.email,
                                   email_list[10 * count:10 * count + rest], fail_silently=False,
                                   html_message=request.POST['msg_body'])
 
