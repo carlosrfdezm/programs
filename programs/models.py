@@ -69,6 +69,7 @@ class ProgramBackgrounds(models.Model):
 
 # modelo de miembros de la CGC
 class CGC_Member(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     name=models.CharField(max_length=50, help_text='Nombre', verbose_name='Nombre')
     lastname=models.CharField(max_length=70, help_text='Apellidos', verbose_name='Apellidos')
     charge = models.CharField(max_length=50,choices=[('Presidente','Presidente'),('Secretario','Secretario'),('Miembro','Miembro')], help_text='Cargo', verbose_name='Cargo')
