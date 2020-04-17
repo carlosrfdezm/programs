@@ -1192,6 +1192,7 @@ def ajx_this_year_requests(request, program_slug):
 
 @login_required
 def ajx_by_year_requests(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
     year=request.POST['year']
     response_data=[]
     labels = []
@@ -1205,8 +1206,16 @@ def ajx_by_year_requests(request, program_slug):
 
     for i in range(1,13):
         labels.append(meses[i])
-        data_1.append(Student.objects.filter(request_date__year=year,request_date__month=i).__len__())
-        data_2.append(Student.objects.filter(init_date__year=year,init_date__month=i).__len__())
+        if program.type == 'phd':
+            data_1.append(Student.objects.filter(request_date__year=year,request_date__month=i).__len__())
+            data_2.append(Student.objects.filter(init_date__year=year,init_date__month=i).__len__())
+        elif program.type == 'msc':
+            data_1.append(MscStudent.objects.filter(request_date__year=year, request_date__month=i).__len__())
+            data_2.append(MscStudent.objects.filter(init_date__year=year, init_date__month=i).__len__())
+        elif program.type == 'dip':
+            data_1.append(DipStudent.objects.filter(request_date__year=year, request_date__month=i).__len__())
+            data_2.append(DipStudent.objects.filter(init_date__year=year, init_date__month=i).__len__())
+
 
     data.append(data_1)
     data.append(data_2)
@@ -1261,10 +1270,10 @@ def ajx_graduated_by_edition(request, program_slug):
         labels.append('Edición ' + str(edition.order))
         if program.type == 'msc':
             data.append(
-                MscStudent.objects.filter(program=program, status='graduado').__len__())
+                MscStudent.objects.filter(program=program, edition=edition, status='graduado').__len__())
         elif program.type == 'dip':
             data.append(
-                DipStudent.objects.filter(program=program, status='graduado').__len__())
+                DipStudent.objects.filter(program=program, edition=edition, status='graduado').__len__())
 
     response_data.append(labels)
     response_data.append(data)
