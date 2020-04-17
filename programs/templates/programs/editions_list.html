@@ -85,6 +85,14 @@
 
                                             </div>
                                         </td>
+                                    {% else %}
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+
+                                                <a class="btn btn-success btn-sm text-white" href="{% url 'programs:msc_edition_students_list' program.slug edition.id 'all' %}" title="Ver estudiantes de esta edición"> <i class="fa fa-users"></i></a>
+
+                                            </div>
+                                        </td>
                                     {% endif %}
                                 </tr>
                                 <div class="modal fade" id="modal_rm_edition_{{ edition.id }}">
@@ -141,7 +149,7 @@
             </div>
             <!-- /.col -->
         </div>
-    {% csrf_token %}
+        {% csrf_token %}
         <!-- /.row -->
     </section>
     <!-- /.content -->
@@ -163,7 +171,10 @@
                 timer: 7000
             });
 
-            $("#example1").DataTable();
+            $("#example1").DataTable({
+                language: {
+                    url: '{% static "programs/plugins/datatables/Spanish.json" %}'
+                }});
             $('#example2').DataTable({
                 "paging": true,
                 "lengthChange": false,

@@ -128,7 +128,7 @@
                     </li>
                     {% user_is_program_cs user program as user_is_program_cs %}
 
-{# Opciones para doctorados#}
+                    {# Opciones para doctorados#}
 
                     {% if program.type == 'phd' %}
 
@@ -284,7 +284,7 @@
                                 </a>
                             </li>
                         {% endif %}
-{#                        Opciones para Maestrias#}
+                        {#                        Opciones para Maestrias#}
                     {% elif program.type == 'msc' %}
                         <li class="nav-item has-treeview">
                             <a href="#" class="nav-link" title="Ediciones del programa">
@@ -296,13 +296,14 @@
                             </a>
                             <ul class="nav nav-treeview">
 
-
-                                <li class="nav-item">
-                                    <a href="{% url 'programs:create_program_edition' program.slug %}" class="nav-link">
-                                        <i class="fa fa-plus nav-icon"></i>
-                                        <p>Nueva</p>
-                                    </a>
-                                </li>
+                                {% if user_is_program_cs %}
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:create_program_edition' program.slug %}" class="nav-link">
+                                            <i class="fa fa-plus nav-icon"></i>
+                                            <p>Nueva</p>
+                                        </a>
+                                    </li>
+                                {% endif %}
                                 <li class="nav-item">
                                     <a href="{% url 'programs:editions_list' program.slug %}" class="nav-link">
                                         <i class="fa fa-list-ul nav-icon"></i>
@@ -458,9 +459,9 @@
 
                         {% endif %}
 
-{#                        Opciones para diplomados#}
+                        {#                        Opciones para diplomados#}
 
-                     {% elif program.type == 'dip' %}
+                    {% elif program.type == 'dip' %}
                         <li class="nav-item has-treeview">
                             <a href="#" class="nav-link" title="Estudiantes y solicitantes">
                                 <i class="nav-icon fas fa-users"></i>
@@ -701,9 +702,9 @@
                                     <option value="" selected>Seleccione un contexto</option>
                                     <option value="requesters">A solicitantes</option>
                                     {% if program.type == 'phd' %}
-                                    <option value="aproved">A doctorandos</option>
-                                        {% elif program.type == 'msc' %}
-                                    <option value="aproved">A maestrantes</option>
+                                        <option value="aproved">A doctorandos</option>
+                                    {% elif program.type == 'msc' %}
+                                        <option value="aproved">A maestrantes</option>
                                     {% endif %}
                                     <option value="graduated">A graduados</option>
                                     <option value="all">A todos</option>

@@ -161,7 +161,10 @@
                 timer: 7000
             });
 
-            $("#example1").DataTable();
+            $("#example1").DataTable({
+                language: {
+                    url: '{% static "programs/plugins/datatables/Spanish.json" %}'
+                }});
             $('#example2').DataTable({
                 "paging": true,
                 "lengthChange": false,
