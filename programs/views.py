@@ -1285,6 +1285,7 @@ def ajx_graduated_by_edition(request, program_slug):
 
 @login_required
 def ajx_last_years_requests(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
     response_data=[]
     labels = []
     data = []
@@ -1295,8 +1296,15 @@ def ajx_last_years_requests(request, program_slug):
 
     for i in range(now().year-4,now().year+1):
         labels.append(i)
-        data_1.append(Student.objects.filter(request_date__year=i).__len__())
-        data_2.append(Student.objects.filter(init_date__year=i).__len__())
+        if program.type == 'phd':
+            data_1.append(Student.objects.filter(request_date__year=i).__len__())
+            data_2.append(Student.objects.filter(init_date__year=i).__len__())
+        elif program.type == 'msc':
+            data_1.append(MscStudent.objects.filter(request_date__year=i).__len__())
+            data_2.append(MscStudent.objects.filter(init_date__year=i).__len__())
+        elif program.type == 'dip':
+            data_1.append(DipStudent.objects.filter(request_date__year=i).__len__())
+            data_2.append(DipStudent.objects.filter(init_date__year=i).__len__())
 
     data.append(data_1)
     data.append(data_2)
