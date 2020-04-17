@@ -19,7 +19,7 @@ from django.utils.timezone import now
 
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
-    InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme
+    InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student
 
 
@@ -1214,6 +1214,60 @@ def ajx_by_year_requests(request, program_slug):
     response_data.append(labels)
     response_data.append(data)
 
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_students_by_edition(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    response_data=[]
+    labels = []
+    data = []
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for edition in ProgramEdition.objects.filter(program=program):
+        labels.append('Edición '+str(edition.order))
+        if program.type == 'msc':
+            data.append(MscStudent.objects.filter(Q(status='maestrante')|Q(status='graduado'), program=program, edition=edition).__len__())
+        elif program.type == 'dip':
+            data.append(DipStudent.objects.filter(Q(status='diplomante')|Q(status='graduado'), program=program, edition=edition).__len__())
+
+
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+
+@login_required
+def ajx_graduated_by_edition(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    response_data = []
+    labels = []
+    data = []
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for edition in ProgramEdition.objects.filter(program=program):
+        labels.append('Edición ' + str(edition.order))
+        if program.type == 'msc':
+            data.append(
+                MscStudent.objects.filter(program=program, status='graduado').__len__())
+        elif program.type == 'dip':
+            data.append(
+                DipStudent.objects.filter(program=program, status='graduado').__len__())
+
+    response_data.append(labels)
+    response_data.append(data)
 
     return HttpResponse(
         json.dumps(response_data),

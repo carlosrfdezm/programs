@@ -313,6 +313,102 @@
 
                 <!-- /.col -->
             </div>
+            {% if program.type == 'msc' %}
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Estudiantes por ediciones</strong></h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
+                                {##}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+
+                                    <div class="chart" id="div_barChartEditionStudents">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="barChartEditionStudents"  style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Graduados por ediciones</strong></h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
+                                {##}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+                                    <div class="chart" id="div_barChartEditionsGraduated">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="barChartEditionsGraduated" height="280" style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+
+                <!-- /.col -->
+            </div>
+            {% endif %}
 
 
             <!-- /.row -->
@@ -423,7 +519,7 @@
                 }
             });
             $.ajax({
-                url : "{% url 'programs:ajx_students_by_line' program.slug %}", // the endpoint
+                url : "{% url 'programs:ajx_students_by_edition' program.slug %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -442,7 +538,7 @@
                             labels  : json[0],
                             datasets: [
                                 {
-                                    label               : 'Estudiantes vinculados',
+                                    label               : 'Estudiantes',
                                     backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
                                     borderColor         : 'rgba(11,15,255,0.8)',
                                     pointRadius          : 2,
@@ -478,7 +574,7 @@
                                 }]
                             }
                         };
-                        var barChartCanvas=$('#requestChartLines');
+                        var barChartCanvas=$('#barChartEditionStudents');
                         var barChart       = new Chart(barChartCanvas, {
                             type: 'bar',
                             data: barChartData,
@@ -488,7 +584,7 @@
                     }
 
                     else {
-                        $('#div_requestChartLines').replaceWith(div_court);
+                        $('#div_barChartEditionStudents').replaceWith(div_court);
 
                     }
 

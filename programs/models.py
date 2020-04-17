@@ -179,6 +179,26 @@ class MscStudent(models.Model):
     def __str__(self):
         return self.user.get_full_name()
 
+class DipStudent(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20,null=True, blank=True)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    request_date= models.DateField(default=now)
+    graduate_date = models.DateField(null=True, blank=True)
+    init_date = models.DateField(null=True, blank=True)
+    country=models.CharField(max_length=70, default='Cuba')
+    picture=models.ImageField(upload_to=student_directory_path, null=True, blank=True)
+    gender=models.CharField(max_length=1, default='f')
+    birth_date=models.DateField(default=now)
+    dni=models.CharField(max_length=11, default='12345678901')
+    status = models.CharField(max_length=15,default='solicitante', choices=[('solicitante', 'Solicitante'), ('diplomante', 'Diplomante'),
+                                                      ('graduado', 'Graduado')])
+    edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
+    faculty = models.CharField(max_length=100, help_text='Nombre de la Facultad a la que pertenece')
+
+    def __str__(self):
+        return self.user.get_full_name()
+
 class PhdStudent(models.Model):
     student = models.OneToOneField(Student,on_delete=models.CASCADE)
     status= models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'),('doctorando','Doctorando'), ('graduado', 'Graduado')])

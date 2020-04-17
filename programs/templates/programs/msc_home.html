@@ -228,7 +228,7 @@
                                             {% else %}
                                                 <i class="text-info fa fa-user fa-5x" style="margin-top: 6px" ></i>
                                             {% endif %}
-                                            <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id %}">{{ requester}}</a>
+                                            <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id %}">{{ requester.user.first_name }}</a>
                                             <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
                                         </li>
                                     {% endfor %}
@@ -304,7 +304,7 @@
                                                 {% else %}
                                                     <i class="text-danger fa fa-user fa-5x" style="margin-top: 6px" ></i>
                                                 {% endif %}
-                                                <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id  %}">{{ requester }}</a>
+                                                <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id  %}">{{ requester.user.first_name }}</a>
                                                 <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
                                             </li>
 
@@ -380,7 +380,7 @@
                                             {% else %}
                                                 <i class="text-success fa fa-user fa-5x" style="margin-top: 6px"></i>
                                             {% endif %}
-                                            <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id %}">{{ requester}}</a>
+                                            <a class="users-list-name" href="{% url 'programs:edit_msc_student' program.slug requester.edition.id requester.id %}">{{ requester.user.first_name}}</a>
                                             <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
                                         </li>
                                     {% endfor %}
