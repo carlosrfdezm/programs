@@ -181,8 +181,65 @@
         <div class="container">
             <div class="section-header">
                 <h3>Comisión de Grados</h3>
-                <p>Miembros de la Comisión de Grados Científicos del Complejo Científico Docente. </p>
+                <p>Miembros de la Comisión de Grados Científicos del Complejo Científico Docente.<br>
+                    <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_cgc_login" title="Inicio de sesión de la CGC">Iniciar sesión</button> </p>
+
             </div>
+            <div class="modal fade" id="modal_cgc_login">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Inicio de sesión de la CGC</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <form class="form-horizontal" id="frm_cgc_login" action="{% url 'log:cgc_login' %}" method="post">
+                            {% csrf_token %}
+                            <div class="modal-body alert alert-success">
+                                <div class="alert alert-warning text-center pb-3 alert-dismissible" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <p class="text-sm text-gray">Este acceso es sólo para miembros de la Comisión de Grados Científicos de la UNAH y el Complejo.</p>
+                                </div>
+
+
+                                <div class="form-row pb-2">
+                                    <label class="col-md-3 control-label" for="inp_user">Email:</label>
+                                    <div class="col-md-9">
+                                        <input type="email" id="inp_user" class="form-control" placeholder="Correo electrónico" name="username" required>
+
+                                    </div>
+                                </div>
+
+
+
+                                <div class="form-row">
+                                    <label class="col-md-3 control-label" for="inp_password">Contraseña:</label>
+                                    <div class="col-md-9">
+                                        <input type="password" id="inp_password" class="form-control" placeholder="Contraseña" name="password" required>
+
+                                    </div>
+                                </div>
+
+
+
+
+
+
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-success" id="btn_cgc_login">Iniciar</button>
+                            </div>
+                        </form>
+
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+
 
             <div class="row">
                 {% for member in cgc_members %}

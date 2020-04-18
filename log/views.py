@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
@@ -16,6 +17,34 @@ def index(request):
         'cgc_members':CGC_Member.objects.all().order_by('priority'),
     }
     return render(request,'log/index.html', context)
+
+def cgc_login(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(request, username=username, password=password)
+
+    if user is None:
+        return HttpResponseRedirect(reverse('log:index'))
+    elif user is not None:
+        try:
+            cgc_member=CGC_Member.objects.get(user=user)
+            login(request,user)
+
+            return HttpResponseRedirect(reverse('log:cgc_home'))
+
+        except:
+            return HttpResponse('Pagina de error de acceso cgc')
+
+
+@login_required
+def cgc_home(request):
+    context = {
+        'cgc_member': CGC_Member.objects.get(user=request.user),
+        'phd_programs': Program.objects.filter(type='phd'),
+    }
+    return render(request, 'programs/cgc_home.html', context)
+
+
 
 def mylogin(request):
     username = request.POST['username']
@@ -59,6 +88,10 @@ def mylogin(request):
 def mylogout(request, program_slug):
     logout(request)
     return HttpResponseRedirect(reverse('programs:index',args=[program_slug]))
+
+def cgc_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('log:index'))
 
 def cgc_member_picture(request, member_id):
     fs = FileSystemStorage()
