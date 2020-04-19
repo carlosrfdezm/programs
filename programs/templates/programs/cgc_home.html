@@ -1,7 +1,7 @@
 {% extends 'programs/base.html' %}
 {% load static %}
 
-{% block content %}
+{% block cgc_content %}
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -29,7 +29,7 @@
                         <span class="info-box-icon bg-info elevation-1"><i class="fas fa-check"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text"><a href="">Solicitantes</a></span>
+                            <span class="info-box-text"><a href="" title="Solicitantes de ingreso a los programas doctorales">Solicitantes</a></span>
                             <span class="info-box-number">
                   {{ requesters }}
                 </span>
@@ -45,7 +45,7 @@
 
 
                             <div class="info-box-content">
-                                <span class="info-box-text"><a href="">Doctorandos</a></span>
+                                <span class="info-box-text"><a href="" title="Estudiantes ingresados a los programas doctorales">Doctorandos</a></span>
                                 <span class="info-box-number">{{ doctorands }}</span>
                             </div>
 
@@ -63,7 +63,7 @@
                         <span class="info-box-icon bg-success elevation-1"><i class="fas fa-graduation-cap"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text"><a href="">Graduados</a></span>
+                            <span class="info-box-text"><a href="" title="Graduados de los programas doctorales">Graduados</a></span>
                             <span class="info-box-number">{{ graduated }}</span>
                         </div>
                         <!-- /.info-box-content -->
@@ -76,8 +76,8 @@
                         <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text"><a href="">Miembros</a></span>
-                            <span class="info-box-number"></span>
+                            <span class="info-box-text"><a href="" title="Miembros de la CGC-UNAH-Complejo">Miembros</a></span>
+                            <span class="info-box-number">{{ members }}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
@@ -216,7 +216,7 @@
                 '</div>';
 
             $.ajax({
-                url : "", // the endpoint
+                url : "{% url 'cgc:ajx_cgc_this_year_requests' %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request

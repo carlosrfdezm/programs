@@ -2,6 +2,7 @@ from django.urls import path
 
 
 from . import views
+from . import cgc as cgc_views
 
 app_name = 'programs'
 
@@ -60,6 +61,7 @@ urlpatterns = [
     path('ajx/messages/students/personal', views.ajx_student_personal_msg, name='ajx_student_personal_msg'),
     path('ajx/messages/students/massive', views.ajx_students_massive_msg, name='ajx_students_massive_msg'),
     path('ajx/messages/everybody/massive', views.ajx_everybody_massive_msg, name='ajx_everybody_massive_msg'),
+
 
     path('statistics', views.program_statistics, name='program_statistics'),
 

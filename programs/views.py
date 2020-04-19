@@ -1668,7 +1668,7 @@ def ajx_students_by_state(request, program_slug):
     program=Program.objects.get(slug=program_slug)
 
     if program.type == 'phd':
-        labels = ['Graduados', 'Soicitantes', 'Doctorandos']
+        labels = ['Graduados', 'Solicitantes', 'Doctorandos']
         data.append(PhdStudent.objects.filter(student__program=program, status='graduado').__len__())
         data.append(PhdStudent.objects.filter(student__program=program, status='solicitante').__len__())
         data.append(PhdStudent.objects.filter(student__program=program, status='doctorando').__len__())

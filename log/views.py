@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
@@ -6,9 +8,10 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.urls import reverse
+from django.utils.timezone import now
 
 from programs.apps import ProgramsConfig
-from programs.models import Program, ProgramMember, CGC_Member, Student, MscStudent
+from programs.models import Program, ProgramMember, CGC_Member, Student, MscStudent, PhdStudent
 
 
 def index(request):
@@ -30,19 +33,12 @@ def cgc_login(request):
             cgc_member=CGC_Member.objects.get(user=user)
             login(request,user)
 
-            return HttpResponseRedirect(reverse('log:cgc_home'))
+            return HttpResponseRedirect(reverse('cgc:cgc_home'))
 
         except:
             return HttpResponse('Pagina de error de acceso cgc')
 
 
-@login_required
-def cgc_home(request):
-    context = {
-        'cgc_member': CGC_Member.objects.get(user=request.user),
-        'phd_programs': Program.objects.filter(type='phd'),
-    }
-    return render(request, 'programs/cgc_home.html', context)
 
 
 
@@ -80,9 +76,9 @@ def mylogin(request):
                 except:
                     pass
                 # return HttpResponseRedirect(reverse('courts:auth_error', args=[court_slug, '2' ]))
-                     # TODO si el usuario no es miembro de este tribunal que redireccione al index del tribunal con un error  especifico
+                # TODO si el usuario no es miembro de este tribunal que redireccione al index del tribunal con un error  especifico
     else:
-       HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+        HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
     # TODO si hay error de usuario y contrase;a que redireccione al index del tribunal con un error  especifico
 
 def mylogout(request, program_slug):
@@ -103,3 +99,5 @@ def cgc_member_picture(request, member_id):
             return response
     else:
         return HttpResponse('Error')
+
+
