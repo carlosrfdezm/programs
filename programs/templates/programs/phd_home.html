@@ -539,7 +539,7 @@
             });
 
             $.ajax({
-                url : "{% url 'programs:ajx_students_by_state' program.slug %}", // the endpoint
+                url : "{% url 'cgc:ajx_students_by_state' %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request

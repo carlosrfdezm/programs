@@ -119,7 +119,7 @@
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
                                     <p class="text-center">
-                                        <strong>Solicitudes de ingreso vs Ingresos</strong>
+                                        <strong>Ingresos vs Graduaciones</strong>
                                     </p>
 
 
@@ -216,7 +216,7 @@
                 '</div>';
 
             $.ajax({
-                url : "{% url 'cgc:ajx_cgc_this_year_requests' %}", // the endpoint
+                url : "{% url 'cgc:ajx_last_years_requests_vs_graduated' %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -306,7 +306,7 @@
             });
 
             $.ajax({
-                url : "", // the endpoint
+                url : "{% url 'cgc:ajx_students_by_state' %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request

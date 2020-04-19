@@ -766,6 +766,50 @@ def create_professor(request, program_slug):
         if request.method == 'POST':
             try:
                 user = User.objects.get(email=request.POST['email'])
+                try:
+                    professor = ProgramMember.objects.get(user=user, program=program)
+                    return error_500(request, program,
+                                     'Ya existe un profesor con este email en el sistema, verifique que no lo intenta duplicar.')
+                except ProgramMember.DoesNotExist:
+                    professor = ProgramMember(
+                        program=program,
+                        user=user,
+                        role=request.POST['role'],
+                        institution=request.POST['institution'],
+                        degree=request.POST['grade'],
+                        phone=request.POST['phone'],
+                        country=request.POST['country'],
+                        fb_contact=request.POST['fb_contact'],
+                        tw_contact=request.POST['tw_contact'],
+                        ln_contact=request.POST['ln_contact'],
+                        sex=request.POST['gender'],
+                        birth_date=request.POST['member_birth_date'],
+
+                    )
+                    if professor.role == 'Coordinador':
+                        professor.weight = 1
+                    elif professor.role == 'Secretario':
+                        professor.weight = 2
+                    elif professor.role == 'Miembro':
+                        professor.weight = 3
+                    elif professor.role == 'Profesor':
+                        professor.weight = 4
+                    elif professor.role == 'Tutor':
+                        professor.weight = 5
+
+                    try:
+                        professor.save()
+                        # send_mail('Hola','Usuario creado',program.email,[professor.user.email,'boris_perez@unah.edu.cu'], fail_silently=False)
+                        utils_send_email(request, 'wm', program.email, professor, '', '', program, passwd)
+                        try:
+                            professor.picture = request.FILES['picture']
+                            professor.save()
+                        except:
+                            pass
+                        # TODO: enviar email al profesor creado
+                        return HttpResponseRedirect(reverse('programs:members_list', args=[program_slug, 'all']))
+
+
             except User.DoesNotExist:
                 passwd = program_slug + str(random.randint(1000000, 9999999))
                 user = User.objects.create_user(
@@ -776,10 +820,7 @@ def create_professor(request, program_slug):
                 user.first_name = request.POST['name']
                 user.last_name = request.POST['surename']
                 user.save()
-            try:
-                professor=ProgramMember.objects.get(user=user, program=program)
-                return error_500(request,program,'Ya existe un profesor con este email en el sistema, verifique que no lo intenta duplicar.')
-            except:
+
                 professor = ProgramMember(
                     program=program,
                     user=user,
@@ -794,37 +835,31 @@ def create_professor(request, program_slug):
                     sex=request.POST['gender'],
                     birth_date=request.POST['member_birth_date'],
 
-
                 )
-                if professor.role=='Coordinador':
-                    professor.weight=1
-                elif professor.role=='Secretario':
-                    professor.weight=2
-                elif professor.role=='Miembro':
-                    professor.weight=3
-                elif professor.role=='Profesor':
-                    professor.weight=4
-                elif professor.role=='Tutor':
-                    professor.weight=5
-
+                if professor.role == 'Coordinador':
+                    professor.weight = 1
+                elif professor.role == 'Secretario':
+                    professor.weight = 2
+                elif professor.role == 'Miembro':
+                    professor.weight = 3
+                elif professor.role == 'Profesor':
+                    professor.weight = 4
+                elif professor.role == 'Tutor':
+                    professor.weight = 5
 
                 try:
                     professor.save()
                     # send_mail('Hola','Usuario creado',program.email,[professor.user.email,'boris_perez@unah.edu.cu'], fail_silently=False)
                     utils_send_email(request, 'wm', program.email, professor, '', '', program, passwd)
                     try:
-                        professor.picture=request.FILES['picture']
+                        professor.picture = request.FILES['picture']
                         professor.save()
                     except:
                         pass
                     # TODO: enviar email al profesor creado
-                    return HttpResponseRedirect(reverse('programs:members_list',args=[program_slug, 'all']))
-
+                    return HttpResponseRedirect(reverse('programs:members_list', args=[program_slug, 'all']))
                 except:
-                    if not ProgramMember.objects.filter(user=user) and not Student.objects.filter(user=user):
-                        user.delete()
-                    return error_500(request, program,
-                                     'Una excepción se ha lanzado al tratar de guardar lso datos del nuevo miembro.')
+                    pass
 
         else:
             context={
@@ -1363,9 +1398,9 @@ def ajx_students_by_age(request, program_slug):
     elif program.type == 'msc':
         data.append(MscStudent.objects.filter(program=program, birth_date__year__gt=now().year - 30).__len__())
         data.append(MscStudent.objects.filter(program=program, birth_date__year__gt=now().year - 40,
-                                           birth_date__year__lt=now().year - 30).__len__())
+                                              birth_date__year__lt=now().year - 30).__len__())
         data.append(MscStudent.objects.filter(program=program, birth_date__year__gt=now().year - 50,
-                                           birth_date__year__lt=now().year - 40).__len__())
+                                              birth_date__year__lt=now().year - 40).__len__())
         data.append(MscStudent.objects.filter(program=program, birth_date__year__lt=now().year - 50).__len__())
     elif program.type == 'dip':
         pass
@@ -1534,11 +1569,11 @@ def ajx_students_massive_msg(request, program_slug ):
                 elif request.POST['msg_scope']=='aproved':
                     for student in PhdStudent.objects.filter(program=program ,status='doctorando' ):
                         email_list.append(student.user.email)
-    
+
                 elif request.POST['msg_scope']=='graduated':
                     for student in PhdStudent.objects.filter(program=program, status='graduado'):
                         email_list.append(student.user.email)
-    
+
                 elif request.POST['msg_scope']=='all':
                     for student in PhdStudent.objects.filter(program=program):
                         email_list.append(student.user.email)
@@ -1608,8 +1643,8 @@ def ajx_student_personal_msg(request, program_slug ):
         try:
             if program.type == 'phd':
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
-                      [Student.objects.get(pk=request.POST['student_id']).user.email,'boris_perez@unah.edu.cu'],
-                      fail_silently=False,html_message=request.POST['msg_body'])
+                          [Student.objects.get(pk=request.POST['student_id']).user.email,'boris_perez@unah.edu.cu'],
+                          fail_silently=False,html_message=request.POST['msg_body'])
             elif program.type == 'msc':
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
                           [MscStudent.objects.get(pk=request.POST['student_id']).user.email, 'boris_perez@unah.edu.cu'],
@@ -1690,6 +1725,7 @@ def ajx_students_by_state(request, program_slug):
         json.dumps(response_data),
         content_type="application/json"
     )
+
 
 
 @login_required

@@ -2,7 +2,7 @@ from django.urls import path
 
 
 from . import views
-from . import cgc as cgc_views
+from . import cgc_views as cgc_views
 
 app_name = 'programs'
 

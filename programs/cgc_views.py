@@ -141,6 +141,37 @@ def ajx_last_years_requests(request, program_slug):
         content_type="application/json"
     )
 
+
+@login_required
+def ajx_last_years_requests_vs_graduated(request):
+    response_data=[]
+    labels = []
+    data = []
+    data_1=[]
+    data_2=[]
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for i in range(now().year-4,now().year+1):
+        labels.append(i)
+        data_1.append(Student.objects.filter(init_date__year=i).__len__())
+        data_2.append(Student.objects.filter(graduate_date__year=i).__len__())
+
+
+
+
+    data.append(data_1)
+    data.append(data_2)
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
 @login_required
 def ajx_students_by_line(request, program_slug):
     program = Program.objects.get(slug=program_slug)
@@ -484,36 +515,26 @@ def ajx_members_by_age(request, program_slug):
     )
 
 
+
 @login_required
-def ajx_students_by_state(request, program_slug):
+def ajx_students_by_state(request):
     response_data=[]
     data = []
-    program=Program.objects.get(slug=program_slug)
 
-    if program.type == 'phd':
-        labels = ['Graduados', 'Solicitantes', 'Doctorandos']
-        data.append(PhdStudent.objects.filter(student__program=program, status='graduado').__len__())
-        data.append(PhdStudent.objects.filter(student__program=program, status='solicitante').__len__())
-        data.append(PhdStudent.objects.filter(student__program=program, status='doctorando').__len__())
 
-        response_data.append(labels)
-        response_data.append(data)
-    elif program.type == 'msc':
-        labels = ['Graduados', 'Solicitantes', 'Maestrantes']
-        data.append(MscStudent.objects.filter(program=program, status='graduado').__len__())
-        data.append(MscStudent.objects.filter(program=program, status='solicitante').__len__())
-        data.append(MscStudent.objects.filter(program=program, status='maestrante').__len__())
+    labels = ['Graduados', 'Solicitantes', 'Doctorandos']
+    data.append(PhdStudent.objects.filter( status='graduado').__len__())
+    data.append(PhdStudent.objects.filter( status='solicitante').__len__())
+    data.append(PhdStudent.objects.filter( status='doctorando').__len__())
 
-        response_data.append(labels)
-        response_data.append(data)
-    elif program.type == 'dip':
-        return HttpResponse('Aun no esta listo este tipo de programa')
+    response_data.append(labels)
+    response_data.append(data)
+
 
     return HttpResponse(
         json.dumps(response_data),
         content_type="application/json"
     )
-
 
 @login_required
 def ajx_members_by_grade(request, program_slug):
