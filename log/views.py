@@ -16,7 +16,7 @@ from programs.models import Program, ProgramMember, CGC_Member, Student, MscStud
 
 def index(request):
     context={
-        'programs': Program.objects.all(),
+        'programs': Program.objects.all().order_by('-type'),
         'cgc_members':CGC_Member.objects.all().order_by('priority'),
     }
     return render(request,'log/index.html', context)

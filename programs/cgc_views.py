@@ -280,7 +280,8 @@ def programs_members_list(request, scope):
                     pass
 
             context={
-                'users': users
+                'users': users,
+                'scope':scope,
             }
         elif scope == 'comite':
             for member in ProgramMember.objects.filter(Q(role='Coordinador')|Q(role='Secretario')|Q(role='Miembro'), program__type='phd'):
@@ -289,7 +290,8 @@ def programs_members_list(request, scope):
                 else:
                     pass
             context = {
-                'users': users
+                'users': users,
+                'scope': 'Comité Doctorales',
             }
 
         return render(request, 'programs/cgc/cgc_program_members_list.html', context)

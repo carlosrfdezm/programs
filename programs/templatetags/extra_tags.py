@@ -5,6 +5,7 @@ from django import template
 from django.contrib.auth.models import User
 from math import floor
 
+from django.db.models import Q
 from django.utils.timezone import now
 
 from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember, StudentFinishRequirement, \
@@ -143,6 +144,17 @@ def max_year_birth_date():
 def user_programs_member(user):
     programs=[]
     for member in ProgramMember.objects.filter(user=user):
+        if not member.program in programs and member.program.type == 'phd':
+            programs.append(member.program)
+        else:
+            pass
+
+    return programs
+
+@register.simple_tag
+def user_programs_comite_member(user):
+    programs=[]
+    for member in ProgramMember.objects.filter(Q(role='Coordinador')|Q(role='Secretario')|Q(role='Miembro'),user=user):
         if not member.program in programs and member.program.type == 'phd':
             programs.append(member.program)
         else:

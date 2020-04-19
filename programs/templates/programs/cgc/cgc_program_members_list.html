@@ -39,52 +39,57 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">{% if scope == 'all' %}Miembros {% else %}{{ scope }} {% endif %} de Programas Doctorales</h3>
+                        <h3 class="card-title">Miembros {% if scope == 'all' %} de Programas Doctorales {% else %} de {{ scope }} {% endif %} </h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                            <table id="example1" class="table table-bordered table-striped">
-                                <thead>
-                                {% user_is_cgc_ps user as user_is_program_cs %}
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            {% user_is_cgc_ps user as user_is_program_cs %}
 
-                                <tr>
-                                    <th>Nombre y apellidos</th>
-                                    <th>Programas</th>
+                            <tr>
+                                <th>Nombre y apellidos</th>
+                                <th>Programas</th>
 
 
+
+
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for user in users %}
+                                {% if scope == 'all' %}
+                                    {% user_programs_member user as user_programs_member  %}
+                                {% else %}
+                                    {% user_programs_comite_member user as user_programs_member  %}
+
+                                {% endif %}
+                                <tr id="tr_member_{{ user.id }}">
+                                    <td>{{ user.last_name|upper }}, {{user.first_name }}</td>
+                                    <td>{{ user_programs_member|unordered_list }}</td>
 
 
 
                                 </tr>
-                                </thead>
-                                <tbody>
-                                {% for user in users %}
-                                    {% user_programs_member user as user_programs_member  %}
-                                    <tr id="tr_member_{{ user.id }}">
-                                        <td>{{ user.last_name|upper }}, {{user.first_name }}</td>
-                                        <td>{{ user_programs_member|unordered_list }}</td>
 
 
-
-                                    </tr>
-
-
-                                {% endfor %}
+                            {% endfor %}
 
 
 
 
-                                </tbody>
-                                <tfoot>
-                                {#                            <tr>#}
-                                {#                                <th>Nombre y apellidos</th>#}
-                                {#                                <th>Fecha solicitud</th>#}
-                                {#                                <th>Estado</th>#}
-                                {#                                <th class="text-center">Requisitos</th>#}
-                                {#                                <th></th>#}
-                                {#                            </tr>#}
-                                </tfoot>
-                            </table>
+                            </tbody>
+                            <tfoot>
+                            {#                            <tr>#}
+                            {#                                <th>Nombre y apellidos</th>#}
+                            {#                                <th>Fecha solicitud</th>#}
+                            {#                                <th>Estado</th>#}
+                            {#                                <th class="text-center">Requisitos</th>#}
+                            {#                                <th></th>#}
+                            {#                            </tr>#}
+                            </tfoot>
+                        </table>
 
                     </div>
                     <!-- /.card-body -->
