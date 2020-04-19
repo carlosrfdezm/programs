@@ -4,34 +4,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-        <title>{% if program %} Programa académico "{{ program  }}"{% else %}Programas académicos {% endif %}</title>
+    <title>{% if program %} Programa académico "{{ program  }}"{% else %}Programas académicos {% endif %}</title>
 
-        <!-- Font Awesome Icons -->
-        <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/all.min.css' %}">
-        {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/fontawesome.css' %}">#}
-        {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/brands.css' %}">#}
-        {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/solid.css' %}">#}
-        {#    <i class="fa fa-graduation-cap" rel="icon"></i>#}
-        <!-- overlayScrollbars -->
-        <link rel="stylesheet" href="{% static 'programs/plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}" >
-        <!-- Theme style -->
-        <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}" >
-        <link rel="stylesheet" href="{% static 'programs/plugins/summernote/summernote-bs4.css'  %}">
-        <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/all.min.css' %}">
+    {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/fontawesome.css' %}">#}
+    {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/brands.css' %}">#}
+    {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/solid.css' %}">#}
+    {#    <i class="fa fa-graduation-cap" rel="icon"></i>#}
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="{% static 'programs/plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}" >
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}" >
+    <link rel="stylesheet" href="{% static 'programs/plugins/summernote/summernote-bs4.css'  %}">
+    <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
 
 
-        {% block extra_css %}
-        {% endblock %}
-        <!-- Google Font: Source Sans Pro -->
-        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-    </head>
+    {% block extra_css %}
+    {% endblock %}
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 {% if program %}
-
-    <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
     <div class="wrapper">
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -790,8 +789,6 @@
 
     </div>
 {% else %}
-
-    <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
     <div class="wrapper">
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -943,34 +940,16 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
-                                {% if user_is_program_cs %}
-                                    <li class="nav-item">
-                                        <a href="" class="nav-link" title="Agregar profesor">
-                                            <i class="fa fa-plus"></i>
-                                            <p>Nuevo</p>
-                                        </a>
-                                    </li>
-                                {% endif %}
+
                                 <li class="nav-item">
-                                    <a href="" class="nav-link">
+                                    <a href="{% url 'cgc:programs_members_list' 'comite' %}" class="nav-link" title="Miembros de Comité Académicos">
                                         <i class="fa fa-users"></i>
                                         <p>Comité</p>
                                     </a>
                                 </li>
+
                                 <li class="nav-item">
-                                    <a href="" class="nav-link">
-                                        <i class="fa fa-chalkboard-teacher"></i>
-                                        <p>Profesores</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="" class="nav-link">
-                                        <i class="fa fa-book-open"></i>
-                                        <p>Tutores</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="" class="nav-link">
+                                    <a href="{% url 'cgc:programs_members_list' 'all' %}" class="nav-link">
                                         <i class="fa fa-list"></i>
                                         <p>Todos</p>
                                     </a>
@@ -1214,7 +1193,6 @@
 
 
     </div>
-
 {% endif %}
 <!-- ./wrapper -->
 

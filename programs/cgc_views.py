@@ -76,6 +76,8 @@ def error_500(request, error_message):
     return render(request,'programs/cgc/cgc_error_500.html', context)
 
 
+
+
 @login_required
 def program_lines(request, program_slug):
     context={
@@ -265,6 +267,32 @@ def ajx_students_by_age(request, program_slug):
         json.dumps(response_data),
         content_type="application/json"
     )
+
+@login_required
+def programs_members_list(request, scope):
+    if user_is_cgc_member(request.user):
+        users=[]
+        if scope == 'all':
+            for member in ProgramMember.objects.filter(program__type='phd'):
+                if not member.user in users:
+                    users.append(member.user)
+                else:
+                    pass
+
+            context={
+                'users': users
+            }
+        elif scope == 'comite':
+            for member in ProgramMember.objects.filter(Q(role='Coordinador')|Q(role='Secretario')|Q(role='Miembro'), program__type='phd'):
+                if not member.user in users:
+                    users.append(member.user)
+                else:
+                    pass
+            context = {
+                'users': users
+            }
+
+        return render(request, 'programs/cgc/cgc_program_members_list.html', context)
 
 @login_required
 def ajx_member_personal_msg(request, program_slug ):
@@ -650,3 +678,4 @@ def ajx_cgc_this_year_requests(request):
         json.dumps(response_data),
         content_type="application/json"
     )
+

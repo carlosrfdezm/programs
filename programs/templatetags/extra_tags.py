@@ -138,5 +138,16 @@ def user_is_cgc_ps(user):
 def max_year_birth_date():
     return now().year-20
 
+#Devuelve la lista de programas a los que pertenece un usuario (como miembro)
+@register.simple_tag
+def user_programs_member(user):
+    programs=[]
+    for member in ProgramMember.objects.filter(user=user):
+        if not member.program in programs and member.program.type == 'phd':
+            programs.append(member.program)
+        else:
+            pass
+
+    return programs
 
 

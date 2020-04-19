@@ -15,7 +15,10 @@ urlpatterns = [
     path('ajx/recent/years/req_vs_grad', views.ajx_last_years_requests_vs_graduated, name='ajx_last_years_requests_vs_graduated'),
     path('ajx/students/state', views.ajx_students_by_state, name='ajx_students_by_state'),
 
-    path('students/<str:scope>', views.students_list, name='students_list')
+    path('students/<str:scope>', views.students_list, name='students_list'),
+
+
+    path('members/<str:scope>', views.programs_members_list, name='programs_members_list'),
 
 
 
