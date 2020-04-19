@@ -46,37 +46,50 @@ def mylogin(request):
     username = request.POST['username']
     password = request.POST['password']
     program_slug = request.POST['program_slug']
+    program = Program.objects.get(slug=program_slug)
     user = authenticate(request, username=username, password=password)
     if user is None:
         return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
 
     elif user is not None:
-        try:
+        if program.type=='phd':
             try:
-                ProgramMember.objects.get(user=user, program=Program.objects.get(slug=program_slug))
-                login(request, user)
+                try:
+                    ProgramMember.objects.filter(user=user, program=program)
+                    login(request, user)
+                    return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
+                except:
+                    try:
+                        Student.objects.get(user=user, program=program)
+                        login(request, user)
+                        return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
+                    except:
+                        #TODO esta debe ser un template de error
+                        return HttpResponse('Error, ni profesor ni estudiante')
             except:
-                try:
-                    Student.objects.get(user=user, program=Program.objects.get(slug=program_slug))
-                    login(request, user)
-                except:
-                    MscStudent.objects.get(user=user, program=Program.objects.get(slug=program_slug))
-                    login(request, user)
+                # TODO esta debe ser un template de error
+                return HttpResponse('Error, ni profesor ni estudiante')
 
-            return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
-        except:
-            if user.is_superuser:
-                login(request, user)
-                return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
-            else:
+        elif program.type == 'msc':
+            try:
                 try:
+                    ProgramMember.objects.filter(user=user, program=program)
                     login(request, user)
-                    user_program = ProgramMember.objects.get(user=user).program
-                    return HttpResponseRedirect(reverse('programs:home', args=[user_program.slug]))
+                    return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
                 except:
-                    pass
-                # return HttpResponseRedirect(reverse('courts:auth_error', args=[court_slug, '2' ]))
-                # TODO si el usuario no es miembro de este tribunal que redireccione al index del tribunal con un error  especifico
+                    try:
+                        MscStudent.objects.filter(user=user, program=program)
+                        login(request, user)
+                        return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
+                    except:
+                        # TODO esta debe ser un template de error
+                        return HttpResponse('Error, ni profesor ni estudiante')
+            except:
+                # TODO esta debe ser un template de error
+                return HttpResponse('Error, ni profesor ni estudiante')
+
+        elif program.type == 'dip':
+            return HttpResponse('Hay que implementar este tipo de prrograma')
     else:
         HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
     # TODO si hay error de usuario y contrase;a que redireccione al index del tribunal con un error  especifico
