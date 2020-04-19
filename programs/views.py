@@ -765,6 +765,7 @@ def create_professor(request, program_slug):
     if user_is_program_cs(request.user, program):
         if request.method == 'POST':
             try:
+
                 user = User.objects.get(email=request.POST['email'])
                 try:
                     professor = ProgramMember.objects.get(user=user, program=program)
@@ -808,7 +809,10 @@ def create_professor(request, program_slug):
                             pass
                         # TODO: enviar email al profesor creado
                         return HttpResponseRedirect(reverse('programs:members_list', args=[program_slug, 'all']))
+                    except:
+                        pass
 
+                    return HttpResponseRedirect(reverse('programs:members_list', args=[program_slug, 'all']))
 
             except User.DoesNotExist:
                 passwd = program_slug + str(random.randint(1000000, 9999999))
