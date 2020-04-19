@@ -8,7 +8,7 @@ from math import floor
 from django.utils.timezone import now
 
 from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember, StudentFinishRequirement, \
-    ProgramFinishRequirements
+    ProgramFinishRequirements, CGC_Member
 
 register = template.Library()
 
@@ -115,6 +115,18 @@ def user_is_program_cs(user, program):
     try:
         member=ProgramMember.objects.get(user=user, program=program)
         if member.role == 'Coordinador' or member.role == 'Secretario':
+            return True
+        else:
+            return False
+
+    except:
+        return False
+
+@register.simple_tag
+def user_is_cgc_ps(user):
+    try:
+        member=CGC_Member.objects.get(user=user)
+        if member.role == 'Presidente' or member.role == 'Secretario':
             return True
         else:
             return False

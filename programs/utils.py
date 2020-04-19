@@ -1,4 +1,4 @@
-from programs.models import ProgramMember, Student
+from programs.models import ProgramMember, Student, CGC_Member
 from django.core.mail import send_mail
 from django.template import loader
 
@@ -16,6 +16,20 @@ def user_is_program_cs(user, program):
 def user_is_program_member(user, program):
     try:
         member=ProgramMember.objects.get(user=user, program=program)
+        return True
+    except:
+        return False
+
+def user_is_program_student(user, program):
+    try:
+        student=Student.objects.get(user=user, program=program)
+        return True
+    except:
+        return False
+
+def user_is_cgc_member(user):
+    try:
+        member=CGC_Member.objects.get(user=user)
         return True
     except:
         return False

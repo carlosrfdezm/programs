@@ -3,13 +3,12 @@
 
 <!DOCTYPE html>
 <html lang="en">
-{% if program %}
-    <head>
+<head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-        <title>Programa académico {% if program %}"{{ program  }}"{% endif %}</title>
+        <title>{% if program %} Programa académico "{{ program  }}"{% else %}Programas académicos {% endif %}</title>
 
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/all.min.css' %}">
@@ -30,6 +29,8 @@
         <!-- Google Font: Source Sans Pro -->
         <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     </head>
+{% if program %}
+
     <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
     <div class="wrapper">
         <!-- Navbar -->
@@ -789,30 +790,7 @@
 
     </div>
 {% else %}
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-        <title>Programas académicos </title>
-
-        <!-- Font Awesome Icons -->
-        <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/all.min.css' %}">
-        {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/fontawesome.css' %}">#}
-        {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/brands.css' %}">#}
-        {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/solid.css' %}">#}
-        {#    <i class="fa fa-graduation-cap" rel="icon"></i>#}
-        <!-- overlayScrollbars -->
-        <link rel="stylesheet" href="{% static 'programs/plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}" >
-        <!-- Theme style -->
-        <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}" >
-        <link rel="stylesheet" href="{% static 'programs/plugins/summernote/summernote-bs4.css'  %}">
-        <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
-
-
-        <!-- Google Font: Source Sans Pro -->
-        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-    </head>
     <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
     <div class="wrapper">
         <!-- Navbar -->
@@ -928,34 +906,27 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
-                                {% if user_is_program_cs %}
-                                    <li class="nav-item">
-                                        <a href="" class="nav-link">
-                                            <i class="fa fa-plus nav-icon"></i>
-                                            <p>Nuevo</p>
-                                        </a>
-                                    </li>
-                                {% endif %}
+
                                 <li class="nav-item">
-                                    <a href="" class="nav-link">
+                                    <a href="{% url 'cgc:students_list' 'requesters' %}" class="nav-link">
                                         <i class="fa fa-check nav-icon"></i>
                                         <p>Solicitantes</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="" class="nav-link">
+                                    <a href="{% url 'cgc:students_list' 'aproved' %}" class="nav-link">
                                         <i class="fa fa-thumbs-up nav-icon"></i>
                                         <p>Doctorandos</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="" class="nav-link">
+                                    <a href="{% url 'cgc:students_list' 'graduated' %}" class="nav-link">
                                         <i class="fa fa-graduation-cap nav-icon"></i>
                                         <p>Graduados</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="" class="nav-link">
+                                    <a href="{% url 'cgc:students_list' 'all' %}" class="nav-link">
                                         <i class="fa fa-list-ul nav-icon"></i>
                                         <p>Todos</p>
                                     </a>

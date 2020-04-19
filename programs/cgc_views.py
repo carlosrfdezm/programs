@@ -20,7 +20,8 @@ from django.utils.timezone import now
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, CGC_Member
-from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student
+from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
+    user_is_cgc_member
 
 
 @login_required
@@ -33,15 +34,46 @@ def cgc_home(request):
         'graduated': PhdStudent.objects.filter(status='graduado').__len__(),
         'members': CGC_Member.objects.all().__len__(),
     }
-    return render(request, 'programs/cgc_home.html', context)
+    return render(request, 'programs/cgc/cgc_home.html', context)
 
+
+@login_required
+def students_list(request, scope):
+    if user_is_cgc_member(request.user):
+
+        if scope == 'all':
+            context = {
+                'students': Student.objects.all(),
+                'scope': 'all',
+            }
+        elif scope == 'requesters':
+            context = {
+                'students': Student.objects.filter( phdstudent__status='solicitante'),
+                'scope': 'Solicitantes',
+            }
+        elif scope == 'aproved':
+            context = {
+                'students': Student.objects.filter( phdstudent__status='doctorando'),
+                'scope': 'Doctorandos',
+            }
+        elif scope == 'graduated':
+            context = {
+                'students': Student.objects.filter( phdstudent__status='graduado'),
+                'scope': 'Graduados',
+            }
+
+        return render(request, 'programs/cgc/cgc_students_list.html', context)
+
+
+    else:
+        return error_500(request, 'Usted no tiene acceso a esta página')
 
 def error_500(request, error_message):
     context={
 
         'error_message':error_message,
     }
-    return render(request,'programs/error_500.html', context)
+    return render(request,'programs/cgc/cgc_error_500.html', context)
 
 
 @login_required
@@ -217,9 +249,9 @@ def ajx_students_by_age(request, program_slug):
     elif program.type == 'msc':
         data.append(MscStudent.objects.filter(program=program, birth_date__year__gt=now().year - 30).__len__())
         data.append(MscStudent.objects.filter(program=program, birth_date__year__gt=now().year - 40,
-                                           birth_date__year__lt=now().year - 30).__len__())
+                                              birth_date__year__lt=now().year - 30).__len__())
         data.append(MscStudent.objects.filter(program=program, birth_date__year__gt=now().year - 50,
-                                           birth_date__year__lt=now().year - 40).__len__())
+                                              birth_date__year__lt=now().year - 40).__len__())
         data.append(MscStudent.objects.filter(program=program, birth_date__year__lt=now().year - 50).__len__())
     elif program.type == 'dip':
         pass
@@ -388,11 +420,11 @@ def ajx_students_massive_msg(request, program_slug ):
                 elif request.POST['msg_scope']=='aproved':
                     for student in PhdStudent.objects.filter(program=program ,status='doctorando' ):
                         email_list.append(student.user.email)
-    
+
                 elif request.POST['msg_scope']=='graduated':
                     for student in PhdStudent.objects.filter(program=program, status='graduado'):
                         email_list.append(student.user.email)
-    
+
                 elif request.POST['msg_scope']=='all':
                     for student in PhdStudent.objects.filter(program=program):
                         email_list.append(student.user.email)
@@ -462,8 +494,8 @@ def ajx_student_personal_msg(request, program_slug ):
         try:
             if program.type == 'phd':
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
-                      [Student.objects.get(pk=request.POST['student_id']).user.email,'boris_perez@unah.edu.cu'],
-                      fail_silently=False,html_message=request.POST['msg_body'])
+                          [Student.objects.get(pk=request.POST['student_id']).user.email,'boris_perez@unah.edu.cu'],
+                          fail_silently=False,html_message=request.POST['msg_body'])
             elif program.type == 'msc':
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
                           [MscStudent.objects.get(pk=request.POST['student_id']).user.email, 'boris_perez@unah.edu.cu'],
