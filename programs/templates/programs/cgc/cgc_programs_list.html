@@ -18,12 +18,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Miembros de claustros</h1>
+                    <h1>Programas doctorales</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{% url 'cgc:cgc_home'  %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Miembros</li>
+                        <li class="breadcrumb-item active">Programas</li>
                     </ol>
                 </div>
             </div>
@@ -39,7 +39,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Miembros {% if scope == 'all' %} de Programas Doctorales {% else %} de {{ scope }} {% endif %} </h3>
+                        <h3 class="card-title">Programas doctorales de la UNAH y el Complejo </h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -48,23 +48,33 @@
                             {% user_is_cgc_ps user as user_is_program_cs %}
 
                             <tr>
-                                <th>Nombre y apellidos</th>
-                                <th>Programas</th>
+                                <th>Nombre</th>
+                                <th>Centro </th>
+                                <th class="text-center">Solicitantes</th>
+                                <th class="text-center">Doctorandos</th>
+                                <th class="text-center">Graduados</th>
+                                <th></th>
 
                             </tr>
                             </thead>
                             <tbody>
-                            {% for user in users %}
-                                {% if scope == 'all' %}
-                                    {% user_programs_member user as user_programs_member  %}
-                                {% else %}
-                                    {% user_programs_comite_member user as user_programs_member  %}
+                            {% for program in programs %}
 
-                                {% endif %}
-                                <tr id="tr_member_{{ user.id }}">
-                                    <td>{{ user.last_name|upper }}, {{user.first_name }}</td>
-                                    <td>{{ user_programs_member|unordered_list }}</td>
+                                <tr id="tr_program_{{ program.id }}">
+                                    <td>{{ program.full_name }}</td>
+                                    <td>{{ program.center }}</td>
+                                    <td class="text-center"><a href="" title="Ver solicitantes de este programa"><span class="badge badge-warning">{% program_requesters program %}</span></a>  </td>
+                                    <td class="text-center"><a href="" title="Ver doctorandos"><span class="badge badge-primary">{% program_aproved program %}</span></a> </td>
+                                    <td class="text-center"><a href="" title="Ver graduados"><span class="badge badge-success">{% program_graduated program %}</span></a> </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" > <i class="fa fa-envelope"></i></a>
 
+                                            <a class="btn btn-warning btn-sm text-white" href="" title="Editar"> <i class="fa fa-edit"></i></a>
+                                            <a class="btn btn-danger btn-sm text-white"  title="Eliminar" ><i class="fa fa-eraser"></i></a>
+
+                                        </div>
+                                    </td>
 
 
                                 </tr>

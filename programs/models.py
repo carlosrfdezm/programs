@@ -51,6 +51,7 @@ class Program(models.Model):
     icon = models.CharField(max_length=100, null=False, blank=False, choices=ICON_CHOICES,
                             help_text='Seleccione una opcion de la lista')
     background = models.ImageField(upload_to=program_directory_path, blank=True)
+    center = models.CharField(max_length=120, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Programa'

@@ -20,6 +20,9 @@ urlpatterns = [
 
     path('members/<str:scope>', views.programs_members_list, name='programs_members_list'),
 
+    path('programs/list', views.cgc_programs_list, name='cgc_programs_list'),
+
+
 
 
 

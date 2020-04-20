@@ -297,6 +297,18 @@ def programs_members_list(request, scope):
         return render(request, 'programs/cgc/cgc_program_members_list.html', context)
 
 @login_required
+def cgc_programs_list(request):
+    if user_is_cgc_member(request.user):
+        context={
+            'programs': Program.objects.filter(type='phd').order_by('full_name'),
+
+        }
+
+        return render(request, 'programs/cgc/cgc_programs_list.html', context)
+    else:
+        return error_500(request, 'Usted no tiene acceso a esta vista.')
+
+@login_required
 def ajx_member_personal_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
     if request.method == 'POST' and request.POST['msg_body'].__len__() <= 500:

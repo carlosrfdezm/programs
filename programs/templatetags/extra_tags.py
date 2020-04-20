@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.utils.timezone import now
 
 from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember, StudentFinishRequirement, \
-    ProgramFinishRequirements, CGC_Member
+    ProgramFinishRequirements, CGC_Member, PhdStudent
 
 register = template.Library()
 
@@ -161,5 +161,26 @@ def user_programs_comite_member(user):
             pass
 
     return programs
+
+@register.simple_tag
+def program_requesters(program):
+    if program.type == 'phd':
+        return PhdStudent.objects.filter(status='solicitante', student__program=program).__len__()
+    else:
+        return 'Error'
+
+@register.simple_tag
+def program_aproved(program):
+    if program.type == 'phd':
+        return PhdStudent.objects.filter(status='doctorando', student__program=program).__len__()
+    else:
+        return 'Error'
+
+@register.simple_tag
+def program_graduated(program):
+    if program.type == 'phd':
+        return PhdStudent.objects.filter(status='graduado', student__program=program).__len__()
+    else:
+        return 'Error'
 
 

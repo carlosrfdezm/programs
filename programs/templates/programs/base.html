@@ -879,7 +879,7 @@
                              with font-awesome or any other icon font library -->
                         <li class="nav-item">
 
-                            <a href="" class="nav-link">
+                            <a href="{% url 'cgc:cgc_home' %}" class="nav-link">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>
                                     Dashboard
@@ -891,7 +891,12 @@
 
                         {# Opciones para doctorados#}
 
-
+                         <li class="nav-item">
+                            <a href="{% url 'cgc:cgc_programs_list' %}" class="nav-link" title="Programas doctorales">
+                                <i class="fa fa-bars nav-icon"></i>
+                                <p>Programas</p>
+                            </a>
+                        </li>
 
 
                         <li class="nav-item has-treeview">
