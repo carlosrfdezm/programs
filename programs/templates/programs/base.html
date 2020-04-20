@@ -971,16 +971,9 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
-                                {% if user_is_program_cs %}
-                                    <li class="nav-item">
-                                        <a href="" class="nav-link">
-                                            <i class="fa fa-plus"></i>
-                                            <p>Nueva</p>
-                                        </a>
-                                    </li>
-                                {% endif %}
+
                                 <li class="nav-item">
-                                    <a href="" class="nav-link">
+                                    <a href="{% url 'cgc:programs_lines' %}" class="nav-link">
                                         <i class="fa fa-list"></i>
                                         <p>Ver líneas</p>
                                     </a>

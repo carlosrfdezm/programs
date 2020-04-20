@@ -26,7 +26,7 @@ path('password_reset/', auth_views.PasswordResetView.as_view(), name='reset_pass
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('admin/', admin.site.urls),
     path('', include('log.urls', namespace='log')),
-    path('<str:program_slug>/', include('programs.urls', namespace='programs')),
     path('cgc/', include('programs.cgcurls', namespace='cgc')),
+    path('<str:program_slug>/', include('programs.urls', namespace='programs')),
 
 ]
