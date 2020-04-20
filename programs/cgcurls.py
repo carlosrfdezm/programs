@@ -21,6 +21,7 @@ urlpatterns = [
     path('members/<str:scope>', views.programs_members_list, name='programs_members_list'),
 
     path('programs/list', views.cgc_programs_list, name='cgc_programs_list'),
+    path('program/<str:program_slug>/students/<str:scope>/list', views.program_students_list, name='program_students_list'),
 
 
 

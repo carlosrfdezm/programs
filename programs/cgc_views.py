@@ -68,6 +68,43 @@ def students_list(request, scope):
     else:
         return error_500(request, 'Usted no tiene acceso a esta página')
 
+@login_required
+def program_students_list(request,program_slug, scope):
+    program = Program.objects.get(slug=program_slug)
+
+    if user_is_cgc_member(request.user):
+
+        if scope == 'all':
+            context = {
+                'phd_program' : program,
+                'students': Student.objects.filter(program=program),
+                'scope': 'all',
+            }
+        elif scope == 'requesters':
+            context = {
+                'phd_program': program,
+                'students': Student.objects.filter(program=program, phdstudent__status='solicitante'),
+                'scope': 'Solicitantes',
+            }
+        elif scope == 'aproved':
+            context = {
+                'phd_program': program,
+                'students': Student.objects.filter(program=program, phdstudent__status='doctorando'),
+                'scope': 'Doctorandos',
+            }
+        elif scope == 'graduated':
+            context = {
+                'phd_program': program,
+                'students': Student.objects.filter(program=program, phdstudent__status='graduado'),
+                'scope': 'Graduados',
+            }
+
+        return render(request, 'programs/cgc/cgc_students_list.html', context)
+
+
+    else:
+        return error_500(request, 'Usted no tiene acceso a esta página')
+
 def error_500(request, error_message):
     context={
 
