@@ -61,8 +61,14 @@
                                         <label for="slc_role">Rol:</label>
                                         <select class="form-control" id="slc_role" name="role" required>
                                             <option value="" >Seleccione una opción</option>
-                                            <option value="Coordinador" title="Coordinador del programa" >Coordinador</option>
-                                            <option value="Secretario" title="Secretario del Comité academico">Secretario</option>
+                                            {% program_has_coordinator program  as program_has_coordinator%}
+                                            {% program_has_secretary program  as program_has_secretary %}
+                                            {% if not program_has_coordinator %}
+                                                <option value="Coordinador" title="Coordinador del programa" >Coordinador</option>
+                                            {% endif %}
+                                            {% if not program_has_secretary %}
+                                                <option value="Secretario" title="Secretario del Comité academico">Secretario</option>
+                                            {% endif %}
                                             <option value="Miembro" title="Miembro del Comité académico">Miembro CA</option>
                                             <option value="Profesor" title="Profesor del programa">Profesor</option>
                                             <option value="Tutor" title="Tutor del programa">Tutor</option>
@@ -97,9 +103,9 @@
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-2">
-                                            <label for="inp_birth_date">Fecha de nacimiento:</label>
-                                            <input type="date" class="form-control" id="inp_birth_date"  name="member_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}/01/01" value="{{member.birth_date|date:'Y-m-d' }}" required>
-                                        </div>
+                                        <label for="inp_birth_date">Fecha de nacimiento:</label>
+                                        <input type="date" class="form-control" id="inp_birth_date"  name="member_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" value="{{member.birth_date|date:'Y-m-d' }}" required>
+                                    </div>
                                     <div class="form-group col-md-4">
                                         <label for="inp_grade">Grado científico:</label>
                                         <input type="text" class="form-control" id="inp_grade"  name="grade" placeholder="p.e:Doctor en Ciencias de la Educación" required>

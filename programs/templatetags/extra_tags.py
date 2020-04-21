@@ -191,4 +191,18 @@ def project_students(project):
 def line_projects(line):
     return InvestigationProject.objects.filter(line=line).__len__()
 
+@register.simple_tag
+def program_has_coordinator(program):
+    if ProgramMember.objects.filter(program=program, role='coordinador'):
+        return True
+    else:
+        return False
+
+@register.simple_tag
+def program_has_secretary(program):
+    if ProgramMember.objects.filter(program=program, role='secretario'):
+        return True
+    else:
+        return False
+
 
