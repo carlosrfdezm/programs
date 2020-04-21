@@ -118,6 +118,19 @@ def programs_lines(request):
     else:
         return error_500(request, 'Usted no tiene acceso a esta página')
 
+@login_required
+def programs_projects(request):
+
+    if user_is_cgc_member(request.user):
+
+       context={
+           'programs': Program.objects.filter(type='phd')
+       }
+       return render(request, 'programs/cgc/cgc_projects_list.html', context)
+
+    else:
+        return error_500(request, 'Usted no tiene acceso a esta página')
+
 
 def error_500(request, error_message):
     context={

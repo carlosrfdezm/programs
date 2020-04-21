@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.utils.timezone import now
 
 from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember, StudentFinishRequirement, \
-    ProgramFinishRequirements, CGC_Member, PhdStudent
+    ProgramFinishRequirements, CGC_Member, PhdStudent, PhdStudentTheme
 
 register = template.Library()
 
@@ -182,5 +182,9 @@ def program_graduated(program):
         return PhdStudent.objects.filter(status='graduado', student__program=program).__len__()
     else:
         return 'Error'
+
+@register.simple_tag
+def project_students(project):
+    return PhdStudentTheme.objects.filter(project=project).__len__()
 
 

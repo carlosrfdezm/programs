@@ -18,12 +18,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Líneas de investigación</h1>
+                    <h1>Proyectos de investigación</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{% url 'cgc:cgc_home'  %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Líneas</li>
+                        <li class="breadcrumb-item active">Proyectos</li>
                     </ol>
                 </div>
             </div>
@@ -39,7 +39,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Líneas de investigación de los Programas doctorales. </h3>
+                        <h3 class="card-title">Proyectos de investigación de los Programas doctorales. </h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -49,7 +49,7 @@
 
                             <tr>
                                 <th>Programa</th>
-                                <th>Líneas de investigación </th>
+                                <th>Proyectos de investigación </th>
 
                             </tr>
                             </thead>
@@ -59,18 +59,29 @@
                                 <tr id="tr_program_{{ program.id }}">
                                     <td>{{ program.full_name }}</td>
                                     <td>
-                                        {% if program.investigationline_set.all %}
+                                        {% if program.investigationproject_set.all %}
                                             <ol>
-                                                {% for line in program.investigationline_set.all %}
+                                                {% for project in program.investigationproject_set.all %}
                                                     <li>
-                                                        <a href="" title="Ver proyectos asociados" >{{ line|truncatewords:7 }}</a>
+                                                        <div class="row">
+                                                            <div class="col-md-11">
+                                                                <a id="a_project_{{ project.id }}" href="" class="" data-toggle="popover" data-trigger="hover" data-placement="right" title="Ver estudiantes vinculados"  data-content="Click para ver estudiantes vinculados"> {{ project|truncatewords:11 }}</a>
+
+                                                            </div>
+
+                                                            <div class="col-md-1">
+                                                                {% project_students project as project_students%}
+                                                                <span class="badge {% if project_students != 0 %}badge-primary{% else %}badge-danger{% endif %}" id="a_project_{{ project.id }}" class="" title="Estudiantes vinculados">{{ project_students }} </span>
+
+                                                            </div>
+
+                                                        </div>
+
                                                     </li>
                                                 {% endfor %}
                                             </ol>
                                         {% else %}
-
-                                                <i class="fa fa-exclamation-triangle text-warning"></i> Este programa no tiene Líneas de investigación asignadas
-
+                                            <i class="fa fa-exclamation-triangle text-warning"></i> Este programa no tiene proyectos de investigación asignados
                                         {% endif %}
                                     </td>
 
@@ -145,6 +156,8 @@
                 showConfirmButton: false,
                 timer: 7000
             });
+            $('[data-toggle="popover"]').popover();
+
 
 
         })

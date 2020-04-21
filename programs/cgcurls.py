@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('students/<str:scope>', views.students_list, name='students_list'),
     path('lines/list', views.programs_lines, name='programs_lines'),
+    path('projects/list', views.programs_projects, name='programs_projects'),
 
 
     path('members/<str:scope>', views.programs_members_list, name='programs_members_list'),
