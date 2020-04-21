@@ -69,14 +69,34 @@ def students_list(request, scope):
         return error_500(request, 'Usted no tiene acceso a esta página')
 
 @login_required
-def program_students_list(request,program_slug, scope):
+def program_members_list(request,program_slug):
+    program = Program.objects.get(slug=program_slug)
+
+    if user_is_cgc_member(request.user):
+
+
+        context = {
+            'phd_program' : program,
+            'members': ProgramMember.objects.filter(program=program),
+            'scope': 'all',
+        }
+
+
+        return render(request, 'programs/cgc/cgc_program_members_list.html', context)
+
+
+    else:
+        return error_500(request, 'Usted no tiene acceso a esta página')
+
+@login_required
+def program_students_list(request, program_slug, scope):
     program = Program.objects.get(slug=program_slug)
 
     if user_is_cgc_member(request.user):
 
         if scope == 'all':
             context = {
-                'phd_program' : program,
+                'phd_program': program,
                 'students': Student.objects.filter(program=program),
                 'scope': 'all',
             }
@@ -105,15 +125,16 @@ def program_students_list(request,program_slug, scope):
     else:
         return error_500(request, 'Usted no tiene acceso a esta página')
 
+
 @login_required
 def programs_lines(request):
 
     if user_is_cgc_member(request.user):
 
-       context={
-           'programs': Program.objects.filter(type='phd')
-       }
-       return render(request, 'programs/cgc/cgc_lines_list.html', context)
+        context={
+            'programs': Program.objects.filter(type='phd')
+        }
+        return render(request, 'programs/cgc/cgc_lines_list.html', context)
 
     else:
         return error_500(request, 'Usted no tiene acceso a esta página')
@@ -123,10 +144,10 @@ def programs_projects(request):
 
     if user_is_cgc_member(request.user):
 
-       context={
-           'programs': Program.objects.filter(type='phd')
-       }
-       return render(request, 'programs/cgc/cgc_projects_list.html', context)
+        context={
+            'programs': Program.objects.filter(type='phd')
+        }
+        return render(request, 'programs/cgc/cgc_projects_list.html', context)
 
     else:
         return error_500(request, 'Usted no tiene acceso a esta página')
@@ -358,7 +379,7 @@ def programs_members_list(request, scope):
                 'scope': 'Comité Doctorales',
             }
 
-        return render(request, 'programs/cgc/cgc_program_members_list.html', context)
+        return render(request, 'programs/cgc/cgc_programs_members_list.html', context)
 
 @login_required
 def cgc_programs_list(request):

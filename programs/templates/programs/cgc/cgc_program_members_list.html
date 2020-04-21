@@ -18,7 +18,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Miembros de claustros</h1>
+                    <h1>Claustro de {{ phd_program}}</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -39,7 +39,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Miembros {% if scope == 'all' %} de Programas Doctorales {% else %} de {{ scope }} {% endif %} </h3>
+                        <h3 class="card-title">Miembros de {{phd_program}} </h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -49,31 +49,21 @@
 
                             <tr>
                                 <th>Nombre y apellidos</th>
-                                <th>Programas</th>
+                                <th>Rol</th>
+
 
                             </tr>
                             </thead>
                             <tbody>
-                            {% for user in users %}
-                                {% if scope == 'all' %}
-                                    {% user_programs_member user as user_programs_member  %}
-                                {% else %}
-                                    {% user_programs_comite_member user as user_programs_member  %}
+                            {% for member in members %}
 
-                                {% endif %}
-                                <tr id="tr_member_{{ user.id }}">
-                                    <td>{{ user.last_name|upper }}, {{user.first_name }}</td>
-                                    <td>{{ user_programs_member|unordered_list }}</td>
-
-
+                                <tr id="tr_member_{{member.id }}">
+                                    <td>{{ member.user.last_name|upper }}, {{member.user.first_name }}</td>
+                                    <td>{{ member.role }}</td>
 
                                 </tr>
 
-
                             {% endfor %}
-
-
-
 
                             </tbody>
                             <tfoot>

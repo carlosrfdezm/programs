@@ -70,7 +70,7 @@
                                         <div class="btn-group" role="group">
                                             <a class="btn btn-success btn-sm text-white" href="{% url 'cgc:program_students_list' program.slug 'all' %}" title="Ver estudiantes" > <i class="fa fa-users"></i></a>
 
-                                            <a class="btn btn-primary btn-sm text-white" href="" title="Ver claustro"> <i class="fa fa-chalkboard-teacher"></i></a>
+                                            <a class="btn btn-primary btn-sm text-white" href="{% url 'cgc:program_members_list' program.slug %}" title="Ver claustro"> <i class="fa fa-chalkboard-teacher"></i></a>
                                             <a class="btn btn-danger btn-sm text-white"  title="Estadísticas del programa" ><i class="fa fa-chart-bar"></i></a>
 
                                         </div>
