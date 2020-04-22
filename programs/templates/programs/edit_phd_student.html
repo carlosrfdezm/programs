@@ -105,7 +105,7 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="txt_theme">Tema:</label>
-                                            <textarea class="form-control" id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="5">{{ student.phdstudent.phdstudenttheme }}</textarea>
+                                            <textarea class="form-control" id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2">{{ student.phdstudent.phdstudenttheme }}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-row">
@@ -121,6 +121,29 @@
                                             </select>
                                         </div>
                                     </div>
+                                <hr>
+                                <h4><strong>Tutores:</strong></h4>
+                                {% for tuthor in student.phdstudent.tuthor_set.all %}
+                                <div class="form-row align-items-center pb-2" id="div_tuthor_{{tuthor.id}}">
+                                    <div class="col-md-2">
+                                        <input type="email" class="form-control" readonly id="inp_tuthor_email_{{ tuthor.id }}" data="{{ tuthor.id }}" name="tuthor_email_{{ tuthor.id }}" placeholder="Email del tutor" value="{{ tuthor.professor.user.email }}" required></input>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" class="form-control" readonly id="inp_tuthor_name_{{ tuthor.id }}" name="tuthor_name_{{ tuthor.id }}" placeholder="Nombre(s) del tutor" value="{{ tuthor.professor.user.first_name }}" required></input>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly id="inp_tuthor_lastname_{{ tuthor.id }}" name="tuthor_lastname_{{ tuthor.id }}" placeholder="Apellidos del tutor" value="{{ tuthor.professor.user.last_name }}" required></input>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly id="inp_tuthor_institution_{{ tuthor.id }}" name="tuthor_institution_{{ tuthor.id }}" placeholder="Institución del tutor" value="{{ tuthor.professor.institution }}" required></input>
+                                    </div>
+                                    <div class="col-md-2 pl-4 ">
+                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_{{ tuthor.id }}" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>
+                                    </div>
+
+
+                                </div>
+                                {% endfor %}
                                     <hr>
                                     <h5><strong>Requisitos</strong></h5>
                                     <div class="form-row">
