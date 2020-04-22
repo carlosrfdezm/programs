@@ -193,10 +193,12 @@ def create_student(request, program_slug):
                 )
                 new_student.save()
                 for i in range(1,int(request.POST['total_tuthors'])+1):
-                    print(create_new_tuthor(request, program,
+                    print(create_new_tuthor(request,
+                                            program,
                                       request.POST['tuthor_name_' + str(i)],
                                       request.POST['tuthor_lastname_' + str(i)],
-                                      request.POST['tuthor_institution_' + str(i)], request.POST['tuthor_email_' + str(i)],
+                                      request.POST['tuthor_institution_' + str(i)],
+                                            request.POST['tuthor_email_' + str(i)],
                                       new_student))
 
 

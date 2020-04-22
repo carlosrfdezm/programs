@@ -82,7 +82,7 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
                 return success
             elif program.type == 'msc':
                 new_tuthor = Tuthor(
-                    phd_student=student,
+                    msc_student=student,
                     professor=member,
                 )
                 new_tuthor.save()
@@ -98,14 +98,14 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
             if program.type == 'phd':
                 new_tuthor = Tuthor(
                     phd_student=student,
-                    professor=member,
+                    professor=new_member,
                 )
                 new_tuthor.save()
                 return success
             elif program.type == 'msc':
                 new_tuthor = Tuthor(
                     msc_student=student,
-                    professor=member,
+                    professor=new_member,
                 )
                 new_tuthor.save()
                 return success
@@ -134,7 +134,7 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
         if program.type == 'phd':
             new_tuthor = Tuthor(
                 phd_student=student,
-                professor=member,
+                professor=new_member,
             )
             new_tuthor.save()
             utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
@@ -142,7 +142,7 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
         elif program.type == 'msc':
             new_tuthor = Tuthor(
                 msc_student=student,
-                professor=member,
+                professor=new_member,
             )
             new_tuthor.save()
             utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)

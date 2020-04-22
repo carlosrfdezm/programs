@@ -234,12 +234,17 @@
 
                         if (json[0] == 1) {
 
-
+                            $('#inp_tuthor_name_'+index).attr('readonly','readonly');
+                            $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
+                            $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
                             $('#inp_tuthor_name_'+index).val(json[1][0]);
                             $('#inp_tuthor_lastname_'+index).val(json[1][1]);
                             $('#inp_tuthor_institution_'+index).val(json[1][2]);
 
                         } else if(json[0] == 0){
+                            $('#inp_tuthor_name_'+index).removeAttr('readonly');
+                            $('#inp_tuthor_lastname_'+index).removeAttr('readonly');
+                            $('#inp_tuthor_institution_'+index).removeAttr('readonly');
 
 
                         }
