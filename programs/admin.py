@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from programs.models import InvestigationLine, Student, MscStudent
+from programs.models import InvestigationLine, Student, MscStudent, Tuthor
 from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember
 
 # Register your models here.
@@ -37,3 +37,4 @@ admin.site.register(ProgramMember, ProgramMemberAdmin)
 admin.site.register(InvestigationLine)
 admin.site.register(Student)
 admin.site.register(MscStudent)
+admin.site.register(Tuthor)

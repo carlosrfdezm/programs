@@ -108,6 +108,27 @@
                                         </select>
                                     </div>
                                 </div>
+                                <hr>
+                                <h4><strong>Tutores:</strong></h4>
+                                <div class="form-row align-items-center pb-2" id="div_tuthor_1">
+                                    <div class="col-md-2">
+                                        <input type="email" class="form-control" id="inp_tuthor_email_1" data="1" name="tuthor_email_1" placeholder="Email del tutor" required></input>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" class="form-control" readonly id="inp_tuthor_name_1" name="tuthor_name_1" placeholder="Nombre(s) del tutor" required></input>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly id="inp_tuthor_lastname_1" name="tuthor_lastname_1" placeholder="Apellidos del tutor" required></input>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly id="inp_tuthor_institution_1" name="tuthor_institution_1" placeholder="Institución del tutor" required></input>
+                                    </div>
+                                    <div class="col-md-2 pl-4 ">
+                                        <button type="button" class="text-white btn btn-sm btn-warning" id="btn_add_tuthor" title="Agregar tutor"><i class="fa fa-plus"></i> </button>
+                                    </div>
+
+
+                                </div>
 
 
                                 <hr>
@@ -135,6 +156,7 @@
                                         <input type="file" class="form-control-file" id="exampleInputFile" name="picture" accept="image/*">
                                     </div>
                                 </div>
+                            <input type="hidden" id="inp_total_tuthors" name="total_tuthors" value="1">
 
                             </div>
                             <!-- /.card-body -->
@@ -186,6 +208,9 @@
     <script src="{% static 'programs/plugins/toastr/toastr.min.js' %}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            var total_tuthors=1;
+
+            
 
             const Toast = Swal.mixin({
                 toast: true,
@@ -194,6 +219,48 @@
                 timer: 7000
             });
             {#bsCustomFileInput.init();#}
+          $(document).on('keyup', "input[name*='tuthor_email']", function () {
+              var index = $(this).attr('data');
+              var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'tuthor_email':$(this).val(),
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0] == 1) {
+
+
+                            $('#inp_tuthor_name_'+index).val(json[1][0]);
+                            $('#inp_tuthor_lastname_'+index).val(json[1][1]);
+                            $('#inp_tuthor_institution_'+index).val(json[1][2]);
+
+                        } else if(json[0] == 0){
+
+
+                        }
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        {#$('#div_by_workshop').removeClass('hidden')#}
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                            " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                    }
+                });
+          });
 
 
             $(document).on('keyup','#inp_email', function () {
@@ -243,6 +310,43 @@
 
             });
 
+            $(document).on('click','#btn_add_tuthor', function () {
+                var old_tuthors = total_tuthors;
+                total_tuthors = total_tuthors+ 1;
+
+
+                $('#inp_total_tuthors').val(total_tuthors);
+                var new_tuthor_div = '<div class="form-row align-items-center pb-2" id="div_tuthor_'+total_tuthors+'">\n' +
+                '                                    <div class="col-md-2">\n' +
+                '                                        <input type="email" class="form-control" id="inp_tuthor_email_'+total_tuthors+'" data="'+total_tuthors+'" name="tuthor_email_'+total_tuthors+'" placeholder="Email del tutor" required="">\n' +
+                '                                    </div>\n' +
+                '                                    <div class="col-md-2">\n' +
+                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_name_'+total_tuthors+'" name="tuthor_name_'+total_tuthors+'" placeholder="Nombre(s) del tutor" required="">\n' +
+                '                                    </div>\n' +
+                '                                    <div class="col-md-3">\n' +
+                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_lastname_'+total_tuthors+'" name="tuthor_lastname_'+total_tuthors+'" placeholder="Apellidos del tutor" required="">\n' +
+                '                                    </div>\n' +
+                '                                    <div class="col-md-3">\n' +
+                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_institution_'+total_tuthors+'" name="tuthor_institution_'+total_tuthors+'" placeholder="Institución del tutor" required="">\n' +
+                '                                    </div>\n' +
+                '                                    <div class="col-md-2 pl-4 ">\n' +
+                '                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor" data="'+total_tuthors+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' +
+                '                                    </div>\n' +
+                '\n' +
+                '\n' +
+                '                                </div>'
+
+
+                $(new_tuthor_div).insertAfter($('#div_tuthor_1'))
+            });
+
+            $(document).on('click',"button[id*='btn_rm_tuthor']",function () {
+                var div_selector = '#div_tuthor_'+ $(this).attr('data');
+                alert(div_selector);
+                $(div_selector).remove();
+
+            })
+
             $(document).on('change','#exampleInputFile', function () {
                 var fileUpload = this;
                 var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
@@ -275,17 +379,17 @@
                             };
                         }
                     } else {
-                       Toast.fire({
-                                        type: 'error',
-                                        title: 'Este navegador no soporta HTML5, debe actualizarlo.'
-                                    });
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Este navegador no soporta HTML5, debe actualizarlo.'
+                        });
                         return false;
                     }
                 } else {
                     Toast.fire({
-                                        type: 'error',
-                                        title: 'Por favor seleccione una imagen.'
-                                    });
+                        type: 'error',
+                        title: 'Por favor seleccione una imagen.'
+                    });
                     return false;
                 }
             });

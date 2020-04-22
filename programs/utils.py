@@ -1,4 +1,8 @@
-from programs.models import ProgramMember, Student, CGC_Member
+import random
+
+from django.contrib.auth.models import User
+
+from programs.models import ProgramMember, Student, CGC_Member, Tuthor
 from django.core.mail import send_mail
 from django.template import loader
 
@@ -61,3 +65,87 @@ def utils_send_email(request, type, sender_email, member, subject, body, program
             send_mail("Información " + program.full_name, email, program.email, [member.user.email,'boris_perez@unah.edu.cu'],fail_silently=False)
         except:
             pass
+
+
+def create_new_tuthor(request, program, first_name,last_name,institution, email,student):
+    success=True
+    try:
+        user = User.objects.get(username=email)
+        try:
+            member=ProgramMember.objects.get(user=user, program=program)
+            if program.type == 'phd':
+                new_tuthor = Tuthor(
+                    phd_student=student,
+                    professor=member,
+                )
+                new_tuthor.save()
+                return success
+            elif program.type == 'msc':
+                new_tuthor = Tuthor(
+                    phd_student=student,
+                    professor=member,
+                )
+                new_tuthor.save()
+                return success
+        except ProgramMember.DoesNotExist:
+            new_member = ProgramMember(
+                user=user,
+                program=program,
+                institution=institution,
+
+            )
+            new_member.save()
+            if program.type == 'phd':
+                new_tuthor = Tuthor(
+                    phd_student=student,
+                    professor=member,
+                )
+                new_tuthor.save()
+                return success
+            elif program.type == 'msc':
+                new_tuthor = Tuthor(
+                    msc_student=student,
+                    professor=member,
+                )
+                new_tuthor.save()
+                return success
+            return success
+
+    except User.DoesNotExist:
+        passwd = program.slug + str(random.randint(1000000, 9999999))
+        user = User.objects.create_user(
+            email,
+            email,
+            passwd,  # Cambiar despues por contrase;a generada
+
+        )
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+
+        new_member = ProgramMember(
+            user=user,
+            program=program,
+            institution=institution,
+
+        )
+        new_member.save()
+
+        if program.type == 'phd':
+            new_tuthor = Tuthor(
+                phd_student=student,
+                professor=member,
+            )
+            new_tuthor.save()
+            utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+            return success
+        elif program.type == 'msc':
+            new_tuthor = Tuthor(
+                msc_student=student,
+                professor=member,
+            )
+            new_tuthor.save()
+            utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+            return success
+        return success
+

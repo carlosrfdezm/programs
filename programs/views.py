@@ -19,8 +19,8 @@ from django.utils.timezone import now
 
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
-    InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent
-from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student
+    InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor
+from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
 
 
 def index(request, program_slug):
@@ -85,7 +85,7 @@ def create_student(request, program_slug):
             try:
                 user = User.objects.get(email=request.POST['student_email'])
                 try:
-                    student= Student.objects.get(user=user, program=program)
+                    Student.objects.get(user=user, program=program)
                     return error_500(request, program, 'El estudiante ya existe en este programa')
                 except Student.DoesNotExist:
                     student = Student(
@@ -114,6 +114,11 @@ def create_student(request, program_slug):
                             status='solicitante',
                         )
                         new_student.save()
+                        for i in range(1,int(request.POST['total_tuthors'])+1):
+                            create_new_tuthor(request,program,
+                                              request.POST['tuthor_name_' + str(i)],
+                                              request.POST['tuthor_lastname_' + str(i)],
+                                              request.POST['tuthor_institution_' + str(i)], request.POST['tuthor_email_' + str(i)], new_student)
                         new_theme = PhdStudentTheme(
                             phd_student=new_student,
                             description=request.POST['theme'],
@@ -187,6 +192,14 @@ def create_student(request, program_slug):
                     status='solicitante',
                 )
                 new_student.save()
+                for i in range(1,int(request.POST['total_tuthors'])+1):
+                    print(create_new_tuthor(request, program,
+                                      request.POST['tuthor_name_' + str(i)],
+                                      request.POST['tuthor_lastname_' + str(i)],
+                                      request.POST['tuthor_institution_' + str(i)], request.POST['tuthor_email_' + str(i)],
+                                      new_student))
+
+
                 new_theme=PhdStudentTheme(
                     phd_student=new_student,
                     description=request.POST['theme'],
@@ -954,6 +967,31 @@ def ajx_usr_exists(request,program_slug):
             json.dumps([{'exists': 0}]),
             content_type="application/json"
         )
+
+@login_required
+def ajx_program_member_tuthor(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    data_response=[]
+
+    if request.method == 'POST':
+        try:
+            user = User.objects.get(username=request.POST['tuthor_email'])
+            try:
+                member=ProgramMember.objects.get(program=program, user=user)
+                data_response.append(1)
+                data_response.append([user.first_name, user.last_name, member.institution])
+            except ProgramMember.DoesNotExist:
+                data_response.append(0)
+        except User.DoesNotExist:
+            data_response.append(0)
+
+
+    return HttpResponse(
+        json.dumps(data_response),
+        content_type="application/json"
+    )
+
+
 
 @login_required
 def create_line(request, program_slug):

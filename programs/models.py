@@ -110,12 +110,12 @@ class ProgramMember(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
-    role = models.CharField(max_length=50, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=50,default='Tutor', choices=ROLE_CHOICES)
     country = models.CharField(max_length=70, default='Cuba')
-    phone = models.CharField(max_length=50)
-    institution = models.CharField(max_length=100)
+    phone = models.CharField(max_length=50, null=True)
+    institution = models.CharField(max_length=100, default='UNAH')
     birth_date = models.DateField(default='1960-01-01', help_text='Fecha de nacimiento')
-    degree = models.CharField(max_length=100,
+    degree = models.CharField(max_length=100, default='Doctor en Ciencias de...',
                                    help_text='Grado cientifico')
     picture = models.ImageField(null=True, blank=True, upload_to=member_directory_path)
     fb_contact = models.CharField(max_length=50, null=True, blank=True,
@@ -125,8 +125,8 @@ class ProgramMember(models.Model):
     ln_contact = models.CharField(max_length=50, null=True, blank=True,
                                   help_text='Contacto de Linkedin del miembro del tribunal')
     init_date = models.DateField(default=now)
-    sex = models.CharField(max_length=2, choices=SEX_CHOICES, help_text='Sexo del miembro del tribunal')
-    weight=models.SmallIntegerField(help_text="Peso del Cargo", choices=[(1,'1'),(2,'2'),(3,'3'),(4,'4'),(5,'5')])
+    sex = models.CharField(max_length=2,default='m', choices=SEX_CHOICES, help_text='Sexo del miembro del tribunal')
+    weight=models.SmallIntegerField(help_text="Peso del Cargo", default=5, choices=[(1,'1'),(2,'2'),(3,'3'),(4,'4'),(5,'5')])
 
     class Meta:
         verbose_name='Miembro del Programa'
@@ -288,4 +288,11 @@ class MscStudentTheme(models.Model):
     def __str__(self):
         return self.description
 
+class Tuthor(models.Model):
+    phd_student=models.ForeignKey(PhdStudent, null=True,on_delete=models.CASCADE)
+    msc_student=models.ForeignKey(MscStudent, null=True, on_delete=models.CASCADE)
+    professor = models.ForeignKey(ProgramMember, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.professor.user.get_full_name()
 
