@@ -221,12 +221,15 @@
             {#bsCustomFileInput.init();#}
             $(document).on('keyup', "input[name*='tuthor_email']", function () {
                 var index = $(this).attr('data');
+                var email = $(this).val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
                 var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
                 $.ajax({
                     url : url,
                     type : "POST", // http method
                     data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                        'tuthor_email':$(this).val(),
+                        'tuthor_email':email,
                     }, // data sent with the post request
 
                     // handle a successful response
@@ -242,6 +245,7 @@
                             $('#inp_tuthor_institution_'+index).val(json[1][2]);
 
                         } else if(json[0] == 0){
+
                             $('#inp_tuthor_name_'+index).removeAttr('readonly');
                             $('#inp_tuthor_lastname_'+index).removeAttr('readonly');
                             $('#inp_tuthor_institution_'+index).removeAttr('readonly');
@@ -265,6 +269,7 @@
                         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                     }
                 });
+                }
             });
 
 
