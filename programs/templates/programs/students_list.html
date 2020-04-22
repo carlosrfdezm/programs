@@ -58,6 +58,7 @@
                                     {% if scope == 'Doctorandos' %}
                                         <th class="text-center">Requisitos<br> (egreso)</th>
                                     {% endif %}
+                                <th>Tutores</th>
 
                                     <th></th>
 
@@ -96,6 +97,7 @@
                                                 {% endif %}
                                             </td>
                                         {% endif %}
+                                    <td>{{ student.phdstudent.tuthor_set.all|unordered_list }}</td>
                                         {% if user_is_program_cs %}
                                             <td class="text-center">
                                                 <div class="btn-group" role="group">
