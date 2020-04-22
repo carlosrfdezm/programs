@@ -156,7 +156,7 @@
                                         <input type="file" class="form-control-file" id="exampleInputFile" name="picture" accept="image/*">
                                     </div>
                                 </div>
-                            <input type="hidden" id="inp_total_tuthors" name="total_tuthors" value="1">
+                                <input type="hidden" id="inp_total_tuthors" name="total_tuthors" value="1">
 
                             </div>
                             <!-- /.card-body -->
@@ -210,7 +210,7 @@
         $(document).ready(function () {
             var total_tuthors=1;
 
-            
+
 
             const Toast = Swal.mixin({
                 toast: true,
@@ -219,9 +219,9 @@
                 timer: 7000
             });
             {#bsCustomFileInput.init();#}
-          $(document).on('keyup', "input[name*='tuthor_email']", function () {
-              var index = $(this).attr('data');
-              var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
+            $(document).on('keyup', "input[name*='tuthor_email']", function () {
+                var index = $(this).attr('data');
+                var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
                 $.ajax({
                     url : url,
                     type : "POST", // http method
@@ -265,7 +265,7 @@
                         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                     }
                 });
-          });
+            });
 
 
             $(document).on('keyup','#inp_email', function () {
@@ -322,33 +322,41 @@
 
                 $('#inp_total_tuthors').val(total_tuthors);
                 var new_tuthor_div = '<div class="form-row align-items-center pb-2" id="div_tuthor_'+total_tuthors+'">\n' +
-                '                                    <div class="col-md-2">\n' +
-                '                                        <input type="email" class="form-control" id="inp_tuthor_email_'+total_tuthors+'" data="'+total_tuthors+'" name="tuthor_email_'+total_tuthors+'" placeholder="Email del tutor" required="">\n' +
-                '                                    </div>\n' +
-                '                                    <div class="col-md-2">\n' +
-                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_name_'+total_tuthors+'" name="tuthor_name_'+total_tuthors+'" placeholder="Nombre(s) del tutor" required="">\n' +
-                '                                    </div>\n' +
-                '                                    <div class="col-md-3">\n' +
-                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_lastname_'+total_tuthors+'" name="tuthor_lastname_'+total_tuthors+'" placeholder="Apellidos del tutor" required="">\n' +
-                '                                    </div>\n' +
-                '                                    <div class="col-md-3">\n' +
-                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_institution_'+total_tuthors+'" name="tuthor_institution_'+total_tuthors+'" placeholder="Institución del tutor" required="">\n' +
-                '                                    </div>\n' +
-                '                                    <div class="col-md-2 pl-4 ">\n' +
-                '                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor" data="'+total_tuthors+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' +
-                '                                    </div>\n' +
-                '\n' +
-                '\n' +
-                '                                </div>'
+                    '                                    <div class="col-md-2">\n' +
+                    '                                        <input type="email" class="form-control" id="inp_tuthor_email_'+total_tuthors+'" data="'+total_tuthors+'" name="tuthor_email_'+total_tuthors+'" placeholder="Email del tutor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-2">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_name_'+total_tuthors+'" name="tuthor_name_'+total_tuthors+'" placeholder="Nombre(s) del tutor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-3">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_lastname_'+total_tuthors+'" name="tuthor_lastname_'+total_tuthors+'" placeholder="Apellidos del tutor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-3">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_institution_'+total_tuthors+'" name="tuthor_institution_'+total_tuthors+'" placeholder="Institución del tutor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-2 pl-4 " id="div_rm_tuthor_'+total_tuthors+'">\n' +
+                    '                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+total_tuthors+'" data="'+total_tuthors+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' +
+                    '                                    </div>\n' +
+                    '\n' +
+                    '\n' +
+                    '                                </div>'
 
-
-                $(new_tuthor_div).insertAfter($('#div_tuthor_1'))
+                $('#btn_rm_tuthor_'+old_tuthors).remove();
+                $(new_tuthor_div).insertAfter($('#div_tuthor_'+old_tuthors))
             });
 
             $(document).on('click',"button[id*='btn_rm_tuthor']",function () {
-                var div_selector = '#div_tuthor_'+ $(this).attr('data');
-                alert(div_selector);
+                var current_index = $(this).attr('data');
+
+                var div_selector = '#div_tuthor_'+ current_index;
                 $(div_selector).remove();
+
+                total_tuthors = total_tuthors -1;
+
+                $('#inp_total_tuthors').val(total_tuthors);
+                $('#div_rm_tuthor_'+total_tuthors).append(
+                    '<button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+total_tuthors+'" ' +
+                    'data="'+total_tuthors+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' )
 
             })
 
