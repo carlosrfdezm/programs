@@ -224,98 +224,108 @@
                 var email = $(this).val();
                 var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
                 if(emailReg.test( email ) && email != ''){
-                var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
-                $.ajax({
-                    url : url,
-                    type : "POST", // http method
-                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                        'tuthor_email':email,
-                    }, // data sent with the post request
+                    var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'tuthor_email':email,
+                        }, // data sent with the post request
 
-                    // handle a successful response
-                    success : function(json) {
+                        // handle a successful response
+                        success : function(json) {
 
-                        if (json[0] == 1) {
+                            if (json[0] == 1) {
 
-                            $('#inp_tuthor_name_'+index).attr('readonly','readonly');
-                            $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
-                            $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
-                            $('#inp_tuthor_name_'+index).val(json[1][0]);
-                            $('#inp_tuthor_lastname_'+index).val(json[1][1]);
-                            $('#inp_tuthor_institution_'+index).val(json[1][2]);
+                                $('#inp_tuthor_name_'+index).attr('readonly','readonly');
+                                $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
+                                $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
+                                $('#inp_tuthor_name_'+index).val(json[1][0]);
+                                $('#inp_tuthor_lastname_'+index).val(json[1][1]);
+                                $('#inp_tuthor_institution_'+index).val(json[1][2]);
 
-                        } else if(json[0] == 0){
+                            } else if(json[0] == 0){
 
-                            $('#inp_tuthor_name_'+index).removeAttr('readonly');
-                            $('#inp_tuthor_lastname_'+index).removeAttr('readonly');
-                            $('#inp_tuthor_institution_'+index).removeAttr('readonly');
+                                $('#inp_tuthor_name_'+index).removeAttr('readonly');
+                                $('#inp_tuthor_lastname_'+index).removeAttr('readonly');
+                                $('#inp_tuthor_institution_'+index).removeAttr('readonly');
 
 
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                         }
-                        console.log(json); // log the returned json to the console
-                        console.log("success"); // another sanity check
+                    });
+                }
+                else{
+                    $('#inp_tuthor_name_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
 
-
-
-
-                        {#$('#div_by_workshop').removeClass('hidden')#}
-
-                    },
-
-                    // handle a non-successful response
-                    error : function(xhr,errmsg,err) {
-                        $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                            " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                    }
-                });
                 }
             });
 
 
             $(document).on('keyup','#inp_email', function () {
-                var url = "{% url 'programs:ajx_usr_exists' program.slug %}"
-                $.ajax({
-                    url : url,
-                    type : "POST", // http method
-                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                        'email':$('#inp_email').val(),
-                    }, // data sent with the post request
+                var email = $('#inp_email').val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_usr_exists' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'email':email,
+                        }, // data sent with the post request
 
-                    // handle a successful response
-                    success : function(json) {
+                        // handle a successful response
+                        success : function(json) {
 
-                        if (json[0].exists == 1) {
+                            if (json[0].exists == 1) {
 
-                            Toast.fire({
-                                type: 'warning',
-                                title: 'Ya hay un usuario con ese correo, quiza ya es miembro de otro programa'
-                            })
+                                Toast.fire({
+                                    type: 'warning',
+                                    title: 'Ya hay un usuario con ese correo, quiza ya es miembro de otro programa'
+                                })
 
-                        } else if(json[0].exists == 2){
-                            Toast.fire({
-                                type: 'error',
-                                title: 'Este correo esta en uso por un miembro del programa'
-                            })
+                            } else if(json[0].exists == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Este correo esta en uso por un miembro del programa'
+                                })
 
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                         }
-                        console.log(json); // log the returned json to the console
-                        console.log("success"); // another sanity check
-
-
-
-
-                        {#$('#div_by_workshop').removeClass('hidden')#}
-
-                    },
-
-                    // handle a non-successful response
-                    error : function(xhr,errmsg,err) {
-                        $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                            " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                    }
-                });
+                    });
+                };
 
 
             });
