@@ -138,7 +138,7 @@
                                         <input type="text" class="form-control" readonly id="inp_tuthor_institution_{{ tuthor.id }}" name="tuthor_institution_{{ tuthor.id }}" placeholder="Institución del tutor" value="{{ tuthor.professor.institution }}" required></input>
                                     </div>
                                     <div class="col-md-2 pl-4 ">
-                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_{{ tuthor.id }}" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>
+                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_{{ tuthor.id }}" data="{{ tuthor.id }}" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>
                                     </div>
 
 
