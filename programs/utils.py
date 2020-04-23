@@ -68,7 +68,7 @@ def utils_send_email(request, type, sender_email, member, subject, body, program
 
 
 def create_new_tuthor(request, program, first_name,last_name,institution, email,student):
-    success=True
+    success=[]
     try:
         user = User.objects.get(username=email)
         try:
@@ -79,6 +79,8 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
                     professor=member,
                 )
                 new_tuthor.save()
+                success.append(True)
+                success.append(new_tuthor.id)
                 return success
             elif program.type == 'msc':
                 new_tuthor = Tuthor(
@@ -86,7 +88,10 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
                     professor=member,
                 )
                 new_tuthor.save()
+                success.append(True)
+                success.append(new_tuthor.id)
                 return success
+
         except ProgramMember.DoesNotExist:
             new_member = ProgramMember(
                 user=user,
@@ -101,6 +106,8 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
                     professor=new_member,
                 )
                 new_tuthor.save()
+                success.append(True)
+                success.append(new_tuthor.id)
                 return success
             elif program.type == 'msc':
                 new_tuthor = Tuthor(
@@ -108,8 +115,10 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
                     professor=new_member,
                 )
                 new_tuthor.save()
+                success.append(True)
+                success.append(new_tuthor.id)
                 return success
-            return success
+
 
     except User.DoesNotExist:
         passwd = program.slug + str(random.randint(1000000, 9999999))
@@ -138,6 +147,8 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
             )
             new_tuthor.save()
             utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+            success.append(True)
+            success.append(new_tuthor.id)
             return success
         elif program.type == 'msc':
             new_tuthor = Tuthor(
@@ -146,6 +157,8 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
             )
             new_tuthor.save()
             utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+            success.append(True)
+            success.append(new_tuthor.id)
             return success
-        return success
+
 

@@ -1171,6 +1171,49 @@ def ajx_delete_member(request, program_slug):
             json.dumps([{'deleted': 0}]),
             content_type="application/json"
         )
+@login_required
+def ajx_create_tuthor(request, program_slug, student_id):
+    program=Program.objects.get(slug=program_slug)
+
+    if program.type == 'phd':
+        student = PhdStudent.objects.get(student=Student.objects.get(pk=student_id, program=program))
+    elif program.type == 'msc':
+        student = MscStudent.objects.get(pk=student_id, program=program)
+
+    if user_is_program_cs(request.user,program ):
+        if request.method=='POST':
+
+            try:
+                new_tuthor = create_new_tuthor(request, program,request.POST['tuthor_name'],request.POST['tuthor_lastname'],
+                                     request.POST['tuthor_institution'],request.POST['tuthor_email'],student )
+                if new_tuthor[0]:
+                    tuthor = Tuthor.objects.get(pk=new_tuthor[1])
+                    return HttpResponse(
+                        json.dumps([{'created': 1,'id':tuthor.id, 'name':tuthor.professor.user.first_name,'lastname':tuthor.professor.user.last_name,
+                                     'email':tuthor.professor.user.email,'institution':tuthor.professor.institution}]),
+                        content_type="application/json"
+                    )
+                else:
+                    return HttpResponse(
+                        json.dumps([{'created': 0}]),
+                        content_type="application/json"
+                    )
+
+            except:
+                return HttpResponse(
+                    json.dumps([{'created': 0}]),
+                    content_type="application/json"
+                )
+        else:
+            return HttpResponse(
+                json.dumps([{'created': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'created': 2}]),
+            content_type="application/json"
+        )
 
 @login_required
 def ajx_delete_tuthor(request, program_slug):
