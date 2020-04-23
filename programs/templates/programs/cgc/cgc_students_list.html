@@ -1,4 +1,4 @@
-{% extends 'programs/base.html' %}
+{% extends 'programs/cgc/cgc_base.html' %}
 {% load static %}
 {% load extra_tags %}
 
@@ -105,7 +105,7 @@
                                         </span>
                                     {% endif %} </td>
                                     {% if scope == 'Doctorandos' %}
-                                        {% finish_requirements_accomplished student studend.program as finish_requirements_accomplished %}
+                                        {% finish_requirements_accomplished student student.program as finish_requirements_accomplished %}
 
                                         <td class="text-center">
                                             {% if finish_requirements_accomplished %}
