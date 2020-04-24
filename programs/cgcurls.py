@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('brieffings/create', views.create_cgc_brief, name='create_cgc_brief'),
     path('brieffings/<int:year>/list', views.cgc_year_brieffings, name='cgc_year_brieffings'),
+    path('brieffings/list', views.cgc_brieffings, name='cgc_brieffings'),
 
     path('students/<str:scope>', views.students_list, name='students_list'),
     path('lines/list', views.programs_lines, name='programs_lines'),

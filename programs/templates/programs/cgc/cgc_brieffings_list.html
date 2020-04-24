@@ -40,6 +40,25 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Actas de la CGC {% if year %} Año {{ year }} {% endif %} </h3>
+
+                        <div class="card-tools">
+                            {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                            {#                                    <i class="fas fa-minus"></i>#}
+                            {#                                </button>#}
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fas fa-wrench"></i>
+                                </button>
+
+                                    <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                    {% for year in years %}
+                                        <a href="{% url 'cgc:cgc_year_brieffings' year %}" class="dropdown-item text-center">Año {{ year }}</a>
+                                     {% endfor %}
+
+                                    </div>
+
+                            </div>
+
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
