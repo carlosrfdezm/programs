@@ -18,12 +18,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Miembros de claustros</h1>
+                    <h1>Actas de la CGC-UNAH-Complejo</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{% url 'cgc:cgc_home'  %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Miembros</li>
+                        <li class="breadcrumb-item active">Actas</li>
                     </ol>
                 </div>
             </div>
@@ -39,31 +39,48 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Miembros {% if scope == 'all' %} de Programas Doctorales {% else %} de {{ scope }} {% endif %} </h3>
+                        <h3 class="card-title">Actas de la CGC {% if year %} Año {{ year }} {% endif %} </h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <table id="example1" class="table table-bordered table-striped">
+                        <table id="example1" class="table  table-striped">
                             <thead>
                             {% user_is_cgc_ps user as user_is_program_cs %}
+                            {% if year %}
+                                <tr>
+                                    <th>Mes</th>
+                                    <th> </th>
 
-                            <tr>
-                                <th>Nombre y apellidos</th>
-                                <th>Programas</th>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <th>Año</th>
+                                    <th>Mes</th>
+                                    <th> </th>
 
-                            </tr>
+                                </tr>
+                            {% endif %}
                             </thead>
                             <tbody>
-                            {% for user in users %}
-                                {% if scope == 'all' %}
-                                    {% user_programs_member user as user_programs_member  %}
-                                {% else %}
-                                    {% user_programs_comite_member user as user_programs_member  %}
+                            {% for brief in brieffings %}
 
-                                {% endif %}
-                                <tr id="tr_member_{{ user.id }}">
-                                    <td>{{ user.last_name|upper }}, {{user.first_name }}</td>
-                                    <td>{{ user_programs_member|unordered_list }}</td>
+                                <tr id="tr_brief_{{ brief.id }}">
+                                    {% if not year %}
+                                        <td>{{ brief.year }}</td>
+                                    {% endif %}
+                                    <td>{{ brief.month }}</td>
+                                    <td class="text-right">
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-success" type="button" title="Ver acta"><i class="fa fa-book-reader"></i> </button>
+                                            {% if user_is_program_cs %}
+                                                <button class="btn btn-sm btn-warning" type="button" title="Editar acta"><i class="fa fa-edit"></i> </button>
+                                                <button class="btn btn-sm btn-danger" type="button" title="Eliminar acta"><i class="fa fa-eraser"></i> </button>
+                                            {% endif %}
+
+                                        </div>
+
+                                    </td>
+
 
 
                                 </tr>
@@ -135,6 +152,8 @@
                 showConfirmButton: false,
                 timer: 7000
             });
+            $('[data-toggle="popover"]').popover();
+
 
 
         })

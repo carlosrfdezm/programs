@@ -98,7 +98,7 @@
             <a href="" class="brand-link">
                 <img src="{% static 'programs/dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
                      style="opacity: .8">
-                <span class="brand-text font-weight-light"></span>
+                <span class="brand-text font-weight-light">Programas CGC</span>
             </a>
 
             <!-- Sidebar -->
@@ -215,7 +215,7 @@
                             <ul class="nav nav-treeview">
 
                                 <li class="nav-item">
-                                    <a href="" class="nav-link" title="Nueva acta de la CGC UNAH-Complejo">
+                                    <a href="{% url 'cgc:create_cgc_brief' %}" class="nav-link" title="Nueva acta de la CGC UNAH-Complejo">
                                         <i class="fa fa-folder-plus"></i>
                                         <p>Nueva acta CGC</p>
                                     </a>

@@ -38,6 +38,16 @@ def user_is_cgc_member(user):
     except:
         return False
 
+def user_is_cgc_ps(user):
+    try:
+        member=CGC_Member.objects.get(user=user)
+        if member.charge == 'Presidente' or member.charge == 'Secretario':
+            return True
+        else:
+            return False
+    except:
+        return False
+
 def user_is_program_student(user, program):
     try:
         student=Student.objects.get(user=user, program=program)

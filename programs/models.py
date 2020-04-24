@@ -7,6 +7,10 @@ def program_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     return 'program_{0}/imgs/{1}'.format(instance.slug, filename)
 
+def program_brief_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
+    return 'program_{0}/brieffings/{1}/{2}/{3}'.format(instance.program.slug,instance.year,instance.month, filename)
+
 def member_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     return 'program_{0}/members/{1}/{2}'.format(instance.program.slug,instance.id, filename)
@@ -22,6 +26,12 @@ def background_directory_path(instance, filename):
 def cgc_photo_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/cgc/imgs/<filename>
     return 'cgc/imgs/{0}'.format(filename)
+
+def cgc_brief_path(instance, filename):
+    return 'cgc/brieffings/{0}/{1}/{2}'.format(instance.year,instance.month,filename)
+
+def cngc_brief_path(instance, filename):
+    return 'cngc/brieffings/{0}/{1}/{2}'.format(instance.year,instance.month,filename)
 
 # Create your models here.
 
@@ -50,7 +60,6 @@ class Program(models.Model):
     email = models.EmailField(help_text='Email de contacto')
     icon = models.CharField(max_length=100, null=False, blank=False, choices=ICON_CHOICES,
                             help_text='Seleccione una opcion de la lista')
-    background = models.ImageField(upload_to=program_directory_path, blank=True)
     center = models.CharField(max_length=120, null=True, blank=True)
 
     class Meta:
@@ -295,4 +304,36 @@ class Tuthor(models.Model):
 
     def __str__(self):
         return self.professor.user.get_full_name()
+
+class CGCBrief(models.Model):
+    brief=models.FileField(upload_to=cgc_brief_path, null=True)
+    year =models.IntegerField(default=now().year)
+    month=models.CharField(max_length=12)
+
+    def __str__(self):
+        meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+                 8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+        return 'Acta de la CGC-UNAH-Complejo de ' + meses[self.month] + ' de ' + str(self.year)
+
+
+class CNGCBrief(models.Model):
+    brief = models.FileField(upload_to=cngc_brief_path, null=True)
+    year = models.IntegerField(default=now().year)
+    month = models.CharField(max_length=12)
+
+    def __str__(self):
+        meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+                 8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+        return 'Acta de la CNGC de ' + meses[self.month] +' de '+ str(self.year)
+
+class ProgramBrief(models.Model):
+    program=models.ForeignKey(Program, on_delete=models.CASCADE, null=True)
+    brief = models.FileField(upload_to=program_brief_path)
+    year = models.IntegerField(default=now().year)
+    month = models.CharField(max_length=12)
+
+    def __str__(self):
+        meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+                 8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+        return 'Acta de' + meses[self.month] +' de '+ str(self.year)
 

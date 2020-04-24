@@ -127,7 +127,7 @@ def user_is_program_cs(user, program):
 def user_is_cgc_ps(user):
     try:
         member=CGC_Member.objects.get(user=user)
-        if member.role == 'Presidente' or member.role == 'Secretario':
+        if member.charge == 'Presidente' or member.charge == 'Secretario':
             return True
         else:
             return False
