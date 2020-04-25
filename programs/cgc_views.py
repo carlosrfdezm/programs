@@ -41,20 +41,25 @@ def cgc_home(request):
 def create_cgc_brief(request):
     if user_is_cgc_ps(request.user):
         if request.method == 'POST':
-            # try:
-            brief = request.FILES['brief']
+            try:
+                brief = request.FILES['brief']
+                fs = FileSystemStorage()
+                brief_ext = brief.name.split('.')[brief.name.split('.').__len__() - 1]
+                new_brief_name ='cgc/brieffings/{0}/{1}/{2}'.format(request.POST['year'],request.POST['month'], 'Acta_CGC_'+request.POST['month']+'_'+ request.POST['year']+'.'+brief_ext)
+                filename = fs.save(new_brief_name, brief)
 
-            new_brief = CGCBrief(
-                brief=brief,
-                year=request.POST['year'],
-                month=request.POST['month'],
-            )
-            new_brief.save()
-            return HttpResponseRedirect(reverse('cgc:cgc_year_brieffings', args=[new_brief.year]))
+                new_brief = CGCBrief(
+                    # brief=brief,
+                    brief=filename,
+                    year=request.POST['year'],
+                    month=request.POST['month'],
+                )
+                new_brief.save()
+                return HttpResponseRedirect(reverse('cgc:cgc_year_brieffings', args=[new_brief.year]))
 
-        # except:
-        #     print('Excepcion lanzada')
-        #     return error_500(request, 'Ha ocurrido un error al crear la nueva acta')
+            except:
+                print('Excepcion lanzada')
+                return error_500(request, 'Ha ocurrido un error al crear la nueva acta')
 
 
         else:
@@ -330,7 +335,11 @@ def ajx_delete_cgc_brieffing(request):
         if request.method=='POST':
             brief_id=request.POST['brief_id']
             try:
+
+                CGCBrief.objects.get(pk=brief_id).brief._del_file
                 CGCBrief.objects.get(pk=brief_id).delete()
+
+
                 return HttpResponse(
                     json.dumps([{'deleted': 1}]),
                     content_type="application/json"
