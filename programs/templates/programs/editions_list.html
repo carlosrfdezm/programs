@@ -171,50 +171,47 @@
                 timer: 7000
             });
 
-            $("#example1").DataTable({
+            var myTable= $("#example1").DataTable({
                 language: {
                     url: '{% static "programs/plugins/datatables/Spanish.json" %}'
                 }});
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-            });
 
-
-
-            {% for project in projects %}
-                $('#btn_rm_project_{{ project.id }}').click(function () {
-                    var project_id={{ project.id }};
-                    var url = "{% url 'programs:ajx_delete_project' program.slug %}";
+            {% for edition in editions %}
+                $('#btn_rm_edition_{{ edition.id }}').click(function () {
+                    var edition_id={{ edition.id }};
+                    var url = "{% url 'programs:ajx_delete_program_edition' program.slug %}";
 
 
                     $.ajax({
                         url : url,
                         type : "POST", // http method
                         data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                            'project_id':project_id,
+                            'edition_id':edition_id,
                         }, // data sent with the post request
 
                         // handle a successful response
                         success : function(json) {
 
                             if (json[0].deleted == 1) {
-
-                                $('#tr_project_{{ project.id }}').remove();
+                                var row = myTable.row( $('#tr_edition_{{ edition.id }}') );
+                                row.remove().draw();
 
                                 Toast.fire({
                                     type: 'success',
-                                    title: 'Proyecto eliminado exitosamente'
+                                    title: 'Edición eliminada exitosamente'
                                 });
 
                             } else if(json[0].deleted == 0){
                                 Toast.fire({
                                     type: 'error',
-                                    title: 'No se ha podido eliminar el proyecto seleccionado.'
+                                    title: 'No se ha podido eliminar la edición seleccionada.'
+                                })
+
+                            }
+                            else if(json[0].deleted == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Usted no puede eliminar la edición seleccionada.'
                                 })
 
                             }
