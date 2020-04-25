@@ -160,18 +160,11 @@
                 timer: 7000
             });
 
-            $("#example1").DataTable({
+            var myTable= $("#example1").DataTable({
                 language: {
                     url: '{% static "programs/plugins/datatables/Spanish.json" %}'
                 }});
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-            });
+
 
 
 
@@ -194,17 +187,18 @@
 
                             if (json[0].deleted == 1) {
 
-                                $('#tr_line_{{ line.id }}').remove();
+                                var row = myTable.row( $('#tr_line_{{ line.id }}') );
+                                row.remove().draw();
 
                                 Toast.fire({
                                     type: 'success',
-                                    title: 'Linea eliminada exitosamente'
+                                    title: 'Línea eliminada exitosamente'
                                 });
 
                             } else if(json[0].deleted == 0){
                                 Toast.fire({
                                     type: 'error',
-                                    title: 'No se ha podido eliminar la linea seleccionada.'
+                                    title: 'No se ha podido eliminar la línea seleccionada.'
                                 })
 
                             }
