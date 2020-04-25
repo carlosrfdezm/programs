@@ -139,7 +139,7 @@
             </div>
             <!-- /.col -->
         </div>
-    {% csrf_token %}
+        {% csrf_token %}
         <!-- /.row -->
     </section>
     <!-- /.content -->
@@ -161,20 +161,10 @@
                 timer: 7000
             });
 
-            $("#example1").DataTable({
+            var myTable= $("#example1").DataTable({
                 language: {
                     url: '{% static "programs/plugins/datatables/Spanish.json" %}'
                 }});
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-            });
-
-
 
             {% for project in projects %}
                 $('#btn_rm_project_{{ project.id }}').click(function () {
@@ -193,8 +183,8 @@
                         success : function(json) {
 
                             if (json[0].deleted == 1) {
-
-                                $('#tr_project_{{ project.id }}').remove();
+                                var row = myTable.row( $('#tr_project_{{ project.id }}') );
+                                row.remove().draw();
 
                                 Toast.fire({
                                     type: 'success',
