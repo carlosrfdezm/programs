@@ -80,7 +80,7 @@ def cgc_year_brieffings(request, year):
     if user_is_cgc_member(request.user):
         context={
             'year':year,
-            'years':years,
+            'years':sorted(years),
             'brieffings': CGCBrief.objects.filter(year=year),
         }
         return render(request, 'programs/cgc/cgc_brieffings_list.html',context)
