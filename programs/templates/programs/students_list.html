@@ -395,21 +395,12 @@
     {#    <script src="{% static 'programs/dist/js/demo.js' %}"></script>#}
     <!-- page script -->
     <script>
-        $(function () {
-            $("#example1").DataTable({
+
+        $(document).ready(function () {
+             var myTable= $("#example1").DataTable({
                 language: {
                     url: '{% static "programs/plugins/datatables/Spanish.json" %}'
                 }});
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-            });
-        });
-        $(document).ready(function () {
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -435,8 +426,8 @@
                         success : function(json) {
 
                             if (json[0].deleted == 1) {
-
-                                $('#tr_student_{{ student.id }}').remove();
+                                var row = myTable.row( $('#tr_student_{{ student.id }}') );
+                                row.remove().draw();
 
                                 Toast.fire({
                                     type: 'success',
