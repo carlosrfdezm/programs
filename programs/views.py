@@ -1120,17 +1120,42 @@ def ajx_delete_student(request, program_slug):
     if user_is_program_cs(request.user,program ):
         if request.method=='POST':
             student_id=request.POST['student_id']
-            try:
-                Student.objects.get(pk=student_id).delete()
-                return HttpResponse(
-                    json.dumps([{'deleted': 1}]),
-                    content_type="application/json"
-                )
-            except:
-                return HttpResponse(
-                    json.dumps([{'deleted': 0}]),
-                    content_type="application/json"
-                )
+            if program.type == 'phd':
+                try:
+                    Student.objects.get(pk=student_id).delete()
+                    return HttpResponse(
+                        json.dumps([{'deleted': 1}]),
+                        content_type="application/json"
+                    )
+                except:
+                    return HttpResponse(
+                        json.dumps([{'deleted': 0}]),
+                        content_type="application/json"
+                    )
+            elif program.type == 'msc':
+                try:
+                    MscStudent.objects.get(pk=student_id).delete()
+                    return HttpResponse(
+                        json.dumps([{'deleted': 1}]),
+                        content_type="application/json"
+                    )
+                except:
+                    return HttpResponse(
+                        json.dumps([{'deleted': 0}]),
+                        content_type="application/json"
+                    )
+            elif program.type == 'dip':
+                try:
+                    DipStudent.objects.get(pk=student_id).delete()
+                    return HttpResponse(
+                        json.dumps([{'deleted': 1}]),
+                        content_type="application/json"
+                    )
+                except:
+                    return HttpResponse(
+                        json.dumps([{'deleted': 0}]),
+                        content_type="application/json"
+                    )
         else:
             return HttpResponse(
                 json.dumps([{'deleted': 0}]),

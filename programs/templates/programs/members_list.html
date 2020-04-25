@@ -235,14 +235,14 @@
     <script>
         $(document).ready(function () {
 
-         const Toast = Swal.mixin({
+            const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
                 timer: 7000
             });
 
-            $("#example1").DataTable({
+            var myTable = $("#example1").DataTable({
                 language: {
                     url: '{% static "programs/plugins/datatables/Spanish.json" %}'
                 }});
@@ -260,24 +260,24 @@
 
 
                 $('#txt_msg_body_{{ member.id }}').summernote({
-                    lang: 'es-Es',
-                    placeholder: 'Escribe el mensaje aquí',
-                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
-                    dialogsInBody: true,
-                    dialogsFade: true,
-                    height: 200,
-                    toolbar: [
-                        // [groupName, [list of button]]
-                        ['style', ['bold', 'italic', 'underline', 'clear']],
-                        ['font', ['strikethrough', 'superscript', 'subscript']],
-                        {#['fontname', ['fontname']],#}
-                        {#['fontsize', ['fontsize']],#}
-                        ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['table', ['table']],
-                    ],
+                        lang: 'es-Es',
+                        placeholder: 'Escribe el mensaje aquí',
+                        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                        dialogsInBody: true,
+                        dialogsFade: true,
+                        height: 200,
+                        toolbar: [
+                            // [groupName, [list of button]]
+                            ['style', ['bold', 'italic', 'underline', 'clear']],
+                            ['font', ['strikethrough', 'superscript', 'subscript']],
+                            {#['fontname', ['fontname']],#}
+                            {#['fontsize', ['fontsize']],#}
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['table', ['table']],
+                        ],
 
-                }
+                    }
                 );
 
                 $('#btn_rm_member_{{ member.id }}').click(function () {
@@ -297,8 +297,8 @@
                         success : function(json) {
 
                             if (json[0].deleted == 1) {
-
-                                $('#tr_member_{{ member.id }}').remove();
+                                var row = myTable.row( $('#tr_member_{{ member.id }}') );
+                                row.remove().draw();
 
                                 Toast.fire({
                                     type: 'success',
