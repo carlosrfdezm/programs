@@ -14,10 +14,12 @@ urlpatterns = [
     path('ajx/recent/requests', views.ajx_cgc_this_year_requests, name='ajx_cgc_this_year_requests'),
     path('ajx/recent/years/req_vs_grad', views.ajx_last_years_requests_vs_graduated, name='ajx_last_years_requests_vs_graduated'),
     path('ajx/students/state', views.ajx_students_by_state, name='ajx_students_by_state'),
+    path('ajx/brieffing/delete', views.ajx_delete_cgc_brieffing, name='ajx_delete_cgc_brieffing'),
 
     path('brieffings/create', views.create_cgc_brief, name='create_cgc_brief'),
     path('brieffings/<int:year>/list', views.cgc_year_brieffings, name='cgc_year_brieffings'),
     path('brieffings/list', views.cgc_brieffings, name='cgc_brieffings'),
+    path('brieffings/<int:brief_id>/view', views.cgc_brief_view, name='cgc_brief_view'),
 
     path('students/<str:scope>', views.students_list, name='students_list'),
     path('lines/list', views.programs_lines, name='programs_lines'),

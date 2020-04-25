@@ -103,7 +103,36 @@ def cgc_brieffings(request):
     else:
         return error_500(request,'Usted no puede ver las actas de la CGC')
 
+def cgc_brief_view(request, brief_id):
 
+    brieffing = CGCBrief.objects.get(pk=brief_id)
+
+    fs = FileSystemStorage()
+
+    filename =brieffing.brief.url
+
+    if fs.exists(filename):
+        brief_ext =filename.split('.')[filename.split('.').__len__()-1]
+
+        if brief_ext =='doc' or brief_ext=='docx' or brief_ext == 'docx':
+
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/doc')
+                response['Content-Disposition'] =  "inline; filename=" + '"'+'Acta_CGC_'+ brieffing.month+'_'+str(brieffing.year)+'.'+brief_ext+'"'
+
+                return response
+
+        elif brief_ext == 'pdf' :
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/pdf')
+                response['Content-Disposition'] = "inline; filename=" + '"'+'Acta_CGC_' + brieffing.month+'_'+str(brieffing.year)+'.'+brief_ext + '"'
+
+                return response
+
+    else:
+
+
+        return error_500(request, 'No existe el archivo solicitado')
 
 @login_required
 def students_list(request, scope):
@@ -293,6 +322,34 @@ def ajx_delete_member(request, program_slug):
             content_type="application/json"
         )
 
+
+@login_required
+def ajx_delete_cgc_brieffing(request):
+
+    if user_is_cgc_ps(request.user ):
+        if request.method=='POST':
+            brief_id=request.POST['brief_id']
+            try:
+                CGCBrief.objects.get(pk=brief_id).delete()
+                return HttpResponse(
+                    json.dumps([{'deleted': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                return HttpResponse(
+                    json.dumps([{'deleted': 0}]),
+                    content_type="application/json"
+                )
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'deleted': 2}]),
+            content_type="application/json"
+        )
 
 
 @login_required
