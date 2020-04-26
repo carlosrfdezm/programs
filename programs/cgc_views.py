@@ -407,7 +407,7 @@ def ajx_delete_cgc_brieffing(request):
             brief_id=request.POST['brief_id']
             try:
 
-                CGCBrief.objects.get(pk=brief_id).brief._del_file
+                CGCBrief.objects.get(pk=brief_id).brief.delete()
                 CGCBrief.objects.get(pk=brief_id).delete()
 
 
