@@ -1374,8 +1374,8 @@ def ajx_this_year_requests(request, program_slug):
     for i in range(1,now().month+1):
         labels.append(meses[i])
         if program.type == 'phd':
-            data_1.append(Student.objects.filter(program=program, request_date__year=now().year,request_date__month=i).__len__())
-            data_2.append(Student.objects.filter(program=program, init_date__year=now().year,init_date__month=i).__len__())
+            data_1.append(PhdStudent.objects.filter(Q(status='solicitante')|Q(status='doctorando')|Q(status='graduado'),student__program=program, student__request_date__year=now().year,student__request_date__month=i).__len__())
+            data_2.append(PhdStudent.objects.filter(Q(status='doctorando')|Q(status='graduado'),student__program=program, student__init_date__year=now().year,student__init_date__month=i).__len__())
         elif program.type == 'msc':
             data_1.append(MscStudent.objects.filter(program=program,request_date__year=now().year, request_date__month=i).__len__())
             data_2.append(MscStudent.objects.filter(program=program, init_date__year=now().year, init_date__month=i).__len__())
@@ -1502,8 +1502,9 @@ def ajx_last_years_requests(request, program_slug):
     for i in range(now().year-4,now().year+1):
         labels.append(i)
         if program.type == 'phd':
-            data_1.append(Student.objects.filter(request_date__year=i).__len__())
-            data_2.append(Student.objects.filter(init_date__year=i).__len__())
+            data_1.append(PhdStudent.objects.filter(Q(status='solicitante') | Q(status='doctorando') | Q(status='graduado'), student__program=program, student__request_date__year=i).__len__())
+            data_2.append(PhdStudent.objects.filter(Q(status='doctorando') | Q(status='graduado'), student__program=program, student__init_date__year=i).__len__())
+
         elif program.type == 'msc':
             data_1.append(MscStudent.objects.filter(request_date__year=i).__len__())
             data_2.append(MscStudent.objects.filter(init_date__year=i).__len__())
