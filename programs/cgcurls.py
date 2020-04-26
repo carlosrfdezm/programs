@@ -20,6 +20,7 @@ urlpatterns = [
     path('brieffings/cngc/create', views.create_cngc_brief, name='create_cngc_brief'),
     path('brieffings/cngc/list', views.cngc_brieffings, name='cngc_brieffings'),
     path('brieffings/cngc/<int:brief_id>/view', views.cngc_brief_view, name='cngc_brief_view'),
+    path('brieffings/cngc/<int:brief_id>/edit', views.edit_cngc_brief, name='edit_cngc_brief'),
     path('brieffings/cngc/year/<int:year>/list', views.cngc_year_brieffings, name='cngc_year_brieffings'),
     path('brieffings/<int:year>/list', views.cgc_year_brieffings, name='cgc_year_brieffings'),
     path('brieffings/list', views.cgc_brieffings, name='cgc_brieffings'),

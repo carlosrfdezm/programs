@@ -186,6 +186,77 @@ def edit_cgc_brief(request, brief_id):
     else:
         return error_500(request,'Usted no tiene privilegios para agregar actas.')
 
+
+@login_required
+def edit_cngc_brief(request, brief_id):
+    if user_is_cgc_ps(request.user):
+        if request.method == 'POST':
+            try:
+                old_year=CNGCBrief.objects.get(pk=brief_id).year
+                old_month=CNGCBrief.objects.get(pk=brief_id).month
+
+
+                CNGCBrief.objects.filter(pk=brief_id).update(
+                    # brief=brief,
+                    year=request.POST['year'],
+                    month=request.POST['month'],
+                )
+                if old_year != request.POST['year'] or old_month != request.POST['month']:
+                    initial_path = CNGCBrief.objects.get(pk=brief_id).brief.path
+                    brief_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
+
+                    brief= CNGCBrief.objects.get(pk=brief_id)
+                    brief.brief.name = 'cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
+                                                                         'Acta_CNGC_' + request.POST['month'] + '_' +
+                                                                         request.POST['year'] + '.' + brief_ext)
+                    new_path= MEDIA_ROOT+ '/cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
+                                                                         'Acta_CNGC_' + request.POST['month'] + '_' +
+                                                                         request.POST['year'] + '.' + brief_ext)
+
+                    os.renames(initial_path, new_path)
+                    brief.save()
+                try:
+                    brief = request.FILES['brief']
+                    fs = FileSystemStorage()
+                    brief_ext = brief.name.split('.')[brief.name.split('.').__len__() - 1]
+
+                    new_brief_name = 'cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
+                                                                         'Acta_CNGC_' + request.POST['month'] + '_' +
+                                                                         request.POST['year'] + '.' + brief_ext)
+                    CNGCBrief.objects.get(pk=brief_id).brief.delete()
+
+                    filename = fs.save(new_brief_name, brief)
+
+                    CNGCBrief.objects.filter(pk=brief_id).update(
+                        brief=filename,
+
+                    )
+                except:
+                    pass
+
+                return HttpResponseRedirect(reverse('cgc:cngc_year_brieffings', args=[CNGCBrief.objects.get(pk=brief_id).year]))
+
+            except:
+                print('Excepcion lanzada')
+                return error_500(request, 'Ha ocurrido un error al crear la nueva acta')
+
+
+        else:
+            meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+                     8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+            context = {
+                'months': ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio','Agosto', 'Septiembre',
+                           'Octubre', 'Noviembre', 'Diciembre'],
+                'current_month': meses[now().month],
+                'years':range(now().year-10,now().year+1),
+                'current_year':now().year,
+                'brieffing': CNGCBrief.objects.get(pk=brief_id),
+            }
+            return render(request, 'programs/cgc/cngc_edit_brief.html',context)
+    else:
+        return error_500(request,'Usted no tiene privilegios para agregar actas.')
+
+
 @login_required
 def cgc_year_brieffings(request, year):
     years = []
