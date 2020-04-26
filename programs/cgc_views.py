@@ -280,6 +280,36 @@ def cgc_brief_view(request, brief_id):
 
 
         return error_500(request, 'No existe el archivo solicitado')
+def cngc_brief_view(request, brief_id):
+
+    brieffing = CNGCBrief.objects.get(pk=brief_id)
+
+    fs = FileSystemStorage()
+
+    filename =brieffing.brief.url
+
+    if fs.exists(filename):
+        brief_ext =filename.split('.')[filename.split('.').__len__()-1]
+
+        if brief_ext =='doc' or brief_ext=='docx' or brief_ext == 'docx':
+
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/doc')
+                response['Content-Disposition'] =  "inline; filename=" + '"'+'Acta_CNGC_'+ brieffing.month+'_'+str(brieffing.year)+'.'+brief_ext+'"'
+
+                return response
+
+        elif brief_ext == 'pdf' :
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/pdf')
+                response['Content-Disposition'] = "inline; filename=" + '"'+'Acta_CNGC_' + brieffing.month+'_'+str(brieffing.year)+'.'+brief_ext + '"'
+
+                return response
+
+    else:
+
+
+        return error_500(request, 'No existe el archivo solicitado')
 
 @login_required
 def students_list(request, scope):

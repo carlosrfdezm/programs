@@ -92,7 +92,7 @@
                                     <td>{{ brief.month }}</td>
                                     <td class="text-right">
                                         <div class="btn-group">
-                                            <button class="btn btn-sm btn-success" type="button" title="Ver acta" onclick=""><i class="fa fa-book-reader"></i> </button>
+                                            <button class="btn btn-sm btn-success" type="button" title="Ver acta" onclick="window.open('{% url "cgc:cngc_brief_view" brief.id %}');"><i class="fa fa-book-reader"></i> </button>
                                             {% if user_is_program_cs %}
                                                 <a class="btn btn-sm btn-warning" href="" title="Editar acta"><i class="fa fa-edit"></i> </a>
                                                 <button class="btn btn-sm btn-danger" type="button" data-toggle="modal" data-target="#modal_rm_brieffing_{{ brief.id }}" title="Eliminar acta"><i class="fa fa-eraser"></i> </button>
