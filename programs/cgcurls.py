@@ -15,6 +15,7 @@ urlpatterns = [
     path('ajx/recent/years/req_vs_grad', views.ajx_last_years_requests_vs_graduated, name='ajx_last_years_requests_vs_graduated'),
     path('ajx/students/state', views.ajx_students_by_state, name='ajx_students_by_state'),
     path('ajx/brieffing/delete', views.ajx_delete_cgc_brieffing, name='ajx_delete_cgc_brieffing'),
+    path('ajx/cngc/brieffing/delete', views.ajx_delete_cngc_brieffing, name='ajx_delete_cngc_brieffing'),
 
     path('brieffings/create', views.create_cgc_brief, name='create_cgc_brief'),
     path('brieffings/cngc/create', views.create_cngc_brief, name='create_cngc_brief'),

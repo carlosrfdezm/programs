@@ -203,7 +203,7 @@
                 var brief_id = $(this).attr('data');
                 var tr_selector = '#tr_brief_'+ brief_id;
 
-                var url = "";
+                var url = "{% url 'cgc:ajx_delete_cngc_brieffing' %}";
 
                 $('#modal_rm_brieffing_'+brief_id).modal('hide');
 
