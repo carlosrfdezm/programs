@@ -1928,8 +1928,8 @@ def ajx_students_by_sex(request, program_slug):
     response_data=[]
     program=Program.objects.get(slug=program_slug)
     if program.type == 'phd':
-        response_data.append(PhdStudent.objects.filter(student__program=program, student__gender='f').__len__())
-        response_data.append(PhdStudent.objects.filter(student__program=program, student__gender='m').__len__())
+        response_data.append(Student.objects.filter(program=program, gender='f').__len__())
+        response_data.append(Student.objects.filter(program=program, gender='m').__len__())
     elif program.type == 'msc':
         response_data.append(MscStudent.objects.filter(program=program, gender='f').__len__())
         response_data.append(MscStudent.objects.filter(program=program,gender='m').__len__())
