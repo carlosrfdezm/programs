@@ -38,6 +38,7 @@ urlpatterns = [
     path('programs/list', views.cgc_programs_list, name='cgc_programs_list'),
     path('program/<str:program_slug>/students/<str:scope>/list', views.program_students_list, name='program_students_list'),
     path('program/<str:program_slug>/members/list', views.program_members_list, name='program_members_list'),
+    path('program/<str:program_slug>/statistics', views.cgc_program_statistics, name='cgc_program_statistics'),
 
 
 
