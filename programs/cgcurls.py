@@ -17,6 +17,9 @@ urlpatterns = [
     path('ajx/brieffing/delete', views.ajx_delete_cgc_brieffing, name='ajx_delete_cgc_brieffing'),
 
     path('brieffings/create', views.create_cgc_brief, name='create_cgc_brief'),
+    path('brieffings/cngc/create', views.create_cngc_brief, name='create_cngc_brief'),
+    path('brieffings/cngc/list', views.cngc_brieffings, name='cngc_brieffings'),
+    path('brieffings/cngc/year/<int:year>/list', views.cngc_year_brieffings, name='cngc_year_brieffings'),
     path('brieffings/<int:year>/list', views.cgc_year_brieffings, name='cgc_year_brieffings'),
     path('brieffings/list', views.cgc_brieffings, name='cgc_brieffings'),
     path('brieffings/<int:brief_id>/view', views.cgc_brief_view, name='cgc_brief_view'),

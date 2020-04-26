@@ -22,7 +22,7 @@ from programas.settings import MEDIA_URL, MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, CGC_Member, \
-    CGCBrief
+    CGCBrief, CNGCBrief
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
     user_is_cgc_member, user_is_cgc_ps
 
@@ -75,6 +75,45 @@ def create_cgc_brief(request):
                 'current_year':now().year,
             }
             return render(request, 'programs/cgc/cgc_create_brief.html',context)
+    else:
+        return error_500(request,'Usted no tiene privilegios para agregar actas.')
+
+
+@login_required
+def create_cngc_brief(request):
+    if user_is_cgc_ps(request.user):
+        if request.method == 'POST':
+            try:
+                brief = request.FILES['brief']
+                fs = FileSystemStorage()
+                brief_ext = brief.name.split('.')[brief.name.split('.').__len__() - 1]
+                new_brief_name ='cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'],request.POST['month'], 'Acta_CNGC_'+request.POST['month']+'_'+ request.POST['year']+'.'+brief_ext)
+                filename = fs.save(new_brief_name, brief)
+
+                new_brief = CNGCBrief(
+                    brief=filename,
+                    year=request.POST['year'],
+                    month=request.POST['month'],
+                )
+                new_brief.save()
+                return HttpResponseRedirect(reverse('cgc:cngc_year_brieffings', args=[new_brief.year]))
+
+            except:
+                print('Excepcion lanzada')
+                return error_500(request, 'Ha ocurrido un error al crear la nueva acta')
+
+
+        else:
+            meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+                     8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+            context = {
+                'months': ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio','Agosto', 'Septiembre',
+                           'Octubre', 'Noviembre', 'Diciembre'],
+                'current_month': meses[now().month],
+                'years':range(now().year-10,now().year+1),
+                'current_year':now().year,
+            }
+            return render(request, 'programs/cgc/cngc_create_brief.html',context)
     else:
         return error_500(request,'Usted no tiene privilegios para agregar actas.')
 
@@ -164,6 +203,22 @@ def cgc_year_brieffings(request, year):
         return error_500(request,'Usted no puede ver las actas de la CGC')
 
 @login_required
+def cngc_year_brieffings(request, year):
+    years = []
+    for brieffing in CNGCBrief.objects.all():
+        if not brieffing.year in years:
+            years.append(brieffing.year)
+    if user_is_cgc_member(request.user):
+        context={
+            'year':year,
+            'years':sorted(years),
+            'brieffings': CNGCBrief.objects.filter(year=year),
+        }
+        return render(request, 'programs/cgc/cngc_brieffings_list.html',context)
+    else:
+        return error_500(request,'Usted no puede ver las actas de la CGC')
+
+@login_required
 def cgc_brieffings(request):
     if user_is_cgc_member(request.user):
         years=[]
@@ -176,6 +231,22 @@ def cgc_brieffings(request):
             'brieffings': CGCBrief.objects.all(),
         }
         return render(request, 'programs/cgc/cgc_brieffings_list.html',context)
+    else:
+        return error_500(request,'Usted no puede ver las actas de la CGC')
+
+@login_required
+def cngc_brieffings(request):
+    if user_is_cgc_member(request.user):
+        years=[]
+        for brieffing in CNGCBrief.objects.all():
+            if not brieffing.year in years:
+                years.append(brieffing.year)
+
+        context={
+            'years': sorted(years),
+            'brieffings': CNGCBrief.objects.all(),
+        }
+        return render(request, 'programs/cgc/cngc_brieffings_list.html',context)
     else:
         return error_500(request,'Usted no puede ver las actas de la CGC')
 
