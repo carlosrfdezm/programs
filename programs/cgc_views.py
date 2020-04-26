@@ -1,4 +1,5 @@
 import json
+import os
 import random
 import calendar, locale
 
@@ -17,6 +18,7 @@ from django.utils import dateparse
 from django.utils.text import slugify, phone2numeric
 from django.utils.timezone import now
 
+from programas.settings import MEDIA_URL, MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, CGC_Member, \
@@ -73,6 +75,75 @@ def create_cgc_brief(request):
                 'current_year':now().year,
             }
             return render(request, 'programs/cgc/cgc_create_brief.html',context)
+    else:
+        return error_500(request,'Usted no tiene privilegios para agregar actas.')
+
+@login_required
+def edit_cgc_brief(request, brief_id):
+    if user_is_cgc_ps(request.user):
+        if request.method == 'POST':
+            try:
+                old_year=CGCBrief.objects.get(pk=brief_id).year
+                old_month=CGCBrief.objects.get(pk=brief_id).month
+
+
+                CGCBrief.objects.filter(pk=brief_id).update(
+                    # brief=brief,
+                    year=request.POST['year'],
+                    month=request.POST['month'],
+                )
+                if old_year != request.POST['year'] or old_month != request.POST['month']:
+                    initial_path = CGCBrief.objects.get(pk=brief_id).brief.path
+                    brief_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
+
+                    brief= CGCBrief.objects.get(pk=brief_id)
+                    brief.brief.name = 'cgc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
+                                                                         'Acta_CGC_' + request.POST['month'] + '_' +
+                                                                         request.POST['year'] + '.' + brief_ext)
+                    new_path= MEDIA_ROOT+ '/cgc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
+                                                                         'Acta_CGC_' + request.POST['month'] + '_' +
+                                                                         request.POST['year'] + '.' + brief_ext)
+
+                    os.renames(initial_path, new_path)
+                    brief.save()
+                try:
+                    brief = request.FILES['brief']
+                    fs = FileSystemStorage()
+                    brief_ext = brief.name.split('.')[brief.name.split('.').__len__() - 1]
+
+                    new_brief_name = 'cgc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
+                                                                         'Acta_CGC_' + request.POST['month'] + '_' +
+                                                                         request.POST['year'] + '.' + brief_ext)
+                    CGCBrief.objects.get(pk=brief_id).brief.delete()
+
+                    filename = fs.save(new_brief_name, brief)
+
+                    CGCBrief.objects.filter(pk=brief_id).update(
+                        brief=filename,
+
+                    )
+                except:
+                    pass
+
+                return HttpResponseRedirect(reverse('cgc:cgc_year_brieffings', args=[CGCBrief.objects.get(pk=brief_id).year]))
+
+            except:
+                print('Excepcion lanzada')
+                return error_500(request, 'Ha ocurrido un error al crear la nueva acta')
+
+
+        else:
+            meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+                     8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+            context = {
+                'months': ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio','Agosto', 'Septiembre',
+                           'Octubre', 'Noviembre', 'Diciembre'],
+                'current_month': meses[now().month],
+                'years':range(now().year-10,now().year+1),
+                'current_year':now().year,
+                'brieffing': CGCBrief.objects.get(pk=brief_id),
+            }
+            return render(request, 'programs/cgc/cgc_edit_brief.html',context)
     else:
         return error_500(request,'Usted no tiene privilegios para agregar actas.')
 

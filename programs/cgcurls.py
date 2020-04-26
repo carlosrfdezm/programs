@@ -20,6 +20,7 @@ urlpatterns = [
     path('brieffings/<int:year>/list', views.cgc_year_brieffings, name='cgc_year_brieffings'),
     path('brieffings/list', views.cgc_brieffings, name='cgc_brieffings'),
     path('brieffings/<int:brief_id>/view', views.cgc_brief_view, name='cgc_brief_view'),
+    path('brieffings/<int:brief_id>/edit', views.edit_cgc_brief, name='edit_cgc_brief'),
 
     path('students/<str:scope>', views.students_list, name='students_list'),
     path('lines/list', views.programs_lines, name='programs_lines'),
