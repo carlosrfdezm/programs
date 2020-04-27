@@ -1139,7 +1139,7 @@ def ajx_members_by_grade(request, program_slug):
 
 
 @login_required
-def ajx_students_by_sex(request, program_slug):
+def ajx_program_students_by_sex(request, program_slug):
 
     response_data=[]
     program=Program.objects.get(slug=program_slug)
@@ -1164,7 +1164,119 @@ def program_statistics(request, program_slug):
         context={
             'program':program,
         }
-        return render(request, 'programs/statistics.html', context)
+        return render(request, 'programs/cgc/cgc_program_statistics.html', context)
+
+
+@login_required
+def ajx_program_this_year_requests(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    response_data=[]
+    labels = []
+    data = []
+    data_1=[]
+    data_2=[]
+    meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+             8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for i in range(1,now().month+1):
+        labels.append(meses[i])
+        if program.type == 'phd':
+            data_1.append(PhdStudent.objects.filter(Q(status='solicitante')|Q(status='doctorando')|Q(status='graduado'),student__program=program, student__request_date__year=now().year,student__request_date__month=i).__len__())
+            data_2.append(PhdStudent.objects.filter(Q(status='doctorando')|Q(status='graduado'),student__program=program, student__init_date__year=now().year,student__init_date__month=i).__len__())
+        elif program.type == 'msc':
+            data_1.append(MscStudent.objects.filter(program=program,request_date__year=now().year, request_date__month=i).__len__())
+            data_2.append(MscStudent.objects.filter(program=program, init_date__year=now().year, init_date__month=i).__len__())
+        elif program.type == 'dip':
+            pass
+
+    data.append(data_1)
+    data.append(data_2)
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_program_by_year_requests(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    year=request.POST['year']
+    response_data=[]
+    labels = []
+    data = []
+    data_1=[]
+    data_2=[]
+    meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+             8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for i in range(1,13):
+        labels.append(meses[i])
+        if program.type == 'phd':
+            data_1.append(Student.objects.filter(request_date__year=year,request_date__month=i).__len__())
+            data_2.append(Student.objects.filter(init_date__year=year,init_date__month=i).__len__())
+        elif program.type == 'msc':
+            data_1.append(MscStudent.objects.filter(request_date__year=year, request_date__month=i).__len__())
+            data_2.append(MscStudent.objects.filter(init_date__year=year, init_date__month=i).__len__())
+        elif program.type == 'dip':
+            data_1.append(DipStudent.objects.filter(request_date__year=year, request_date__month=i).__len__())
+            data_2.append(DipStudent.objects.filter(init_date__year=year, init_date__month=i).__len__())
+
+
+    data.append(data_1)
+    data.append(data_2)
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_program_last_years_requests(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    response_data=[]
+    labels = []
+    data = []
+    data_1=[]
+    data_2=[]
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for i in range(now().year-4,now().year+1):
+        labels.append(i)
+        if program.type == 'phd':
+            data_1.append(PhdStudent.objects.filter(Q(status='solicitante') | Q(status='doctorando') | Q(status='graduado'), student__program=program, student__request_date__year=i).__len__())
+            data_2.append(PhdStudent.objects.filter(Q(status='doctorando') | Q(status='graduado'), student__program=program, student__init_date__year=i).__len__())
+
+        elif program.type == 'msc':
+            data_1.append(MscStudent.objects.filter(request_date__year=i).__len__())
+            data_2.append(MscStudent.objects.filter(init_date__year=i).__len__())
+        elif program.type == 'dip':
+            data_1.append(DipStudent.objects.filter(request_date__year=i).__len__())
+            data_2.append(DipStudent.objects.filter(init_date__year=i).__len__())
+
+    data.append(data_1)
+    data.append(data_2)
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
 
 
 @login_required

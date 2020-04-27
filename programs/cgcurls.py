@@ -14,8 +14,12 @@ urlpatterns = [
     path('ajx/recent/requests', views.ajx_cgc_this_year_requests, name='ajx_cgc_this_year_requests'),
     path('ajx/recent/years/req_vs_grad', views.ajx_last_years_requests_vs_graduated, name='ajx_last_years_requests_vs_graduated'),
     path('ajx/students/state', views.ajx_students_by_state, name='ajx_students_by_state'),
+    path('ajx/program/<str:program_slug>/students/by_gender', views.ajx_program_students_by_sex, name='ajx_program_students_by_sex'),
     path('ajx/brieffing/delete', views.ajx_delete_cgc_brieffing, name='ajx_delete_cgc_brieffing'),
     path('ajx/cngc/brieffing/delete', views.ajx_delete_cngc_brieffing, name='ajx_delete_cngc_brieffing'),
+    path('ajx/program/<str:program_slug>/req_vs_init', views.ajx_program_this_year_requests, name='ajx_program_this_year_requests'),
+    path('ajx/program/<str:program_slug>/by_year_req', views.ajx_program_by_year_requests, name='ajx_program_by_year_requests'),
+    path('ajx/program/<str:program_slug>/last_year_req', views.ajx_program_last_years_requests, name='ajx_program_last_years_requests'),
 
     path('brieffings/create', views.create_cgc_brief, name='create_cgc_brief'),
     path('brieffings/cngc/create', views.create_cngc_brief, name='create_cngc_brief'),
