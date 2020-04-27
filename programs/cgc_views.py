@@ -362,7 +362,7 @@ def cngc_brief_view(request, brief_id):
     if fs.exists(filename):
         brief_ext =filename.split('.')[filename.split('.').__len__()-1]
 
-        if brief_ext =='doc' or brief_ext=='docx' or brief_ext == 'docx':
+        if brief_ext =='doc' or brief_ext=='docx' or brief_ext == 'odt':
 
             with fs.open(filename) as brief:
                 response = HttpResponse(brief, content_type='application/doc')
