@@ -740,7 +740,7 @@ def ajx_program_students_by_line(request, program_slug):
     )
 
 @login_required
-def ajx_students_by_age(request, program_slug):
+def ajx_program_students_by_age(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     response_data=[]
     labels = ['<30 años','30-40','40-50','>50 años']
