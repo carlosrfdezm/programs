@@ -92,13 +92,13 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
                                         <label for="txt_theme">Tema:</label>
-                                        <textarea class="form-control" id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2"></textarea>
+                                        <textarea class="form-control" id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2" required></textarea>
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
                                         <label for="slc_project">Proyecto asociado:</label>
-                                        <select class="form-control" id="slc_project" name="investigation_project" >
+                                        <select class="form-control" id="slc_project" name="investigation_project" required>
                                             <option value="" >Seleccione una opción</option>
 
                                             {% for project in projects %}

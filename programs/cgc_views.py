@@ -712,7 +712,7 @@ def ajx_last_years_requests_vs_graduated(request):
     )
 
 @login_required
-def ajx_students_by_line(request, program_slug):
+def ajx_program_students_by_line(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     response_data=[]
     labels = []
@@ -720,7 +720,7 @@ def ajx_students_by_line(request, program_slug):
 
     # locale.setlocale(locale.LC_ALL, 'es-ES')
     i=0
-    for line in InvestigationLine.objects.filter(program=Program.objects.get(slug=program_slug)):
+    for line in InvestigationLine.objects.filter(program=program):
         i += 1
         labels.append(line.name.split()[0])
         if program.type == 'phd':

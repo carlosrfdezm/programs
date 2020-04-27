@@ -422,85 +422,86 @@
                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                 }
             });
-{#            $.ajax({#}
-{#                url : "{% url 'programs:ajx_students_by_line' program.slug %}", // the endpoint#}
-{#                type : "GET", // http method#}
-{#                data : {#}
-{#                }, // data sent with the post request#}
-{##}
-{#                // handle a successful response#}
-{#                success : function(json) {#}
-{#                    var total = 0;#}
-{#                    for(var i=0;i<json[1].length;i++){#}
-{##}
-{#                        total = total + json[1][i];#}
-{##}
-{#                    }#}
-{#                    if(total>0){#}
-{##}
-{#                        var barChartData = {#}
-{#                            labels  : json[0],#}
-{#                            datasets: [#}
-{#                                {#}
-{#                                    label               : 'Estudiantes vinculados',#}
-{#                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],#}
-{#                                    borderColor         : 'rgba(11,15,255,0.8)',#}
-{#                                    pointRadius          : 2,#}
-{#                                    pointColor          : '#3b8bba',#}
-{#                                    pointStrokeColor    : 'rgba(60,141,188,1)',#}
-{#                                    pointHighlightFill  : '#fff',#}
-{#                                    pointHighlightStroke: 'rgba(60,141,188,1)',#}
-{#                                    data                : json[1],#}
-{#                                },#}
-{##}
-{##}
-{#                            ]#}
-{#                        };#}
-{##}
-{#                        var barChartOptions = {#}
-{#                            maintainAspectRatio : false,#}
-{#                            responsive : true,#}
-{#                            legend: {#}
-{#                                display: false#}
-{#                            },#}
-{#                            scales: {#}
-{#                                xAxes: [{#}
-{#                                    gridLines : {#}
-{#                                        display : false,#}
-{#                                    }#}
-{#                                }],#}
-{#                                yAxes: [{#}
-{##}
-{#                                    gridLines : {#}
-{#                                        display : false,#}
-{#                                    },#}
-{##}
-{#                                }]#}
-{#                            }#}
-{#                        };#}
-{#                        var barChartCanvas=$('#requestChartLines');#}
-{#                        var barChart       = new Chart(barChartCanvas, {#}
-{#                            type: 'bar',#}
-{#                            data: barChartData,#}
-{#                            options: barChartOptions#}
-{#                        });#}
-{#                        console.log(json);#}
-{#                    }#}
-{##}
-{#                    else {#}
-{#                        $('#div_requestChartLines').replaceWith(div_court);#}
-{##}
-{#                    }#}
-{##}
-{#                },#}
-{##}
-{#                // handle a non-successful response#}
-{#                error : function(xhr,errmsg,err) {#}
-{#                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+#}
-{#                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom#}
-{#                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console#}
-{#                }#}
-{#            });#}
+            $.ajax({
+                url : "{% url 'programs:ajx_program_students_by_line' program.slug %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    console.log(json);
+                    var total = 0;
+                    for(var i=0;i<json[1].length;i++){
+
+                        total = total + json[1][i];
+
+                    }
+                    if(total>0){
+
+                        var barChartData = {
+                            labels  : json[0],
+                            datasets: [
+                                {
+                                    label               : 'Estudiantes vinculados',
+                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    borderColor         : 'rgba(11,15,255,0.8)',
+                                    pointRadius          : 2,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[1],
+                                },
+
+
+                            ]
+                        };
+
+                        var barChartOptions = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: false
+                            },
+                            scales: {
+                                xAxes: [{
+                                    gridLines : {
+                                        display : false,
+                                    }
+                                }],
+                                yAxes: [{
+
+                                    gridLines : {
+                                        display : false,
+                                    },
+
+                                }]
+                            }
+                        };
+                        var barChartCanvas=$('#requestChartLines');
+                        var barChart       = new Chart(barChartCanvas, {
+                            type: 'bar',
+                            data: barChartData,
+                            options: barChartOptions
+                        });
+                        console.log(json);
+                    }
+
+                    else {
+                        $('#div_requestChartLines').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
 {#            $.ajax({#}
 {#                url : "{% url 'programs:ajx_students_by_edition' program.slug %}", // the endpoint#}
 {#                type : "GET", // http method#}
