@@ -1116,7 +1116,7 @@ def ajx_students_by_state(request):
     )
 
 @login_required
-def ajx_members_by_grade(request, program_slug):
+def ajx_program_members_by_grade(request, program_slug):
     response_data=[]
     grades=[]
     data=[]

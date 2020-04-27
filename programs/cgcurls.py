@@ -22,6 +22,7 @@ urlpatterns = [
     path('ajx/program/<str:program_slug>/req_vs_init', views.ajx_program_this_year_requests, name='ajx_program_this_year_requests'),
     path('ajx/program/<str:program_slug>/by_year_req', views.ajx_program_by_year_requests, name='ajx_program_by_year_requests'),
     path('ajx/program/<str:program_slug>/last_year_req', views.ajx_program_last_years_requests, name='ajx_program_last_years_requests'),
+    path('ajx/program/<str:program_slug>/members/by_grade', views.ajx_program_members_by_grade, name='ajx_program_members_by_grade'),
 
     path('brieffings/create', views.create_cgc_brief, name='create_cgc_brief'),
     path('brieffings/cngc/create', views.create_cngc_brief, name='create_cngc_brief'),
