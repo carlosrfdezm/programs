@@ -1071,7 +1071,7 @@ def ajx_student_personal_msg(request, program_slug ):
         )
 
 @login_required
-def ajx_members_by_age(request, program_slug):
+def ajx_program_members_by_age(request, program_slug):
     response_data=[]
     labels = ['<30 años','30-40','40-50','>50 años']
     data = []
