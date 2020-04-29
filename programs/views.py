@@ -29,6 +29,7 @@ def index(request, program_slug):
 
         context = {
             'program': program,
+            'lines': InvestigationLine.objects.filter(program=program),
 
         }
         if program.type == 'phd':
@@ -55,6 +56,7 @@ def home(request, program_slug):
                 '-student__request_date')[:4],
             'last_graduated': PhdStudent.objects.filter(student__program=program, status='graduado').order_by(
                 '-student__request_date')[:4],
+
 
         }
         return render(request, 'programs/phd_home.html', context)
@@ -1785,8 +1787,6 @@ def ajx_students_massive_msg(request, program_slug ):
                                   email_list[10 * count:10 * count + rest], fail_silently=False,
                                   html_message=request.POST['msg_body'])
 
-
-
             return HttpResponse(
                 json.dumps([{'sended': 1}]),
                 content_type="application/json"
@@ -1856,10 +1856,8 @@ def ajx_members_by_age(request, program_slug):
     data.append(ProgramMember.objects.filter(program=Program.objects.get(slug=program_slug ),birth_date__year__gt=now().year-50, birth_date__year__lt=now().year-40 ).__len__() )
     data.append(ProgramMember.objects.filter(program=Program.objects.get(slug=program_slug ), birth_date__year__lt=now().year-50 ).__len__() )
 
-
     response_data.append(labels)
     response_data.append(data)
-
 
     return HttpResponse(
         json.dumps(response_data),

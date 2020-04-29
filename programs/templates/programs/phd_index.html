@@ -73,7 +73,7 @@
         <nav id="nav-menu-container">
             <ul class="nav-menu">
                 <li class="menu-active"><a href="#body">Home</a></li>
-                <li><a href="#about">Acerca de</a></li>
+                <li><a href="#about">{% if not lines %}Acerca de{% else %}Líneas{% endif %}</a></li>
 
                 {#                <li><a href="#portfolio">Portfolio</a></li>#}
                 <li><a href="#team">Claustro</a></li>
@@ -101,7 +101,7 @@
     <div class="intro-content">
         <h2>{{ program }}</h2>
         <div>
-            <a href="#contact" class="btn-get-started scrollto">Iniciar sesion</a>
+            <a href="#contact" class="btn-get-started scrollto">Iniciar sesión</a>
             <a href="#team" class="btn-projects scrollto">Claustro</a>
         </div>
     </div>
@@ -133,6 +133,7 @@
                 <div class="col-lg-6 about-img">
                     <img src="{% static 'programs/index/img/about-img.jpg' %}" alt="">
                 </div>
+                {% if not lines %}
 
                 <div class="col-lg-6 content">
                     <h2>Formación doctoral en Cuba</h2>
@@ -150,6 +151,18 @@
                     </ul>
 
                 </div>
+                {% else %}
+                    <div class="col-lg-6 content">
+                    <h2>Líneas de investigación</h2>
+
+                    <ul>
+                        {% for line in lines %}
+                        <li><i class="ion-android-checkmark-circle"></i> {{ line.name }}</li>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+                {% endif %}
             </div>
 
         </div>
@@ -185,7 +198,7 @@
                 {% for member in program.programmember_set.all %}
                     <div class="col-lg-3 col-md-6">
                         <div class="member">
-                            <div class="pic" >{% if member.picture %}<img src="{% url 'programs:program_member_picture' program.slug member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.sex == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="">{% elif member.sex == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="">{% endif %}</div>
+                            <div class="pic" >{% if member.picture %}<img src="{% url 'programs:program_member_picture' program.slug member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.sex == 'f' %}<img src="{% static 'programs/dist/img/avatar3.png' %}" alt="">{% elif member.sex == 'm' %}<img src="{% static 'programs/dist/img/avatar5.png' %}" alt="">{% endif %}</div>
                             <div class="details">
                                 <h6 class="text-bold">{{member|truncatewords:3}}</h6>
                                 <span>{{ member.role }}</span>
