@@ -1511,8 +1511,8 @@ def ajx_last_years_requests(request, program_slug):
             data_1.append(MscStudent.objects.filter(Q(status='solicitante')| Q(status='maestrante') | Q(status='graduado'),program=program,request_date__year=i).__len__())
             data_2.append(MscStudent.objects.filter(Q(status='maestrante') | Q(status='graduado'),program=program,init_date__year=i).__len__())
         elif program.type == 'dip':
-            data_1.append(DipStudent.objects.filter(request_date__year=i).__len__())
-            data_2.append(DipStudent.objects.filter(init_date__year=i).__len__())
+            data_1.append(DipStudent.objects.filter(Q(status='solicitante')| Q(status='diplomante') | Q(status='graduado'),program=program,request_date__year=i).__len__())
+            data_2.append(DipStudent.objects.filter(Q(status='diplomante') | Q(status='graduado'),program=program,init_date__year=i).__len__())
 
     data.append(data_1)
     data.append(data_2)
