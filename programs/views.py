@@ -123,16 +123,10 @@ def create_student(request, program_slug):
                                               request.POST['tuthor_institution_' + str(i)], request.POST['tuthor_email_' + str(i)], new_student)
                         new_theme = PhdStudentTheme(
                             phd_student=new_student,
+                            project=InvestigationProject.objects.get(pk=request.POST['investigation_project']),
+                            line=InvestigationProject.objects.get(pk=request.POST['investigation_project']).line,
                             description=request.POST['theme'],
                         )
-                        try:
-                            new_theme.project = InvestigationProject.objects.get(
-                                pk=request.POST['investigation_project'])
-                            new_theme.line = InvestigationProject.objects.get(
-                                pk=request.POST['investigation_project']).line,
-
-                        except:
-                            pass
 
                         new_theme.save()
                     else:
@@ -206,14 +200,10 @@ def create_student(request, program_slug):
 
                 new_theme=PhdStudentTheme(
                     phd_student=new_student,
+                    project=InvestigationProject.objects.get(pk=request.POST['investigation_project']),
+                    line=InvestigationProject.objects.get(pk=request.POST['investigation_project']).line,
                     description=request.POST['theme'],
                 )
-                try:
-                    new_theme.project=InvestigationProject.objects.get(pk=request.POST['investigation_project'])
-                    new_theme.line=InvestigationProject.objects.get(pk=request.POST['investigation_project']).line,
-
-                except:
-                    pass
 
                 new_theme.save()
             else:
@@ -980,6 +970,8 @@ def ajx_program_member_tuthor(request, program_slug):
     if request.method == 'POST':
         try:
             user = User.objects.get(username=request.POST['tuthor_email'])
+            data_response.append(1)
+            data_response.append([ user.first_name, user.last_name ])
             try:
                 member=ProgramMember.objects.get(program=program, user=user)
                 data_response.append(1)
@@ -988,7 +980,6 @@ def ajx_program_member_tuthor(request, program_slug):
                 data_response.append(0)
         except User.DoesNotExist:
             data_response.append(0)
-
 
     return HttpResponse(
         json.dumps(data_response),
@@ -1543,11 +1534,8 @@ def ajx_students_by_line(request, program_slug):
         elif program.type == 'msc':
             data.append(MscStudentTheme.objects.filter(line=line).__len__())
 
-
-
     response_data.append(labels)
     response_data.append(data)
-
 
     return HttpResponse(
         json.dumps(response_data),
