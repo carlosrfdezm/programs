@@ -1309,3 +1309,10 @@ def ajx_cgc_this_year_requests(request):
         content_type="application/json"
     )
 
+
+@login_required
+def cgc_statistics(request):
+    if user_is_cgc_member(request.user):
+        return render(request, 'programs/cgc/cgc_statistics.html')
+    else:
+        return error_500(request,'Usted no tiene acceso a esta página.')

@@ -48,6 +48,8 @@ urlpatterns = [
     path('program/<str:program_slug>/members/list', views.program_members_list, name='program_members_list'),
     path('program/<str:program_slug>/statistics', views.cgc_program_statistics, name='cgc_program_statistics'),
 
+    path('statistics', views.cgc_statistics,name='cgc_statistics'),
+
 
 
 
