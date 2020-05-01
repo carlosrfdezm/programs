@@ -332,7 +332,7 @@
                 '</div>';
 
             $.ajax({
-                url : "solicitudes ultimos 5 a;os", // the endpoint
+                url : "{% url 'cgc:ajx_cgc_last_years_requests' %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
