@@ -137,11 +137,11 @@ def edit_cgc_brief(request, brief_id):
 
                     brief= CGCBrief.objects.get(pk=brief_id)
                     brief.brief.name = 'cgc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
-                                                                         'Acta_CGC_' + request.POST['month'] + '_' +
-                                                                         request.POST['year'] + '.' + brief_ext)
+                                                                           'Acta_CGC_' + request.POST['month'] + '_' +
+                                                                           request.POST['year'] + '.' + brief_ext)
                     new_path= MEDIA_ROOT+ '/cgc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
-                                                                         'Acta_CGC_' + request.POST['month'] + '_' +
-                                                                         request.POST['year'] + '.' + brief_ext)
+                                                                               'Acta_CGC_' + request.POST['month'] + '_' +
+                                                                               request.POST['year'] + '.' + brief_ext)
 
                     os.renames(initial_path, new_path)
                     brief.save()
@@ -207,11 +207,11 @@ def edit_cngc_brief(request, brief_id):
 
                     brief= CNGCBrief.objects.get(pk=brief_id)
                     brief.brief.name = 'cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
-                                                                         'Acta_CNGC_' + request.POST['month'] + '_' +
-                                                                         request.POST['year'] + '.' + brief_ext)
+                                                                            'Acta_CNGC_' + request.POST['month'] + '_' +
+                                                                            request.POST['year'] + '.' + brief_ext)
                     new_path= MEDIA_ROOT+ '/cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
-                                                                         'Acta_CNGC_' + request.POST['month'] + '_' +
-                                                                         request.POST['year'] + '.' + brief_ext)
+                                                                                'Acta_CNGC_' + request.POST['month'] + '_' +
+                                                                                request.POST['year'] + '.' + brief_ext)
 
                     os.renames(initial_path, new_path)
                     brief.save()
@@ -221,8 +221,8 @@ def edit_cngc_brief(request, brief_id):
                     brief_ext = brief.name.split('.')[brief.name.split('.').__len__() - 1]
 
                     new_brief_name = 'cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
-                                                                         'Acta_CNGC_' + request.POST['month'] + '_' +
-                                                                         request.POST['year'] + '.' + brief_ext)
+                                                                          'Acta_CNGC_' + request.POST['month'] + '_' +
+                                                                          request.POST['year'] + '.' + brief_ext)
                     CNGCBrief.objects.get(pk=brief_id).brief.delete()
 
                     filename = fs.save(new_brief_name, brief)
@@ -702,6 +702,19 @@ def ajx_cgc_last_years_requests(request):
     response_data.append(labels)
     response_data.append(data)
 
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_cgc_students_by_gender(request):
+
+    response_data=[]
+
+    response_data.append(Student.objects.filter( gender='f').__len__())
+    response_data.append(Student.objects.filter( gender='m').__len__())
 
     return HttpResponse(
         json.dumps(response_data),
