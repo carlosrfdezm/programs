@@ -930,7 +930,7 @@
 
             $(document).on('click', 'a.dropdown-item', function () {
                 $.ajax({
-                    url : "ver soicitudes por a;o en paricular", // the endpoint
+                    url : "{% url 'cgc:ajx_cgc_by_year_requests' %}", // the endpoint
                     type : "POST", // http method
                     data : { 'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
                         'year':$(this).attr('data')
