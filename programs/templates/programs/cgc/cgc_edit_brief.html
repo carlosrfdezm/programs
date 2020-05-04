@@ -60,7 +60,7 @@
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="exampleInputFile">Acta:<a class="text-sm text-primary"  onclick="window.open('{% url 'cgc:cgc_brief_view' brieffing.id %}')"> {{ brieffing.brief.name|truncatechars:50 }}</a></label>
+                                        <label for="exampleInputFile">Acta:<a class="text-sm text-primary" title="Click para ver o descargar acta." onclick="window.open('{% url 'cgc:cgc_brief_view' brieffing.id %}')"> {{ brieffing.brief.name|truncatechars:50 }}</a></label>
                                         <input type="file" class="form-control-file" id="exampleInputFile" name="brief" accept=".doc, .docx, .odt, .pdf" >
 
                                     </div>
