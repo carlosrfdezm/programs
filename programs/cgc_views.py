@@ -1238,6 +1238,30 @@ def ajx_program_members_by_age(request, program_slug):
     )
 
 
+@login_required
+def ajx_cgc_program_members_by_age(request):
+    response_data=[]
+    labels = ['<30 años','30-40','40-50','>50 años']
+    data = []
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+    i=0
+    data.append(ProgramMember.objects.filter(program__type='phd',birth_date__year__gt=now().year-30 ).__len__())
+    data.append(ProgramMember.objects.filter(program__type='phd',birth_date__year__gt=now().year-40, birth_date__year__lt=now().year-30 ).__len__() )
+    data.append(ProgramMember.objects.filter(program__type='phd',birth_date__year__gt=now().year-50, birth_date__year__lt=now().year-40 ).__len__() )
+    data.append(ProgramMember.objects.filter(program__type='phd', birth_date__year__lt=now().year-50 ).__len__() )
+
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+
 
 @login_required
 def ajx_students_by_state(request):
