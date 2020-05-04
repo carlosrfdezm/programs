@@ -9,7 +9,9 @@ def program_directory_path(instance, filename):
 
 def program_brief_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
-    return 'program_{0}/brieffings/{1}/{2}/{3}'.format(instance.program.slug,instance.year,instance.month, filename)
+    brief_ext = filename.split('.')[filename.split('.').__len__() - 1]
+    new_brief_name = 'Acta_'+instance.program.slug+'_'+instance.year+'_'+instance.month+'.'+brief_ext
+    return 'program_{0}/brieffings/{1}/{2}/{3}'.format(instance.program.slug,instance.year,instance.month, new_brief_name)
 
 def member_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>

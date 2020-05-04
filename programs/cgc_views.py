@@ -29,15 +29,18 @@ from programs.utils import user_is_program_cs, user_is_program_member, utils_sen
 
 @login_required
 def cgc_home(request):
-    context = {
-        'cgc_member': CGC_Member.objects.get(user=request.user),
-        'phd_programs': Program.objects.filter(type='phd'),
-        'requesters': PhdStudent.objects.filter(status='solicitante').__len__(),
-        'doctorands': PhdStudent.objects.filter(status='doctorando').__len__(),
-        'graduated': PhdStudent.objects.filter(status='graduado').__len__(),
-        'members': CGC_Member.objects.all().__len__(),
-    }
-    return render(request, 'programs/cgc/cgc_home.html', context)
+    if user_is_cgc_member(request.user):
+        context = {
+            'cgc_member': CGC_Member.objects.get(user=request.user),
+            'phd_programs': Program.objects.filter(type='phd'),
+            'requesters': PhdStudent.objects.filter(status='solicitante').__len__(),
+            'doctorands': PhdStudent.objects.filter(status='doctorando').__len__(),
+            'graduated': PhdStudent.objects.filter(status='graduado').__len__(),
+            'members': CGC_Member.objects.all().__len__(),
+        }
+        return render(request, 'programs/cgc/cgc_home.html', context)
+    else:
+        return error_500(request,'Usted no es miembro de la CGC.')
 
 @login_required
 def create_cgc_brief(request):

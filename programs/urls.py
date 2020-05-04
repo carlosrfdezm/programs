@@ -68,6 +68,10 @@ urlpatterns = [
 
 
     path('statistics', views.program_statistics, name='program_statistics'),
+    path('brieffings/create', views.create_program_brief, name='create_program_brief'),
+    path('brieffings/list', views.program_brieffings, name='program_brieffings'),
+
+
 
 
     # path('login', views.mylogin, name='my_login'),

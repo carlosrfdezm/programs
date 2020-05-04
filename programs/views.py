@@ -19,7 +19,8 @@ from django.utils.timezone import now
 
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
-    InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor
+    InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
+    ProgramBrief
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
 
 
@@ -2062,3 +2063,65 @@ def edit_program_edition(request, program_slug, edition_id):
             return error_500(request,program, 'Este tipo de programas no tiene ediciones.')
     else:
         return error_500(request, program, 'Usted no tiene privilegios para modificar ediciones en este programa.')
+
+
+
+@login_required
+def create_program_brief(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            try:
+
+                # fs = FileSystemStorage()
+                # brief_ext = brief.name.split('.')[brief.name.split('.').__len__() - 1]
+                # new_brief_name ='program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'],request.POST['month'], 'Acta_Programa_'+request.POST['month']+'_'+ request.POST['year']+'.'+brief_ext)
+                # filename = fs.save(new_brief_name, brief)
+
+                new_brief = ProgramBrief(
+                    program=program,
+                    # brief=filename,
+                    brief=request.FILES['brief'],
+                    year=request.POST['year'],
+                    month=request.POST['month'],
+                )
+                new_brief.save()
+                return HttpResponseRedirect(reverse('programs:program_brieffings', args=[program_slug]))
+
+            except:
+                print()
+                return error_500(request,program, 'Ha ocurrido un error al crear la nueva acta')
+
+
+        else:
+            meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+                     8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+            context = {
+                'program':program,
+                'months': ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio','Agosto', 'Septiembre',
+                           'Octubre', 'Noviembre', 'Diciembre'],
+                'current_month': meses[now().month],
+                'years':range(now().year-10,now().year+1),
+                'current_year':now().year,
+            }
+            return render(request, 'programs/create_program_brief.html',context)
+    else:
+        return error_500(request,'Usted no tiene privilegios para agregar actas.')
+
+@login_required
+def program_brieffings(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_member(request.user, program):
+        years=[]
+        for brieffing in ProgramBrief.objects.filter(program=program):
+            if not brieffing.year in years:
+                years.append(brieffing.year)
+
+        context={
+            'program':program,
+            'years': sorted(years),
+            'brieffings': ProgramBrief.objects.filter(program=program),
+        }
+        return render(request, 'programs/program_brieffings_list.html',context)
+    else:
+        return error_500(request,'Usted no puede ver las actas de este programa')
