@@ -1283,6 +1283,28 @@ def ajx_program_members_by_grade(request, program_slug):
 
 
 @login_required
+def ajx_cgc_program_members_by_grade(request):
+    response_data=[]
+    grades=[]
+    data=[]
+
+    for member in ProgramMember.objects.filter(program__type='phd'):
+        if not member.degree in grades:
+            grades.append(member.degree)
+
+    for degree in grades:
+        data.append(ProgramMember.objects.filter(program__type='phd', degree=degree).__len__())
+
+    response_data.append(grades)
+    response_data.append(data)
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+
+@login_required
 def ajx_program_students_by_sex(request, program_slug):
 
     response_data=[]

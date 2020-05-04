@@ -576,7 +576,7 @@
                             datasets: [
                                 {
                                     label               : 'Estudiantes',
-                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(6,13,132,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
                                     borderColor         : 'rgba(11,15,255,0.8)',
                                     pointRadius          : 2,
                                     pointColor          : '#3b8bba',
@@ -928,7 +928,7 @@
                 }
             });
             $.ajax({
-                url : "miembros por grado", // the endpoint
+                url : "{% url 'cgc:ajx_cgc_program_members_by_grade' %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
