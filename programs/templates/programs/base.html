@@ -280,7 +280,7 @@
                                 </ul>
                             </li>
                             <li class="nav-item has-treeview">
-                                <a href="#" class="nav-link" title="Proyectos asociados al programa">
+                                <a href="#" class="nav-link" title="Actas del programa y de las Comisiones de Grado.">
                                     <i class="nav-icon fas fa-file"></i>
                                     <p>
                                         Actas
@@ -499,6 +499,34 @@
 
                                 </ul>
                             </li>
+                            <li class="nav-item has-treeview">
+                                <a href="#" class="nav-link" title="Actas del programa y de las Comisiones de Grado.">
+                                    <i class="nav-icon fas fa-file"></i>
+                                    <p>
+                                        Actas
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    {% if user_is_program_cs %}
+                                        <li class="nav-item">
+                                            <a href="" class="nav-link">
+                                                <i class="fa fa-plus nav-icon"></i>
+                                                <p>Nueva</p>
+                                            </a>
+
+                                        </li>
+                                    {% endif %}
+                                    <li class="nav-item">
+                                        <a href="" class="nav-link">
+                                            <i class="fa fa-list-alt nav-icon"></i>
+                                            <p>Actas del programa</p>
+                                        </a>
+
+                                    </li>
+
+                                </ul>
+                            </li>
                             {%  if user_is_program_cs %}
                                 <li class="nav-item">
                                     <a href="{% url 'programs:program_statistics' program.slug %}" class="nav-link" title="Estadísticas del programa">
@@ -651,6 +679,34 @@
                                             <i class="fa fa-list nav-icon"></i>
                                             <p>Ver lista</p>
                                         </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                            <li class="nav-item has-treeview">
+                                <a href="#" class="nav-link" title="Actas del programa">
+                                    <i class="nav-icon fas fa-file"></i>
+                                    <p>
+                                        Actas
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    {% if user_is_program_cs %}
+                                        <li class="nav-item">
+                                            <a href="" class="nav-link">
+                                                <i class="fa fa-plus nav-icon"></i>
+                                                <p>Nueva</p>
+                                            </a>
+
+                                        </li>
+                                    {% endif %}
+                                    <li class="nav-item">
+                                        <a href="" class="nav-link">
+                                            <i class="fa fa-list-alt nav-icon"></i>
+                                            <p>Actas del programa</p>
+                                        </a>
+
                                     </li>
 
                                 </ul>

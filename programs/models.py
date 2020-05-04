@@ -309,6 +309,7 @@ class CGCBrief(models.Model):
     brief=models.FileField(upload_to=cgc_brief_path, null=True)
     year =models.IntegerField(default=now().year)
     month=models.CharField(max_length=12)
+    update_date = models.DateField(default=now)
 
     def __str__(self):
         meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
@@ -320,6 +321,8 @@ class CNGCBrief(models.Model):
     brief = models.FileField(upload_to=cngc_brief_path, null=True)
     year = models.IntegerField(default=now().year)
     month = models.CharField(max_length=12)
+    update_date = models.DateField(default=now)
+
 
     def __str__(self):
         meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
@@ -331,6 +334,8 @@ class ProgramBrief(models.Model):
     brief = models.FileField(upload_to=program_brief_path)
     year = models.IntegerField(default=now().year)
     month = models.CharField(max_length=12)
+    update_date = models.DateField(default=now)
+
 
     def __str__(self):
         meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",

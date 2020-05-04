@@ -70,6 +70,7 @@
                             {% if year %}
                                 <tr>
                                     <th>Mes</th>
+                                    <th>Subida</th>
                                     <th> </th>
 
                                 </tr>
@@ -77,6 +78,7 @@
                                 <tr>
                                     <th>Año</th>
                                     <th>Mes</th>
+                                    <th>Subida</th>
                                     <th> </th>
 
                                 </tr>
@@ -90,6 +92,7 @@
                                         <td>{{ brief.year }}</td>
                                     {% endif %}
                                     <td>{{ brief.month }}</td>
+                                    <td>{{ brief.update_date|date:'Y-m-d' }}</td>
                                     <td class="text-right">
                                         <div class="btn-group">
                                             <button class="btn btn-sm btn-success" type="button" title="Ver acta" onclick="window.open('{% url 'cgc:cgc_brief_view' brief.id %}');"><i class="fa fa-book-reader"></i> </button>
