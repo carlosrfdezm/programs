@@ -126,6 +126,57 @@
             </div>
 
             <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Estudiantes por Programa</strong></h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
+                                {##}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+
+                                    <div class="chart" id="div_programChartLines">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="programChartLines"  style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+
+                <!-- /.col -->
+            </div>
+
+            <div class="row">
                 <div class="col-md-6 col-sm-6">
                     <div class="card">
                         <div class="card-header">
@@ -219,6 +270,7 @@
 
                 <!-- /.col -->
             </div>
+
             <div class="row">
                 <div class="col-md-4 col-sm-4">
                     <div class="card">
@@ -504,7 +556,7 @@
                 }
             });
             $.ajax({
-                url : "estudiantes por programas", // the endpoint
+                url : "{% url 'cgc:ajx_cgc_students_by_program' %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -559,7 +611,7 @@
                                 }]
                             }
                         };
-                        var barChartCanvas=$('#barChartEditionStudents');
+                        var barChartCanvas=$('#programChartLines');
                         var barChart       = new Chart(barChartCanvas, {
                             type: 'bar',
                             data: barChartData,
@@ -569,7 +621,7 @@
                     }
 
                     else {
-                        $('#div_barChartEditionStudents').replaceWith(div_court);
+                        $('#div_programChartLines').replaceWith(div_court);
 
                     }
 

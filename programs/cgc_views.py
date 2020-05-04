@@ -778,6 +778,28 @@ def ajx_cgc_students_by_line(request):
         content_type="application/json"
     )
 
+
+@login_required
+def ajx_cgc_students_by_program(request):
+    response_data=[]
+    labels = []
+    data = []
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+    i=0
+    for program in Program.objects.filter(type='phd'):
+        i += 1
+        labels.append(program.short_name)
+        data.append(Student.objects.filter(program=program).__len__())
+
+    response_data.append(labels)
+    response_data.append(data)
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
 @login_required
 def ajx_cgc_students_by_age(request):
     response_data=[]
