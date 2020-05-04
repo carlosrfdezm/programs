@@ -346,6 +346,7 @@
 
                     }
                     if(total>0){
+
                         for(var j=0;j<json[0].length; j++){
                             $('#div_st_1').append('<a class="dropdown-item stat" data="'+json[0][j]+'">Año '+json[0][j]+'</a>')
                         }
@@ -929,11 +930,12 @@
             });
 
             $(document).on('click', 'a.dropdown-item', function () {
+                var year = $(this).attr('data');
                 $.ajax({
                     url : "{% url 'cgc:ajx_cgc_by_year_requests' %}", // the endpoint
                     type : "POST", // http method
                     data : { 'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                        'year':$(this).attr('data')
+                        'year':year
                     }, // data sent with the post request
 
                     // handle a successful response
@@ -945,6 +947,11 @@
 
                         }
                         if(total>0){
+                            var div_chart = '<div class="chart" id="div_ChartLastYears">\n' +
+                                '                                        <!-- Sales Chart Canvas -->\n' +
+                                '                                        <canvas id="requestChartLastYears" height="280" style="height: 230px;"></canvas>\n' +
+                                '                                    </div>';
+                            $('#div_ChartLastYears').replaceWith(div_chart);
 
                             var areaChartData = {
                                 labels  : json[0],
@@ -1007,8 +1014,10 @@
                         }
 
                         else {
-                            var div_court='<div id="div_pie" class="card-body"><div class="alert alert-warning"><h5 class="text-center">No hay datos disponibles.</h5></div></div>'
-                            $('#div_pie').replaceWith(div_court);
+                            var div_court = '<div class="jumbotron" id="div_ChartLastYears" style="height: 198px;">'+
+                                '<h3 class="text-center"><i class="text-warning fas fa-exclamation-triangle"></i> No hay datos disponibles para el año '+ year + '.</h3>'+
+                                '</div>';
+                            $('#div_ChartLastYears').replaceWith(div_court);
 
                         }
 
