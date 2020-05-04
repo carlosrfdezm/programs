@@ -2086,10 +2086,10 @@ def create_program_brief(request, program_slug):
                     month=request.POST['month'],
                 )
                 new_brief.save()
-                return HttpResponseRedirect(reverse('programs:program_brieffings', args=[program_slug]))
+                return HttpResponseRedirect(reverse('programs:program_brieffings_by_year', args=[program_slug, new_brief.year]))
 
             except:
-                print()
+
                 return error_500(request,program, 'Ha ocurrido un error al crear la nueva acta')
 
 
@@ -2121,6 +2121,25 @@ def program_brieffings(request, program_slug):
             'program':program,
             'years': sorted(years),
             'brieffings': ProgramBrief.objects.filter(program=program),
+        }
+        return render(request, 'programs/program_brieffings_list.html',context)
+    else:
+        return error_500(request,'Usted no puede ver las actas de este programa')
+
+@login_required
+def program_brieffings_by_year(request, program_slug, year):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_member(request.user, program):
+        years=[]
+        for brieffing in ProgramBrief.objects.filter(program=program):
+            if not brieffing.year in years:
+                years.append(brieffing.year)
+
+        context={
+            'year': year,
+            'program':program,
+            'years': sorted(years),
+            'brieffings': ProgramBrief.objects.filter(program=program, year=year),
         }
         return render(request, 'programs/program_brieffings_list.html',context)
     else:
