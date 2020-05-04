@@ -735,12 +735,22 @@ def ajx_cgc_by_year_requests(request):
              8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
 
     # locale.setlocale(locale.LC_ALL, 'es-ES')
+    if int(year) != now().year:
 
-    for i in range(1,13):
-        labels.append(meses[i])
+        print(year,':',now().year)
 
-        data_1.append(Student.objects.filter(request_date__year=year,request_date__month=i).__len__())
-        data_2.append(Student.objects.filter(init_date__year=year,init_date__month=i).__len__())
+        for i in range(1,13):
+            labels.append(meses[i])
+
+            data_1.append(Student.objects.filter(request_date__year=year,request_date__month=i).__len__())
+            data_2.append(Student.objects.filter(init_date__year=year,init_date__month=i).__len__())
+    else:
+        for i in range(1, now().month+1):
+            labels.append(meses[i])
+
+            data_1.append(Student.objects.filter(request_date__year=year, request_date__month=i).__len__())
+            data_2.append(Student.objects.filter(init_date__year=year, init_date__month=i).__len__())
+
 
 
 
