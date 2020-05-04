@@ -793,17 +793,23 @@ def ajx_cgc_students_by_line(request):
 def ajx_cgc_students_by_program(request):
     response_data=[]
     labels = []
-    data = []
+    data_1 = []
+    data_2 = []
+    data_3 = []
 
     # locale.setlocale(locale.LC_ALL, 'es-ES')
     i=0
     for program in Program.objects.filter(type='phd'):
         i += 1
         labels.append(program.short_name)
-        data.append(Student.objects.filter(program=program).__len__())
+        data_1.append(PhdStudent.objects.filter(student__program=program, status='solicitante').__len__())
+        data_2.append(PhdStudent.objects.filter(student__program=program, status='doctorando').__len__())
+        data_3.append(PhdStudent.objects.filter(student__program=program, status='graduado').__len__())
 
     response_data.append(labels)
-    response_data.append(data)
+    response_data.append(data_1)
+    response_data.append(data_2)
+    response_data.append(data_3)
 
     return HttpResponse(
         json.dumps(response_data),

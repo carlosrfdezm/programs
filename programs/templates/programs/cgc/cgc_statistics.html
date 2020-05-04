@@ -23,6 +23,56 @@
     <section class="content">
         <div class="container-fluid">
 
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Estudiantes por Programa</strong></h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
+                                {##}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+
+                                    <div class="chart" id="div_programChartLines">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="programChartLines"  style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+
+                <!-- /.col -->
+            </div>
 
             <div class="row">
                 <div class="col-md-8 col-sm-8">
@@ -111,57 +161,6 @@
                                     </div>
                                     <!-- /.progress-group -->
                                 </div>
-                                <!-- /.col -->
-                            </div>
-                            <!-- /.row -->
-                        </div>
-
-
-                    </div>
-                    <!-- /.card -->
-                </div>
-
-
-                <!-- /.col -->
-            </div>
-
-            <div class="row">
-                <div class="col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title"><strong>Estudiantes por Programa</strong></h5>
-
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                {#                                <div class="btn-group">#}
-                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
-                                {#                                        <i class="fas fa-wrench"></i>#}
-                                {#                                    </button>#}
-                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
-                                {##}
-                                {#                                    </div>#}
-                                {#                                </div>#}
-                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
-                                {#                    <i class="fas fa-times"></i>#}
-                                {#                  </button>#}
-                            </div>
-                        </div>
-                        <!-- /.card-header -->
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12 col-sm-12">
-
-
-                                    <div class="chart" id="div_programChartLines">
-                                        <!-- Sales Chart Canvas -->
-                                        <canvas id="programChartLines"  style="height: 230px;"></canvas>
-                                    </div>
-                                    <!-- /.chart-responsive -->
-                                </div>
-                                <!-- /.col -->
-
                                 <!-- /.col -->
                             </div>
                             <!-- /.row -->
@@ -575,8 +574,8 @@
                             labels  : json[0],
                             datasets: [
                                 {
-                                    label               : 'Estudiantes',
-                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(6,13,132,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    label               : 'Solicitantes',
+                                    backgroundColor     : ['rgba(121,124,205,0.67)','rgba(12,18,206,0.67)','rgba(4,52,94,0.8)'],
                                     borderColor         : 'rgba(11,15,255,0.8)',
                                     pointRadius          : 2,
                                     pointColor          : '#3b8bba',
@@ -584,6 +583,28 @@
                                     pointHighlightFill  : '#fff',
                                     pointHighlightStroke: 'rgba(60,141,188,1)',
                                     data                : json[1],
+                                },
+                                {
+                                    label               : 'Doctorandos',
+                                    backgroundColor     : ['rgba(29,196,10,0.67)','rgba(19,132,6,0.67)','rgba(2,73,3,0.8)'],
+                                    borderColor         : 'rgba(11,15,255,0.8)',
+                                    pointRadius          : 2,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[2],
+                                },
+                                {
+                                    label               : 'Graduados',
+                                    backgroundColor     : ['rgba(198,179,7,0.67)','rgba(215,133,19,0.67)','rgba(239,116,7,0.8)'],
+                                    borderColor         : 'rgba(11,15,255,0.8)',
+                                    pointRadius          : 2,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[3],
                                 },
 
 
@@ -598,16 +619,16 @@
                             },
                             scales: {
                                 xAxes: [{
+                                    stacked: true,
                                     gridLines : {
                                         display : false,
                                     }
                                 }],
                                 yAxes: [{
-
+                                    stacked: true,
                                     gridLines : {
                                         display : false,
-                                    },
-
+                                    }
                                 }]
                             }
                         };
