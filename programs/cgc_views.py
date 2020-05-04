@@ -756,6 +756,29 @@ def ajx_cgc_by_year_requests(request):
         content_type="application/json"
     )
 
+
+@login_required
+def ajx_cgc_students_by_line(request):
+    response_data=[]
+    labels = []
+    data = []
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+    i=0
+    for line in InvestigationLine.objects.all():
+        i += 1
+        labels.append(line.name.split()[0])
+        data.append(PhdStudentTheme.objects.filter(line=line).__len__())
+
+    response_data.append(labels)
+    response_data.append(data)
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+
 @login_required
 def ajx_last_years_requests_vs_graduated(request):
     response_data=[]
