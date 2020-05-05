@@ -1577,17 +1577,17 @@ def ajx_students_by_age(request, program_slug):
     # locale.setlocale(locale.LC_ALL, 'es-ES')
     i=0
     if program.type == 'phd':
-        data.append(Student.objects.filter(program=program,birth_date__year__gt=now().year-30 ).__len__())
-        data.append(Student.objects.filter(program=program,birth_date__year__gt=now().year-40, birth_date__year__lt=now().year-30 ).__len__() )
-        data.append(Student.objects.filter(program=program,birth_date__year__gt=now().year-50, birth_date__year__lt=now().year-40 ).__len__() )
-        data.append(Student.objects.filter(program=program, birth_date__year__lt=now().year-50 ).__len__() )
+        data.append(Student.objects.filter(program=program,birth_date__year__gte=now().year-30 ).__len__())
+        data.append(Student.objects.filter(program=program,birth_date__year__gte=now().year-40, birth_date__year__lt=now().year-30 ).__len__() )
+        data.append(Student.objects.filter(program=program,birth_date__year__gte=now().year-50, birth_date__year__lt=now().year-40 ).__len__() )
+        data.append(Student.objects.filter(program=program, birth_date__year__lte=now().year-50 ).__len__() )
     elif program.type == 'msc':
-        data.append(MscStudent.objects.filter(program=program, birth_date__year__gt=now().year - 30).__len__())
-        data.append(MscStudent.objects.filter(program=program, birth_date__year__gt=now().year - 40,
+        data.append(MscStudent.objects.filter(program=program, birth_date__year__gte=now().year - 30).__len__())
+        data.append(MscStudent.objects.filter(program=program, birth_date__year__gte=now().year - 40,
                                               birth_date__year__lt=now().year - 30).__len__())
-        data.append(MscStudent.objects.filter(program=program, birth_date__year__gt=now().year - 50,
+        data.append(MscStudent.objects.filter(program=program, birth_date__year__gte=now().year - 50,
                                               birth_date__year__lt=now().year - 40).__len__())
-        data.append(MscStudent.objects.filter(program=program, birth_date__year__lt=now().year - 50).__len__())
+        data.append(MscStudent.objects.filter(program=program, birth_date__year__lte=now().year - 50).__len__())
     elif program.type == 'dip':
         pass
 
