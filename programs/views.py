@@ -23,7 +23,7 @@ from programas.settings import MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
-    ProgramBrief
+    ProgramBrief, CGCBrief
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
 
 
@@ -2130,6 +2130,43 @@ def program_brieffings(request, program_slug):
         return error_500(request,'Usted no puede ver las actas de este programa')
 
 @login_required
+def program_cgc_brieffings(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_member(request.user, program):
+        years=[]
+        for brieffing in CGCBrief.objects.all():
+            if not brieffing.year in years:
+                years.append(brieffing.year)
+
+        context={
+            'program':program,
+            'years': sorted(years),
+            'brieffings': CGCBrief.objects.all(),
+        }
+        return render(request, 'programs/program_cgc_brieffings_list.html',context)
+    else:
+        return error_500(request,program, 'Usted no puede ver las actas de la CGC')
+
+@login_required
+def program_cgc_brieffings_by_year(request, program_slug, year):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_member(request.user, program):
+        years=[]
+        for brieffing in CGCBrief.objects.all():
+            if not brieffing.year in years:
+                years.append(brieffing.year)
+
+        context={
+            'program':program,
+            'year':year,
+            'years': sorted(years),
+            'brieffings': CGCBrief.objects.filter(year=year),
+        }
+        return render(request, 'programs/program_cgc_brieffings_list.html',context)
+    else:
+        return error_500(request,program, 'Usted no puede ver las actas de la CGC')
+
+@login_required
 def program_brieffings_by_year(request, program_slug, year):
     program = Program.objects.get(slug=program_slug)
     if user_is_program_member(request.user, program):
@@ -2227,6 +2264,39 @@ def program_brief_view(request,program_slug, brief_id):
     program = Program.objects.get(slug=program_slug)
 
     brieffing = ProgramBrief.objects.get(pk=brief_id)
+
+    fs = FileSystemStorage()
+
+    filename =brieffing.brief.url
+
+    if fs.exists(filename):
+        brief_ext =filename.split('.')[filename.split('.').__len__()-1]
+
+
+        if brief_ext =='doc' or brief_ext=='docx' or brief_ext == 'odt':
+
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/doc')
+                response['Content-Disposition'] =  "inline; filename=" + '"'+filename.split('/')[filename.split('/').__len__()-1]+'"'
+
+                return response
+
+        elif brief_ext == 'pdf' :
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/pdf')
+                response['Content-Disposition'] = "inline; filename=" + '"'+filename.split('/')[filename.split('/').__len__()-1] + '"'
+
+                return response
+
+    else:
+
+
+        return error_500(request,program, 'No existe el archivo solicitado')
+
+def program_cgc_brief_view(request,program_slug, brief_id):
+    program = Program.objects.get(slug=program_slug)
+
+    brieffing = CGCBrief.objects.get(pk=brief_id)
 
     fs = FileSystemStorage()
 
