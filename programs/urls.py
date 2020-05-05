@@ -75,6 +75,9 @@ urlpatterns = [
     path('cgc/brieffings', views.program_cgc_brieffings, name='program_cgc_brieffings'),
     path('cgc/brieffings/<int:year>', views.program_cgc_brieffings_by_year, name='program_cgc_brieffings_by_year'),
     path('cgc/brieffings/<int:brief_id>/view', views.program_cgc_brief_view, name='program_cgc_brief_view'),
+    path('cngc/brieffings', views.program_cngc_brieffings, name='program_cngc_brieffings'),
+    path('cngc/brieffings/<int:year>', views.program_cngc_brieffings_by_year, name='program_cngc_brieffings_by_year'),
+    path('cngc/brieffings/<int:brief_id>/view', views.program_cngc_brief_view, name='program_cngc_brief_view'),
     path('brieffings/list', views.program_brieffings, name='program_brieffings'),
     path('brieffings/year/<int:year>/list', views.program_brieffings_by_year, name='program_brieffings_by_year'),
 
