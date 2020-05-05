@@ -1,4 +1,5 @@
 import json
+import os
 import random
 import calendar, locale
 
@@ -12,11 +13,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 # Create your views here.
+from django.test.utils import override_script_prefix
 from django.urls import reverse
 from django.utils import dateparse
 from django.utils.text import slugify, phone2numeric
 from django.utils.timezone import now
 
+from programas.settings import MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
@@ -2144,3 +2147,145 @@ def program_brieffings_by_year(request, program_slug, year):
         return render(request, 'programs/program_brieffings_list.html',context)
     else:
         return error_500(request,'Usted no puede ver las actas de este programa')
+
+
+@login_required
+def edit_program_brief(request,program_slug, brief_id):
+    program = Program.objects.get(slug=program_slug)
+
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            try:
+                old_year=ProgramBrief.objects.get(pk=brief_id).year
+                old_month=ProgramBrief.objects.get(pk=brief_id).month
+
+                if old_year != request.POST['year'] or old_month != request.POST['month']:
+                    initial_path = ProgramBrief.objects.get(pk=brief_id).brief.path
+
+                    ProgramBrief.objects.filter(pk=brief_id).update(
+                        # brief=brief,
+                        year=request.POST['year'],
+                        month=request.POST['month'],
+                    )
+
+                    brief_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
+
+                    brief= ProgramBrief.objects.get(pk=brief_id)
+                    brief.brief.name = 'program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
+                                                                           'Acta_'+program_slug+'_' + request.POST['month'] + '_' +
+                                                                           request.POST['year'] + '.' + brief_ext)
+                    new_path= MEDIA_ROOT+ '/program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
+                                                                           'Acta_'+program_slug+'_' + request.POST['month'] + '_' +
+                                                                           request.POST['year'] + '.' + brief_ext)
+
+                    print(initial_path,':'+new_path)
+                    os.renames(initial_path, new_path)
+                    brief.save()
+                try:
+                    brief = request.FILES['brief']
+                    fs = FileSystemStorage()
+                    brief_ext = brief.name.split('.')[brief.name.split('.').__len__() - 1]
+
+                    new_brief_name = 'program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
+                                                                           'Acta_'+program_slug+'_' + request.POST['month'] + '_' +
+                                                                           request.POST['year'] + '.' + brief_ext)
+                    ProgramBrief.objects.get(pk=brief_id).brief.delete()
+
+                    filename = fs.save(new_brief_name, brief)
+
+                    ProgramBrief.objects.filter(pk=brief_id).update(
+                        brief=filename,
+
+                    )
+                except:
+                    pass
+
+                return HttpResponseRedirect(reverse('programs:program_brieffings_by_year', args=[program_slug, ProgramBrief.objects.get(pk=brief_id).year]))
+
+            except:
+                return error_500(request,program, 'Ha ocurrido un error al editar el acta')
+
+
+        else:
+            meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+                     8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+            context = {
+                'program':program,
+                'months': ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio','Agosto', 'Septiembre',
+                           'Octubre', 'Noviembre', 'Diciembre'],
+                'current_month': meses[now().month],
+                'years':range(now().year-10,now().year+1),
+                'current_year':now().year,
+                'brieffing': ProgramBrief.objects.get(pk=brief_id),
+            }
+            return render(request, 'programs/edit_program_brief.html',context)
+    else:
+        return error_500(request,'Usted no tiene privilegios para agregar actas.')
+
+
+def program_brief_view(request,program_slug, brief_id):
+    program = Program.objects.get(slug=program_slug)
+
+    brieffing = ProgramBrief.objects.get(pk=brief_id)
+
+    fs = FileSystemStorage()
+
+    filename =brieffing.brief.url
+
+    if fs.exists(filename):
+        brief_ext =filename.split('.')[filename.split('.').__len__()-1]
+
+
+        if brief_ext =='doc' or brief_ext=='docx' or brief_ext == 'odt':
+
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/doc')
+                response['Content-Disposition'] =  "inline; filename=" + '"'+filename.split('/')[filename.split('/').__len__()-1]+'"'
+
+                return response
+
+        elif brief_ext == 'pdf' :
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/pdf')
+                response['Content-Disposition'] = "inline; filename=" + '"'+filename.split('/')[filename.split('/').__len__()-1] + '"'
+
+                return response
+
+    else:
+
+
+        return error_500(request,program, 'No existe el archivo solicitado')
+
+
+
+@login_required
+def ajx_delete_program_brieffing(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program ):
+        if request.method=='POST':
+            brief_id=request.POST['brief_id']
+            try:
+
+                ProgramBrief.objects.get(pk=brief_id).brief.delete()
+                ProgramBrief.objects.get(pk=brief_id).delete()
+
+
+                return HttpResponse(
+                    json.dumps([{'deleted': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                return HttpResponse(
+                    json.dumps([{'deleted': 0}]),
+                    content_type="application/json"
+                )
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'deleted': 2}]),
+            content_type="application/json"
+        )

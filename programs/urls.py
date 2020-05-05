@@ -65,10 +65,13 @@ urlpatterns = [
     path('ajx/messages/students/personal', views.ajx_student_personal_msg, name='ajx_student_personal_msg'),
     path('ajx/messages/students/massive', views.ajx_students_massive_msg, name='ajx_students_massive_msg'),
     path('ajx/messages/everybody/massive', views.ajx_everybody_massive_msg, name='ajx_everybody_massive_msg'),
+    path('ajx/delete/program/brieffing', views.ajx_delete_program_brieffing, name='ajx_delete_program_brieffing'),
 
 
     path('statistics', views.program_statistics, name='program_statistics'),
     path('brieffings/create', views.create_program_brief, name='create_program_brief'),
+    path('brieffings/<int:brief_id>/edit', views.edit_program_brief, name='edit_program_brief'),
+    path('brieffings/<int:brief_id>/view', views.program_brief_view, name='program_brief_view'),
     path('brieffings/list', views.program_brieffings, name='program_brieffings'),
     path('brieffings/year/<int:year>/list', views.program_brieffings_by_year, name='program_brieffings_by_year'),
 
