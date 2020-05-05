@@ -1265,10 +1265,10 @@ def ajx_cgc_program_members_by_age(request):
 
     # locale.setlocale(locale.LC_ALL, 'es-ES')
     i=0
-    data.append(ProgramMember.objects.filter(program__type='phd',birth_date__year__gt=now().year-30 ).__len__())
-    data.append(ProgramMember.objects.filter(program__type='phd',birth_date__year__gt=now().year-40, birth_date__year__lt=now().year-30 ).__len__() )
-    data.append(ProgramMember.objects.filter(program__type='phd',birth_date__year__gt=now().year-50, birth_date__year__lt=now().year-40 ).__len__() )
-    data.append(ProgramMember.objects.filter(program__type='phd', birth_date__year__lt=now().year-50 ).__len__() )
+    data.append(ProgramMember.objects.filter(program__type='phd',birth_date__year__gte=now().year-30 ).__len__())
+    data.append(ProgramMember.objects.filter(program__type='phd',birth_date__year__gte=now().year-40, birth_date__year__lt=now().year-30 ).__len__() )
+    data.append(ProgramMember.objects.filter(program__type='phd',birth_date__year__gte=now().year-50, birth_date__year__lt=now().year-40 ).__len__() )
+    data.append(ProgramMember.objects.filter(program__type='phd', birth_date__year__lte=now().year-50 ).__len__() )
 
 
     response_data.append(labels)
