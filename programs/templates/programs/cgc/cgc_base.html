@@ -311,7 +311,7 @@
                                 <div class="col-md-12">
                                     <select class="form-control" id="slc_msg_scope" name="msg_scope">
                                         <option value="" selected>Seleccione un contexto</option>
-                                        <option value="comite">A Miembros del Comité Académico</option>
+                                        <option value="comite">A Miembros de Comités Académicos</option>
                                         <option value="professors">A Profesores</option>
                                         <option value="tuthors">A Tutores</option>
                                         <option value="all">A todos los profesores</option>
@@ -541,7 +541,7 @@
         $('#frm_msg_member').on('submit', function (e) {
             e.preventDefault();
             $('#modal_msg_members').modal('hide');
-            var url = "";
+            var url = "{% url 'cgc:ajx_cgc_member_massive_msg' %}";
 
             $.ajax({
                 url : url,

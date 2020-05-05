@@ -1005,23 +1005,23 @@ def ajx_member_personal_msg(request, program_slug ):
         )
 
 @login_required
-def ajx_member_massive_msg(request, program_slug ):
-    program=Program.objects.get(slug=program_slug)
+def ajx_cgc_member_massive_msg(request ):
+
     if request.method == 'POST' and request.POST['msg_body'].__len__() <= 500:
         try:
             email_list = []
             if request.POST['msg_scope'] == 'comite':
-                for member in ProgramMember.objects.filter(Q(role='Coordinador')|Q(role='Secretario')|Q(role='Miembro'), program=program  ):
+                for member in ProgramMember.objects.filter(Q(role='Coordinador')|Q(role='Secretario')|Q(role='Miembro'), program__type='phd'  ):
                     email_list.append(member.user.email)
             elif request.POST['msg_scope']=='professors':
-                for member in ProgramMember.objects.filter(program=program , role='Profesor' ):
+                for member in ProgramMember.objects.filter( program__type='phd', role='Profesor' ):
                     email_list.append(member.user.email)
             elif request.POST['msg_scope']=='tuthors':
-                for member in ProgramMember.objects.filter(program=program , role='Tutor' ):
+                for member in ProgramMember.objects.filter( program__type='phd', role='Tutor' ):
                     email_list.append(member.user.email)
 
             elif request.POST['msg_scope']=='all':
-                for member in ProgramMember.objects.filter(program=program ):
+                for member in ProgramMember.objects.filter( program__type='phd' ):
                     email_list.append(member.user.email)
 
             if email_list.__len__()<=10:
