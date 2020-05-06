@@ -81,6 +81,7 @@ urlpatterns = [
     path('brieffings/list', views.program_brieffings, name='program_brieffings'),
     path('brieffings/download', views.program_brief_zip_download, name='program_brief_zip_download'),
     path('brieffings/year/<int:year>/list', views.program_brieffings_by_year, name='program_brieffings_by_year'),
+    path('brieffings/year/<int:year>/download', views.program_by_year_brief_zip_download, name='program_by_year_brief_zip_download'),
 
 
 

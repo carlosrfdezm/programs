@@ -2487,3 +2487,58 @@ def program_brief_zip_download(request,program_slug):
 
     else:
         return error_500(request, program, 'No hay actas para descargar')
+
+@login_required()
+def program_by_year_brief_zip_download(request,program_slug, year):
+    program = Program.objects.get(slug=program_slug)
+
+    brief_list = ProgramBrief.objects.filter(program=program, year=year)
+    zipname = "Actas-de-"+slugify(program.short_name)+'-'+str(year)
+
+    if brief_list.count() > 0:
+        # Files (local path) to put in the .zip
+        filenames = []
+        i = int(0)
+        # Folder name in ZIP archive which contains the above files
+        # E.g [thearchive.zip]/somefiles/file2.txt
+
+        zip_filename = "%s.zip" % zipname
+
+        # # Open StringIO to grab in-memory ZIP contents
+        # s = StringIO()
+        #
+        # # The zip compressor
+        zf = zipfile.ZipFile(MEDIA_ROOT + '/' + zip_filename, "w")
+
+        for brief in brief_list:
+                try:
+                    fpath = MEDIA_ROOT +'/'+ brief.brief.name
+                    fdir, fname = os.path.split(fpath)
+                    zip_subdir = str(brief.month)
+                    zip_path = os.path.join(zip_subdir, brief.brief.name.split('/')[brief.brief.name.split('/').__len__()-1])
+
+
+                    # zip_path = os.path.join(zip_subdir, fname)
+                    # Add file, at correct path
+                    zf.write(fpath, zip_path)
+                except:
+                    print('Excepcion:algo paso al agregar el archivo', brief.brief.name)
+
+
+        zf.close()
+
+        # Must close zip for all contents to be written
+        fs = FileSystemStorage()
+
+        with fs.open(zip_filename) as zip:
+            # response = HttpResponse(pdf, content_type='application/pdf')
+            # response['Content-Disposition'] = "inline; filename=" + '"' + filename + '"'
+            # Grab ZIP file from in-memory, make response with correct MIME-type
+            resp = HttpResponse(zip, content_type="application/x-zip-compressed")
+            # ..and correct content-disposition
+            resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+
+        return resp
+
+    else:
+        return error_500(request, program, 'No hay actas para descargar')
