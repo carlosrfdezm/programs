@@ -98,7 +98,15 @@ def create_cngc_brief(request):
                 fs = FileSystemStorage()
                 brief_ext = brief.name.split('.')[brief.name.split('.').__len__() - 1]
                 new_brief_name ='cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'],request.POST['month'], 'Acta_CNGC_'+request.POST['month']+'_'+ request.POST['year']+'.'+brief_ext)
-                filename = fs.save(new_brief_name, brief)
+                if not fs.exists(new_brief_name):
+                    filename = fs.save(new_brief_name, brief)
+                else:
+                    index =str(CNGCBrief.objects.filter(year=request.POST['year'], month= request.POST['month']).__len__()+1)
+                    new_brief_name = 'cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
+                                                                         'Acta_CNGC_' + request.POST['month'] + '_' +
+                                                                         request.POST['year'] +'_'+index+ '.' + brief_ext)
+                    filename = fs.save(new_brief_name, brief)
+
 
                 new_brief = CNGCBrief(
                     brief=filename,
