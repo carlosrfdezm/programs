@@ -51,10 +51,22 @@
                                 </button>
 
                                 <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                    {% for year in years %}
-                                        <a href="{% url 'cgc:cngc_year_brieffings' year %}" class="dropdown-item text-center" title="Ver actas del año {{ year }}">Año {{ year }}</a>
+                                {% for year in years %}
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <a href="{% url 'cgc:cngc_year_brieffings' year %}" class="dropdown-item text-left" title="Ver actas del {{ year }}">Año {{ year }} </a>
+
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <a href="{% url 'programs:cngc_by_year_brief_zip_download' year %}" class="text-center text-sm" title="Descargar actas del {{ year }}"><i class="fa fa-download"></i> </a>
+
+                                            </div>
+
+                                        </div>
                                     {% endfor %}
-                                <a href="{% url 'cgc:cngc_brieffings' %}" class="dropdown-item text-center" title="Ver todas las actas">Todas</a>
+                                    <a href="{% url 'cgc:cngc_brieffings' %}" class="dropdown-item text-left" title="Ver todas las actas">Ver todas</a>
+                                    <a href="{% url 'cgc:cngc_brief_zip_download' %}" class="dropdown-item text-left" title="Descargar todas las actas">Descargar todas</a>
+
 
                                 </div>
 
