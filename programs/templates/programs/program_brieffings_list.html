@@ -54,7 +54,7 @@
                                     {% for year in years %}
                                         <div class="row">
                                             <div class="col-sm-8">
-                                                <a href="{% url 'programs:program_brieffings_by_year' program.slug year %}" class="dropdown-item text-left title="Ver actas del {{ year }}">Año {{ year }} </a>
+                                                <a href="{% url 'programs:program_brieffings_by_year' program.slug year %}" class="dropdown-item text-left" title="Ver actas del {{ year }}">Año {{ year }} </a>
 
                                             </div>
                                             <div class="col-sm-4">
