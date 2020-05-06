@@ -258,6 +258,7 @@ def edit_cngc_brief(request, brief_id):
                                                                                      request.POST[
                                                                                          'year'] + '_' + index + '.' + brief_ext)
                         os.renames(initial_path, new_path)
+                    brief.save()
                 try:
                     brief = request.FILES['brief']
                     fs = FileSystemStorage()
