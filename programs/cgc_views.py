@@ -1067,7 +1067,7 @@ def ajx_cgc_member_massive_msg(request ):
             )
     else:
         return HttpResponse(
-            json.dumps([{'sended': 2}]),
+            json.dumps([{'sended': 3}]),
             content_type="application/json"
         )
 
@@ -1125,84 +1125,72 @@ def ajx_everybody_massive_msg(request, program_slug ):
         )
 
 @login_required
-def ajx_students_massive_msg(request, program_slug ):
-    program=Program.objects.get(slug=program_slug)
-    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 500:
-        try:
-            email_list = ['boris_perez@unah.edu.cu']
-            if program.type == 'phd':
-                if request.POST['msg_scope'] == 'requesters':
-                    for student in PhdStudent.objects.filter(program=program ,status='solicitante' ):
-                        email_list.append(student.user.email)
-                elif request.POST['msg_scope']=='aproved':
-                    for student in PhdStudent.objects.filter(program=program ,status='doctorando' ):
-                        email_list.append(student.user.email)
+def ajx_cgc_students_massive_msg(request ):
+    if user_is_cgc_ps(request.user):
+        if request.method == 'POST' and request.POST['msg_body'].__len__() <= 500:
+            try:
+                email_list = ['boris_perez@unah.edu.cu']
 
-                elif request.POST['msg_scope']=='graduated':
-                    for student in PhdStudent.objects.filter(program=program, status='graduado'):
-                        email_list.append(student.user.email)
-
-                elif request.POST['msg_scope']=='all':
-                    for student in PhdStudent.objects.filter(program=program):
-                        email_list.append(student.user.email)
-            elif program.type == 'msc':
                 if request.POST['msg_scope'] == 'requesters':
-                    for student in MscStudent.objects.filter(program=program, status='solicitante'):
+                    for student in Student.objects.filter(status='solicitante'):
                         email_list.append(student.user.email)
                 elif request.POST['msg_scope'] == 'aproved':
-                    for student in MscStudent.objects.filter(program=program, status='maestrante'):
+                    for student in Student.objects.filter(status='doctorando'):
                         email_list.append(student.user.email)
 
                 elif request.POST['msg_scope'] == 'graduated':
-                    for student in MscStudent.objects.filter(program=program, status='graduado'):
+                    for student in Student.objects.filter(status='graduado'):
                         email_list.append(student.user.email)
 
                 elif request.POST['msg_scope'] == 'all':
-                    for student in MscStudent.objects.filter(program=program):
+                    for student in Student.objects.all():
                         email_list.append(student.user.email)
-            elif program.type == 'dip':
-                pass
 
-            if email_list.__len__()<=10:
-                send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
-                          email_list, fail_silently=False, html_message=request.POST['msg_body'])
-            else:
-                count = email_list.__len__() // 10
-                rest = email_list.__len__() % 10
+                if email_list.__len__() <= 10:
+                    send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
+                              email_list, fail_silently=False, html_message=request.POST['msg_body'])
+                else:
+                    count = email_list.__len__() // 10
+                    rest = email_list.__len__() % 10
 
-                for i in range(count):
-                    print(i)
-                    send_mail(request.POST['msg_subject'], request.POST['msg_body'],
-                              request.user.email,
-                              email_list[10 * i:10 * (i + 1)], fail_silently=False, html_message=request.POST['msg_body'])
-
-                    if rest != 0:
+                    for i in range(count):
+                        print(i)
                         send_mail(request.POST['msg_subject'], request.POST['msg_body'],
                                   request.user.email,
-                                  email_list[10 * count:10 * count + rest], fail_silently=False,
+                                  email_list[10 * i:10 * (i + 1)], fail_silently=False,
                                   html_message=request.POST['msg_body'])
 
+                        if rest != 0:
+                            send_mail(request.POST['msg_subject'], request.POST['msg_body'],
+                                      request.user.email,
+                                      email_list[10 * count:10 * count + rest], fail_silently=False,
+                                      html_message=request.POST['msg_body'])
 
-
+                return HttpResponse(
+                    json.dumps([{'sended': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                return HttpResponse(
+                    json.dumps([{'sended': 0}]),
+                    content_type="application/json"
+                )
+        elif request.method == 'POST' and request.POST['msg_body'].__len__() > 500:
             return HttpResponse(
-                json.dumps([{'sended': 1}]),
+                json.dumps([{'sended': 2}]),
                 content_type="application/json"
             )
-        except:
+        else:
             return HttpResponse(
                 json.dumps([{'sended': 0}]),
                 content_type="application/json"
             )
-    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 500:
-        return HttpResponse(
-            json.dumps([{'sended': 2}]),
-            content_type="application/json"
-        )
     else:
         return HttpResponse(
-            json.dumps([{'sended': 0}]),
+            json.dumps([{'sended': 3}]),
             content_type="application/json"
         )
+
 
 @login_required
 def ajx_student_personal_msg(request, program_slug ):

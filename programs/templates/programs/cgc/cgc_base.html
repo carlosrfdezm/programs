@@ -577,6 +577,13 @@
                         })
 
                     }
+                    else if(json[0].sended == 3){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Usted no puede enviar mensajes masivos.'
+                        })
+
+                    }
                     console.log(json); // log the returned json to the console
 
                 },
@@ -597,7 +604,7 @@
         $('#frm_msg_students').on('submit', function (e) {
             e.preventDefault();
             $('#modal_msg_students').modal('hide');
-            var url = "";
+            var url = "{% url 'cgc:ajx_cgc_students_massive_msg' %}";
 
             $.ajax({
                 url : url,
@@ -630,6 +637,13 @@
                         Toast.fire({
                             type: 'error',
                             title: 'El texto del mensaje es muy largo.'
+                        })
+
+                    }
+                    else if(json[0].sended == 3){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Usted no puede enviar mensajes masivos.'
                         })
 
                     }
