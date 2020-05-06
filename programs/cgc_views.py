@@ -139,14 +139,34 @@ def edit_cgc_brief(request, brief_id):
                     brief_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
 
                     brief= CGCBrief.objects.get(pk=brief_id)
-                    brief.brief.name = 'cgc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
-                                                                           'Acta_CGC_' + request.POST['month'] + '_' +
-                                                                           request.POST['year'] + '.' + brief_ext)
+
                     new_path= MEDIA_ROOT+ '/cgc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
                                                                                'Acta_CGC_' + request.POST['month'] + '_' +
                                                                                request.POST['year'] + '.' + brief_ext)
+                    fs = FileSystemStorage()
 
-                    os.renames(initial_path, new_path)
+                    if not fs.exists(new_path):
+                        brief.brief.name = 'cgc/brieffings/{0}/{1}/{2}'.format(request.POST['year'],
+                                                                               request.POST['month'],
+                                                                               'Acta_CGC_' + request.POST[
+                                                                                   'month'] + '_' +
+                                                                               request.POST['year'] + '.' + brief_ext)
+                        os.renames(initial_path, new_path)
+                    else:
+                        index = str(CGCBrief.objects.filter(year=brief.year, month=brief.month).__len__())
+                        brief.brief.name = 'cgc/brieffings/{0}/{1}/{2}'.format(request.POST['year'],
+                                                                               request.POST['month'],
+                                                                               'Acta_CGC_' + request.POST[
+                                                                                   'month'] + '_' +
+                                                                               request.POST['year'] +'_'+index+ '.' + brief_ext)
+                        new_path = MEDIA_ROOT + '/cgc/brieffings/{0}/{1}/{2}'.format(request.POST['year'],
+                                                                                     request.POST['month'],
+                                                                                     'Acta_CGC_' + request.POST[
+                                                                                         'month'] + '_' +
+                                                                                     request.POST[
+                                                                                         'year'] +'_'+index+ '.' + brief_ext)
+                        os.renames(initial_path, new_path)
+
                     brief.save()
                 try:
                     brief = request.FILES['brief']
@@ -209,15 +229,35 @@ def edit_cngc_brief(request, brief_id):
                     brief_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
 
                     brief= CNGCBrief.objects.get(pk=brief_id)
-                    brief.brief.name = 'cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
-                                                                            'Acta_CNGC_' + request.POST['month'] + '_' +
-                                                                            request.POST['year'] + '.' + brief_ext)
+
                     new_path= MEDIA_ROOT+ '/cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'], request.POST['month'],
                                                                                 'Acta_CNGC_' + request.POST['month'] + '_' +
                                                                                 request.POST['year'] + '.' + brief_ext)
 
-                    os.renames(initial_path, new_path)
-                    brief.save()
+                    fs = FileSystemStorage()
+
+                    if not fs.exists(new_path):
+                        brief.brief.name = 'cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'],
+                                                                               request.POST['month'],
+                                                                               'Acta_CNGC_' + request.POST[
+                                                                                   'month'] + '_' +
+                                                                               request.POST['year'] + '.' + brief_ext)
+                        os.renames(initial_path, new_path)
+                    else:
+                        index = str(CNGCBrief.objects.filter(year=brief.year, month=brief.month).__len__())
+                        brief.brief.name = 'cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'],
+                                                                               request.POST['month'],
+                                                                               'Acta_CNGC_' + request.POST[
+                                                                                   'month'] + '_' +
+                                                                               request.POST[
+                                                                                   'year'] + '_' + index + '.' + brief_ext)
+                        new_path = MEDIA_ROOT + '/cngc/brieffings/{0}/{1}/{2}'.format(request.POST['year'],
+                                                                                     request.POST['month'],
+                                                                                     'Acta_CNGC_' + request.POST[
+                                                                                         'month'] + '_' +
+                                                                                     request.POST[
+                                                                                         'year'] + '_' + index + '.' + brief_ext)
+                        os.renames(initial_path, new_path)
                 try:
                     brief = request.FILES['brief']
                     fs = FileSystemStorage()
