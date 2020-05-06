@@ -79,6 +79,7 @@ urlpatterns = [
     path('cngc/brieffings/<int:year>', views.program_cngc_brieffings_by_year, name='program_cngc_brieffings_by_year'),
     path('cngc/brieffings/<int:brief_id>/view', views.program_cngc_brief_view, name='program_cngc_brief_view'),
     path('brieffings/list', views.program_brieffings, name='program_brieffings'),
+    path('brieffings/download', views.program_brief_zip_download, name='program_brief_zip_download'),
     path('brieffings/year/<int:year>/list', views.program_brieffings_by_year, name='program_brieffings_by_year'),
 
 

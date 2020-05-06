@@ -52,9 +52,20 @@
 
                                 <div class="dropdown-menu dropdown-menu-right" role="menu">
                                     {% for year in years %}
-                                        <a href="{% url 'programs:program_brieffings_by_year' program.slug year %}" class="dropdown-item text-center" title="Ver actas del {{ year }}">Año {{ year }}</a>
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <a href="{% url 'programs:program_brieffings_by_year' program.slug year %}" class="dropdown-item text-left title="Ver actas del {{ year }}">Año {{ year }} </a>
+
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <a href="" class="text-center text-sm" title="Descargar actas del {{ year }}"><i class="fa fa-download"></i> </a>
+
+                                            </div>
+
+                                        </div>
                                     {% endfor %}
-                                <a href="{% url 'programs:program_brieffings' program.slug %}" class="dropdown-item text-center" title="Ver todas las actas">Todas</a>
+                                    <a href="{% url 'programs:program_brieffings' program.slug %}" class="dropdown-item text-left" title="Ver todas las actas">Ver todas</a>
+                                    <a href="{% url 'programs:program_brief_zip_download' program.slug %}" class="dropdown-item text-left" title="Descargar todas las actas">Descargar todas</a>
 
                                 </div>
 
