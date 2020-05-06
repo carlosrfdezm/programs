@@ -34,6 +34,7 @@ urlpatterns = [
     path('ajx/cgc/members_by_age', views.ajx_cgc_program_members_by_age, name='ajx_cgc_program_members_by_age'),
     path('ajx/cgc/members_massive_message', views.ajx_cgc_member_massive_msg, name='ajx_cgc_member_massive_msg'),
     path('ajx/cgc/students_massive_message', views.ajx_cgc_students_massive_msg, name='ajx_cgc_students_massive_msg'),
+    path('ajx/cgc/all_massive_message', views.ajx_cgc_everybody_massive_msg, name='ajx_cgc_everybody_massive_msg'),
 
     path('brieffings/create', views.create_cgc_brief, name='create_cgc_brief'),
     path('brieffings/cngc/create', views.create_cngc_brief, name='create_cngc_brief'),

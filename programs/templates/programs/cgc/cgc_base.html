@@ -667,7 +667,7 @@
         $('#frm_msg_all').on('submit', function (e) {
             e.preventDefault();
             $('#modal_msg_all').modal('hide');
-            var url = "";
+            var url = "{% url 'cgc:ajx_cgc_everybody_massive_msg' %}";
 
             $.ajax({
                 url : url,
