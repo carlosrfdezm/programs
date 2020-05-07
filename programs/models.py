@@ -14,9 +14,9 @@ def program_brief_path(instance, filename):
     brief_ext = filename.split('.')[filename.split('.').__len__() - 1]
     index = ProgramBrief.objects.filter(program=instance.program, year=instance.year, month=instance.month).__len__()
     if index == 0:
-        new_brief_name = 'Acta-' + slugify(instance.program.short_name) + '-' + instance.year + '-' + instance.month + '-1.' + brief_ext
+        new_brief_name = 'Acta-' + slugify(instance.program.short_name) + '-'+ instance.month +'-'+ instance.year + '-1.' + brief_ext
     elif index > 0:
-        new_brief_name = 'Acta-' + slugify(instance.program.short_name) + '-' + instance.year + '-' + instance.month +'-'+str(index+1)+ '.' + brief_ext
+        new_brief_name = 'Acta-' + slugify(instance.program.short_name) + '-'+ instance.month +'-' + instance.year + '-'+str(index+1)+ '.' + brief_ext
 
     return 'program_{0}/brieffings/{1}/{2}/{3}'.format(instance.program.slug, instance.year,
                                                                        instance.month, new_brief_name)

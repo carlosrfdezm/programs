@@ -2226,46 +2226,63 @@ def program_brieffings_by_year(request, program_slug, year):
 @login_required
 def edit_program_brief(request,program_slug, brief_id):
     program = Program.objects.get(slug=program_slug)
+    brief = ProgramBrief.objects.get(pk=brief_id)
 
     if user_is_program_cs(request.user, program):
         if request.method == 'POST':
             try:
-                old_year=ProgramBrief.objects.get(pk=brief_id).year
-                old_month=ProgramBrief.objects.get(pk=brief_id).month
+                old_year=brief.year
+                old_month=brief.month
 
-                if old_year != request.POST['year'] or old_month != request.POST['month']:
+                if str(old_year) != request.POST['year'] or old_month != request.POST['month']:
                     initial_path = ProgramBrief.objects.get(pk=brief_id).brief.path
 
-                    ProgramBrief.objects.filter(pk=brief_id).update(
-                        # brief=brief,
-                        year=request.POST['year'],
-                        month=request.POST['month'],
-                    )
+
 
                     brief_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
 
-                    brief= ProgramBrief.objects.get(pk=brief_id)
-                    brief.brief.name = 'program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
-                                                                           'Acta_'+program_slug+'_' + request.POST['month'] + '_' +
-                                                                           request.POST['year'] + '.' + brief_ext)
-                    new_path= MEDIA_ROOT+ '/program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
-                                                                           'Acta_'+program_slug+'_' + request.POST['month'] + '_' +
-                                                                           request.POST['year'] + '.' + brief_ext)
 
-                    print(initial_path,':'+new_path)
+                    index =ProgramBrief.objects.filter(program=program, month=request.POST['month'], year=request.POST['year']).__len__()
+                    if index>0:
+                        brief.brief.name = 'program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
+                                                                               'Acta-'+slugify(program.short_name)+'-' + request.POST['month'] + '-' +
+                                                                               request.POST['year'] +'-'+str(index+1)+'-'+str(brief_id)+ '.' + brief_ext)
+                        new_path= MEDIA_ROOT+ '/program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
+                                                                               'Acta-'+slugify(program.short_name)+'-' + request.POST['month'] + '-' +
+                                                                               request.POST['year']+'-' +str(index+1)+'-'+str(brief_id)+ '.' + brief_ext)
+                    else:
+                        brief.brief.name = 'program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug,
+                                                                                       request.POST['year'],
+                                                                                       request.POST['month'],
+                                                                                       'Acta-' + slugify(
+                                                                                           program.short_name) + '-' +
+                                                                                       request.POST['month'] + '-' +
+                                                                                       request.POST['year'] + '-1.' + brief_ext)
+                        new_path = MEDIA_ROOT + '/program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug,
+                                                                                             request.POST['year'],
+                                                                                             request.POST['month'],
+                                                                                             'Acta-' + slugify(
+                                                                                           program.short_name) + '-' +
+                                                                                       request.POST['month'] + '-' +
+                                                                                       request.POST['year'] + '-1.' + brief_ext)
+
+
                     os.renames(initial_path, new_path)
+                    brief.year = request.POST['year']
+                    brief.month = request.POST['month']
+
                     brief.save()
                 try:
-                    brief = request.FILES['brief']
+                    brief_file = request.FILES['brief']
                     fs = FileSystemStorage()
-                    brief_ext = brief.name.split('.')[brief.name.split('.').__len__() - 1]
+                    brief_name = brief.brief.path.split('/')[brief.brief.path.split('/').__len__() - 1]
+                    brief_ext = brief_file.name.split('.')[brief_file.name.split('.').__len__() - 1]
 
                     new_brief_name = 'program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
-                                                                           'Acta_'+program_slug+'_' + request.POST['month'] + '_' +
-                                                                           request.POST['year'] + '.' + brief_ext)
-                    ProgramBrief.objects.get(pk=brief_id).brief.delete()
+                                                                           brief_name.split('.')[brief_name.split('.').__len__() - 2]+'.'+brief_ext)
+                    brief.brief.delete()
 
-                    filename = fs.save(new_brief_name, brief)
+                    filename = fs.save(new_brief_name, brief_file)
 
                     ProgramBrief.objects.filter(pk=brief_id).update(
                         brief=filename,

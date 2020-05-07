@@ -52,9 +52,7 @@
                                         <label for="slc_months">Mes:</label>
                                         <select class="form-control" id="slc_months" name="month" required>
                                             <option value="" >Seleccione una opción</option>
-                                            {% for month in months %}
-                                                <option value="{{ month }}" {% if brieffing.month == month %}selected{% endif %}>{{ month }}</option>
-                                            {% endfor %}
+
 
                                         </select>
                                     </div>
@@ -119,19 +117,20 @@
             var yyyy = today.getFullYear();
             var meses =[ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre", "Noviembre", "Diciembre" ];
 
-            {#for(var i = 0; i<= mm;i++){#}
-            {#    if(i==mm){#}
-            {#        var option = '<option value="'+meses[i]+'"selected >'+meses[i]+'</option>';#}
-            {#    }#}
-            {#    else{#}
-            {#        var option = '<option value="'+meses[i]+'" >'+meses[i]+'</option>';#}
-            {##}
-            {#    }#}
-            {##}
-            {#    $('#slc_months').append(option);#}
-            {##}
-            {##}
-            {#}#}
+            for(var i = 0; i<= mm; i++){
+
+                if(meses[i]=='{{ brieffing.month }}'){
+                    var option = '<option value="'+meses[i]+'"selected >'+meses[i]+'</option>';
+                }
+                else{
+                    var option = '<option value="'+meses[i]+'" >'+meses[i]+'</option>';
+
+                }
+
+                $('#slc_months').append(option);
+
+
+            };
 
 
 
