@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.core.validators import MinLengthValidator
+from django.utils.text import slugify
 from django.utils.timezone import now
 
 def program_directory_path(instance, filename):
@@ -10,8 +12,14 @@ def program_directory_path(instance, filename):
 def program_brief_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     brief_ext = filename.split('.')[filename.split('.').__len__() - 1]
-    new_brief_name = 'Acta_'+instance.program.slug+'_'+instance.year+'_'+instance.month+'.'+brief_ext
-    return 'program_{0}/brieffings/{1}/{2}/{3}'.format(instance.program.slug,instance.year,instance.month, new_brief_name)
+    index = ProgramBrief.objects.filter(program=instance.program, year=instance.year, month=instance.month).__len__()
+    if index == 0:
+        new_brief_name = 'Acta-' + slugify(instance.program.short_name) + '-' + instance.year + '-' + instance.month + '-1.' + brief_ext
+    elif index > 0:
+        new_brief_name = 'Acta-' + slugify(instance.program.short_name) + '-' + instance.year + '-' + instance.month +'-'+str(index+1)+ '.' + brief_ext
+
+    return 'program_{0}/brieffings/{1}/{2}/{3}'.format(instance.program.slug, instance.year,
+                                                                       instance.month, new_brief_name)
 
 def member_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
