@@ -255,7 +255,7 @@
                             {% endif %}
                             <div class="member-info">
                                 <div class="member-info-content">
-                                    <h4>{{member.name}} {{ member.lastname|truncatewords:1 }}</h4>
+                                    <h4>{{member.user.first_name}} {{ member.user.last_name|truncatewords:1 }}</h4>
                                     <span>{{member.charge}}</span>
                                     <div class="social">
                                         <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
