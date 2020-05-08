@@ -66,7 +66,7 @@
                                     <td>
                                         <div class="btn-group">
                                             {% if user_is_cgc_cs%}
-                                                <a class="btn btn-sm btn-warning" href="" title="Editar acta"><i class="fa fa-edit"></i> </a>
+                                                <a class="btn btn-sm btn-warning" href="{% url 'cgc:cgc_edit_member' member.id %}" title="Editar acta"><i class="fa fa-edit"></i> </a>
                                                 <button class="btn btn-sm btn-danger" type="button" data-toggle="modal" data-target="#modal_rm_member_{{ member.id }}" title="Eliminar miembro"><i class="fa fa-eraser"></i> </button>
                                             {% endif %}
 

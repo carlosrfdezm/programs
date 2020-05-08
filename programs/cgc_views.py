@@ -1953,3 +1953,44 @@ def ajx_cgc_delete_member(request):
             json.dumps([{'deleted': 2}]),
             content_type="application/json"
         )
+
+
+@login_required
+def cgc_edit_member(request, member_id):
+    if user_is_cgc_ps(request.user):
+        if request.method == 'POST':
+            member=CGC_Member.objects.get(pk=member_id)
+            user = member.user
+            user.first_name = request.POST['name']
+            user.last_name = request.POST['surename']
+            user.save()
+
+            member.charge = request.POST['role']
+            member.gender = request.POST['gender']
+            if request.POST['role'] == 'Secretario':
+                member.priority = 2
+            elif request.POST['role'] == 'Miembro':
+                member.priority = 3
+            member.institution = request.POST['institution']
+            member.in_contact = request.POST['ln_contact']
+            member.fb_contact = request.POST['fb_contact']
+            member.tw_contact = request.POST['tw_contact']
+            member.birth_date = request.POST['birth_date']
+            member.degree = request.POST['degree']
+
+            try:
+                member.picture=request.FILES['picture']
+            except:
+                pass
+
+            member.save()
+
+            return HttpResponseRedirect(reverse('cgc:cgc_members_list'))
+
+        else:
+            context={
+                'member': CGC_Member.objects.get(pk=member_id)
+            }
+            return render(request, 'programs/cgc/cgc_edit_member.html', context)
+    else:
+        return error_500(request, 'Usted no puede eliminar miembros de la CGC')
