@@ -140,7 +140,32 @@
                             </a>
                         </li>
 
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link" title="Estudiantes y solicitantes">
+                                <i class="nav-icon fas fa-graduation-cap"></i>
+                                <p>
+                                    Miembros
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
 
+                                <li class="nav-item">
+                                    <a href="{% url 'cgc:cgc_create_cgc_member' %}" class="nav-link" title="Agregar nuevo miembro a la CGC">
+                                        <i class="fa fa-user-plus nav-icon"></i>
+                                        <p>Nuevo</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="" class="nav-link">
+                                        <i class="fa fa-user-check nav-icon"></i>
+                                        <p>Todos</p>
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                        </li>
                         <li class="nav-item has-treeview">
                             <a href="#" class="nav-link" title="Estudiantes y solicitantes">
                                 <i class="nav-icon fas fa-users"></i>

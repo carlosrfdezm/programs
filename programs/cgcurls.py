@@ -11,6 +11,7 @@ urlpatterns = [
 
     #URLS DE CGC
     path('home', views.cgc_home, name='cgc_home'),
+    path('members/create', views.cgc_create_cgc_member, name='cgc_create_cgc_member'),
     path('ajx/recent/requests', views.ajx_cgc_this_year_requests, name='ajx_cgc_this_year_requests'),
     path('ajx/recent/years/req_vs_grad', views.ajx_last_years_requests_vs_graduated, name='ajx_last_years_requests_vs_graduated'),
     path('ajx/students/state', views.ajx_students_by_state, name='ajx_students_by_state'),
@@ -35,6 +36,7 @@ urlpatterns = [
     path('ajx/cgc/members_massive_message', views.ajx_cgc_member_massive_msg, name='ajx_cgc_member_massive_msg'),
     path('ajx/cgc/students_massive_message', views.ajx_cgc_students_massive_msg, name='ajx_cgc_students_massive_msg'),
     path('ajx/cgc/all_massive_message', views.ajx_cgc_everybody_massive_msg, name='ajx_cgc_everybody_massive_msg'),
+    path('ajx/member/exists', views.ajx_cgc_usr_exists, name='ajx_cgc_usr_exists'),
 
     path('brieffings/create', views.create_cgc_brief, name='create_cgc_brief'),
     path('brieffings/download', views.cgc_brief_zip_download, name='cgc_brief_zip_download'),
@@ -56,8 +58,7 @@ urlpatterns = [
     path('projects/list', views.programs_projects, name='programs_projects'),
 
 
-    path('members/<str:scope>', views.programs_members_list, name='programs_members_list'),
-
+    path('programs/members/<str:scope>', views.programs_members_list, name='programs_members_list'),
     path('programs/list', views.cgc_programs_list, name='cgc_programs_list'),
     path('program/<str:program_slug>/students/<str:scope>/list', views.program_students_list, name='program_students_list'),
     path('program/<str:program_slug>/members/list', views.program_members_list, name='program_members_list'),

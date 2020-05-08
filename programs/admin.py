@@ -25,7 +25,7 @@ class ProgramAdmin(admin.ModelAdmin):
 admin.site.register(Program, ProgramAdmin)
 
 class CGC_MemberAdmin(admin.ModelAdmin):
-    list_display = ('name', 'charge')
+    list_display = ('user', 'charge')
 
 admin.site.register(CGC_Member, CGC_MemberAdmin)
 

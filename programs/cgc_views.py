@@ -1803,4 +1803,116 @@ def cngc_by_year_brief_zip_download(request, year):
         return resp
 
     else:
-        return error_500(request, program, 'No hay actas para descargar')
+        return error_500(request, 'No hay actas para descargar')
+
+@login_required
+def cgc_create_cgc_member(request):
+    if user_is_cgc_ps(request.user):
+        if request.method == 'POST':
+            if request.POST['role']=='Secretario':
+                order=2
+            elif request.POST['role']=='Miembro':
+                order=3
+            try:
+                user = User.objects.get(email=request.POST['email'])
+                try:
+                    cgc_member=CGC_Member.objects.get(user=user)
+                    return error_500(request, 'Ya existe un miembro con ese email')
+                except CGC_Member.DoesNotExist:
+                    cgc_new_member = CGC_Member(
+                        user=user,
+                        gender=request.POST['gender'],
+                        charge=request.POST['role'],
+                        priority=order,
+                        institution=request.POST['institution'],
+                        phone=request.POST['phone'],
+                        birth_date=request.POST['birth_date'],
+                        degree=request.POST['degree'],
+                        fb_contact = request.POST['fb_contact'],
+                        in_contact = request.POST['ln_contact'],
+                        tw_contact = request.POST['tw_contact'],
+
+                    )
+                    cgc_new_member.save()
+
+                    try:
+                        picture=request.FILES['picture']
+                        cgc_new_member.picture=picture
+                        cgc_new_member.save()
+                    except:
+                        pass
+
+                    return HttpResponse('Nuevo miembro creado exitosamente')
+
+            except User.DoesNotExist:
+                passwd = 'CGC' + str(random.randint(1000000, 9999999))
+                user = User.objects.create_user(
+                    request.POST['email'],
+                    request.POST['email'],
+                    passwd,  # Cambiar despues por contrase;a generada
+
+                )
+                user.first_name = request.POST['name']
+                user.last_name = request.POST['surename']
+                user.save()
+
+
+                cgc_new_member = CGC_Member(
+                    user=user,
+                    gender=request.POST['gender'],
+                    charge=request.POST['role'],
+                    priority=order,
+                    institution=request.POST['institution'],
+                    phone=request.POST['phone'],
+                    birth_date=request.POST['birth_date'],
+                    degree=request.POST['degree'],
+                    fb_contact=request.POST['fb_contact'],
+                    in_contact=request.POST['ln_contact'],
+                    tw_contact=request.POST['tw_contact'],
+
+                )
+                cgc_new_member.save()
+
+
+                try:
+                    picture = request.FILES['picture']
+                    cgc_new_member.picture = picture
+                    cgc_new_member.save()
+                except:
+                    pass
+
+                return HttpResponse('Nuevo miembro creado exitosamente')
+        else:
+            return render(request, 'programs/cgc/cgc_create_member.html')
+    else:
+        return error_500(request, 'Usted no tiene porivilegios para agregar nuevos miembros a la CGC')
+
+@login_required
+def ajx_cgc_usr_exists(request):
+
+    if request.method=='POST':
+
+        try:
+            user= User.objects.get(email=request.POST['email'])
+            if user_is_cgc_member(user ):
+                return HttpResponse(
+                    json.dumps([{'exists': 2}]),
+                    content_type="application/json"
+                )
+            else:
+                return HttpResponse(
+                    json.dumps([{'exists': 1}]),
+                    content_type="application/json"
+                )
+
+
+        except User.DoesNotExist:
+            return HttpResponse(
+                json.dumps([{'exists': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'exists': 0}]),
+            content_type="application/json"
+        )
