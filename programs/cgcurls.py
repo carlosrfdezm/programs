@@ -12,6 +12,7 @@ urlpatterns = [
     #URLS DE CGC
     path('home', views.cgc_home, name='cgc_home'),
     path('members/create', views.cgc_create_cgc_member, name='cgc_create_cgc_member'),
+    path('members/list', views.cgc_members_list, name='cgc_members_list'),
     path('ajx/recent/requests', views.ajx_cgc_this_year_requests, name='ajx_cgc_this_year_requests'),
     path('ajx/recent/years/req_vs_grad', views.ajx_last_years_requests_vs_graduated, name='ajx_last_years_requests_vs_graduated'),
     path('ajx/students/state', views.ajx_students_by_state, name='ajx_students_by_state'),

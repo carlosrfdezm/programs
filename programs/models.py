@@ -111,7 +111,7 @@ class CGC_Member(models.Model):
         verbose_name_plural = 'Miembros de la CGC'
 
     def __str__(self):
-        return self.name
+        return self.user.get_full_name()
 
 # modelo de miembros de programas
 class ProgramMember(models.Model):

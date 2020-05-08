@@ -1916,3 +1916,11 @@ def ajx_cgc_usr_exists(request):
             json.dumps([{'exists': 0}]),
             content_type="application/json"
         )
+
+@login_required
+def cgc_members_list(request):
+    if user_is_cgc_member(request.user):
+        context={
+            'members': CGC_Member.objects.all()
+        }
+        return render(request, 'programs/cgc/cgc_members_list.html', context)
