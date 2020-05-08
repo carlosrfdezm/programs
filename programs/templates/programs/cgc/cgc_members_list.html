@@ -148,21 +148,12 @@
     {#    <script src="{% static 'programs/dist/js/demo.js' %}"></script>#}
     <!-- page script -->
     <script>
-        $(function () {
-            $("#example1").DataTable({
+
+        $(document).ready(function () {
+            var myTable = $("#example1").DataTable({
                 language: {
                     url: '{% static "programs/plugins/datatables/Spanish.json" %}'
                 }});
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-            });
-        });
-        $(document).ready(function () {
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -172,8 +163,9 @@
 
             {% for member in members %}
                 $('#btn_rm_member_{{ member.id }}').click(function () {
+
                     var member_id={{ member.id }};
-                    var url = "";
+                    var url = "{% url 'cgc:ajx_cgc_delete_member' %}";
 
                     $('#modal_rm_member_{{ member.id }}').modal('hide');
 
@@ -200,6 +192,13 @@
                                 Toast.fire({
                                     type: 'error',
                                     title: 'No se ha podido eliminar al profesor seleccionado.'
+                                })
+
+                            }
+                            else if(json[0].deleted == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Usted no tiene privilegios para eliminar miembros de la CGC.'
                                 })
 
                             }

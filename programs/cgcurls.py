@@ -38,6 +38,7 @@ urlpatterns = [
     path('ajx/cgc/students_massive_message', views.ajx_cgc_students_massive_msg, name='ajx_cgc_students_massive_msg'),
     path('ajx/cgc/all_massive_message', views.ajx_cgc_everybody_massive_msg, name='ajx_cgc_everybody_massive_msg'),
     path('ajx/member/exists', views.ajx_cgc_usr_exists, name='ajx_cgc_usr_exists'),
+    path('ajx/member/delete', views.ajx_cgc_delete_member, name='ajx_cgc_delete_member'),
 
     path('brieffings/create', views.create_cgc_brief, name='create_cgc_brief'),
     path('brieffings/download', views.cgc_brief_zip_download, name='cgc_brief_zip_download'),

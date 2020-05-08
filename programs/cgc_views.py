@@ -1693,7 +1693,7 @@ def cgc_by_year_brief_zip_download(request, year):
         return resp
 
     else:
-        return error_500(request, program, 'No hay actas para descargar')
+        return error_500(request, 'No hay actas para descargar')
 
 @login_required()
 def cngc_brief_zip_download(request):
@@ -1842,7 +1842,7 @@ def cgc_create_cgc_member(request):
                     except:
                         pass
 
-                    return HttpResponse('Nuevo miembro creado exitosamente')
+                    return HttpResponseRedirect(reverse('cgc:cgc_members_list'))
 
             except User.DoesNotExist:
                 passwd = 'CGC' + str(random.randint(1000000, 9999999))
@@ -1881,7 +1881,7 @@ def cgc_create_cgc_member(request):
                 except:
                     pass
 
-                return HttpResponse('Nuevo miembro creado exitosamente')
+                return HttpResponseRedirect(reverse('cgc:cgc_members_list'))
         else:
             return render(request, 'programs/cgc/cgc_create_member.html')
     else:
@@ -1924,3 +1924,32 @@ def cgc_members_list(request):
             'members': CGC_Member.objects.all()
         }
         return render(request, 'programs/cgc/cgc_members_list.html', context)
+
+@login_required
+def ajx_cgc_delete_member(request):
+    print('Esta llamando al ajx')
+
+    if user_is_cgc_ps(request.user ):
+        if request.method=='POST':
+            member_id=request.POST['member_id']
+            try:
+                CGC_Member.objects.get(pk=member_id).delete()
+                return HttpResponse(
+                    json.dumps([{'deleted': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                return HttpResponse(
+                    json.dumps([{'deleted': 0}]),
+                    content_type="application/json"
+                )
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'deleted': 2}]),
+            content_type="application/json"
+        )
