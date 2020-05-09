@@ -141,7 +141,7 @@
                         </li>
 
                         <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link" title="Estudiantes y solicitantes">
+                            <a href="#" class="nav-link" title="Miembros de la CGC">
                                 <i class="nav-icon fas fa-graduation-cap"></i>
                                 <p>
                                     Miembros
@@ -157,7 +157,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{% url 'cgc:cgc_members_list' %}" class="nav-link">
+                                    <a href="{% url 'cgc:cgc_members_list' %}" title="Ver miembros de la CGC" class="nav-link">
                                         <i class="fa fa-user-check nav-icon"></i>
                                         <p>Todos</p>
                                     </a>
@@ -230,7 +230,7 @@
                             </ul>
                         </li>
                         <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link" title="Profesores y tutores del programa">
+                            <a href="#" class="nav-link" title="Actas de la CGC y CNGC">
                                 <i class="nav-icon fas fa-archive"></i>
                                 <p>
                                     Actas
@@ -290,6 +290,13 @@
                             <a href="{% url 'cgc:cgc_statistics' %}" class="nav-link" title="Estadísticas del programa">
                                 <i class="fa fa-chart-line nav-icon"></i>
                                 <p>Estadísticas</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="" class="nav-link" title="Reportes de la CGC">
+                                <i class="fa fa-receipt nav-icon"></i>
+                                <p>Reportes</p>
                             </a>
                         </li>
 
