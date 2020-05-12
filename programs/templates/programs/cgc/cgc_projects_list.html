@@ -65,7 +65,7 @@
                                                     <li>
                                                         <div class="row">
                                                             <div class="col-md-11">
-                                                                <a id="a_project_{{ project.id }}" href="" class="" data-toggle="popover" data-trigger="hover" data-placement="right" title="Ver estudiantes vinculados"  data-content="Click para ver estudiantes vinculados"> {{ project|truncatewords:11 }}</a>
+                                                                <a id="a_project_{{ project.id }}" href="{% url 'cgc:cgc_project_students_list' project.id %}" class="" data-toggle="popover" data-trigger="hover" data-placement="right" title="Ver estudiantes vinculados"  data-content="Click para ver estudiantes vinculados"> {{ project|truncatewords:11 }}</a>
 
                                                             </div>
 

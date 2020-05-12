@@ -2143,3 +2143,18 @@ def docx_cgc_report(request):
 
     else:
         return error_500(request, 'Solo el presidente y el secretario pueden acceder a la vista de reportes')
+
+
+@login_required
+def cgc_project_students_list(request, project_id):
+    project = InvestigationProject.objects.get(pk=project_id)
+    if user_is_cgc_member(request.user) :
+        context={
+            'project': project,
+            'students': PhdStudent.objects.filter(phdstudenttheme__project=project),
+        }
+        return render(request, 'programs/cgc/cgc_by_projects_students_list.html', context)
+
+
+    else:
+        return error_500(request,  'Usted no tiene acceso a esta página')
