@@ -26,6 +26,11 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
     user_is_cgc_member, user_is_cgc_ps
 
+from docx import Document
+from docx.shared import Inches
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+
+
 
 @login_required
 def cgc_home(request):
@@ -1995,3 +2000,53 @@ def cgc_edit_member(request, member_id):
             return render(request, 'programs/cgc/cgc_edit_member.html', context)
     else:
         return error_500(request, 'Usted no puede eliminar miembros de la CGC')
+
+
+@login_required
+def docx_cgc_report(request):
+    if user_is_cgc_ps(request.user):
+        document = Document()
+
+        document.add_heading('Resumen estadístico', level=2)
+
+        document.add_heading('Programas doctorales', level=3)
+        if Program.objects.filter(type='phd'):
+            table = document.add_table(rows=1, cols=4)
+            hdr_cells = table.rows[0].cells
+            hdr_cells[0].text = 'Nombre del programa.'
+            hdr_cells[1].text = 'Solicitantes'
+            hdr_cells[2].text = 'Doctorandos'
+            hdr_cells[3].text = 'Graduados'
+
+            for program in Program.objects.filter(type='phd'):
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(program.full_name)
+                row_cells[1].text = str(PhdStudent.objects.filter(student__program=program, status='Solicitante').__len__())
+                row_cells[2].text = str(PhdStudent.objects.filter(student__program=program, status='Doctorando').__len__())
+                row_cells[3].text = str(PhdStudent.objects.filter(student__program=program, status='Graduado').__len__())
+
+
+        else:
+            document.add_heading('No hay programas doctorales en el sistema', level=3)
+
+        docname = 'Reporte_CGC_' + str(now().year) + '_' + str(now().month) + '.docx'
+        # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
+        docpath = MEDIA_ROOT + '/cgc/'+ docname
+
+        document.save(docpath)
+
+        fs = FileSystemStorage()
+
+        filename = docpath
+
+        if fs.exists(filename):
+
+            with fs.open(filename) as docx:
+                response = HttpResponse(docx, content_type='application/docx')
+                response['Content-Disposition'] = 'attachment; filename="'+docname+ '"'
+                return response
+        else:
+            return error_500(request, 'No se ha encontrado el archivo del reporte correspondiente')
+
+    else:
+        return error_500(request, 'Solo el presidente y el secretario pueden acceder a la vista de reportes')

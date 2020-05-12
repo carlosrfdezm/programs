@@ -69,6 +69,7 @@ urlpatterns = [
     path('program/<str:program_slug>/statistics', views.cgc_program_statistics, name='cgc_program_statistics'),
 
     path('statistics', views.cgc_statistics,name='cgc_statistics'),
+    path('report', views.docx_cgc_report,name='docx_cgc_report'),
 
 
 
