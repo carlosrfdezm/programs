@@ -2158,3 +2158,31 @@ def cgc_project_students_list(request, project_id):
 
     else:
         return error_500(request,  'Usted no tiene acceso a esta página')
+
+@login_required
+def cgc_line_students_list(request, line_id):
+    line = InvestigationLine.objects.get(pk=line_id)
+    if user_is_cgc_member(request.user) :
+        context={
+            'line': line,
+            'students': PhdStudent.objects.filter(phdstudenttheme__line=line),
+        }
+        return render(request, 'programs/cgc/cgc_by_line_students_list.html', context)
+
+
+    else:
+        return error_500(request,  'Usted no tiene acceso a esta página')
+
+@login_required
+def cgc_by_line_projects_list(request, line_id):
+    line = InvestigationLine.objects.get(pk=line_id)
+    if user_is_cgc_member(request.user) :
+        context={
+            'line': line,
+            'projects': InvestigationProject.objects.filter(line=line),
+        }
+        return render(request, 'programs/cgc/cgc_by_line_projects_list.html', context)
+
+
+    else:
+        return error_500(request,  'Usted no tiene acceso a esta página')

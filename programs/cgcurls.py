@@ -59,6 +59,8 @@ urlpatterns = [
 
     path('students/<str:scope>', views.students_list, name='students_list'),
     path('lines/list', views.programs_lines, name='programs_lines'),
+    path('lines/<int:line_id>/students/list', views.cgc_line_students_list, name='cgc_line_students_list'),
+    path('lines/<int:line_id>/projects/list', views.cgc_by_line_projects_list, name='cgc_by_line_projects_list'),
     path('projects/list', views.programs_projects, name='programs_projects'),
     path('projects/<int:project_id>/students/list', views.cgc_project_students_list, name='cgc_project_students_list'),
 
