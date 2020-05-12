@@ -23,6 +23,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, CGC_Member, \
     CGCBrief, CNGCBrief
+from programs.templatetags.extra_tags import init_requirements_accomplished, finish_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
     user_is_cgc_member, user_is_cgc_ps
 
@@ -2007,9 +2008,9 @@ def docx_cgc_report(request):
     if user_is_cgc_ps(request.user):
         document = Document()
 
-        document.add_heading('Resumen estadístico', level=2)
+        document.add_heading('Resumen de los programas doctorales', level=1)
 
-        document.add_heading('Programas doctorales', level=3)
+        document.add_heading('Programas doctorales', level=2)
         if Program.objects.filter(type='phd'):
             table = document.add_table(rows=1, cols=4)
             hdr_cells = table.rows[0].cells
@@ -2024,6 +2025,79 @@ def docx_cgc_report(request):
                 row_cells[1].text = str(PhdStudent.objects.filter(student__program=program, status='Solicitante').__len__())
                 row_cells[2].text = str(PhdStudent.objects.filter(student__program=program, status='Doctorando').__len__())
                 row_cells[3].text = str(PhdStudent.objects.filter(student__program=program, status='Graduado').__len__())
+
+
+
+
+        else:
+            document.add_heading('No hay programas doctorales en el sistema', level=3)
+
+        document.add_heading('Datos por programas', level=2)
+        if Program.objects.filter(type='phd'):
+            for program in Program.objects.filter(type='phd'):
+                document.add_heading(program.full_name, level=2)
+                document.add_heading('Datos de los solicitantes', level=3)
+                if PhdStudent.objects.filter(student__program=program, status='Solicitante'):
+                    table = document.add_table(rows=1, cols=4)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos.'
+                    hdr_cells[1].text = 'País.'
+                    hdr_cells[2].text = 'Fecha de solicitud'
+                    hdr_cells[3].text = 'Requisitos de ingreso'
+
+                    for phdstudent in PhdStudent.objects.filter(student__program=program, status='Solicitante'):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(phdstudent.student.user.get_full_name())
+                        row_cells[1].text = str(phdstudent.student.country)
+                        row_cells[2].text = str(phdstudent.student.request_date)
+                        if init_requirements_accomplished(phdstudent.student, phdstudent.student.program):
+                            row_cells[3].text = 'Completos'
+                        else:
+                            row_cells[3].text = 'Incompletos'
+                else:
+                    document.add_heading('No hay solicitantes en este programa', level=3)
+
+                document.add_heading('Datos de los doctorandos', level=3)
+                if PhdStudent.objects.filter(student__program=program, status='Doctorando'):
+                    table = document.add_table(rows=1, cols=4)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos.'
+                    hdr_cells[1].text = 'País.'
+                    hdr_cells[2].text = 'Fecha de aprobacion'
+                    hdr_cells[3].text = 'Requisitos de egreso'
+
+                    for phdstudent in PhdStudent.objects.filter(student__program=program, status='Solicitante'):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(phdstudent.student.user.get_full_name())
+                        row_cells[1].text = str(phdstudent.student.country)
+                        row_cells[2].text = str(phdstudent.student.request_date)
+                        if finish_requirements_accomplished(phdstudent.student, phdstudent.student.program):
+                            row_cells[3].text = 'Completos'
+                        else:
+                            row_cells[3].text = 'Incompletos'
+                else:
+                    document.add_heading('No hay doctorandos en este programa', level=3)
+
+                document.add_heading('Datos de los graduados', level=3)
+                if PhdStudent.objects.filter(student__program=program, status='Graduado'):
+                    table = document.add_table(rows=1, cols=3)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos.'
+                    hdr_cells[1].text = 'Pais.'
+                    hdr_cells[2].text = 'Año de egreso'
+
+                    for phdstudent in PhdStudent.objects.filter(student__program=program, status='Graduado'):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(phdstudent.student.user.get_full_name())
+                        row_cells[1].text = str(phdstudent.student.country)
+                        row_cells[2].text = str(phdstudent.student.graduate_date.year)
+
+                else:
+                    document.add_heading('No hay graduados en este programa', level=3)
+
+
+
+
 
 
         else:
