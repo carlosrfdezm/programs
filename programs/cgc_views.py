@@ -2066,7 +2066,7 @@ def docx_cgc_report(request):
                     hdr_cells[2].text = 'Fecha de aprobacion'
                     hdr_cells[3].text = 'Requisitos de egreso'
 
-                    for phdstudent in PhdStudent.objects.filter(student__program=program, status='Solicitante'):
+                    for phdstudent in PhdStudent.objects.filter(student__program=program, status='Doctorando'):
                         row_cells = table.add_row().cells
                         row_cells[0].text = str(phdstudent.student.user.get_full_name())
                         row_cells[1].text = str(phdstudent.student.country)
@@ -2094,6 +2094,25 @@ def docx_cgc_report(request):
 
                 else:
                     document.add_heading('No hay graduados en este programa', level=3)
+
+                document.add_heading('Datos del Claustro', level=3)
+                if ProgramMember.objects.filter(program=program):
+                    table = document.add_table(rows=1, cols=4)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos.'
+                    hdr_cells[1].text = 'Rol.'
+                    hdr_cells[2].text = 'Centro'
+                    hdr_cells[3].text = 'Email'
+
+                    for member in ProgramMember.objects.filter(program=program):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(member.user.get_full_name())
+                        row_cells[1].text = str(member.role)
+                        row_cells[2].text = str(member.institution)
+                        row_cells[3].text = str(member.user.email)
+
+                else:
+                    document.add_heading('No hay profesores en este programa', level=3)
 
 
 
