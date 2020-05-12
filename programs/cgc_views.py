@@ -1977,6 +1977,7 @@ def cgc_edit_member(request, member_id):
             member.tw_contact = request.POST['tw_contact']
             member.birth_date = request.POST['birth_date']
             member.degree = request.POST['degree']
+            member.phone = request.POST['phone']
 
             try:
                 member.picture=request.FILES['picture']
