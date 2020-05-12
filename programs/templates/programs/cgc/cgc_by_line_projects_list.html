@@ -49,7 +49,7 @@
 
                             <tr>
                                 <th>Nombre del proyecto</th>
-                                <th>Estudiantes vinculados </th>
+                                <th class="text-center">Estudiantes vinculados </th>
 
                             </tr>
                             </thead>
@@ -58,12 +58,15 @@
 
                                 <tr id="tr_program_{{ program.id }}">
                                     <td>{{ project.name }}</td>
-                                    <td>
-                                        <div class="col-md-1">
-                                            {% project_students project as project_students%}
-                                            <span class="badge {% if project_students != 0 %}badge-primary{% else %}badge-danger{% endif %}" id="a_project_{{ project.id }}" class="" title="Estudiantes vinculados">{{ project_students }} </span>
+                                    <td class="text-center" >
 
-                                        </div>
+                                        {% project_students project as project_students%}
+                                        <a href="{% url 'cgc:cgc_project_students_list' project.id %}" title="Ver estudiantes vinculados">
+                                            <span class="badge {% if project_students != 0 %}badge-primary{% else %}badge-danger{% endif %}" id="a_project_{{ project.id }}" class="" title="Ver estudiantes vinculados">{{ project_students }} </span>
+
+                                        </a>
+
+
 
                                     </td>
 
