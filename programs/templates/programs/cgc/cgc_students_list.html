@@ -71,6 +71,7 @@
                             {% user_is_cgc_ps user as user_is_program_cs %}
 
                             <tr>
+                               {% if not phd_program %} <th>Programa</th> {% endif %}
                                 <th>Nombre y apellidos</th>
                                 <th>Fecha<br>(solicitud)</th>
                                 <th>Estado</th>
@@ -90,6 +91,7 @@
                             {% for student in students %}
                                 {% init_requirements_accomplished student student.program as init_requirements_accomplished %}
                                 <tr id="tr_student_{{ student.id }}">
+                                    {% if not phd_program %}<td>{{ student.program.short_name }}</td>{% endif %}
                                     <td>{{ student.user.last_name|upper }}, {{ student.user.first_name }}</td>
                                     <td>{{ student.request_date|date:'Y-m-d' }}</td>
                                     <td>{{ student.phdstudent.status|capfirst }}</td>
