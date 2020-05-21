@@ -85,6 +85,12 @@ urlpatterns = [
 
 
 
+    path('reports', views.docx_program_report, name='docx_program_report'),
+
+
+
+
+
 
     # path('login', views.mylogin, name='my_login'),
     # path('logout/<str:court_slug>/', views.mylogout, name='my_logout'),

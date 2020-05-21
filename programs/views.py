@@ -24,8 +24,9 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief
+from programs.templatetags.extra_tags import finish_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
-
+from docx import Document
 
 def index(request, program_slug):
     if not request.user.is_authenticated :
@@ -2559,3 +2560,67 @@ def program_by_year_brief_zip_download(request,program_slug, year):
 
     else:
         return error_500(request, program, 'No hay actas para descargar')
+
+@login_required
+def docx_program_report(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        document = Document()
+
+        document.add_heading('Resumen de datos del Programa', level=1)
+
+        document.add_heading(program.full_name, level=2)
+        if program.type == 'phd':
+            table = document.add_table(rows=1, cols=3)
+            hdr_cells = table.rows[0].cells
+            hdr_cells[0].text = 'Solicitantes'
+            hdr_cells[1].text = 'Doctorandos'
+            hdr_cells[2].text = 'Graduados'
+            if PhdStudent.objects.filter(student__program=program):
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(PhdStudent.objects.filter(student__program=program, status='Solicitante').__len__())
+                row_cells[1].text = str(PhdStudent.objects.filter(student__program=program, status='Doctorando').__len__())
+                row_cells[2].text = str(PhdStudent.objects.filter(student__program=program, status='Graduado').__len__())
+            else:
+                document.add_heading('No hay estudiantes registrados en el programa', level=3)
+        elif program.type == 'msc':
+            table = document.add_table(rows=1, cols=3)
+            hdr_cells = table.rows[0].cells
+            hdr_cells[0].text = 'Solicitantes'
+            hdr_cells[1].text = 'Maestrantes'
+            hdr_cells[2].text = 'Graduados'
+            if PhdStudent.objects.filter(student__program=program):
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(
+                    MscStudent.objects.filter(program=program, status='Solicitante').__len__())
+                row_cells[1].text = str(
+                    MscStudent.objects.filter(program=program, status='Maestrante').__len__())
+                row_cells[2].text = str(
+                    MscStudent.objects.filter(program=program, status='Graduado').__len__())
+            else:
+                document.add_heading('No hay estudiantes registrados en el programa', level=3)
+
+
+
+        docname = 'Reporte_Programa_'+program.slug.upper() + str(now().year) + '_' + str(now().month) + '.docx'
+        # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
+        docpath = MEDIA_ROOT + '/program_{0}/{1}'.format(program_slug, docname)
+        try:
+            document.save(docpath)
+        except:
+            return error_500(request, program, "Ha ocurrido un error al intentar guardar el documento solicitado")
+        fs = FileSystemStorage()
+
+        filename = docpath
+
+        if fs.exists(filename):
+
+            with fs.open(filename) as docx:
+                response = HttpResponse(docx, content_type='application/docx')
+                response['Content-Disposition'] = 'attachment; filename="'+docname+ '"'
+                return response
+        else:
+            return error_500(request, 'No se ha encontrado el archivo del reporte correspondiente')
+
+    else:
+        return error_500(request,program, 'Solo el Coordinador y el Secretario pueden acceder a la vista de reportes')
