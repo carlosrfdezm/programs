@@ -2620,6 +2620,25 @@ def docx_program_report(request, program_slug):
                         row_cells[2].text = 'Incumplidos'
             else:
                 document.add_heading('No hay solicitantes registrados en el programa', level=5)
+
+            document.add_heading('Doctorandos', level=3)
+            if PhdStudent.objects.filter(student__program=program, status='Doctorando'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Fecha de ingreso'
+                hdr_cells[2].text = 'Requisitos de egreso'
+
+                for student in PhdStudent.objects.filter(student__program=program, status='Doctorando'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.student.user.get_full_name())
+                    row_cells[1].text = str(student.student.init_date)
+                    if finish_requirements_accomplished(student.student, program):
+                        row_cells[2].text = 'Cumplidos'
+                    else:
+                        row_cells[2].text = 'Incumplidos'
+            else:
+                document.add_heading('No hay doctorandos registrados en el programa', level=5)
         elif program.type == 'msc':
             if MscStudent.objects.filter(program=program):
                 document.add_heading('Estudiantes por estado', level=3)
@@ -2657,6 +2676,25 @@ def docx_program_report(request, program_slug):
                         row_cells[2].text = 'Incumplidos'
             else:
                 document.add_heading('No hay solicitantes registrados en el programa', level=5)
+
+            document.add_heading('Maestrantes', level=3)
+            if MscStudent.objects.filter(program=program, status='Maestrante'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Fecha de ingreso'
+                hdr_cells[2].text = 'Requisitos de egreso'
+
+                for student in MscStudent.objects.filter(program=program, status='Maestrante'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.init_date)
+                    if finish_requirements_accomplished(student, program):
+                        row_cells[2].text = 'Cumplidos'
+                    else:
+                        row_cells[2].text = 'Incumplidos'
+            else:
+                document.add_heading('No hay maestrantes registrados en el programa', level=5)
 
         docname = 'Reporte_Programa_'+program.slug.upper() + str(now().year) + '_' + str(now().month) + '.docx'
         # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
