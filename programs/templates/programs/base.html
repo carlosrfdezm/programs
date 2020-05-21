@@ -113,7 +113,7 @@
                         <a href="#" class="d-block" title="{{ user.get_full_name }}">{{ user.get_full_name }}</a>
                         {% if member %}
                             <h6 class="text-sm text-white-50">{{ member.role }}</h6>
-                            {% elif student %}
+                        {% elif student %}
                             <h6 class="text-sm text-white-50">Estudiante</h6>
 
                         {% endif %}
@@ -384,7 +384,6 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
-
                                     <li class="nav-item">
                                         <a href="{% url 'programs:msc_all_students_list' program.slug 'requesters' %}" class="nav-link">
                                             <i class="fa fa-check nav-icon"></i>
