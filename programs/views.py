@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail, send_mass_mail
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 
 # Create your views here.
@@ -65,6 +65,14 @@ def home(request, program_slug):
 
 
         }
+        try:
+            context['member']=ProgramMember.objects.get(user=request.user,program=program)
+        except ProgramMember.DoesNotExist:
+            try:
+                context['student'] = Student.objects.get(user=request.user, program=program)
+            except Student.DoesNotExist:
+                raise Http404('No hay profesor o estudiante de este programa con ese usuario')
+
         return render(request, 'programs/phd_home.html', context)
     elif program.type == 'msc':
         context = {
@@ -79,6 +87,13 @@ def home(request, program_slug):
                               :4],
 
         }
+        try:
+            context['member']=ProgramMember.objects.get(user=request.user,program=program)
+        except ProgramMember.DoesNotExist:
+            try:
+                context['student'] = MscStudent.objects.get(user=request.user, program=program)
+            except Student.DoesNotExist:
+                raise Http404('No hay profesor o estudiante de este programa con ese usuario')
 
         return render(request, 'programs/msc_home.html', context)
     else:

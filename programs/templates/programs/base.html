@@ -111,6 +111,12 @@
                     {#                </div>#}
                     <div class="info">
                         <a href="#" class="d-block" title="{{ user.get_full_name }}">{{ user.get_full_name }}</a>
+                        {% if member %}
+                            <h6 class="text-sm text-white-50">{{ member.role }}</h6>
+                            {% elif student %}
+                            <h6 class="text-sm text-white-50">Estudiante</h6>
+
+                        {% endif %}
                     </div>
                 </div>
 
@@ -516,7 +522,7 @@
                                 <ul class="nav nav-treeview">
                                     {% if user_is_program_cs %}
                                         <li class="nav-item">
-                                            <a href="" class="nav-link">
+                                            <a href="{% url 'programs:create_program_brief' program.slug %}" class="nav-link">
                                                 <i class="fa fa-plus nav-icon"></i>
                                                 <p>Nueva</p>
                                             </a>
@@ -524,7 +530,7 @@
                                         </li>
                                     {% endif %}
                                     <li class="nav-item">
-                                        <a href="" class="nav-link">
+                                        <a href="{% url 'programs:program_brieffings' program.slug %}" class="nav-link">
                                             <i class="fa fa-list-alt nav-icon"></i>
                                             <p>Actas del programa</p>
                                         </a>
@@ -538,6 +544,12 @@
                                     <a href="{% url 'programs:program_statistics' program.slug %}" class="nav-link" title="Estadísticas del programa">
                                         <i class="fa fa-chart-line nav-icon"></i>
                                         <p>Estadísticas</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'programs:docx_program_report' program.slug %}" class="nav-link" title="Reportes del programa">
+                                        <i class="fa fa-receipt nav-icon"></i>
+                                        <p>Reportes</p>
                                     </a>
                                 </li>
 
