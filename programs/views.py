@@ -2622,16 +2622,18 @@ def docx_program_report(request, program_slug):
         if program.type == 'phd':
             document.add_heading('Estudiantes por estado', level=3)
             if PhdStudent.objects.filter(student__program=program):
-                table = document.add_table(rows=1, cols=3)
+                table = document.add_table(rows=1, cols=4)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Solicitantes'
                 hdr_cells[1].text = 'Doctorandos'
                 hdr_cells[2].text = 'Graduados'
+                hdr_cells[3].text = 'Total'
 
                 row_cells = table.add_row().cells
                 row_cells[0].text = str(PhdStudent.objects.filter(student__program=program, status='Solicitante').__len__())
                 row_cells[1].text = str(PhdStudent.objects.filter(student__program=program, status='Doctorando').__len__())
                 row_cells[2].text = str(PhdStudent.objects.filter(student__program=program, status='Graduado').__len__())
+                row_cells[3].text = str(PhdStudent.objects.filter(student__program=program).__len__())
             else:
                 document.add_heading('No hay estudiantes registrados en el programa', level=5)
 
@@ -2675,11 +2677,12 @@ def docx_program_report(request, program_slug):
         elif program.type == 'msc':
             if MscStudent.objects.filter(program=program):
                 document.add_heading('Estudiantes por estado', level=3)
-                table = document.add_table(rows=1, cols=3)
+                table = document.add_table(rows=1, cols=4)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Solicitantes'
                 hdr_cells[1].text = 'Maestrantes'
                 hdr_cells[2].text = 'Graduados'
+                hdr_cells[3].text = 'Total'
 
                 row_cells = table.add_row().cells
                 row_cells[0].text = str(
@@ -2688,6 +2691,8 @@ def docx_program_report(request, program_slug):
                     MscStudent.objects.filter(program=program, status='Maestrante').__len__())
                 row_cells[2].text = str(
                     MscStudent.objects.filter(program=program, status='Graduado').__len__())
+                row_cells[3].text = str(
+                    MscStudent.objects.filter(program=program).__len__())
             else:
                 document.add_heading('No hay estudiantes registrados en el programa', level=5)
 
