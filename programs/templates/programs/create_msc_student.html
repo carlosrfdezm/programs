@@ -197,8 +197,11 @@
 
 
             $(document).on('keyup','#inp_email', function () {
-                var url = "{% url 'programs:ajx_usr_exists' program.slug %}"
-                $.ajax({
+                var email = $(this).val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_student_exists' program.slug %}"
+                    $.ajax({
                     url : url,
                     type : "POST", // http method
                     data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
@@ -211,14 +214,14 @@
                         if (json[0].exists == 1) {
 
                             Toast.fire({
-                                type: 'warning',
-                                title: 'Ya hay un usuario con ese correo, quiza ya es miembro de otro programa'
+                                type: 'error',
+                                title: 'Ya hay un estudiante de este programa con ese correo.'
                             })
 
-                        } else if(json[0].exists == 2){
+                        } else if(json[0].exists == 0){
                             Toast.fire({
                                 type: 'error',
-                                title: 'Este correo esta en uso por un miembro del programa'
+                                title: 'Uff, ha ocurrido un error desconocido'
                             })
 
                         }
@@ -239,6 +242,8 @@
                         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                     }
                 });
+                };
+
 
 
             });

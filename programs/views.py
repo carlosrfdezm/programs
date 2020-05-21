@@ -332,7 +332,7 @@ def create_msc_student(request, program_slug, edition_id):
                             )
                             new_student_requirement.save()
 
-                    return HttpResponseRedirect(reverse('programs:msc_edition_students_list', args=[program_slug, edition_id, 'all']))
+                    return HttpResponseRedirect(reverse('programs:create_msc_student', args=[program_slug, edition_id]))
 
 
             except User.DoesNotExist:
@@ -401,7 +401,7 @@ def create_msc_student(request, program_slug, edition_id):
                     )
                     new_student_requirement.save()
 
-            return HttpResponseRedirect(reverse('programs:msc_edition_students_list', args=[program_slug, edition_id, 'all']))
+            return HttpResponseRedirect(reverse('programs:create_msc_student', args=[program_slug, edition_id]))
         else:
             context = {
                 'program': program,
@@ -977,6 +977,39 @@ def ajx_usr_exists(request,program_slug):
                 json.dumps([{'exists': 0}]),
                 content_type="application/json"
             )
+    else:
+        return HttpResponse(
+            json.dumps([{'exists': 0}]),
+            content_type="application/json"
+        )
+
+@login_required
+def ajx_student_exists(request,program_slug):
+    program = Program.objects.get(slug=program_slug)
+
+    if request.method=='POST':
+        if program.type == 'phd':
+
+            try:
+                student= Student.objects.get(user__username=request.POST['email'], program=program)
+
+                return HttpResponse(
+                    json.dumps([{'exists': 1}]),
+                    content_type="application/json"
+                )
+
+            except Student.DoesNotExist:
+                pass
+        elif program.type == 'msc':
+            try:
+                student = MscStudent.objects.get(user__username=request.POST['email'],program=program)
+                return HttpResponse(
+                    json.dumps([{'exists': 1}]),
+                    content_type="application/json"
+                )
+
+            except MscStudent.DoesNotExist:
+                pass
     else:
         return HttpResponse(
             json.dumps([{'exists': 0}]),
