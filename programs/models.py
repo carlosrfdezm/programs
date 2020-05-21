@@ -357,3 +357,13 @@ class ProgramBrief(models.Model):
                  8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
         return 'Acta de' + meses[self.month] +' de '+ str(self.year)
 
+class Course(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
+    name = models.CharField(max_length=250)
+    description = models.TextField(max_length=500, null=True)
+    init_date = models.DateField(null=True)
+
+    def __str__(self):
+        return self.name
+
