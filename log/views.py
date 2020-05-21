@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 from programs.apps import ProgramsConfig
-from programs.models import Program, ProgramMember, CGC_Member, Student, MscStudent, PhdStudent
+from programs.models import Program, ProgramMember, CGC_Member, Student, MscStudent, PhdStudent, DipStudent
 
 
 def index(request):
@@ -49,49 +49,54 @@ def mylogin(request):
     program = Program.objects.get(slug=program_slug)
     user = authenticate(request, username=username, password=password)
     if user is None:
-        return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+        return render(request, 'log/login_error.html', {'error_message':
+                                                            'El nombre de usuario introducido no existe o la contraseña es incorrecta'})
 
-    elif user is not None:
-        if program.type=='phd':
-            try:
-                try:
-                    ProgramMember.objects.filter(user=user, program=program)
-                    login(request, user)
-                    return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
-                except:
-                    try:
-                        Student.objects.get(user=user, program=program)
-                        login(request, user)
-                        return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
-                    except:
-                        #TODO esta debe ser un template de error
-                        return HttpResponse('Error, ni profesor ni estudiante')
-            except:
-                # TODO esta debe ser un template de error
-                return HttpResponse('Error, ni profesor ni estudiante')
 
-        elif program.type == 'msc':
-            try:
-                try:
-                    ProgramMember.objects.filter(user=user, program=program)
-                    login(request, user)
-                    return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
-                except:
-                    try:
-                        MscStudent.objects.filter(user=user, program=program)
-                        login(request, user)
-                        return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
-                    except:
-                        # TODO esta debe ser un template de error
-                        return HttpResponse('Error, ni profesor ni estudiante')
-            except:
-                # TODO esta debe ser un template de error
-                return HttpResponse('Error, ni profesor ni estudiante')
-
-        elif program.type == 'dip':
-            return HttpResponse('Hay que implementar este tipo de prrograma')
     else:
-        HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+        try:
+            member = ProgramMember.objects.get(user=user, program=program)
+            login(request, user)
+            return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
+        except ProgramMember.DoesNotExist:
+            if program.type=='phd':
+                try:
+                    student=Student.objects.get(user=user, program=program)
+                    login(request, user)
+                    return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
+                except Student.DoesNotExist:
+                    context = {
+                        'error_message':'Usted no es profesor ni estudiante de este programa doctoral',
+                        'program':program,
+                    }
+                    #TODO esta debe ser un template de error
+                    return render(request, 'log/login_error.html',context)
+
+
+            elif program.type == 'msc':
+                try:
+                    student=MscStudent.objects.get(user=user, program=program)
+                    login(request, user)
+                    return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
+                except MscStudent.DoesNotExist:
+                    context = {
+                        'error_message': 'Usted no es profesor ni estudiante de este programa de maestría',
+                        'program': program,
+                    }
+                    return render(request, 'log/login_error.html', context)
+
+            elif program.type == 'dip':
+                try:
+                    student = DipStudent.objects.get(user=user, program=program)
+                    login(request, user)
+                    return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
+                except DipStudent.DoesNotExist:
+                    context = {
+                        'error_message': 'Usted no es profesor ni estudiante de este diplomado',
+                        'program': program,
+                    }
+                    return render(request, 'log/login_error.html', context)
+
     # TODO si hay error de usuario y contrase;a que redireccione al index del tribunal con un error  especifico
 
 def mylogout(request, program_slug):

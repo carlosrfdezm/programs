@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Programas Académicos, UNAH</title>
+    <meta content="" name="descriptison">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="{% static '/log/img/favicon.png' %}" rel="icon">
+    <link href="{% static '/log/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Montserrat:300,400,500,700" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{% static '/log/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static '/log/vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static '/log/vendor/animate.css/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static '/log/vendor/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+    <link href="{% static '/log/vendor/owl.carousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% static '/log/vendor/venobox/venobox.css' %}" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{% static '/log/css/style.css' %}" rel="stylesheet">
+
+    <!-- =======================================================
+    * Template Name: NewBiz - v2.0.0
+    * Template URL: https://bootstrapmade.com/newbiz-bootstrap-business-template/
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->
+</head>
+
+<body>
+
+<!-- ======= Header ======= -->
+<header id="header" class="fixed-top">
+    <div class="container">
+
+        <div class="logo float-left">
+            <!-- Uncomment below if you prefer to use an text logo -->
+            <h1 class="text-light"><a href="#header"><span>Programas</span></a></h1>
+            {#        <a href="#intro" class="scrollto">Programas</a>#}
+        </div>
+
+        <nav class="main-nav float-right d-none d-lg-block">
+            <ul>
+                <li class="active"><a href="{% url 'programs:index' program.slug %}#contact">Inicio</a></li>
+
+
+            </ul>
+        </nav><!-- .main-nav -->
+
+    </div>
+</header><!-- #header -->
+
+<!-- ======= Intro Section ======= -->
+<section id="intro" class="clearfix">
+    <div class="container">
+
+        <div class="intro-img">
+            <img src="{% static '/log/img/intro-img.svg' %} " alt="" class="img-fluid">
+        </div>
+
+        <div class="intro-info">
+            <h2><span>Error!!!</span></h2>
+            <div>
+                <h3 class="text-warning"> {{ error_message }}:{{ program.short_name }}</h3>
+            </div>
+        </div>
+
+    </div>
+</section><!-- End Intro Section -->
+
+<!-- ======= Footer ======= -->
+<footer id="footer">
+    <div class="footer-top">
+        <div class="container">
+            <div class="row">
+
+                <div class="footer-info">
+                    <h3>Programas</h3>
+                    <p>Sistema para la gestión de programas académicos en la UNAH y el Complejo Científico.</p>
+                </div>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="copyright">
+            &copy; Copyright <strong>LATED, UNAH</strong>. Todos los derechos reservados
+        </div>
+        <div class="credits">
+            <!--
+            All the links in the footer should remain intact.
+            You can delete the links only if you purchased the pro version.
+            Licensing information: https://bootstrapmade.com/license/
+            Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=NewBiz
+          -->
+            <a href="https://bootstrapmade.com/"></a>
+        </div>
+
+    </div>
+
+</footer><!-- End Footer -->
+
+<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="{% static '/log/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static '/log/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static '/log/vendor/jquery.easing/jquery.easing.min.js' %}"></script>
+<script src="{% static '/log/vendor/php-email-form/validate.js' %}"></script>
+<script src="{% static '/log/vendor/counterup/counterup.min.js' %}"></script>
+<script src="{% static '/log/vendor/mobile-nav/mobile-nav.js' %}"></script>
+<script src="{% static '/log/vendor/wow/wow.min.js' %}"></script>
+<script src="{% static '/log/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+<script src="{% static '/log/vendor/owl.carousel/owl.carousel.min.js' %}"></script>
+<script src="{% static '/log/vendor/waypoints/jquery.waypoints.min.js' %}"></script>
+<script src="{% static '/log/vendor/venobox/venobox.min.js' %}"></script>
+
+<!-- Template Main JS File -->
+<script src="{% static '/log/js/main.js' %}"></script>
+
+</body>
+
+</html>
