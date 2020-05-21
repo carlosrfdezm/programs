@@ -24,7 +24,8 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief
-from programs.templatetags.extra_tags import finish_requirements_accomplished
+from programs.templatetags.extra_tags import finish_requirements_accomplished, student_init_requirement_accomplished, \
+    init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
 from docx import Document
 
@@ -2571,6 +2572,7 @@ def docx_program_report(request, program_slug):
 
         document.add_heading(program.full_name, level=2)
         if program.type == 'phd':
+            document.add_heading('Estudiantes por estado', level=3)
             table = document.add_table(rows=1, cols=3)
             hdr_cells = table.rows[0].cells
             hdr_cells[0].text = 'Solicitantes'
@@ -2583,13 +2585,32 @@ def docx_program_report(request, program_slug):
                 row_cells[2].text = str(PhdStudent.objects.filter(student__program=program, status='Graduado').__len__())
             else:
                 document.add_heading('No hay estudiantes registrados en el programa', level=3)
+
+            document.add_heading('Solicitantes de ingreso', level=3)
+            table = document.add_table(rows=1, cols=3)
+            hdr_cells = table.rows[0].cells
+            hdr_cells[0].text = 'Nombre y apellidos'
+            hdr_cells[1].text = 'Fecha de solicitud'
+            hdr_cells[2].text = 'Requisitos de ingreso'
+            if PhdStudent.objects.filter(student__program=program, status='Solicitante'):
+                for student in PhdStudent.objects.filter(student__program=program, status='Solicitante'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.student.user.get_full_name())
+                    row_cells[1].text = str(student.student.request_date)
+                    if init_requirements_accomplished(student.student, program):
+                        row_cells[2].text = 'Cumplidos'
+                    else:
+                        row_cells[2].text = 'Incumplidos'
+            else:
+                document.add_heading('No hay solicitantes registrados en el programa', level=3)
         elif program.type == 'msc':
+            document.add_heading('Estudiantes por estado', level=3)
             table = document.add_table(rows=1, cols=3)
             hdr_cells = table.rows[0].cells
             hdr_cells[0].text = 'Solicitantes'
             hdr_cells[1].text = 'Maestrantes'
             hdr_cells[2].text = 'Graduados'
-            if PhdStudent.objects.filter(student__program=program):
+            if MscStudent.objects.filter(program=program):
                 row_cells = table.add_row().cells
                 row_cells[0].text = str(
                     MscStudent.objects.filter(program=program, status='Solicitante').__len__())
@@ -2600,7 +2621,18 @@ def docx_program_report(request, program_slug):
             else:
                 document.add_heading('No hay estudiantes registrados en el programa', level=3)
 
-
+            document.add_heading('Solicitantes de ingreso', level=3)
+            if MscStudent.objects.filter(program=program, status='Solicitante'):
+                for student in MscStudent.objects.filter(program=program, status='Solicitante'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.request_date)
+                    if init_requirements_accomplished(student, program):
+                        row_cells[2].text = 'Cumplidos'
+                    else:
+                        row_cells[2].text = 'Incumplidos'
+            else:
+                document.add_heading('No hay solicitantes registrados en el programa', level=3)
 
         docname = 'Reporte_Programa_'+program.slug.upper() + str(now().year) + '_' + str(now().month) + '.docx'
         # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
