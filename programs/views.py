@@ -4,6 +4,7 @@ import random
 import calendar, locale
 import zipfile
 
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
@@ -71,6 +72,7 @@ def home(request, program_slug):
             try:
                 context['student'] = Student.objects.get(user=request.user, program=program)
             except Student.DoesNotExist:
+                logout(request)
                 raise Http404('No hay profesor o estudiante de este programa con ese usuario')
 
         return render(request, 'programs/phd_home.html', context)
@@ -92,7 +94,8 @@ def home(request, program_slug):
         except ProgramMember.DoesNotExist:
             try:
                 context['student'] = MscStudent.objects.get(user=request.user, program=program)
-            except Student.DoesNotExist:
+            except MscStudent.DoesNotExist:
+                logout(request)
                 raise Http404('No hay profesor o estudiante de este programa con ese usuario')
 
         return render(request, 'programs/msc_home.html', context)
@@ -2674,6 +2677,24 @@ def docx_program_report(request, program_slug):
                         row_cells[2].text = 'Incumplidos'
             else:
                 document.add_heading('No hay doctorandos registrados en el programa', level=5)
+
+            document.add_heading('Graduados', level=3)
+            if PhdStudent.objects.filter(student__program=program, status='Graduado'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Fecha de ingreso'
+                hdr_cells[2].text = 'Fecha de egreso'
+
+                for student in PhdStudent.objects.filter(student__program=program, status='Graduado'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.student.user.get_full_name())
+                    row_cells[1].text = str(student.student.init_date)
+                    row_cells[2].text = str(student.student.graduate_date)
+
+            else:
+                document.add_heading('No hay graduados registrados en el programa', level=5)
+
         elif program.type == 'msc':
             if MscStudent.objects.filter(program=program):
                 document.add_heading('Estudiantes por estado', level=3)
@@ -2715,6 +2736,23 @@ def docx_program_report(request, program_slug):
             else:
                 document.add_heading('No hay solicitantes registrados en el programa', level=5)
 
+            document.add_heading('Graduados', level=3)
+            if MscStudent.objects.filter(program=program, status='Graduado'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Fecha de ingreso'
+                hdr_cells[2].text = 'Fecha de egreso'
+
+                for student in MscStudent.objects.filter(program=program, status='Graduado'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.init_date)
+                    row_cells[2].text = str(student.graduate_date)
+
+            else:
+                document.add_heading('No hay graduados registrados en el programa', level=5)
+
             document.add_heading('Maestrantes', level=3)
             if MscStudent.objects.filter(program=program, status='Maestrante'):
                 table = document.add_table(rows=1, cols=3)
@@ -2733,6 +2771,21 @@ def docx_program_report(request, program_slug):
                         row_cells[2].text = 'Incumplidos'
             else:
                 document.add_heading('No hay maestrantes registrados en el programa', level=5)
+
+        document.add_heading('Claustro', level=3)
+        if ProgramMember.objects.filter(program=program):
+            table = document.add_table(rows=1, cols=2)
+            hdr_cells = table.rows[0].cells
+            hdr_cells[0].text = 'Nombre y apellidos'
+            hdr_cells[1].text = 'Rol'
+
+            for member in ProgramMember.objects.filter(program=program):
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(member.user.get_full_name())
+                row_cells[1].text = str(member.role)
+
+        else:
+            document.add_heading('No hay profesores registrados en el claustro del programa', level=5)
 
         docname = 'Reporte_Programa_'+program.slug.upper() + str(now().year) + '_' + str(now().month) + '.docx'
         # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
