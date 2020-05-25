@@ -359,7 +359,7 @@ class ProgramBrief(models.Model):
 
 class Course(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
-    edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
+    edition = models.ForeignKey(ProgramEdition,null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=250)
     description = models.TextField(max_length=500, null=True)
     init_date = models.DateField(null=True)
@@ -367,3 +367,13 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
+
+class CourseEvaluation(models.Model):
+    phdstudent=models.ForeignKey(PhdStudent,null=True, on_delete=models.CASCADE)
+    mscstudent=models.ForeignKey(MscStudent, null=True, on_delete=models.CASCADE)
+    dipstudent=models.ForeignKey(DipStudent, null=True, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    value=models.SmallIntegerField()
+
+    def __str__(self):
+        return self.value
