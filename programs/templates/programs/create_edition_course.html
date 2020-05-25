@@ -37,6 +37,20 @@
                             {% csrf_token %}
                             <div class="card-body">
                                 <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="inp_name">Nombre del curso:</label>
+                                        <input class="form-control" id="inp_name" name="course_name" placeholder="Nombre del curso." maxlength="250" >
+                                    </div>
+
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="txt_description">Descripción:</label>
+                                        <textarea class="form-control" id="txt_description" name="course_description" placeholder="Descripción del curso" maxlength="500" rows="5" ></textarea>
+                                    </div>
+
+                                </div>
+                                <div class="form-row">
 
                                     <div class="form-group col-md-6">
                                         <label for="inp_init_date">Fecha de inicio:</label>
@@ -44,18 +58,12 @@
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="inp_end_date">Fecha de fin:</label>
-                                        <input type="date" class="form-control" id="inp_end_date" name="end_date" required>
+                                        <input type="date" class="form-control" id="inp_end_date" name="end_date" >
                                     </div>
 
                                 </div>
 
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label for="inp_name">Observaciones:</label>
-                                        <textarea class="form-control" id="inp_name" name="observations" placeholder="Observaciones necesarias" maxlength="250" rows="5" ></textarea>
-                                    </div>
 
-                                </div>
 
                             </div>
                             <!-- /.card-body -->

@@ -7,10 +7,10 @@
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
+                <div class="col-sm-9">
                     <h1> Agregar nuevo componente a {{ program }} </h1>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{% url 'cgc:cgc_home' %}">Dashboard</a></li>
                         <li class="breadcrumb-item active">Nuevo componente</li>
@@ -29,40 +29,39 @@
                     <!-- general form elements -->
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Acta</h3>
+                            <h3 class="card-title">Componente</h3>
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
                         <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_program_brief' program.slug %}">
                             {% csrf_token %}
                             <div class="card-body">
-                                <div class="form-row align-items-center">
-                                    <div class="form-group col-md-4">
-                                        <label for="slc_years">Año:</label>
-                                        <select class="form-control" id="slc_years" name="year" required>
-                                            <option value="" selected>Seleccione una opción</option>
-                                            {% for year in years %}
-                                                <option value="{{ year }}" {% if current_year == year %}selected{% endif %}>{{ year }}</option>
-
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-4">
-
-                                        <label for="slc_months">Mes:</label>
-                                        <select class="form-control" id="slc_months" name="month" required>
-                                            <option value="" selected>Seleccione una opción</option>
-
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="exampleInputFile">Acta:</label>
-                                        <input type="file" class="form-control-file" id="exampleInputFile" name="brief" accept=".doc, .docx, .odt, .pdf" required>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="inp_name">Nombre del componente:</label>
+                                        <input class="form-control" id="inp_name" name="course_name" placeholder="Nombre del componente." maxlength="250" >
                                     </div>
 
                                 </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="txt_description">Descripción:</label>
+                                        <textarea class="form-control" id="txt_description" name="course_description" placeholder="Descripción del componente" maxlength="500" rows="5" ></textarea>
+                                    </div>
 
+                                </div>
+                                <div class="form-row">
+
+                                    <div class="form-group col-md-6">
+                                        <label for="inp_init_date">Fecha de inicio:</label>
+                                        <input type="date" class="form-control" id="inp_init_date" name="init_date" required>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="inp_end_date">Fecha de fin:</label>
+                                        <input type="date" class="form-control" id="inp_end_date" name="end_date" >
+                                    </div>
+
+                                </div>
 
 
 

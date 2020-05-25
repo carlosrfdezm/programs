@@ -832,7 +832,7 @@ def create_professor(request, program_slug):
                     try:
                         professor.save()
                         # send_mail('Hola','Usuario creado',program.email,[professor.user.email,'boris_perez@unah.edu.cu'], fail_silently=False)
-                        utils_send_email(request, 'wm', program.email, professor, '', '', program, passwd)
+                        utils_send_email(request, 'wm', program.email, professor, '', '', program, '********')
                         try:
                             professor.picture = request.FILES['picture']
                             professor.save()
@@ -2809,3 +2809,20 @@ def docx_program_report(request, program_slug):
 
     else:
         return error_500(request,program, 'Solo el Coordinador y el Secretario pueden acceder a la vista de reportes')
+
+
+# View para crear componente de programa doctoral
+@login_required
+def create_program_course(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            pass
+        else:
+            context={
+                'program':program,
+                'member': ProgramMember.objects.get(user=request.user, program=program),
+            }
+            return render(request, 'programs/create_program_course.html', context)
+    else:
+        return error_500(request,program, 'Usted no tiene privilegios para crear coimpinentes en este programa doctoral')

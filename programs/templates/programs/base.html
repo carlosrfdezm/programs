@@ -231,6 +231,34 @@
                                 </ul>
                             </li>
                             <li class="nav-item has-treeview">
+                                <a href="#" class="nav-link" title="Componentes evaluativos del programa">
+                                    <i class="nav-icon fas fa-book-reader"></i>
+                                    <p>
+                                        Componentes
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    {% if user_is_program_cs %}
+                                        <li class="nav-item">
+                                            <a href="{% url 'programs:create_program_course' program.slug %}" class="nav-link" title="NUevo componente">
+                                                <i class="fa fa-plus"></i>
+                                                <p>Nuevo</p>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    <li class="nav-item">
+                                        <a href="" title="Ver componentes" class="nav-link">
+                                            <i class="fa fa-list-ol"></i>
+                                            <p>Componentes</p>
+                                        </a>
+                                    </li>
+
+
+
+                                </ul>
+                            </li>
+                            <li class="nav-item has-treeview">
                                 <a href="#" class="nav-link" title="Líneas de investigación del programa">
                                     <i class="nav-icon fas fa-project-diagram"></i>
                                     <p>
