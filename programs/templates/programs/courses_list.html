@@ -99,7 +99,7 @@
                                             </div>
                                             <div class="modal-footer justify-content-between">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_line_{{ line.id }}">Eliminar</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_component_{{ component.id }}">Eliminar</button>
                                             </div>
                                         </div>
                                         <!-- /.modal-content -->
@@ -160,9 +160,9 @@
 
 
             {% for component in components %}
-                $('#btn_rm_line_{{ component.id }}').click(function () {
+                $('#btn_rm_component_{{ component.id }}').click(function () {
                     var component_id={{ component.id }};
-                    var url = "";
+                    var url = "{% url 'programs:ajx_delete_course' program.slug %}";
 
                     {#$('#modal_rm_line_{{ line.id }}').modal('hide');#}
 
@@ -183,13 +183,20 @@
 
                                 Toast.fire({
                                     type: 'success',
-                                    title: 'Línea eliminada exitosamente'
+                                    title: 'Componente eliminado exitosamente'
                                 });
 
                             } else if(json[0].deleted == 0){
                                 Toast.fire({
                                     type: 'error',
-                                    title: 'No se ha podido eliminar la línea seleccionada.'
+                                    title: 'No se ha podido eliminar el componente seleccionado.'
+                                })
+
+                            }
+                            else if(json[0].deleted == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Usted no puede eliminar el componente seleccionado.'
                                 })
 
                             }

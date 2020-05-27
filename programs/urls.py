@@ -71,6 +71,7 @@ urlpatterns = [
     path('ajx/messages/students/massive', views.ajx_students_massive_msg, name='ajx_students_massive_msg'),
     path('ajx/messages/everybody/massive', views.ajx_everybody_massive_msg, name='ajx_everybody_massive_msg'),
     path('ajx/delete/program/brieffing', views.ajx_delete_program_brieffing, name='ajx_delete_program_brieffing'),
+    path('ajx/delete/course', views.ajx_delete_course, name='ajx_delete_course'),
 
 
     path('statistics', views.program_statistics, name='program_statistics'),
