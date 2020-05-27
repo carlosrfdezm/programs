@@ -1,0 +1,123 @@
+{% extends 'programs/base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Evaluar estudiante</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Evaluar</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Evaluando a {% if program.type == 'phd' %}{{ student.student.user.get_full_name }}{% else %}{{ student.user.get_full_name }} {% endif %}</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        {% if pending_courses %}
+                            <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:evaluate_student' program.slug student.id %}">
+                                {% csrf_token %}
+                                <div class="card-body">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-9">
+                                            <label for="slc_courses">{% if program.type == 'phd' %}Componente a evaluar:{% else %} Curso a evaluar:{% endif %}</label>
+                                            <select class="form-control" id="slc_courses" name="course" required>
+                                                <option value="" selected>Seleccione una opción</option>
+                                                {% for course in pending_courses %}
+                                                    <option value="{{ course.id }}" >{{ course|truncatewords:10 }}</option>
+
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+
+                                        <div class="form-group col-md-3">
+                                            <label for="slc_eval">Evaluación:</label>
+                                            <select class="form-control" id="slc_eval" name="eval" required>
+                                                <option value="" selected>Seleccione una opción</option>
+
+                                                <option value="5" >Excelente</option>
+                                                <option value="4" >Bien</option>
+                                                <option value="3" >Regular</option>
+                                                <option value="2" >Mal</option>
+
+
+                                            </select>
+
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                                <!-- /.card-body -->
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                            </form>
+                        {% else %}
+                            <div class="jumbotron ">
+                                <h3 class="text-success text-center pt-4"><i class="fa fa-birthday-cake"></i> Este estudiante tiene todos los componentes evaluados.<i class="fa fa-birthday-cake"></i></h3>
+
+                            </div>
+                        {% endif %}
+                    </div>
+                    <!-- /.card -->
+
+
+
+                    <!-- /.card -->
+
+                    <!-- Input addon -->
+                    <!-- /.card -->
+                    <!-- Horizontal Form -->
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+<!-- jQuery -->
+<script src="../../plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- bs-custom-file-input -->
+<script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="../../dist/js/demo.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        bsCustomFileInput.init();
+    });
+</script>
+</body>
+</html>

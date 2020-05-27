@@ -24,7 +24,7 @@ from programas.settings import MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
-    ProgramBrief, CGCBrief, CNGCBrief, Course
+    ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation
 from programs.templatetags.extra_tags import finish_requirements_accomplished, student_init_requirement_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -2903,4 +2903,68 @@ def edit_program_course(request, program_slug, course_id):
             }
             return render(request, 'programs/edit_program_course.html', context)
     else:
-        return error_500(request,program, 'Usted no tiene privilegios para crear componentes en este programa doctoral')
+        return error_500(request, program, 'Usted no tiene privilegios para crear componentes en este programa doctoral')
+
+
+@login_required
+def evaluate_student(request, program_slug, student_id):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            evaluation = CourseEvaluation(
+                course=Course.objects.get(pk=request.POST['course']),
+                value=request.POST['eval'],
+            )
+            if program.type == 'phd':
+                try:
+                    evaluation.phdstudent = PhdStudent.objects.get(pk=student_id)
+                except PhdStudent.DoesNotExist:
+                    return error_500(request, program, 'No existe el estudiante de doctorado a evaluar.')
+            elif program.type == 'msc':
+                try:
+                    evaluation.mscstudent = MscStudent.objects.get(pk=student_id)
+                except MscStudent.DoesNotExist:
+                    return error_500(request, program, 'No existe el estudiante de maestría a evaluar.')
+            elif program.type == 'dip':
+                try:
+                    evaluation.dipstudent = DipStudent.objects.get(pk=student_id)
+                except DipStudent.DoesNotExist:
+                    return error_500(request, program, 'No existe el estudiante de diplomado a evaluar.')
+            evaluation.save()
+
+            return  HttpResponseRedirect(reverse('programs:evaluate_student', args=[program_slug, student_id]))
+        else:
+            if program.type == 'phd':
+                student=PhdStudent.objects.get(pk=student_id)
+            elif program.type == 'msc':
+                student = MscStudent.objects.get(pk=student_id)
+            elif program.type == 'dip':
+                student = DipStudent.objects.get(pk=student_id)
+
+            pending_courses=[]
+            for course in Course.objects.filter(program=program):
+                if program.type == 'phd':
+                    try:
+                        evaluation=CourseEvaluation.objects.get(course=course, phdstudent=student)
+                    except CourseEvaluation.DoesNotExist:
+                        pending_courses.append(course)
+                elif program.type == 'msc':
+                    try:
+                        evaluation=CourseEvaluation.objects.get(course=course, mscstudent=student)
+                    except CourseEvaluation.DoesNotExist:
+                        pending_courses.append(course)
+                elif program.type == 'dip':
+                    try:
+                        evaluation=CourseEvaluation.objects.get(course=course, dipstudent=student)
+                    except CourseEvaluation.DoesNotExist:
+                        pending_courses.append(course)
+
+
+            context={
+                'program':program,
+                'pending_courses':pending_courses,
+                'student':student,
+            }
+            return render(request, 'programs/evaluate_student_course.html', context)
+    else:
+        return error_500(request, program, 'Usted no tiene privilegios para asignar evaluaciones a estudiantes en este programa')
