@@ -40,6 +40,7 @@ urlpatterns = [
     path('editions/<int:edition_id>/edit',views.edit_program_edition, name='edit_program_edition'),
 
     path('courses/create', views.create_program_course, name='create_program_course'),
+    path('courses/list', views.program_courses, name='program_courses'),
 
 
     path('ajx/user/exists', views.ajx_usr_exists, name='ajx_usr_exists'),

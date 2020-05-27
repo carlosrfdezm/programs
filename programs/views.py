@@ -2833,4 +2833,22 @@ def create_program_course(request, program_slug):
             }
             return render(request, 'programs/create_program_course.html', context)
     else:
-        return error_500(request,program, 'Usted no tiene privilegios para crear coimpinentes en este programa doctoral')
+        return error_500(request,program, 'Usted no tiene privilegios para crear componentes en este programa doctoral')
+
+@login_required
+def program_courses(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    context={
+        'program':program,
+        'components': Course.objects.filter(program=program),
+    }
+    try:
+        context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+    except ProgramMember.DoesNotExist:
+        try:
+            context['student'] = Student.objects.get(user=request.user, program=program)
+        except Student.DoesNotExist:
+            logout(request)
+            raise Http404('No hay profesor o estudiante de este programa con ese usuario')
+
+    return render(request, 'programs/courses_list.html', context)
