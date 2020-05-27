@@ -24,7 +24,7 @@ from programas.settings import MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
-    ProgramBrief, CGCBrief, CNGCBrief
+    ProgramBrief, CGCBrief, CNGCBrief, Course
 from programs.templatetags.extra_tags import finish_requirements_accomplished, student_init_requirement_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -2817,7 +2817,15 @@ def create_program_course(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     if user_is_program_cs(request.user, program):
         if request.method == 'POST':
-            pass
+            component = Course(
+                program=program,
+                name=request.POST['course_name'],
+                description=request.POST['course_description'],
+
+            )
+
+            component.save()
+            return HttpResponseRedirect(reverse('programs:create_program_course', args=[program_slug]))
         else:
             context={
                 'program':program,

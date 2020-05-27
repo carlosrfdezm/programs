@@ -362,7 +362,8 @@ class Course(models.Model):
     edition = models.ForeignKey(ProgramEdition,null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=250)
     description = models.TextField(max_length=500, null=True)
-    init_date = models.DateField(null=True)
+    init_date = models.DateField(default=now)
+    end_date = models.DateField(null=True)
 
     def __str__(self):
         return self.name
