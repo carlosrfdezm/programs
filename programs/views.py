@@ -2968,3 +2968,41 @@ def evaluate_student(request, program_slug, student_id):
             return render(request, 'programs/evaluate_student_course.html', context)
     else:
         return error_500(request, program, 'Usted no tiene privilegios para asignar evaluaciones a estudiantes en este programa')
+
+
+@login_required
+def student_evals(request, program_slug, student_id):
+    program = Program.objects.get(slug=program_slug)
+    if program.type == 'phd':
+        if user_is_program_member(request.user, program) or PhdStudent.objects.get(pk=student_id).student.user == request.user:
+            context={
+                'program': program,
+                'student': PhdStudent.objects.get(pk=student_id),
+                'evals': PhdStudent.objects.get(pk=student_id).courseevaluation_set.all(),
+            }
+            return render(request, 'programs/student_evals.html', context)
+        else:
+            return error_500(request, program, 'Usted no puede ver las evaluaciones de estudiantes')
+    elif program.type == 'msc':
+        if user_is_program_member(request.user, program) or MscStudent.objects.get(pk=student_id).user == request.user:
+            context={
+                'program': program,
+                'student': MscStudent.objects.get(pk=student_id),
+                'evals': MscStudent.objects.get(pk=student_id).courseevaluation_set.all(),
+            }
+            return render(request, 'programs/student_evals.html', context)
+        else:
+            return error_500(request, program, 'Usted no puede ver las evaluaciones de estudiantes')
+    elif program.type == 'dip':
+        if user_is_program_member(request.user, program) or DipStudent.objects.get(pk=student_id).user == request.user:
+            context={
+                'program': program,
+                'student': DipStudent.objects.get(pk=student_id),
+                'evals': DipStudent.objects.get(pk=student_id).courseevaluation_set.all(),
+            }
+            return render(request, 'programs/student_evals.html', context)
+        else:
+            return error_500(request, program, 'Usted no puede ver las evaluaciones de estudiantes')
+    else:
+        pass
+

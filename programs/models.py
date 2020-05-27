@@ -377,4 +377,4 @@ class CourseEvaluation(models.Model):
     value=models.SmallIntegerField()
 
     def __str__(self):
-        return self.value
+        return str(self.value)

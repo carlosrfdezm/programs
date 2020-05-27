@@ -1,0 +1,238 @@
+{% extends 'programs/base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+
+{% block extra_css %}
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' %}">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
+    <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+
+{% endblock %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Evaluaciones de {% if program.type == 'phd' %}{{  student.student.user.get_full_name }}{% else %}{{ student.user.get_full_name }}{% endif %}</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Evaluaciones</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+
+                <!-- /.card -->
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Evaluaciones</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            {% user_is_program_cs user program as user_is_program_cs %}
+
+                            <tr>
+                                <th>Nombre del {% if program.type == 'phd' %} componente {% else %} curso. {% endif %}</th>
+                                <th class="text-center">Evaluación</th>
+
+                                {% if user_is_program_cs %}
+                                    <th></th>
+                                {% endif %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for eval in evals %}
+                                <tr id="tr_eval_{{ eval.id }}">
+                                    <td><p>{{ eval.course.name|truncatewords:10 }}</p> </td>
+                                    <td class="text-center text-lg">
+                                        {% if eval.value == 5 %}
+                                        <span class="badge badge-success">
+                                            {{ eval }}
+                                        </span>
+                                            {% elif eval.value == 4 %}
+                                        <span class="badge badge-info">
+                                            {{ eval }}
+                                        </span>
+                                            {% elif eval.value == 3 %}
+                                        <span class="badge badge-warning">
+                                            {{ eval }}
+                                        </span>
+                                            {% elif eval.value == 2 %}
+                                        <span class="badge badge-danger">
+                                            {{ eval }}
+                                        </span>
+                                        {% endif %}
+                                    </td>
+
+
+                                    {% if user_is_program_cs %}
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+
+                                                <a class="btn btn-warning btn-sm text-white" href="" title="Editar"> <i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_line_{{ line.id }}"><i class="fa fa-eraser"></i></a>
+
+                                            </div>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                                <div class="modal fade" id="modal_rm_eval_{{ eval.id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Eliminar evaluación</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <p class="text-center">¿Seguro que desea eliminar esta evaluación?<br>Esto no se puede deshacer&hellip;</p>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_eval_{{ eval.id }}">Eliminar</button>
+                                            </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+
+                            {% endfor %}
+
+
+
+
+                            </tbody>
+                            <tfoot>
+                            {#                            <tr>#}
+                            {#                                <th>Nombre y apellidos</th>#}
+                            {#                                <th>Fecha solicitud</th>#}
+                            {#                                <th>Estado</th>#}
+                            {#                                <th class="text-center">Requisitos</th>#}
+                            {#                                <th></th>#}
+                            {#                            </tr>#}
+                            </tfoot>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        {% csrf_token %}
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+{% block extra_scripts %}
+    <!-- jQuery -->
+    <script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+    <!-- DataTables -->
+    <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
+    <!-- page script -->
+    <script>
+        $(document).ready(function () {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+
+            var myTable= $("#example1").DataTable({
+                language: {
+                    url: '{% static "programs/plugins/datatables/Spanish.json" %}'
+                }});
+
+
+
+
+            {% for line in lines %}
+                $('#btn_rm_line_{{ line.id }}').click(function () {
+                    var line_id={{ line.id }};
+                    var url = "{% url 'programs:ajx_delete_line' program.slug %}";
+
+                    {#$('#modal_rm_line_{{ line.id }}').modal('hide');#}
+
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'line_id':line_id,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].deleted == 1) {
+
+                                var row = myTable.row( $('#tr_line_{{ line.id }}') );
+                                row.remove().draw();
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Línea eliminada exitosamente'
+                                });
+
+                            } else if(json[0].deleted == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar la línea seleccionada.'
+                                })
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
+                });
+            {% endfor %}
+
+        });
+    </script>
+{% endblock %}
