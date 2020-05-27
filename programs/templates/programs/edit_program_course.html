@@ -1,0 +1,161 @@
+{% extends 'programs/base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-9">
+                    <h1> Editar componente de {{ program }} </h1>
+                </div>
+                <div class="col-sm-3">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Editar componente</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Componente</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        {% if component %}
+                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_program_course' program.slug component.id %}">
+                            {% csrf_token %}
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="inp_name">Nombre del componente:</label>
+                                        <input class="form-control" id="inp_name" name="course_name" value="{{ component.name }}" placeholder="Nombre del componente." maxlength="250" >
+                                    </div>
+
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="txt_description">Descripción:</label>
+                                        <textarea class="form-control" id="txt_description" name="course_description"  placeholder="Descripción del componente" maxlength="500" rows="5" >{{ component.description }}</textarea>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </form>
+                        {% else %}
+                            <div class="alert alert-warning">
+                            <h3>No se ha elegido ningún curso.</h3>
+                            </div>>
+                        {% endif %}
+                    </div>
+                    <!-- /.card -->
+
+
+
+                    <!-- /.card -->
+
+                    <!-- Input addon -->
+                    <!-- /.card -->
+                    <!-- Horizontal Form -->
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+{% block extra_scripts %}
+    <!-- jQuery -->
+    <script src="../../plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- bs-custom-file-input -->
+    <script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="../../dist/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="../../dist/js/demo.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var today = new Date();
+
+            var mm = today.getMonth(); //January is 0!
+            var yyyy = today.getFullYear();
+            var meses =[ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre", "Noviembre", "Diciembre" ];
+
+            for(var i = 0; i<= mm;i++){
+                if(i==mm){
+                    var option = '<option value="'+meses[i]+'"selected >'+meses[i]+'</option>';
+                }
+                else{
+                    var option = '<option value="'+meses[i]+'" >'+meses[i]+'</option>';
+
+                }
+
+                $('#slc_months').append(option);
+
+
+            }
+
+
+
+            $('#slc_years').change(function () {
+
+                $('#slc_months option').remove();
+                $('#slc_months').append('<option value="" selected>Seleccione una opción</option>');
+
+                if($(this).val()== yyyy){
+                    for(var i = 0; i<= mm;i++){
+                        if(i==mm){
+                            var option = '<option value="'+meses[i]+'"selected >'+meses[i]+'</option>';
+                        }
+                        else{
+                            var option = '<option value="'+meses[i]+'" >'+meses[i]+'</option>';
+
+                        }
+
+                        $('#slc_months').append(option);
+
+
+                    }
+
+                }
+                else {
+                    for(var i = 0; i< meses.length; i++){
+
+                        var option = '<option value="'+meses[i]+'">'+meses[i]+'</option>';
+                        $('#slc_months').append(option);
+
+                    }
+                }
+
+            });
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

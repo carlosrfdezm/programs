@@ -2852,3 +2852,26 @@ def program_courses(request, program_slug):
             raise Http404('No hay profesor o estudiante de este programa con ese usuario')
 
     return render(request, 'programs/courses_list.html', context)
+
+@login_required
+def edit_program_course(request, program_slug, course_id):
+    program = Program.objects.get(slug=program_slug)
+
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            Course.objects.filter(pk=course_id).update(
+                name=request.POST['course_name'],
+                description=request.POST['course_description'],
+
+            )
+
+            return HttpResponseRedirect(reverse('programs:program_courses', args=[program_slug]))
+        else:
+            context={
+                'program':program,
+                'member': ProgramMember.objects.get(user=request.user, program=program),
+                'component': Course.objects.get(pk=course_id),
+            }
+            return render(request, 'programs/edit_program_course.html', context)
+    else:
+        return error_500(request,program, 'Usted no tiene privilegios para crear componentes en este programa doctoral')
