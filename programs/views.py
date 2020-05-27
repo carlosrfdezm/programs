@@ -449,6 +449,8 @@ def students_list(request, program_slug, scope):
                     'students': Student.objects.filter(program=program, phdstudent__status='graduado'),
                     'scope': 'Graduados',
                 }
+            if user_is_program_member(request.user, program):
+                context['member']=ProgramMember.objects.get(user=request.user, program=program)
 
             return render(request, 'programs/students_list.html', context)
         elif program.type == 'msc':
@@ -2980,6 +2982,8 @@ def student_evals(request, program_slug, student_id):
                 'student': PhdStudent.objects.get(pk=student_id),
                 'evals': PhdStudent.objects.get(pk=student_id).courseevaluation_set.all(),
             }
+            if user_is_program_member(request.user, program):
+                context['member']=ProgramMember.objects.get(user=request.user, program=program)
             return render(request, 'programs/student_evals.html', context)
         else:
             return error_500(request, program, 'Usted no puede ver las evaluaciones de estudiantes')
@@ -2990,6 +2994,8 @@ def student_evals(request, program_slug, student_id):
                 'student': MscStudent.objects.get(pk=student_id),
                 'evals': MscStudent.objects.get(pk=student_id).courseevaluation_set.all(),
             }
+            if user_is_program_member(request.user, program):
+                context['member']=ProgramMember.objects.get(user=request.user, program=program)
             return render(request, 'programs/student_evals.html', context)
         else:
             return error_500(request, program, 'Usted no puede ver las evaluaciones de estudiantes')
@@ -3000,6 +3006,8 @@ def student_evals(request, program_slug, student_id):
                 'student': DipStudent.objects.get(pk=student_id),
                 'evals': DipStudent.objects.get(pk=student_id).courseevaluation_set.all(),
             }
+            if user_is_program_member(request.user, program):
+                context['member']=ProgramMember.objects.get(user=request.user, program=program)
             return render(request, 'programs/student_evals.html', context)
         else:
             return error_500(request, program, 'Usted no puede ver las evaluaciones de estudiantes')
