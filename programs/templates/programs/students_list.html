@@ -58,7 +58,7 @@
                                     {% if scope == 'Doctorandos' %}
                                         <th class="text-center">Requisitos<br> (egreso)</th>
                                     {% endif %}
-                                <th>Tutores</th>
+                                    <th>Tutores</th>
 
                                     <th></th>
 
@@ -97,12 +97,17 @@
                                                 {% endif %}
                                             </td>
                                         {% endif %}
-                                    <td>{{ student.phdstudent.tuthor_set.all|unordered_list }}</td>
+                                        <td>{{ student.phdstudent.tuthor_set.all|unordered_list }}</td>
                                         {% if user_is_program_cs %}
                                             <td class="text-center">
                                                 <div class="btn-group" role="group">
                                                     <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
-
+                                                    {% if scope == 'Doctorandos' %}
+                                                        <a class="btn btn-success btn-sm text-white" href="" title="Ver evaluaciones">  <i class="fa fa-user-graduate"></i></a>
+                                                        <a class="btn btn-warning btn-sm text-white" href="" title="Asignar evaluación"> <i class="fa fa-check-square"></i></a>
+                                                    {% elif scope == 'Graduados' %}
+                                                        <a class="btn btn-success btn-sm text-white" href="" title="Ver evaluaciones">  <i class="fa fa-user-graduate"></i></a>
+                                                    {% endif %}
                                                     <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_student' program.slug student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
                                                     <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_student_{{ student.id }}"><i class="fa fa-eraser"></i></a>
 
@@ -397,7 +402,7 @@
     <script>
 
         $(document).ready(function () {
-             var myTable= $("#example1").DataTable({
+            var myTable= $("#example1").DataTable({
                 language: {
                     url: '{% static "programs/plugins/datatables/Spanish.json" %}'
                 }});
