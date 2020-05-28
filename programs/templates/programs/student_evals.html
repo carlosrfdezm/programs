@@ -64,19 +64,19 @@
                                     <td><p>{{ eval.course.name|truncatewords:10 }}</p> </td>
                                     <td class="text-center text-lg">
                                         {% if eval.value == 5 %}
-                                        <span class="badge badge-success">
+                                        <span id="bg_eval_{{ eval.id }}" class="badge badge-success">
                                             {{ eval }}
                                         </span>
                                             {% elif eval.value == 4 %}
-                                        <span class="badge badge-info">
+                                        <span id="bg_eval_{{ eval.id }}" class="badge badge-info">
                                             {{ eval }}
                                         </span>
                                             {% elif eval.value == 3 %}
-                                        <span class="badge badge-warning">
+                                        <span id="bg_eval_{{ eval.id }}" class="badge badge-warning">
                                             {{ eval }}
                                         </span>
                                             {% elif eval.value == 2 %}
-                                        <span class="badge badge-danger">
+                                        <span id="bg_eval_{{ eval.id }}" class="badge badge-danger">
                                             {{ eval }}
                                         </span>
                                         {% endif %}
@@ -87,7 +87,7 @@
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
 
-                                                <a class="btn btn-warning btn-sm text-white" href="" title="Editar"> <i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-warning btn-sm text-white" title="Editar" data-toggle="modal" data-target="#modal_edit_eval_{{ eval.id }}"> <i class="fa fa-edit"></i></a>
                                                 <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_line_{{ line.id }}"><i class="fa fa-eraser"></i></a>
 
                                             </div>
@@ -118,6 +118,36 @@
                                             <div class="modal-footer justify-content-between">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                                                 <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_eval_{{ eval.id }}">Eliminar</button>
+                                            </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+                                <div class="modal fade" id="modal_edit_eval_{{ eval.id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Modificar evaluación</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <select class="form-control" id="slc_eval_{{ eval.id }}" name="eval" required>
+                                                        <option value="">Seleccione una opción</option>
+                                                        <option value="5" {% if eval.value == 5 %}selected{% endif %}>Excelente</option>
+                                                        <option value="4" {% if eval.value == 4 %}selected{% endif %}>Bien</option>
+                                                        <option value="3" {% if eval.value == 3 %}selected{% endif %}>Regular</option>
+                                                        <option value="2" {% if eval.value == 2 %}selected{% endif %}>Mal</option>
+                                                    </select>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-success" data-dismiss="modal" id="btn_edit_eval_{{ eval.id }}">Guardar</button>
                                             </div>
                                         </div>
                                         <!-- /.modal-content -->
@@ -177,61 +207,135 @@
 
 
 
-            {% for line in lines %}
-                $('#btn_rm_line_{{ line.id }}').click(function () {
-                    var line_id={{ line.id }};
-                    var url = "{% url 'programs:ajx_delete_line' program.slug %}";
+           {% for eval in evals %}
+               $('#btn_rm_eval_{{ eval.id }}').click(function () {
+                   var eval_id={{ eval.id }};
+                   var url = "";
 
                     {#$('#modal_rm_line_{{ line.id }}').modal('hide');#}
 
-                    $.ajax({
-                        url : url,
-                        type : "POST", // http method
-                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                            'line_id':line_id,
-                        }, // data sent with the post request
+                   $.ajax({
+                       url : url,
+                       type : "POST", // http method
+                       data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                           'eval_id':eval_id,
+                       }, // data sent with the post request
 
-                        // handle a successful response
-                        success : function(json) {
+                       // handle a successful response
+                       success : function(json) {
 
-                            if (json[0].deleted == 1) {
+                           if (json[0].deleted == 1) {
 
-                                var row = myTable.row( $('#tr_line_{{ line.id }}') );
-                                row.remove().draw();
+                               var row = myTable.row( $('#tr_line_{{ line.id }}') );
+                               row.remove().draw();
 
-                                Toast.fire({
-                                    type: 'success',
-                                    title: 'Línea eliminada exitosamente'
-                                });
+                               Toast.fire({
+                                   type: 'success',
+                                   title: 'Línea eliminada exitosamente'
+                               });
 
-                            } else if(json[0].deleted == 0){
-                                Toast.fire({
-                                    type: 'error',
-                                    title: 'No se ha podido eliminar la línea seleccionada.'
-                                })
+                           } else if(json[0].deleted == 0){
+                               Toast.fire({
+                                   type: 'error',
+                                   title: 'No se ha podido eliminar la línea seleccionada.'
+                               })
 
-                            }
-                            console.log(json); // log the returned json to the console
-                            console.log("success"); // another sanity check
-
-
+                           }
+                           console.log(json); // log the returned json to the console
+                           console.log("success"); // another sanity check
 
 
-                            {#$('#div_by_workshop').removeClass('hidden')#}
 
-                        },
 
-                        // handle a non-successful response
-                        error : function(xhr,errmsg,err) {
-                            Toast.fire({
-                                type: 'error',
-                                title: 'Uff, ha ocurrido algo desconocido.'
-                            })
-                        }
-                    });
+                            $('#div_by_workshop').removeClass('hidden')
 
-                });
-            {% endfor %}
+                       },
+
+                       // handle a non-successful response
+                       error : function(xhr,errmsg,err) {
+                           Toast.fire({
+                               type: 'error',
+                               title: 'Uff, ha ocurrido algo desconocido.'
+                           })
+                       }
+                   });
+
+               });
+               $('#slc_eval_{{ eval.id }}').change(function () {
+                   var eval_id={{ eval.id }};
+                   var eval = $(this).val();
+                   var url = "{% url 'programs:ajx_edit_eval' program.slug %}";
+
+                   $('#modal_edit_eval_{{ eval.id }}').modal('hide');
+
+                   $.ajax({
+                       url : url,
+                       type : "POST", // http method
+                       data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                           'eval_id':eval_id,
+                           'eval':eval,
+                       }, // data sent with the post request
+
+                       // handle a successful response
+                       success : function(json) {
+
+                           if (json[0].saved == 1) {
+
+                               Toast.fire({
+                                   type: 'success',
+                                   title: 'Evaluación modificada exitosamente'
+                               });
+
+                               if(eval == 5){
+                                   $('#bg_eval_{{ eval.id }}').replaceWith('<span id="bg_eval_'+eval_id+'" class="badge badge-success">5</span>')
+                               }
+                               else if(eval == 4){
+                                   $('#bg_eval_{{ eval.id }}').replaceWith('<span id="bg_eval_'+eval_id+'" class="badge badge-info">4</span>')
+                               }
+                               else if(eval == 3){
+                                   $('#bg_eval_{{ eval.id }}').replaceWith('<span id="bg_eval_'+eval_id+'" class="badge badge-warning">3</span>')
+                               }
+                               else if(eval == 2){
+                                   $('#bg_eval_{{ eval.id }}').replaceWith('<span id="bg_eval_'+eval_id+'" class="badge badge-danger">2</span>')
+                               }
+
+
+                           }
+                           else if(json[0].saved == 0){
+                               Toast.fire({
+                                   type: 'error',
+                                   title: 'No se ha podido modificar la evaluación seleccionada.'
+                               });
+
+                           }
+                           else if(json[0].saved == 2){
+                               Toast.fire({
+                                   type: 'error',
+                                   title: 'Usted no puede modificar evaluaciones en este programa.'
+                               });
+
+                           }
+                           console.log(json); // log the returned json to the console
+                           console.log("success"); // another sanity check
+
+
+
+
+                            $('#div_by_workshop').removeClass('hidden')
+
+                       },
+
+                       // handle a non-successful response
+                       error : function(xhr,errmsg,err) {
+                           Toast.fire({
+                               type: 'error',
+                               title: 'Uff, ha ocurrido algo desconocido.'
+                           })
+                       }
+                   });
+
+               });
+           {% endfor %}
 
         });
     </script>

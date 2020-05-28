@@ -1409,6 +1409,36 @@ def ajx_delete_course(request, program_slug):
             content_type="application/json"
         )
 
+@login_required
+def ajx_edit_eval(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+
+    if user_is_program_cs(request.user,program ):
+        if request.method=='POST':
+            eval_id=request.POST['eval_id']
+            try:
+                evaluation = CourseEvaluation.objects.get(pk=eval_id)
+                evaluation.value = request.POST['eval']
+                evaluation.save()
+                return HttpResponse(
+                    json.dumps([{'saved': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                return HttpResponse(
+                    json.dumps([{'saved': 0}]),
+                    content_type="application/json"
+                )
+        else:
+            return HttpResponse(
+                json.dumps([{'saved': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'saved': 2}]),
+            content_type="application/json"
+        )
 
 @login_required
 def ajx_delete_project(request, program_slug):
