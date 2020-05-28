@@ -33,35 +33,70 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
+                    <section id="new_course">
                         <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_edition_course' program.slug edition.id %}">
                             {% csrf_token %}
                             <div class="card-body">
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label for="inp_name">Nombre del curso:</label>
-                                        <input class="form-control" id="inp_name" name="course_name" placeholder="Nombre del curso." maxlength="250" >
+                                {% if edition.order != 1 %}
+                                    <div class="form-row" >
+                                        <div class="form-group col-md-6">
+                                            <label for="slc_edition">Importar cursos de ediciones previas:</label>
+                                            <select class="form-control" id="slc_edition" name="edition">
+                                                <option value="" selected>Seleccione una edición</option>
+                                                {% for edition in editions %}
+                                                    <option value="{{ edition.id }}"  >{{ edition }}a edición</option>
+
+
+
+
+                                                {% endfor %}
+
+                                            </select>
+                                        </div>
+
+
+
+                                    </div>
+                                    <div class="form-row invisible" id="div_confirm_import">
+                                        <div class="col-md-6" id="div_confirm_import">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" id="chk_import"> Confirme que desea importar cursos
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                    <div class="form-row">
+                                        <div class="form-group col-md-12">
+                                            <label for="inp_name">Nombre del curso:</label>
+                                            <input class="form-control" id="inp_name" name="course_name" placeholder="Nombre del curso." maxlength="250" >
+                                        </div>
+
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-12">
+                                            <label for="txt_description">Descripción:</label>
+                                            <textarea class="form-control" id="txt_description" name="course_description" placeholder="Descripción del curso" maxlength="500" rows="5" ></textarea>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-row">
+
+                                        <div class="form-group col-md-6">
+                                            <label for="inp_init_date">Fecha de inicio:</label>
+                                            <input type="date" class="form-control" id="inp_init_date" name="init_date" required>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="inp_end_date">Fecha de fin:</label>
+                                            <input type="date" class="form-control" id="inp_end_date" name="end_date" >
+                                        </div>
+
                                     </div>
 
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label for="txt_description">Descripción:</label>
-                                        <textarea class="form-control" id="txt_description" name="course_description" placeholder="Descripción del curso" maxlength="500" rows="5" ></textarea>
-                                    </div>
 
-                                </div>
-                                <div class="form-row">
 
-                                    <div class="form-group col-md-6">
-                                        <label for="inp_init_date">Fecha de inicio:</label>
-                                        <input type="date" class="form-control" id="inp_init_date" name="init_date" required>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="inp_end_date">Fecha de fin:</label>
-                                        <input type="date" class="form-control" id="inp_end_date" name="end_date" >
-                                    </div>
-
-                                </div>
 
 
 
@@ -69,9 +104,10 @@
                             <!-- /.card-body -->
 
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <button type="submit" id="btn_save" class="btn btn-primary">Guardar</button>
                             </div>
                         </form>
+                    </section>
                     </div>
                     <!-- /.card -->
 
@@ -94,21 +130,113 @@
     </section>
     <!-- /.content -->
 {% endblock %}
+{% block extra_scripts %}
+    {#<!-- jQuery -->#}
+    {#<script src="../../plugins/jquery/jquery.min.js"></script>#}
+    {#<!-- Bootstrap 4 -->#}
+    {#<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>#}
+    {#<!-- bs-custom-file-input -->#}
+    {#<script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>#}
+    {#<!-- AdminLTE App -->#}
+    {#<script src="../../dist/js/adminlte.min.js"></script>#}
+    {#<!-- AdminLTE for demo purposes -->#}
+    {#<script src="../../dist/js/demo.js"></script>#}
+    <script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
 
-<!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- bs-custom-file-input -->
-<script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
-<!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        bsCustomFileInput.init();
-    });
-</script>
+    <script >
+        $(document).ready(function () {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+            var edition = 0;
+
+            $('#slc_edition').change(function () {
+                edition = $(this).val();
+                {#alert(edition);#}
+                $('#div_confirm_import').removeClass('invisible');
+
+            });
+            $(document).on('click','#chk_import',function (e) {
+
+                if(this.checked){
+                    var edition_id=edition;
+                    var url = "{% url 'programs:ajx_import_courses' program.slug  edition.id %}";
+
+                    {#$('#modal_rm_line_{{ line.id }}').modal('hide');#}
+
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'edition_id':edition_id,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+
+                            if (json[0].imported == 1) {
+
+
+
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Cursos importados exitosamente'
+                                });
+                                var div='<div id="imported_courses" class="jumbotron"><h5>Cursos importados:</h5><ol>'
+                                alert(json[1].length);
+
+                                for (var i = 0; i <json[1].length; i++ ){
+
+                                    div = div+'<li>'+json[1][i]+'</li>';
+                                }
+                                div =div + '</ol></div>'
+                                $('#new_course').replaceWith($(div));
+                                $('#btn_save').remove();
+
+                            } else if(json[0].imported == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido importar los cursos de la edicion seleccionada.'
+                                })
+
+                            }
+                            else if(json[0].imported == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Usted no puede importar cursos.'
+                                })
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
+                }
+
+
+            })
+        });
+    </script>
+{% endblock %}
 </body>
 </html>

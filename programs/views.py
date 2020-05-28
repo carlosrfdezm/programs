@@ -1322,6 +1322,43 @@ def ajx_create_tuthor(request, program_slug, student_id):
         )
 
 @login_required
+def ajx_import_courses(request, program_slug, edition_id):
+    program=Program.objects.get(slug=program_slug)
+    edition = ProgramEdition.objects.get(pk=edition_id)
+
+    if user_is_program_cs(request.user,program ):
+        if request.method=='POST':
+            origin_edition = ProgramEdition.objects.get(pk=request.POST['edition_id'])
+            courses=[]
+
+            for course in Course.objects.filter(program=program, edition=origin_edition):
+                new_course = Course(
+                    program=program,
+                    edition=edition,
+                    name=course.name,
+                    description=course.description,
+                )
+                new_course.save()
+                courses.append(new_course.name)
+
+            return HttpResponse(
+                json.dumps([{'imported': 1}, courses]),
+                content_type="application/json"
+            )
+
+
+        else:
+            return HttpResponse(
+                json.dumps([{'imported': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'imported': 2}]),
+            content_type="application/json"
+        )
+
+@login_required
 def ajx_delete_tuthor(request, program_slug):
     program=Program.objects.get(slug=program_slug)
 
@@ -2950,6 +2987,9 @@ def create_edition_course(request, program_slug, edition_id):
                 'edition':edition,
                 'member': ProgramMember.objects.get(user=request.user, program=program),
             }
+            if edition.order > 1:
+                context['editions'] = ProgramEdition.objects.filter(order__lt=edition.order)
+
             return render(request, 'programs/create_edition_course.html', context)
     else:
         return error_500(request,program, 'Usted no tiene privilegios para crear componentes en este programa doctoral')

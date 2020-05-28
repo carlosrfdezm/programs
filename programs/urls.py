@@ -78,6 +78,7 @@ urlpatterns = [
     path('ajx/course/delete', views.ajx_delete_course, name='ajx_delete_course'),
     path('ajx/evaluation/edit', views.ajx_edit_eval, name='ajx_edit_eval'),
     path('ajx/evaluation/delete', views.ajx_delete_eval, name='ajx_delete_eval'),
+    path('ajx/edition/<int:edition_id>/courses/import', views.ajx_import_courses, name='ajx_import_courses'),
 
 
     path('statistics', views.program_statistics, name='program_statistics'),
