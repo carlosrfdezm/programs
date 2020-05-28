@@ -33,7 +33,7 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
-                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_program_edition' program.slug %}">
+                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_edition_course' program.slug edition.id %}">
                             {% csrf_token %}
                             <div class="card-body">
                                 <div class="form-row">

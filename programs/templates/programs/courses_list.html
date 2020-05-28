@@ -20,12 +20,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-9">
-                    <h1>Componentes evaluativos de {{ program }}</h1>
+                    <h1>{% if program.type == 'phd' %}Componentes evaluativos de {{ program }}{%  else %} Cursos de la {{ edition }} de {{ program }}{% endif %} </h1>
                 </div>
                 <div class="col-sm-3">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Componentes evaluativos</li>
+                        <li class="breadcrumb-item active">{% if program.type == 'phd' %}Componentes evaluativos{% else  %}Cursos {% endif %}</li>
                     </ol>
                 </div>
             </div>
@@ -41,7 +41,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Componentes</h3>
+                        <h3 class="card-title">{% if program.type == 'phd' %}Componentes{% else %}Cursos{% endif %}</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">

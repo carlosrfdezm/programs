@@ -40,6 +40,8 @@ urlpatterns = [
     path('editions/create',views.create_program_edition, name='create_program_edition'),
     path('editions/list',views.editions_list, name='editions_list'),
     path('editions/<int:edition_id>/edit',views.edit_program_edition, name='edit_program_edition'),
+    path('editions/<int:edition_id>/course/create',views.create_edition_course, name='create_edition_course'),
+    path('editions/<int:edition_id>/courses',views.edition_courses, name='edition_courses'),
 
     path('courses/create', views.create_program_course, name='create_program_course'),
     path('courses/list', views.program_courses, name='program_courses'),

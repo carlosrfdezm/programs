@@ -2925,12 +2925,63 @@ def create_program_course(request, program_slug):
     else:
         return error_500(request,program, 'Usted no tiene privilegios para crear componentes en este programa doctoral')
 
+
+@login_required
+def create_edition_course(request, program_slug, edition_id):
+    program = Program.objects.get(slug=program_slug)
+    edition = ProgramEdition.objects.get(pk=edition_id)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            component = Course(
+                program=program,
+                edition=edition,
+                name=request.POST['course_name'],
+                description=request.POST['course_description'],
+                init_date=request.POST['init_date'],
+                end_date=request.POST['end_date'],
+
+            )
+
+            component.save()
+            return HttpResponseRedirect(reverse('programs:create_edition_course', args=[program_slug, edition_id]))
+        else:
+            context={
+                'program':program,
+                'edition':edition,
+                'member': ProgramMember.objects.get(user=request.user, program=program),
+            }
+            return render(request, 'programs/create_edition_course.html', context)
+    else:
+        return error_500(request,program, 'Usted no tiene privilegios para crear componentes en este programa doctoral')
+
+
 @login_required
 def program_courses(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     context={
         'program':program,
         'components': Course.objects.filter(program=program),
+    }
+    try:
+        context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+    except ProgramMember.DoesNotExist:
+        try:
+            context['student'] = Student.objects.get(user=request.user, program=program)
+        except Student.DoesNotExist:
+            logout(request)
+            raise Http404('No hay profesor o estudiante de este programa con ese usuario')
+
+    return render(request, 'programs/courses_list.html', context)
+
+
+@login_required
+def edition_courses(request, program_slug, edition_id):
+    program = Program.objects.get(slug=program_slug)
+    edition = ProgramEdition.objects.get(pk=edition_id)
+    context={
+        'program':program,
+        'edition':edition,
+        'components': Course.objects.filter(program=program, edition=edition),
     }
     try:
         context['member'] = ProgramMember.objects.get(user=request.user, program=program)
