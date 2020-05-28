@@ -110,7 +110,9 @@
 
                                                     </div>
                                                     <div class="col-md-10">
-                                                        <p class="text-center">¿Seguro que desea eliminar esta evaluación?<br>Esto no se puede deshacer&hellip;</p>
+                                                        <p class="text-center">¿Seguro que desea eliminar esta evaluación?<br>
+                                                            {{ eval.course|truncatewords:3 }}...{{ eval }}
+                                                            <br>Esto no se puede deshacer&hellip;</p>
                                                     </div>
                                                 </div>
 
