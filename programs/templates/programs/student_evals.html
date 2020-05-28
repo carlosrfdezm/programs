@@ -88,7 +88,7 @@
                                             <div class="btn-group" role="group">
 
                                                 <a class="btn btn-warning btn-sm text-white" title="Editar" data-toggle="modal" data-target="#modal_edit_eval_{{ eval.id }}"> <i class="fa fa-edit"></i></a>
-                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_line_{{ line.id }}"><i class="fa fa-eraser"></i></a>
+                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_eval_{{ eval.id }}"><i class="fa fa-eraser"></i></a>
 
                                             </div>
                                         </td>
@@ -210,7 +210,7 @@
            {% for eval in evals %}
                $('#btn_rm_eval_{{ eval.id }}').click(function () {
                    var eval_id={{ eval.id }};
-                   var url = "";
+                   var url = "{% url 'programs:ajx_delete_eval' program.slug %}";
 
                     {#$('#modal_rm_line_{{ line.id }}').modal('hide');#}
 
@@ -226,18 +226,25 @@
 
                            if (json[0].deleted == 1) {
 
-                               var row = myTable.row( $('#tr_line_{{ line.id }}') );
+                               var row = myTable.row( $('#tr_eval_{{ eval.id }}') );
                                row.remove().draw();
 
                                Toast.fire({
                                    type: 'success',
-                                   title: 'Línea eliminada exitosamente'
+                                   title: 'Evaluación eliminada exitosamente'
                                });
 
                            } else if(json[0].deleted == 0){
                                Toast.fire({
                                    type: 'error',
-                                   title: 'No se ha podido eliminar la línea seleccionada.'
+                                   title: 'No se ha podido eliminar la evaluación seleccionada.'
+                               })
+
+                           }
+                           else if(json[0].deleted == 2){
+                               Toast.fire({
+                                   type: 'error',
+                                   title: 'Usted no tiene privilegios para eliminar la evaluación seleccionada.'
                                })
 
                            }
