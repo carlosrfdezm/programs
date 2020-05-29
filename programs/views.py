@@ -215,11 +215,11 @@ def create_student(request, program_slug):
                 for i in range(1,int(request.POST['total_tuthors'])+1):
                     print(create_new_tuthor(request,
                                             program,
-                                      request.POST['tuthor_name_' + str(i)],
-                                      request.POST['tuthor_lastname_' + str(i)],
-                                      request.POST['tuthor_institution_' + str(i)],
+                                            request.POST['tuthor_name_' + str(i)],
+                                            request.POST['tuthor_lastname_' + str(i)],
+                                            request.POST['tuthor_institution_' + str(i)],
                                             request.POST['tuthor_email_' + str(i)],
-                                      new_student))
+                                            new_student))
 
 
                 new_theme=PhdStudentTheme(
@@ -1291,7 +1291,7 @@ def ajx_create_tuthor(request, program_slug, student_id):
 
             try:
                 new_tuthor = create_new_tuthor(request, program,request.POST['tuthor_name'],request.POST['tuthor_lastname'],
-                                     request.POST['tuthor_institution'],request.POST['tuthor_email'],student )
+                                               request.POST['tuthor_institution'],request.POST['tuthor_email'],student )
                 if new_tuthor[0]:
                     tuthor = Tuthor.objects.get(pk=new_tuthor[1])
                     return HttpResponse(
@@ -2425,11 +2425,11 @@ def edit_program_brief(request,program_slug, brief_id):
                     index =ProgramBrief.objects.filter(program=program, month=request.POST['month'], year=request.POST['year']).__len__()
                     if index>0:
                         brief.brief.name = 'program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
-                                                                               'Acta-'+slugify(program.short_name)+'-' + request.POST['month'] + '-' +
-                                                                               request.POST['year'] +'-'+str(index+1)+'-'+str(brief_id)+ '.' + brief_ext)
+                                                                                       'Acta-'+slugify(program.short_name)+'-' + request.POST['month'] + '-' +
+                                                                                       request.POST['year'] +'-'+str(index+1)+'-'+str(brief_id)+ '.' + brief_ext)
                         new_path= MEDIA_ROOT+ '/program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
-                                                                               'Acta-'+slugify(program.short_name)+'-' + request.POST['month'] + '-' +
-                                                                               request.POST['year']+'-' +str(index+1)+'-'+str(brief_id)+ '.' + brief_ext)
+                                                                                           'Acta-'+slugify(program.short_name)+'-' + request.POST['month'] + '-' +
+                                                                                           request.POST['year']+'-' +str(index+1)+'-'+str(brief_id)+ '.' + brief_ext)
                     else:
                         brief.brief.name = 'program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug,
                                                                                        request.POST['year'],
@@ -2442,9 +2442,9 @@ def edit_program_brief(request,program_slug, brief_id):
                                                                                              request.POST['year'],
                                                                                              request.POST['month'],
                                                                                              'Acta-' + slugify(
-                                                                                           program.short_name) + '-' +
-                                                                                       request.POST['month'] + '-' +
-                                                                                       request.POST['year'] + '-1.' + brief_ext)
+                                                                                                 program.short_name) + '-' +
+                                                                                             request.POST['month'] + '-' +
+                                                                                             request.POST['year'] + '-1.' + brief_ext)
 
 
                     os.renames(initial_path, new_path)
@@ -2459,7 +2459,7 @@ def edit_program_brief(request,program_slug, brief_id):
                     brief_ext = brief_file.name.split('.')[brief_file.name.split('.').__len__() - 1]
 
                     new_brief_name = 'program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
-                                                                           brief_name.split('.')[brief_name.split('.').__len__() - 2]+'.'+brief_ext)
+                                                                                 brief_name.split('.')[brief_name.split('.').__len__() - 2]+'.'+brief_ext)
                     brief.brief.delete()
 
                     filename = fs.save(new_brief_name, brief_file)
@@ -2653,18 +2653,18 @@ def program_brief_zip_download(request,program_slug):
         for brief in brief_list:
 
 
-                try:
-                    fpath = MEDIA_ROOT +'/'+ brief.brief.name
-                    fdir, fname = os.path.split(fpath)
-                    zip_subdir = str(brief.year)
-                    zip_path = os.path.join(zip_subdir, brief.brief.name.split('/')[brief.brief.name.split('/').__len__()-1])
+            try:
+                fpath = MEDIA_ROOT +'/'+ brief.brief.name
+                fdir, fname = os.path.split(fpath)
+                zip_subdir = str(brief.year)
+                zip_path = os.path.join(zip_subdir, brief.brief.name.split('/')[brief.brief.name.split('/').__len__()-1])
 
 
-                    # zip_path = os.path.join(zip_subdir, fname)
-                    # Add file, at correct path
-                    zf.write(fpath, zip_path)
-                except:
-                    print('Excepcion:algo paso al agregar el archivo', brief.brief.name)
+                # zip_path = os.path.join(zip_subdir, fname)
+                # Add file, at correct path
+                zf.write(fpath, zip_path)
+            except:
+                print('Excepcion:algo paso al agregar el archivo', brief.brief.name)
 
 
         zf.close()
@@ -2708,18 +2708,18 @@ def program_by_year_brief_zip_download(request,program_slug, year):
         zf = zipfile.ZipFile(MEDIA_ROOT + '/' + zip_filename, "w")
 
         for brief in brief_list:
-                try:
-                    fpath = MEDIA_ROOT +'/'+ brief.brief.name
-                    fdir, fname = os.path.split(fpath)
-                    zip_subdir = str(brief.month)
-                    zip_path = os.path.join(zip_subdir, brief.brief.name.split('/')[brief.brief.name.split('/').__len__()-1])
+            try:
+                fpath = MEDIA_ROOT +'/'+ brief.brief.name
+                fdir, fname = os.path.split(fpath)
+                zip_subdir = str(brief.month)
+                zip_path = os.path.join(zip_subdir, brief.brief.name.split('/')[brief.brief.name.split('/').__len__()-1])
 
 
-                    # zip_path = os.path.join(zip_subdir, fname)
-                    # Add file, at correct path
-                    zf.write(fpath, zip_path)
-                except:
-                    print('Excepcion:algo paso al agregar el archivo', brief.brief.name)
+                # zip_path = os.path.join(zip_subdir, fname)
+                # Add file, at correct path
+                zf.write(fpath, zip_path)
+            except:
+                print('Excepcion:algo paso al agregar el archivo', brief.brief.name)
 
 
         zf.close()
@@ -2936,6 +2936,83 @@ def docx_program_report(request, program_slug):
 
     else:
         return error_500(request,program, 'Solo el Coordinador y el Secretario pueden acceder a la vista de reportes')
+
+@login_required
+def print_edition_courses_registers(request, program_slug, edition_id):
+    program = Program.objects.get(slug=program_slug)
+    edition = ProgramEdition.objects.get(pk=edition_id)
+    if user_is_program_cs(request.user, program):
+        if program.type == 'msc' or program.type == 'dip':
+
+            document = Document()
+
+            for course in Course.objects.filter(program=program, edition=edition):
+                document.add_heading(program.full_name.upper(), level=1)
+                document.add_heading('Acta  de ' + course.name, level=2)
+
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Evaluación'
+                hdr_cells[2].text = 'Firma'
+
+                if program.type == 'msc':
+                    if MscStudent.objects.filter(Q(status='Maestrante')|Q(status='Graduado'),edition=edition):
+
+                        for student in MscStudent.objects.filter(Q(status='Maestrante')|Q(status='Graduado'),edition=edition).order_by('user__last_name'):
+                            row_cells = table.add_row().cells
+                            row_cells[0].text = str(student.user.last_name)+','+student.user.first_name
+                            try:
+                                row_cells[1].text = str(CourseEvaluation.objects.get(course=course, mscstudent=student))
+                            except CourseEvaluation.DoesNotExist:
+                                row_cells[1].text = '   '
+
+                            row_cells[2].text = '   '
+                    else:
+                        document.add_heading('No hay estudiantes en esta edición', level=5)
+
+                elif program.type == 'dip':
+                    if DipStudent.objects.filter(Q(status='Diplomante')|Q(status='Graduado'),edition=edition):
+
+                        for student in DipStudent.objects.filter(Q(status='Diplomante')|Q(status='Graduado'), edition=edition).order_by('user__last_name'):
+                            row_cells = table.add_row().cells
+                            row_cells[0].text = str(student.user.last_name)+','+student.user.first_name
+                            try:
+                                row_cells[1].text = str(CourseEvaluation.objects.get(course=course, dipstudent=student))
+                            except CourseEvaluation.DoesNotExist:
+                                row_cells[1].text = '   '
+                            row_cells[2].text = '   '
+                    else:
+                        document.add_heading('No hay estudiantes en esta edición', level=5)
+
+                document.add_page_break()
+
+
+
+        docname = 'Actas_' + '_' + program.slug.upper() +'_'+str(edition)+'a_ed'+ '.docx'
+        # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
+        docpath = MEDIA_ROOT + '/program_{0}/{1}'.format(program_slug, docname)
+        try:
+            document.save(docpath)
+        except:
+            return error_500(request, program,
+                             "Ha ocurrido un error al intentar guardar el documento solicitado")
+        fs = FileSystemStorage()
+
+        filename = docpath
+
+        if fs.exists(filename):
+
+            with fs.open(filename) as docx:
+                response = HttpResponse(docx, content_type='application/docx')
+                response['Content-Disposition'] = 'attachment; filename="' + docname + '"'
+                return response
+        else:
+            return error_500(request, 'No se ha encontrado el archivo del reporte correspondiente')
+    else:
+        return error_500(request, program, 'En este tipo de programas no se puede exportar las actas.')
+
+
 
 @login_required
 def print_student_evals(request, program_slug, student_id):

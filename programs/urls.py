@@ -44,6 +44,7 @@ urlpatterns = [
     path('editions/<int:edition_id>/edit',views.edit_program_edition, name='edit_program_edition'),
     path('editions/<int:edition_id>/course/create',views.create_edition_course, name='create_edition_course'),
     path('editions/<int:edition_id>/courses',views.edition_courses, name='edition_courses'),
+    path('editions/<int:edition_id>/courses/print',views.print_edition_courses_registers, name='print_edition_courses_registers'),
 
     path('courses/create', views.create_program_course, name='create_program_course'),
     path('courses/list', views.program_courses, name='program_courses'),

@@ -148,10 +148,10 @@
                                             <div class="btn-group" role="group">
                                                 <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
                                                 {% if scope == 'Maestrantes' %}
-                                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.id %}" title="Ver evaluaciones" > <i class="fa fa-check-square"></i></a>
-                                                    <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:evaluate_student' program.slug student.id %}" title="Asignar evaluación"> <i class="fa fa-user-graduate"></i></a>
+                                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.id %}" title="Ver evaluaciones" > <i class="fa fa-user-graduate"></i></a>
+                                                    <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:evaluate_student' program.slug student.id %}" title="Asignar evaluación"> <i class="fa fa-check-square"></i></a>
                                                 {% elif scope == 'Graduados' %}
-                                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.id %}" title="Ver evaluaciones" > <i class="fa fa-check-square"></i></a>
+                                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.id %}" title="Ver evaluaciones" > <i class="fa fa-user-graduate"></i></a>
 
                                                 {% endif %}
                                                 <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_msc_student' program.slug student.edition.id student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>

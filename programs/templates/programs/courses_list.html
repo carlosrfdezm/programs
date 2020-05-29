@@ -42,6 +42,22 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">{% if program.type == 'phd' %}Componentes{% else %}Cursos{% endif %}</h3>
+                        <div class="card-tools">
+                            {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                            {#                                    <i class="fas fa-minus"></i>#}
+                            {#                                </button>#}
+                            {% if program.type != 'phd' %}
+                                <div class="btn-group">
+                                    <a type="button" class="btn btn-tool " href="{% url 'programs:print_edition_courses_registers' program.slug edition.id %}" title="Descargar todas las actas." >
+                                        <i class="fa fa-print"></i>
+                                    </a>
+
+                                </div>
+                            {% endif %}
+                            {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                            {#                    <i class="fas fa-times"></i>#}
+                            {#                  </button>#}
+                        </div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -68,7 +84,7 @@
                                     {% if user_is_program_cs %}
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
-
+                                                <a class="btn btn-primary btn-sm text-white " href="" title="Descargar acta." ><i class="fa fa-print"></i></a>
                                                 <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_program_course' program.slug component.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
                                                 <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_component_{{ component.id }}"><i class="fa fa-eraser"></i></a>
 
