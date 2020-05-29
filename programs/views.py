@@ -1027,18 +1027,14 @@ def ajx_program_member_tuthor(request, program_slug):
     data_response=[]
 
     if request.method == 'POST':
+
         try:
-            user = User.objects.get(username=request.POST['tuthor_email'])
+            member=ProgramMember.objects.get(program=program, user__email=request.POST['tuthor_email'])
             data_response.append(1)
-            data_response.append([ user.first_name, user.last_name ])
-            try:
-                member=ProgramMember.objects.get(program=program, user=user)
-                data_response.append(1)
-                data_response.append([user.first_name, user.last_name, member.institution])
-            except ProgramMember.DoesNotExist:
-                data_response.append(0)
-        except User.DoesNotExist:
+            data_response.append([member.user.first_name, member.user.last_name, member.institution])
+        except ProgramMember.DoesNotExist:
             data_response.append(0)
+
 
     return HttpResponse(
         json.dumps(data_response),

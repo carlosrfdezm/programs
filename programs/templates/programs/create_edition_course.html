@@ -94,6 +94,27 @@
                                         </div>
 
                                     </div>
+                                    <hr>
+                                <h5><strong>Profesores:</strong></h5>
+                                <div class="form-row align-items-center pb-2" id="div_tuthor_1">
+                                    <div class="col-md-3">
+                                        <input type="email" class="form-control" id="inp_prof_email_1" data="1" name="prof_email_1" placeholder="Email del profesor" required></input>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" class="form-control" readonly id="inp_prof_name_1" name="prof_name_1" placeholder="Nombre(s) del profesor" required></input>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly id="inp_prof_lastname_1" name="prof_lastname_1" placeholder="Apellidos del profesor" required></input>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly id="inp_prof_institution_1" name="prof_institution_1" placeholder="Institución del profesor" required></input>
+                                    </div>
+                                    <div class="col-md-1 pl-4 ">
+                                        <button type="button" class="text-white btn btn-sm btn-warning" id="btn_add_prof" title="Agregar profesor"><i class="fa fa-plus"></i> </button>
+                                    </div>
+
+
+                                </div>
 
 
 
@@ -152,6 +173,69 @@
                 timer: 7000
             });
             var edition = 0;
+             $(document).on('keyup', "input[name*='prof_email']", function () {
+                var index = $(this).attr('data');
+                var email = $(this).val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'tuthor_email':email,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0] == 1) {
+
+                                $('#inp_prof_name_'+index).attr('readonly','readonly');
+                                $('#inp_prof_lastname_'+index).attr('readonly','readonly');
+                                $('#inp_prof_institution_'+index).attr('readonly','readonly');
+                                $('#inp_prof_name_'+index).val(json[1][0]);
+                                $('#inp_prof_lastname_'+index).val(json[1][1]);
+                                $('#inp_prof_institution_'+index).val(json[1][2]);
+
+                            } else if(json[0] == 0){
+                                $(this).value('');
+                                $('#inp_prof_name_'+index).attr('value','');
+                                $('#inp_prof_lastname_'+index).attr('value','');
+                                $('#inp_prof_institution_'+index).attr('value','');
+
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No existe miembro del claustro con ese email, debe agregarlo previamente.'
+                                });
+
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                }
+                else{
+                    $('#inp_tuthor_name_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
+
+                }
+            });
 
             $('#slc_edition').change(function () {
                 edition = $(this).val();

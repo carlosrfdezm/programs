@@ -368,6 +368,14 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
+class CourseProfessor(models.Model):
+    professor = models.ForeignKey(ProgramMember, null=True,on_delete=models.SET_NULL)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.professor.user.get_full_name()
+
+
 
 class CourseEvaluation(models.Model):
     phdstudent=models.ForeignKey(PhdStudent,null=True, on_delete=models.CASCADE)
