@@ -3116,18 +3116,21 @@ def evaluate_student(request, program_slug, student_id):
                 student = DipStudent.objects.get(pk=student_id)
 
             pending_courses=[]
-            for course in Course.objects.filter(program=program):
-                if program.type == 'phd':
+
+            if program.type == 'phd':
+                for course in Course.objects.filter(program=program):
                     try:
                         evaluation=CourseEvaluation.objects.get(course=course, phdstudent=student)
                     except CourseEvaluation.DoesNotExist:
                         pending_courses.append(course)
-                elif program.type == 'msc':
+            elif program.type == 'msc':
+                for course in Course.objects.filter(program=program, edition=student.edition):
                     try:
                         evaluation=CourseEvaluation.objects.get(course=course, mscstudent=student)
                     except CourseEvaluation.DoesNotExist:
                         pending_courses.append(course)
-                elif program.type == 'dip':
+            elif program.type == 'dip':
+                for course in Course.objects.filter(program=program, edition=student.edition):
                     try:
                         evaluation=CourseEvaluation.objects.get(course=course, dipstudent=student)
                     except CourseEvaluation.DoesNotExist:
