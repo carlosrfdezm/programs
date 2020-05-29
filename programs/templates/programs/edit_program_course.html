@@ -3,89 +3,186 @@
 {% load extra_tags %}
 
 {% block content %}
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-9">
-                    <h1> Editar componente de {{ program }} </h1>
-                </div>
-                <div class="col-sm-3">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Editar componente</li>
-                    </ol>
-                </div>
-            </div>
-        </div><!-- /.container-fluid -->
-    </section>
-
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <!-- left column -->
-                <div class="col-md-12">
-                    <!-- general form elements -->
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">Componente</h3>
-                        </div>
-                        <!-- /.card-header -->
-                        <!-- form start -->
-                        {% if component %}
-                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_program_course' program.slug component.id %}">
-                            {% csrf_token %}
-                            <div class="card-body">
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label for="inp_name">Nombre del componente:</label>
-                                        <input class="form-control" id="inp_name" name="course_name" value="{{ component.name }}" placeholder="Nombre del componente." maxlength="250" required>
-                                    </div>
-
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label for="txt_description">Descripción:</label>
-                                        <textarea class="form-control" id="txt_description" name="course_description"  placeholder="Descripción del componente" maxlength="500" rows="5" required >{{ component.description }}</textarea>
-                                    </div>
-
-                                </div>
-
-
-                            </div>
-                            <!-- /.card-body -->
-
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                            </div>
-                        </form>
-                        {% else %}
-                            <div class="alert alert-warning">
-                            <h3>No se ha elegido ningún curso.</h3>
-                            </div>>
-                        {% endif %}
+    {% if program.type == 'phd' %}
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-9">
+                        <h1> Editar componente de {{ program }} </h1>
                     </div>
-                    <!-- /.card -->
-
-
-
-                    <!-- /.card -->
-
-                    <!-- Input addon -->
-                    <!-- /.card -->
-                    <!-- Horizontal Form -->
-                    <!-- /.card -->
-
+                    <div class="col-sm-3">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Editar componente</li>
+                        </ol>
+                    </div>
                 </div>
-                <!--/.col (left) -->
-                <!-- right column -->
-                <!--/.col (right) -->
-            </div>
-            <!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- left column -->
+                    <div class="col-md-12">
+                        <!-- general form elements -->
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Componente</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            {% if component %}
+                                <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_program_course' program.slug component.id %}">
+                                    {% csrf_token %}
+                                    <div class="card-body">
+                                        <div class="form-row">
+                                            <div class="form-group col-md-12">
+                                                <label for="inp_name">Nombre del componente:</label>
+                                                <input class="form-control" id="inp_name" name="course_name" value="{{ component.name }}" placeholder="Nombre del componente." maxlength="250" required>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-12">
+                                                <label for="txt_description">Descripción:</label>
+                                                <textarea class="form-control" id="txt_description" name="course_description"  placeholder="Descripción del componente" maxlength="500" rows="5" required >{{ component.description }}</textarea>
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+                                    <!-- /.card-body -->
+
+                                    <div class="card-footer">
+                                        <button type="submit" class="btn btn-primary">Guardar</button>
+                                    </div>
+                                </form>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    <h3>No se ha elegido ningún curso.</h3>
+                                </div>>
+                            {% endif %}
+                        </div>
+                        <!-- /.card -->
+
+
+
+                        <!-- /.card -->
+
+                        <!-- Input addon -->
+                        <!-- /.card -->
+                        <!-- Horizontal Form -->
+                        <!-- /.card -->
+
+                    </div>
+                    <!--/.col (left) -->
+                    <!-- right column -->
+                    <!--/.col (right) -->
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    {% else %}
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-9">
+                        <h1> Editar curso de la {{ edition }}a edición. </h1>
+                    </div>
+                    <div class="col-sm-3">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Editar curso</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- left column -->
+                    <div class="col-md-12">
+                        <!-- general form elements -->
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Curso</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            {% if component %}
+                                <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_program_course' program.slug component.id %}">
+                                    {% csrf_token %}
+                                    <div class="card-body">
+                                        <div class="form-row">
+                                            <div class="form-group col-md-12">
+                                                <label for="inp_name">Nombre del curso:</label>
+                                                <input class="form-control" id="inp_name" name="course_name" value="{{ component.name }}" placeholder="Nombre del componente." maxlength="250" required>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-12">
+                                                <label for="txt_description">Descripción:</label>
+                                                <textarea class="form-control" id="txt_description" name="course_description"  placeholder="Descripción del curso" maxlength="500" rows="5" required >{{ component.description }}</textarea>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-row">
+
+                                        <div class="form-group col-md-6">
+                                            <label for="inp_init_date">Fecha de inicio:</label>
+                                            <input type="date" class="form-control" id="inp_init_date" name="init_date" value="{{ component.init_date|date:'Y-m-d' }}" required>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="inp_end_date">Fecha de fin:</label>
+                                            <input type="date" class="form-control" id="inp_end_date" name="end_date" value="{{ component.end_date|date:'Y-m-d' }}" required >
+                                        </div>
+
+                                    </div>
+
+
+                                    </div>
+                                    <!-- /.card-body -->
+
+                                    <div class="card-footer">
+                                        <button type="submit" class="btn btn-primary">Guardar</button>
+                                    </div>
+                                </form>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    <h3>No se ha elegido ningún curso.</h3>
+                                </div>>
+                            {% endif %}
+                        </div>
+                        <!-- /.card -->
+
+
+
+                        <!-- /.card -->
+
+                        <!-- Input addon -->
+                        <!-- /.card -->
+                        <!-- Horizontal Form -->
+                        <!-- /.card -->
+
+                    </div>
+                    <!--/.col (left) -->
+                    <!-- right column -->
+                    <!--/.col (right) -->
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </section>
+
+    {% endif %}
 {% endblock %}
 {% block extra_scripts %}
     <!-- jQuery -->

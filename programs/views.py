@@ -3040,19 +3040,41 @@ def edit_program_course(request, program_slug, course_id):
 
     if user_is_program_cs(request.user, program):
         if request.method == 'POST':
-            Course.objects.filter(pk=course_id).update(
-                name=request.POST['course_name'],
-                description=request.POST['course_description'],
+            if program.type== 'phd':
+                Course.objects.filter(pk=course_id).update(
+                    name=request.POST['course_name'],
+                    description=request.POST['course_description'],
 
-            )
+                )
 
-            return HttpResponseRedirect(reverse('programs:program_courses', args=[program_slug]))
+                return HttpResponseRedirect(reverse('programs:program_courses', args=[program_slug]))
+            else:
+                Course.objects.filter(pk=course_id).update(
+                    name=request.POST['course_name'],
+                    description=request.POST['course_description'],
+                    init_date = request.POST['init_date'],
+                    end_date = request.POST['end_date'],
+
+                )
+
+
+                return HttpResponseRedirect(reverse('programs:edition_courses', args=[program_slug,Course.objects.get(pk=course_id).edition.id ]))
+
         else:
-            context={
-                'program':program,
-                'member': ProgramMember.objects.get(user=request.user, program=program),
-                'component': Course.objects.get(pk=course_id),
-            }
+            if program.type == 'phd':
+                context={
+                    'program':program,
+                    'member': ProgramMember.objects.get(user=request.user, program=program),
+                    'component': Course.objects.get(pk=course_id),
+                }
+            else:
+                context = {
+                    'program': program,
+                    'member': ProgramMember.objects.get(user=request.user, program=program),
+                    'component': Course.objects.get(pk=course_id),
+                    'edition': Course.objects.get(pk=course_id).edition,
+                }
+
             return render(request, 'programs/edit_program_course.html', context)
     else:
         return error_500(request, program, 'Usted no tiene privilegios para crear componentes en este programa doctoral')
