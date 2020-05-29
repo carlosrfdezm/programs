@@ -2937,6 +2937,93 @@ def docx_program_report(request, program_slug):
     else:
         return error_500(request,program, 'Solo el Coordinador y el Secretario pueden acceder a la vista de reportes')
 
+@login_required
+def print_student_evals(request, program_slug, student_id):
+    program = Program.objects.get(slug=program_slug)
+
+    if program.type == 'phd':
+        student=PhdStudent.objects.get(pk=student_id)
+        student_name=student.student.user.get_full_name()
+    elif program.type == 'msc':
+        student=MscStudent.objects.get(pk=student_id)
+        student_name=student.user.get_full_name()
+
+    elif program.type == 'dip':
+        student=DipStudent.objects.get(pk=student_id)
+        student_name=student.user.get_full_name()
+
+
+    if user_is_program_cs(request.user, program):
+        document = Document()
+
+        document.add_heading(program.full_name.upper(), level=1)
+        document.add_heading('Evaluaciones de '+student_name, level=2)
+
+        if program.type == 'phd':
+            if CourseEvaluation.objects.filter(phdstudent=student, course__program=program):
+                table = document.add_table(rows=1, cols=2)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre del componente'
+                hdr_cells[1].text = 'Evaluación'
+
+                for evaluation in CourseEvaluation.objects.filter(phdstudent=student, course__program=program):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(evaluation.course.name)
+                    row_cells[1].text = str(evaluation.value)
+            else:
+                document.add_heading('No tiene evaluaciones', level=5)
+
+        elif program.type == 'msc':
+            if CourseEvaluation.objects.filter(mscstudent=student, course__program=program, course__edition=student.edition):
+                table = document.add_table(rows=1, cols=2)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre del curso'
+                hdr_cells[1].text = 'Evaluación'
+
+                for evaluation in CourseEvaluation.objects.filter(mscstudent=student, course__program=program, course__edition=student.edition):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(evaluation.course.name)
+                    row_cells[1].text = str(evaluation.value)
+            else:
+                document.add_heading('No tiene evaluaciones', level=5)
+
+        elif program.type == 'dip':
+            if CourseEvaluation.objects.filter(dipstudent=student, course__program=program, course__edition=student.edition):
+                table = document.add_table(rows=1, cols=2)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre del curso'
+                hdr_cells[1].text = 'Evaluación'
+
+                for evaluation in CourseEvaluation.objects.filter(dipstudent=student, course__program=program, course__edition=student.edition):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(evaluation.course.name)
+                    row_cells[1].text = str(evaluation.value)
+            else:
+                document.add_heading('No tiene evaluaciones', level=5)
+
+        docname = 'Evaluaciones_'+slugify(student_name).upper()+'_'+program.slug.upper() + '.docx'
+        # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
+        docpath = MEDIA_ROOT + '/program_{0}/{1}'.format(program_slug, docname)
+        try:
+            document.save(docpath)
+        except:
+            return error_500(request, program, "Ha ocurrido un error al intentar guardar el documento solicitado")
+        fs = FileSystemStorage()
+
+        filename = docpath
+
+        if fs.exists(filename):
+
+            with fs.open(filename) as docx:
+                response = HttpResponse(docx, content_type='application/docx')
+                response['Content-Disposition'] = 'attachment; filename="'+docname+ '"'
+                return response
+        else:
+            return error_500(request, 'No se ha encontrado el archivo del reporte correspondiente')
+
+    else:
+        return error_500(request,program, 'Solo el Coordinador y el Secretario pueden acceder a la vista de reportes')
+
 
 # View para crear componente de programa doctoral
 @login_required
