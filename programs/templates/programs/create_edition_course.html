@@ -176,6 +176,7 @@
              $(document).on('keyup', "input[name*='prof_email']", function () {
                 var index = $(this).attr('data');
                 var email = $(this).val();
+                var id = '#'+$(this).attr('id');
                 var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
                 if(emailReg.test( email ) && email != ''){
                     var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
@@ -191,23 +192,21 @@
 
                             if (json[0] == 1) {
 
-                                $('#inp_prof_name_'+index).attr('readonly','readonly');
-                                $('#inp_prof_lastname_'+index).attr('readonly','readonly');
-                                $('#inp_prof_institution_'+index).attr('readonly','readonly');
                                 $('#inp_prof_name_'+index).val(json[1][0]);
                                 $('#inp_prof_lastname_'+index).val(json[1][1]);
                                 $('#inp_prof_institution_'+index).val(json[1][2]);
 
                             } else if(json[0] == 0){
-                                $(this).value('');
-                                $('#inp_prof_name_'+index).attr('value','');
-                                $('#inp_prof_lastname_'+index).attr('value','');
-                                $('#inp_prof_institution_'+index).attr('value','');
-
                                 Toast.fire({
                                     type: 'error',
                                     title: 'No existe miembro del claustro con ese email, debe agregarlo previamente.'
                                 });
+                                $(id).val('');
+                                $('#inp_prof_name_'+index).val('');
+                                $('#inp_prof_lastname_'+index).val('');
+                                $('#inp_prof_institution_'+index).val('');
+
+
 
 
                             }
