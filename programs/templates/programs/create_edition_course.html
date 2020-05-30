@@ -33,40 +33,32 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
-                    <section id="new_course">
-                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_edition_course' program.slug edition.id %}">
-                            {% csrf_token %}
-                            <div class="card-body">
-                                {% if edition.order != 1 %}
-                                    <div class="form-row" >
-                                        <div class="form-group col-md-6">
-                                            <label for="slc_edition">Importar cursos de ediciones previas:</label>
-                                            <select class="form-control" id="slc_edition" name="edition">
-                                                <option value="" selected>Seleccione una edición</option>
-                                                {% for edition in editions %}
-                                                    <option value="{{ edition.id }}"  >{{ edition }}a edición</option>
+                        <section id="new_course">
+                            <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_edition_course' program.slug edition.id %}">
+                                {% csrf_token %}
+                                <div class="card-body">
+                                    {% if edition.order != 1 %}
+                                        <div class="form-row" id="div_slc_edition" >
+                                            <div class="form-group col-md-6">
+                                                <label for="slc_edition">Importar cursos de ediciones previas:</label>
+                                                <select class="form-control" id="slc_edition" name="edition">
+                                                    <option value="" selected>Seleccione una edición</option>
+                                                    {% for edition in editions %}
+                                                        <option value="{{ edition.id }}"  >{{ edition }}a edición</option>
 
 
 
 
-                                                {% endfor %}
+                                                    {% endfor %}
 
-                                            </select>
-                                        </div>
-
-
-
-                                    </div>
-                                    <div class="form-row invisible" id="div_confirm_import">
-                                        <div class="col-md-6" id="div_confirm_import">
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox" id="chk_import"> Confirme que desea importar cursos
-                                                </label>
+                                                </select>
                                             </div>
+
+
+
                                         </div>
-                                    </div>
-                                {% endif %}
+
+                                    {% endif %}
 
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
@@ -95,40 +87,37 @@
 
                                     </div>
                                     <hr>
-                                <h5><strong>Profesores:</strong></h5>
-                                <div class="form-row align-items-center pb-2" id="div_tuthor_1">
-                                    <div class="col-md-3">
-                                        <input type="email" class="form-control" id="inp_prof_email_1" data="1" name="prof_email_1" placeholder="Email del profesor" required></input>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <input type="text" class="form-control" readonly id="inp_prof_name_1" name="prof_name_1" placeholder="Nombre(s) del profesor" required></input>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="text" class="form-control" readonly id="inp_prof_lastname_1" name="prof_lastname_1" placeholder="Apellidos del profesor" required></input>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="text" class="form-control" readonly id="inp_prof_institution_1" name="prof_institution_1" placeholder="Institución del profesor" required></input>
-                                    </div>
-                                    <div class="col-md-1 pl-4 ">
-                                        <button type="button" class="text-white btn btn-sm btn-warning" id="btn_add_prof" title="Agregar profesor"><i class="fa fa-plus"></i> </button>
+                                    <h5><strong>Profesores:</strong></h5>
+                                    <div class="form-row align-items-center pb-2" id="div_prof_1">
+                                        <div class="col-md-3">
+                                            <input type="email" class="form-control" id="inp_prof_email_1" data="1" name="prof_email_1" placeholder="Email del profesor" required></input>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input type="text" class="form-control" readonly id="inp_prof_name_1" name="prof_name_1" placeholder="Nombre(s) del profesor" required></input>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="text" class="form-control" readonly id="inp_prof_lastname_1" name="prof_lastname_1" placeholder="Apellidos del profesor" required></input>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="text" class="form-control" readonly id="inp_prof_institution_1" name="prof_institution_1" placeholder="Institución del profesor" required></input>
+                                        </div>
+                                        <div class="col-md-1 pl-4 ">
+                                            <button type="button" class="text-white btn btn-sm btn-warning" id="btn_add_prof" title="Agregar profesor"><i class="fa fa-plus"></i> </button>
+                                        </div>
+
+
                                     </div>
 
 
                                 </div>
+                                <!-- /.card-body -->
 
-
-
-
-
-
-                            </div>
-                            <!-- /.card-body -->
-
-                            <div class="card-footer">
-                                <button type="submit" id="btn_save" class="btn btn-primary">Guardar</button>
-                            </div>
-                        </form>
-                    </section>
+                                <div class="card-footer">
+                                    <input type="hidden" id="inp_total_prof" name="total_prof">
+                                    <button type="submit" id="btn_save" class="btn btn-primary">Guardar</button>
+                                </div>
+                            </form>
+                        </section>
                     </div>
                     <!-- /.card -->
 
@@ -172,8 +161,9 @@
                 showConfirmButton: false,
                 timer: 7000
             });
+            var total_prof = 1;
             var edition = 0;
-             $(document).on('keyup', "input[name*='prof_email']", function () {
+            $(document).on('keyup', "input[name*='prof_email']", function () {
                 var index = $(this).attr('data');
                 var email = $(this).val();
                 var id = '#'+$(this).attr('id');
@@ -239,7 +229,20 @@
             $('#slc_edition').change(function () {
                 edition = $(this).val();
                 {#alert(edition);#}
-                $('#div_confirm_import').removeClass('invisible');
+                var div_chk ='<div class="form-row" id="div_confirm_import">\n' +
+                                    '                                            <div class="col-md-6" id="div_confirm_import">\n' +
+                                    '                                                <div class="checkbox">\n' +
+                                    '                                                    <label>\n' +
+                                    '                                                        <input type="checkbox" id="chk_import"> Confirme que desea importar cursos de la edición seleccionada\n' +
+                                    '                                                    </label>\n' +
+                                    '                                                </div>\n' +
+                                    '                                                <p class="text-sm text-gray">Al marcar la casilla se importarán automáticamente los cursos.</p>\n' +
+                                    '\n' +
+                                    '\n' +
+                                    '                                            </div>\n' +
+                                    '\n' +
+                                    '                                        </div>';
+                $(div_chk).insertAfter($('#div_slc_edition'));
 
             });
             $(document).on('click','#chk_import',function (e) {
@@ -266,6 +269,8 @@
 
 
 
+
+
                                 Toast.fire({
                                     type: 'success',
                                     title: 'Cursos importados exitosamente'
@@ -280,6 +285,7 @@
                                 div =div + '</ol></div>'
                                 $('#new_course').replaceWith($(div));
                                 $('#btn_save').remove();
+                                $('#div_prof_1').remove();
 
                             } else if(json[0].imported == 0){
                                 Toast.fire({
@@ -316,6 +322,50 @@
 
                 }
 
+
+            });
+            $(document).on('click','#btn_add_prof', function () {
+                var old_prof = total_prof;
+                total_prof = total_prof+ 1;
+
+
+                $('#inp_total_prof').val(total_prof);
+                var new_prof_div = '<div class="form-row align-items-center pb-2" id="div_prof_'+total_prof+'">\n' +
+                    '                                    <div class="col-md-3">\n' +
+                    '                                        <input type="email" class="form-control" id="inp_prof_email_'+total_prof+'" data="'+total_prof+'" name="prof_email_'+total_prof+'" placeholder="Email del profesor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-2">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_prof_name_'+total_prof+'" name="prof_name_'+total_prof+'" placeholder="Nombre(s) del profesor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-3">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_prof_lastname_'+total_prof+'" name="prof_lastname_'+total_prof+'" placeholder="Apellidos del profesor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-3">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_prof_institution_'+total_prof+'" name="prof_institution_'+total_prof+'" placeholder="Institución del profesor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-1 pl-4 " id="div_rm_prof_'+total_prof+'">\n' +
+                    '                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_prof_'+total_prof+'" data="'+total_prof+'" title="Eliminar profesor"><i class="fa fa-minus"></i> </button>' +
+                    '                                    </div>\n' +
+                    '\n' +
+                    '\n' +
+                    '                                </div>'
+
+                $('#btn_rm_prof_'+old_prof).remove();
+                $(new_prof_div).insertAfter($('#div_prof_'+old_prof))
+            });
+
+            $(document).on('click',"button[id*='btn_rm_tuthor']",function () {
+                var current_index = $(this).attr('data');
+
+                var div_selector = '#div_tuthor_'+ current_index;
+                $(div_selector).remove();
+
+                total_tuthors = total_tuthors -1;
+
+                $('#inp_total_tuthors').val(total_tuthors);
+                $('#div_rm_tuthor_'+total_tuthors).append(
+                    '<button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+total_tuthors+'" ' +
+                    'data="'+total_tuthors+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' )
 
             })
         });
