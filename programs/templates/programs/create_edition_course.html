@@ -102,7 +102,7 @@
                                             <input type="text" class="form-control" readonly id="inp_prof_institution_1" name="prof_institution_1" placeholder="Institución del profesor" required></input>
                                         </div>
                                         <div class="col-md-1 pl-4 ">
-                                            <button type="button" class="text-white btn btn-sm btn-warning" id="btn_add_prof" title="Agregar profesor"><i class="fa fa-plus"></i> </button>
+                                            <button type="button" class="text-white btn btn-sm btn-warning disabled" id="btn_add_prof" title="Agregar profesor"><i class="fa fa-plus"></i> </button>
                                         </div>
 
 
@@ -182,9 +182,24 @@
 
                             if (json[0] == 1) {
 
+
                                 $('#inp_prof_name_'+index).val(json[1][0]);
                                 $('#inp_prof_lastname_'+index).val(json[1][1]);
                                 $('#inp_prof_institution_'+index).val(json[1][2]);
+                                $('#btn_add_prof').removeClass('disabled');
+                                var email_is_on_input = false;
+                                for(var i =0;i< index;i++){
+                                    if($('#inp_prof_email_'+i).val() == email){
+                                        email_is_on_input = true
+                                    }
+                                }
+                                if(email_is_on_input){
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'Al parecer está duplicando el profesor del curso, revise la entrada de correos de profesores.'
+                                    });
+                                    $('#btn_add_prof').addClass('disabled');
+                                }
 
                             } else if(json[0] == 0){
                                 Toast.fire({
@@ -230,18 +245,18 @@
                 edition = $(this).val();
                 {#alert(edition);#}
                 var div_chk ='<div class="form-row" id="div_confirm_import">\n' +
-                                    '                                            <div class="col-md-6" id="div_confirm_import">\n' +
-                                    '                                                <div class="checkbox">\n' +
-                                    '                                                    <label>\n' +
-                                    '                                                        <input type="checkbox" id="chk_import"> Confirme que desea importar cursos de la edición seleccionada\n' +
-                                    '                                                    </label>\n' +
-                                    '                                                </div>\n' +
-                                    '                                                <p class="text-sm text-gray">Al marcar la casilla se importarán automáticamente los cursos.</p>\n' +
-                                    '\n' +
-                                    '\n' +
-                                    '                                            </div>\n' +
-                                    '\n' +
-                                    '                                        </div>';
+                    '                                            <div class="col-md-6" id="div_confirm_import">\n' +
+                    '                                                <div class="checkbox">\n' +
+                    '                                                    <label>\n' +
+                    '                                                        <input type="checkbox" id="chk_import"> Confirme que desea importar cursos de la edición seleccionada\n' +
+                    '                                                    </label>\n' +
+                    '                                                </div>\n' +
+                    '                                                <p class="text-sm text-gray">Al marcar la casilla se importarán automáticamente los cursos.</p>\n' +
+                    '\n' +
+                    '\n' +
+                    '                                            </div>\n' +
+                    '\n' +
+                    '                                        </div>';
                 $(div_chk).insertAfter($('#div_slc_edition'));
 
             });
@@ -327,6 +342,7 @@
             $(document).on('click','#btn_add_prof', function () {
                 var old_prof = total_prof;
                 total_prof = total_prof+ 1;
+                $('#inp_prof_email_'+old_prof).attr('readonly', 'readonly')
 
 
                 $('#inp_total_prof').val(total_prof);
@@ -352,6 +368,7 @@
 
                 $('#btn_rm_prof_'+old_prof).remove();
                 $(new_prof_div).insertAfter($('#div_prof_'+old_prof))
+                $(this).addClass('disabled')
             });
 
             $(document).on('click',"button[id*='btn_rm_tuthor']",function () {
