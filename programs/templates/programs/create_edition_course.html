@@ -371,18 +371,21 @@
                 $(this).addClass('disabled')
             });
 
-            $(document).on('click',"button[id*='btn_rm_tuthor']",function () {
+            $(document).on('click',"button[id*='btn_rm_prof']",function () {
                 var current_index = $(this).attr('data');
 
-                var div_selector = '#div_tuthor_'+ current_index;
+                var div_selector = '#div_prof_'+ current_index;
                 $(div_selector).remove();
 
-                total_tuthors = total_tuthors -1;
+                total_prof = total_prof -1;
 
-                $('#inp_total_tuthors').val(total_tuthors);
-                $('#div_rm_tuthor_'+total_tuthors).append(
-                    '<button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+total_tuthors+'" ' +
-                    'data="'+total_tuthors+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' )
+                $('#inp_total_prof').val(total_prof);
+                $('#div_rm_prof_'+total_prof).append(
+                    '<button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_prof_'+total_prof+'" ' +
+                    'data="'+total_prof+'" title="Eliminar profesor"><i class="fa fa-minus"></i> </button>' );
+                if(total_prof == 1){
+                    $('#btn_add_prof').removeClass('disabled');
+                }
 
             })
         });

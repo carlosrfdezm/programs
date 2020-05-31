@@ -68,6 +68,9 @@
                             <tr>
                                 <th>Nombre</th>
                                 <th class="text-center">Descripción</th>
+                                {% if program.type != 'phd' %}
+                                    <th class="text-center">Profesores</th>
+                                {% endif %}
 
                                 {% if user_is_program_cs %}
                                     <th></th>
@@ -79,6 +82,9 @@
                                 <tr id="tr_component_{{ component.id }}">
                                     <td><p>{{ component.name|truncatewords:10 }}</p> </td>
                                     <td><p class="text-justify">{{ component.description|truncatewords:10 }}</p> </td>
+                                    {% if program.type != 'phd' %}
+                                        <td class="text-left">{{ component.courseprofessor_set.all|unordered_list }}</td>
+                                    {% endif %}
 
 
                                     {% if user_is_program_cs %}

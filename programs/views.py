@@ -24,7 +24,7 @@ from programas.settings import MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
-    ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation
+    ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor
 from programs.templatetags.extra_tags import finish_requirements_accomplished, student_init_requirement_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -3140,6 +3140,13 @@ def create_edition_course(request, program_slug, edition_id):
             )
 
             component.save()
+            for i in range(1,int(request.POST['total_prof'])+1):
+                course_professor = CourseProfessor(
+                    course=component,
+                    professor=ProgramMember.objects.get(program=program, user__email=request.POST['prof_email_'+str(i)])
+                )
+                course_professor.save()
+
             return HttpResponseRedirect(reverse('programs:create_edition_course', args=[program_slug, edition_id]))
         else:
             context={
