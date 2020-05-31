@@ -137,22 +137,63 @@
                                         </div>
                                         <div class="form-row">
 
-                                        <div class="form-group col-md-6">
-                                            <label for="inp_init_date">Fecha de inicio:</label>
-                                            <input type="date" class="form-control" id="inp_init_date" name="init_date" value="{{ component.init_date|date:'Y-m-d' }}" required>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="inp_end_date">Fecha de fin:</label>
-                                            <input type="date" class="form-control" id="inp_end_date" name="end_date" value="{{ component.end_date|date:'Y-m-d' }}" required >
-                                        </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="inp_init_date">Fecha de inicio:</label>
+                                                <input type="date" class="form-control" id="inp_init_date" name="init_date" value="{{ component.init_date|date:'Y-m-d' }}" required>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="inp_end_date">Fecha de fin:</label>
+                                                <input type="date" class="form-control" id="inp_end_date" name="end_date" value="{{ component.end_date|date:'Y-m-d' }}" required >
+                                            </div>
 
-                                    </div>
+                                        </div>
+                                        <hr>
+                                        <div class="form-row">
+                                            <div class="col-md-11">
+                                                <h5><strong>Profesores:</strong></h5>
+                                            </div>
+                                            <div class="col-md-1 pl-4">
+
+                                                <button type="button" class="text-white btn btn-sm btn-warning" id="btn_add_prof" title="Agregar profesor"><i class="fa fa-plus"></i></button>
+                                            </div>
+                                        </div>
+                                        <section id="old_professors">
+                                            {% for professor in component.courseprofessor_set.all %}
+
+                                                <div class="form-row align-items-center pb-2" id="div_prof_{{ forloop.counter }}">
+                                                    <div class="col-md-3">
+                                                        <input type="email" class="form-control" readonly id="inp_prof_email_{{ forloop.counter }}" name="prof_email_{{ forloop.counter }}" value="{{ professor.professor.user.email }}" required>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <input type="text" class="form-control" readonly id="inp_prof_name_{{ forloop.counter }}" name="prof_name_{{ forloop.counter }}" value="{{ professor.professor.user.first_name }}" required>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <input type="text" class="form-control" readonly id="inp_prof_lastname_{{ forloop.counter }}" name="prof_lastname_{{ forloop.counter }}" value="{{ professor.professor.user.last_name }}" required></input>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <input type="text" class="form-control" readonly id="inp_prof_institution_{{ forloop.counter }}" name="prof_institution_{{ forloop.counter }}" value="{{ professor.professor.institution }}" required></input>
+                                                    </div>
+                                                    <div class="col-md-1 pl-4 ">
+
+                                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_prof_{{ forloop.counter }}" title="Eliminar profesor" data="{{ professor.id }}"><i class="fa fa-minus"></i> </button>
+                                                    </div>
+
+
+                                                </div>
+                                            {% endfor %}
+                                        </section>
+                                        <section id="new_professors">
+
+                                        </section>
+
+
 
 
                                     </div>
                                     <!-- /.card-body -->
 
                                     <div class="card-footer">
+                                        <input type="hidden" id="inp_new_prof" name="total_new_prof" value="0">
                                         <button type="submit" class="btn btn-primary">Guardar</button>
                                     </div>
                                 </form>
@@ -198,6 +239,8 @@
 
     <script>
         $(document).ready(function () {
+            var old_professors = {{ component.courseprofessor_set.all.count }};
+            var total_new_prof = 0;
             var today = new Date();
 
             var mm = today.getMonth(); //January is 0!
@@ -217,6 +260,12 @@
 
 
             }
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
 
 
 
@@ -250,6 +299,123 @@
                     }
                 }
 
+            });
+            $(document).on('click','#btn_add_prof', function () {
+                var old_new_prof = total_new_prof;
+                total_new_prof = total_new_prof+ 1;
+                $('#inp_prof_email_'+old_new_prof).attr('readonly', 'readonly')
+
+
+                $('#inp_total_prof').val(total_new_prof);
+                var new_prof_div = '<div class="form-row align-items-center pb-2" id="div_prof_'+total_new_prof+'">\n' +
+                    '                                    <div class="col-md-3">\n' +
+                    '                                        <input type="email" class="form-control" id="inp_new_prof_email_'+total_new_prof+'" data="'+total_new_prof+'" name="prof_email_'+total_new_prof+'" placeholder="Email del profesor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-2">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_new_prof_name_'+total_new_prof+'" name="prof_name_'+total_new_prof+'" placeholder="Nombre(s) del profesor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-3">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_new_prof_lastname_'+total_new_prof+'" name="prof_lastname_'+total_new_prof+'" placeholder="Apellidos del profesor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-3">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_new_prof_institution_'+total_new_prof+'" name="prof_institution_'+total_new_prof+'" placeholder="Institución del profesor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-1 pl-4 " id="div_rm_prof_'+total_new_prof+'">\n' +
+                    '                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_new_prof_'+total_new_prof+'" data="'+total_new_prof+'" title="Eliminar profesor"><i class="fa fa-minus"></i> </button>' +
+                    '                                    </div>\n' +
+                    '\n' +
+                    '\n' +
+                    '                                </div>'
+
+                $('#btn_rm_new_prof_'+old_new_prof).remove();
+                $('#new_professors').append(new_prof_div);
+                $(this).addClass('disabled')
+            });
+            $(document).on('keyup', "input[name*='prof_email']", function () {
+                var index = $(this).attr('data');
+                var email = $(this).val();
+                var id = '#'+$(this).attr('id');
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'tuthor_email':email,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0] == 1) {
+
+
+                                $('#inp_new_prof_name_'+index).val(json[1][0]);
+                                $('#inp_new_prof_lastname_'+index).val(json[1][1]);
+                                $('#inp_new_prof_institution_'+index).val(json[1][2]);
+                                $('#btn_add_prof').removeClass('disabled');
+                                var email_is_on_input = false;
+                                for(var i =1;i< index;i++){
+                                    if($('#inp_new_prof_email_'+i).val() == email){
+                                        email_is_on_input = true
+                                    }
+                                }
+                                for(var i =1;i< old_professors+1;i++){
+                                    if($('#inp_prof_email_'+i).val() == email){
+                                        email_is_on_input = true
+                                    }
+                                }
+                                if(email_is_on_input){
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'Al parecer está duplicando el profesor del curso, revise la entrada de correos de profesores.'
+                                    });
+                                    $(id).val('');
+                                    $('#inp_new_prof_name_'+index).val('');
+                                    $('#inp_new_prof_lastname_'+index).val('');
+                                    $('#inp_new_prof_institution_'+index).val('');
+                                    $('#btn_add_prof').addClass('disabled');
+                                }
+
+                            } else if(json[0] == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No existe miembro del claustro con ese email, debe agregarlo previamente.'
+                                });
+                                $(id).val('');
+                                $('#inp_prof_name_'+index).val('');
+                                $('#inp_prof_lastname_'+index).val('');
+                                $('#inp_prof_institution_'+index).val('');
+
+
+
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                }
+                else{
+                    $('#inp_tuthor_name_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
+
+                }
             });
         });
     </script>
