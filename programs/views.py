@@ -51,6 +51,7 @@ def index(request, program_slug):
 @login_required
 def home(request, program_slug):
     program = Program.objects.get(slug=program_slug)
+    # TODO Verificar lo del user is authenticate
     if program.type == 'phd':
         context = {
             'program': program,
@@ -3223,6 +3224,14 @@ def edit_program_course(request, program_slug, course_id):
                     end_date = request.POST['end_date'],
 
                 )
+                # TODO Agregar lo de profesores
+                if int(request.POST['total_new_prof']) > 0:
+                    for i in range(1,int(request.POST['total_new_prof'])+1):
+                        new_professor = CourseProfessor(
+                            course=Course.objects.get(pk=course_id),
+                            professor=ProgramMember.objects.get(program=program, user__email=request.POST['new_prof_email_'+str(i)])
+                        )
+                        new_professor.save()
 
 
                 return HttpResponseRedirect(reverse('programs:edition_courses', args=[program_slug,Course.objects.get(pk=course_id).edition.id ]))
