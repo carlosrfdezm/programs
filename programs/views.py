@@ -1366,6 +1366,13 @@ def ajx_import_courses(request, program_slug, edition_id):
                     description=course.description,
                 )
                 new_course.save()
+                for professor in course.courseprofessor_set.all():
+                    new_professor = CourseProfessor(
+                        course=new_course,
+                        professor=professor.professor,
+                    )
+                    new_professor.save()
+
                 courses.append(new_course.name)
 
             return HttpResponse(

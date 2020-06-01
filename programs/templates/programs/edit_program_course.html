@@ -362,7 +362,6 @@
                     '\n' +
                     '                                </div>'
 
-                $('#btn_rm_new_prof_'+old_new_prof).remove();
                 $('#new_professors').append(new_prof_div);
                 $(this).addClass('disabled')
             });
@@ -396,11 +395,13 @@
                                         email_is_on_input = true
                                     }
                                 }
-                                for(var i =1;i< old_professors+1;i++){
-                                    if($('#inp_prof_email_'+i).val() == email){
+                                {% for professor in component.courseprofessor_set.all %}
+
+                                    if($("#inp_prof_email_"+{{ professor.id }}).val() == email){
                                         email_is_on_input = true
                                     }
-                                }
+                                {% endfor %}
+
                                 if(email_is_on_input){
                                     Toast.fire({
                                         type: 'error',
@@ -495,6 +496,13 @@
                                     type: 'success',
                                     title: 'Profesor eliminado exitosamente'
                                 });
+                                old_professors = old_professors-1;
+                                if(old_professors==0){
+                                    $('#old_professors').append('<div class="alert alert-info col-md-10 offset-1" id="div_not_prof">\n' +
+                                        '                                                    <h5 class="text-center"> Este curso no tiene profesores, por favor agregue al menos uno</h5>\n' +
+                                        '                                                </div>');
+
+                                }
 
                             } else if(json[0].deleted == 0){
                                 Toast.fire({
