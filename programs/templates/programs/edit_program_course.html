@@ -160,27 +160,61 @@
                                         <section id="old_professors">
                                             {% for professor in component.courseprofessor_set.all %}
 
-                                                <div class="form-row align-items-center pb-2" id="div_prof_{{ forloop.counter }}">
+                                                <div class="form-row align-items-center pb-2" id="div_prof_{{ professor.id }}">
                                                     <div class="col-md-3">
-                                                        <input type="email" class="form-control" readonly id="inp_prof_email_{{ forloop.counter }}" name="prof_email_{{ forloop.counter }}" value="{{ professor.professor.user.email }}" required>
+                                                        <input type="email" class="form-control" readonly id="inp_prof_email_{{ professor.id }}" name="prof_email_{{ professor.id }}" value="{{ professor.professor.user.email }}" required>
                                                     </div>
                                                     <div class="col-md-2">
-                                                        <input type="text" class="form-control" readonly id="inp_prof_name_{{ forloop.counter }}" name="prof_name_{{ forloop.counter }}" value="{{ professor.professor.user.first_name }}" required>
+                                                        <input type="text" class="form-control" readonly id="inp_prof_name_{{ professor.id }}" name="prof_name_{{ professor.id }}" value="{{ professor.professor.user.first_name }}" required>
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <input type="text" class="form-control" readonly id="inp_prof_lastname_{{ forloop.counter }}" name="prof_lastname_{{ forloop.counter }}" value="{{ professor.professor.user.last_name }}" required></input>
+                                                        <input type="text" class="form-control" readonly id="inp_prof_lastname_{{ professor.id }}" name="prof_lastname_{{ professor.id }}" value="{{ professor.professor.user.last_name }}" required></input>
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <input type="text" class="form-control" readonly id="inp_prof_institution_{{ forloop.counter }}" name="prof_institution_{{ forloop.counter }}" value="{{ professor.professor.institution }}" required></input>
+                                                        <input type="text" class="form-control" readonly id="inp_prof_institution_{{ professor.id }}" name="prof_institution_{{ professor.id }}" value="{{ professor.professor.institution }}" required></input>
                                                     </div>
                                                     <div class="col-md-1 pl-4 ">
 
-                                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_prof_{{ forloop.counter }}" title="Eliminar profesor" data="{{ professor.id }}"><i class="fa fa-minus"></i> </button>
+                                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_{{ professor.id }}" title="Eliminar profesor" data-toggle="modal" data-target="#modal_rm_prof_{{ professor.id }}"><i class="fa fa-minus"></i> </button>
                                                     </div>
+                                                </div>
+                                                <div class="modal fade" id="modal_rm_prof_{{ professor.id }}">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title">Eliminar profesor</h4>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-2">
+                                                                        <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
 
+                                                                    </div>
+                                                                    <div class="col-md-10">
+                                                                        <p class="text-center">¿Seguro que desea eliminar a:<br><strong>{{ professor }}</strong>
+                                                                            <br> de la lista de profesores de este curso?</p>
+                                                                    </div>
+                                                                </div>
 
+                                                            </div>
+                                                            <div class="modal-footer justify-content-between">
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                                <button type="button" class="btn btn-danger" data-dismiss="modal" data="{{ professor.id }}" id="btn_rm_prof_{{ professor.id }}">Eliminar</button>
+                                                            </div>
+                                                        </div>
+                                                        <!-- /.modal-content -->
+                                                    </div>
+                                                    <!-- /.modal-dialog -->
                                                 </div>
                                             {% endfor %}
+                                            {% if not component.courseprofessor_set.all %}
+                                                <div class="alert alert-info col-md-10 offset-1" id="div_not_prof">
+                                                    <h5 class="text-center"> Este curso no tiene profesores, por favor agregue al menos uno</h5>
+                                                </div>
+                                            {% endif %}
                                         </section>
                                         <section id="new_professors">
 
@@ -303,11 +337,12 @@
             $(document).on('click','#btn_add_prof', function () {
                 var old_new_prof = total_new_prof;
                 total_new_prof = total_new_prof+ 1;
-                $('#inp_prof_email_'+old_new_prof).attr('readonly', 'readonly')
+                $('#inp_prof_email_'+old_new_prof).attr('readonly', 'readonly');
+                $('#div_not_prof').remove();
 
 
                 $('#inp_new_prof').val(total_new_prof);
-                var new_prof_div = '<div class="form-row align-items-center pb-2" id="div_prof_'+total_new_prof+'">\n' +
+                var new_prof_div = '<div class="form-row align-items-center pb-2" id="div_new_prof_'+total_new_prof+'">\n' +
                     '                                    <div class="col-md-3">\n' +
                     '                                        <input type="email" class="form-control" id="inp_new_prof_email_'+total_new_prof+'" data="'+total_new_prof+'" name="new_prof_email_'+total_new_prof+'" placeholder="Email del profesor" required="">\n' +
                     '                                    </div>\n' +
@@ -417,6 +452,84 @@
 
                 }
             });
+            $(document).on('click',"button[id*='btn_rm_new_prof']",function () {
+                var current_index = $(this).attr('data');
+
+                var div_selector = '#div_new_prof_'+ current_index;
+                $(div_selector).remove();
+
+                total_new_prof = total_new_prof -1;
+
+                $('#inp_total_new_prof').val(total_new_prof);
+                if(old_professors+total_new_prof == 0){
+                    $('#new_professors').append('<div class="alert alert-info col-md-10 offset-1" id="div_not_prof">\n' +
+                        '                                                    <h5 class="text-center"> Este curso no tiene profesores, por favor agregue al menos uno</h5>\n' +
+                        '                                                </div>')
+
+                }
+                $('#btn_add_prof').removeClass('disabled');
+
+
+            });
+            $(document).on('click',"button[id*='btn_rm_prof_']",function () {
+                    var professor_id=$(this).attr('data');
+                    var url = "{% url 'programs:ajx_delete_course_professor' program.slug %}";
+
+                    {#$('#modal_rm_line_{{ line.id }}').modal('hide');#}
+
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'professor_id':professor_id,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].deleted == 1) {
+
+                                $('#div_prof_'+professor_id).remove();
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Profesor eliminado exitosamente'
+                                });
+
+                            } else if(json[0].deleted == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar el profesor seleccionado.'
+                                })
+
+                            }
+                            else if(json[0].deleted == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Usted no tiene privilegios para eliminar el profesor seleccionado.'
+                                })
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
+                });
         });
     </script>
 {% endblock %}
