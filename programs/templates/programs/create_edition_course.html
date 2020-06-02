@@ -54,8 +54,6 @@
                                                 </select>
                                             </div>
 
-
-
                                         </div>
 
                                     {% endif %}
@@ -243,9 +241,9 @@
 
             $('#slc_edition').change(function () {
                 edition = $(this).val();
-                {#alert(edition);#}
+                $('#div_confirm_import').remove();
                 var div_chk ='<div class="form-row" id="div_confirm_import">\n' +
-                    '                                            <div class="col-md-6" id="div_confirm_import">\n' +
+                    '                                            <div class="col-md-5" >\n' +
                     '                                                <div class="checkbox">\n' +
                     '                                                    <label>\n' +
                     '                                                        <input type="checkbox" id="chk_import"> Confirme que desea importar cursos de la edición seleccionada\n' +
@@ -256,6 +254,7 @@
                     '\n' +
                     '                                            </div>\n' +
                     '\n' +
+                        '<div class="col-md-1 align-left"><button class="btn btn-sm btn-danger" id="btn_cancel_import" type="button">Cancelar</button></div>'+
                     '                                        </div>';
                 $(div_chk).insertAfter($('#div_slc_edition'));
 
@@ -386,6 +385,11 @@
                 if(total_prof == 1){
                     $('#btn_add_prof').removeClass('disabled');
                 }
+
+            });
+            $(document).on('click','#btn_cancel_import', function () {
+                $('#div_confirm_import').remove();
+                $('#slc_edition').val('')
 
             })
         });

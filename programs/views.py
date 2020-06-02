@@ -841,7 +841,6 @@ def create_professor(request, program_slug):
                             professor.save()
                         except:
                             pass
-                        # TODO: enviar email al profesor creado
                         return HttpResponseRedirect(reverse('programs:members_list', args=[program_slug, 'all']))
                     except:
                         pass
@@ -894,7 +893,6 @@ def create_professor(request, program_slug):
                         professor.save()
                     except:
                         pass
-                    # TODO: enviar email al profesor creado
                     return HttpResponseRedirect(reverse('programs:members_list', args=[program_slug, 'all']))
                 except:
                     pass
@@ -3261,7 +3259,6 @@ def edit_program_course(request, program_slug, course_id):
                     end_date = request.POST['end_date'],
 
                 )
-                # TODO Agregar lo de profesores
                 if int(request.POST['total_new_prof']) > 0:
                     for i in range(1,int(request.POST['total_new_prof'])+1):
                         new_professor = CourseProfessor(
