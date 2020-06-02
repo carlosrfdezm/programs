@@ -3049,6 +3049,88 @@ def print_edition_courses_registers(request, program_slug, edition_id):
     else:
         return error_500(request, program, 'En este tipo de programas no se puede exportar las actas.')
 
+@login_required
+def print_course_register(request, program_slug, course_id):
+    program = Program.objects.get(slug=program_slug)
+    course = Course.objects.get(pk=course_id)
+
+    if user_is_program_cs(request.user, program):
+        if program.type == 'msc' or program.type == 'dip':
+            edition = course.edition
+
+            document = Document()
+            document.add_heading(program.full_name.upper(), level=1)
+            document.add_heading('Acta  de ' + course.name, level=2)
+
+            table = document.add_table(rows=1, cols=3)
+            hdr_cells = table.rows[0].cells
+            hdr_cells[0].text = 'Nombre y apellidos'
+            hdr_cells[1].text = 'Evaluación'
+            hdr_cells[2].text = 'Firma'
+
+            if program.type == 'msc':
+                if MscStudent.objects.filter(Q(status='Maestrante') | Q(status='Graduado'), edition=edition):
+
+                    for student in MscStudent.objects.filter(Q(status='Maestrante') | Q(status='Graduado'),
+                                                             edition=edition).order_by('user__last_name'):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.last_name) + ',' + student.user.first_name
+                        try:
+                            row_cells[1].text = str(CourseEvaluation.objects.get(course=course, mscstudent=student))
+                        except CourseEvaluation.DoesNotExist:
+                            row_cells[1].text = '   '
+
+                        row_cells[2].text = '   '
+                else:
+                    document.add_heading('No hay estudiantes en esta edición', level=5)
+
+            elif program.type == 'dip':
+                if DipStudent.objects.filter(Q(status='Diplomante') | Q(status='Graduado'), edition=edition):
+
+                    for student in DipStudent.objects.filter(Q(status='Diplomante') | Q(status='Graduado'),
+                                                             edition=edition).order_by('user__last_name'):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.last_name) + ',' + student.user.first_name
+                        try:
+                            row_cells[1].text = str(CourseEvaluation.objects.get(course=course, dipstudent=student))
+                        except CourseEvaluation.DoesNotExist:
+                            row_cells[1].text = '   '
+                        row_cells[2].text = '   '
+                else:
+                    document.add_heading('No hay estudiantes en esta edición', level=5)
+
+            for professor in course.courseprofessor_set.all():
+                document.add_paragraph('')
+                document.add_paragraph('__________________________')
+                document.add_paragraph(professor.professor.user.get_full_name())
+
+            document.add_page_break()
+
+        docname = 'Acta_' +slugify(course.name).upper()+ '_' + program.slug.upper() + '_' + str(edition) + 'a_ed' + '.docx'
+        # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
+        docpath = MEDIA_ROOT + '/program_{0}/{1}'.format(program_slug, docname)
+        try:
+            document.save(docpath)
+        except:
+            return error_500(request, program,
+                             "Ha ocurrido un error al intentar guardar el documento solicitado")
+        fs = FileSystemStorage()
+
+        filename = docpath
+
+        if fs.exists(filename):
+
+            with fs.open(filename) as docx:
+                response = HttpResponse(docx, content_type='application/docx')
+                response['Content-Disposition'] = 'attachment; filename="' + docname + '"'
+                return response
+        else:
+            return error_500(request, 'No se ha encontrado el archivo del reporte correspondiente')
+    else:
+        return error_500(request, program, 'En este tipo de programas no se puede exportar las actas.')
+
+
+
 
 
 @login_required

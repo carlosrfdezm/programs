@@ -49,6 +49,7 @@ urlpatterns = [
     path('courses/create', views.create_program_course, name='create_program_course'),
     path('courses/list', views.program_courses, name='program_courses'),
     path('courses/<int:course_id>/edit', views.edit_program_course, name='edit_program_course'),
+    path('courses/<int:course_id>/print/register', views.print_course_register, name='print_course_register'),
 
 
     path('ajx/user/exists', views.ajx_usr_exists, name='ajx_usr_exists'),
