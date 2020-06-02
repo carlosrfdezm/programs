@@ -90,7 +90,9 @@
                                     {% if user_is_program_cs %}
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
-                                                <a class="btn btn-primary btn-sm text-white " href="{% url 'programs:print_course_register' program.slug component.id %}" title="Descargar acta." ><i class="fa fa-print"></i></a>
+                                                {% if not program.type == 'phd' %}
+                                                    <a class="btn btn-primary btn-sm text-white " href="{% url 'programs:print_course_register' program.slug component.id %}" title="Descargar acta." ><i class="fa fa-print"></i></a>
+                                                {% endif %}
                                                 <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_program_course' program.slug component.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
                                                 <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_component_{{ component.id }}"><i class="fa fa-eraser"></i></a>
 
