@@ -3017,6 +3017,11 @@ def print_edition_courses_registers(request, program_slug, edition_id):
                     else:
                         document.add_heading('No hay estudiantes en esta edición', level=5)
 
+                for professor in course.courseprofessor_set.all():
+                    document.add_paragraph('')
+                    document.add_paragraph('__________________________')
+                    document.add_paragraph(professor.professor.user.get_full_name())
+
                 document.add_page_break()
 
 
