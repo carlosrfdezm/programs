@@ -25,6 +25,8 @@ urlpatterns = [
     path('msc/edition/<int:edition_id>/students/<str:scope>/list', views.msc_edition_students_list, name='msc_edition_students_list'),
     path('msc/students/<str:scope>/list', views.msc_all_students_list, name='msc_all_students_list'),
 
+    path('dip/<int:edition_id>/students/create', views.create_dip_student, name='create_dip_student'),
+
     path('professors/create', views.create_professor, name='create_professor'),
     path('professors/<int:member_id>/edit', views.edit_member, name='edit_member'),
     path('professors/<int:member_id>/picture', views.program_member_picture, name='program_member_picture'),

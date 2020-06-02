@@ -446,6 +446,88 @@ def create_msc_student(request, program_slug, edition_id):
     else:
         return HttpResponse('Error, acceso solo a coordinadores y secretarios')
 
+@login_required
+def create_dip_student(request, program_slug, edition_id):
+    program=Program.objects.get(slug=program_slug)
+    edition = ProgramEdition.objects.get(pk = edition_id)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            try:
+                user = User.objects.get(email=request.POST['student_email'])
+                try:
+                    student = DipStudent.objects.get(user=user, program=program)
+                    return error_500(request, program, 'Estudiante matriculado previamente en el programa')
+                except DipStudent.DoesNotExist:
+                    #Se crea el MscStudent
+
+                    student = DipStudent(
+                        user=user,
+                        edition=edition,
+                        program=program,
+                        gender=request.POST['gender'],
+                        dni=request.POST['student_dni'],
+                        birth_date=request.POST['student_birth_date'],
+                        country=request.POST['student_country']
+                    )
+                    student.save()
+
+                    utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
+
+                    try:
+                        student.picture = request.FILES['picture']
+                        student.save()
+
+                    except:
+                        pass
+
+                    return HttpResponseRedirect(reverse('programs:create_msc_student', args=[program_slug, edition_id]))
+
+
+            except User.DoesNotExist:
+                passwd = program_slug + str(random.randint(1000000, 9999999))
+                user = User.objects.create_user(
+                    request.POST['student_email'],
+                    request.POST['student_email'],
+                    passwd,  # Cambiar despues por contrase;a generada
+
+                )
+                user.first_name = request.POST['student_name']
+                user.last_name = request.POST['student_surename']
+                user.save()
+
+            student = DipStudent(
+                user=user,
+                edition=edition,
+                program=program,
+                gender=request.POST['gender'],
+                dni=request.POST['student_dni'],
+                birth_date=request.POST['student_birth_date'],
+                country=request.POST['student_country']
+            )
+            student.save()
+
+            utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+
+            try:
+                student.picture=request.FILES['picture']
+                student.save()
+
+            except:
+                pass
+
+            return HttpResponseRedirect(reverse('programs:create_dip_student', args=[program_slug, edition_id]))
+        else:
+            context = {
+                'program': program,
+                'edition': edition,
+            }
+            if program.type == 'dip':
+                return render(request, 'programs/create_dip_student.html', context)
+            else:
+                return HttpResponse('El programa no es un diplomado')
+    else:
+        return HttpResponse('Error, acceso solo a coordinadores y secretarios')
+
 
 @login_required
 def students_list(request, program_slug, scope):
@@ -1039,6 +1121,16 @@ def ajx_student_exists(request,program_slug):
                 )
 
             except MscStudent.DoesNotExist:
+                pass
+        elif program.type == 'dip':
+            try:
+                student = DipStudent.objects.get(user__username=request.POST['email'],program=program)
+                return HttpResponse(
+                    json.dumps([{'exists': 1}]),
+                    content_type="application/json"
+                )
+
+            except DipStudent.DoesNotExist:
                 pass
     else:
         return HttpResponse(
