@@ -49,7 +49,7 @@ def mylogin(request):
     program = Program.objects.get(slug=program_slug)
     user = authenticate(request, username=username, password=password)
     if user is None:
-        return render(request, 'log/login_error.html', {'error_message':
+        return render(request, 'log/login_error.html', {'program':program,'error_message':
                                                             'El nombre de usuario introducido no existe o la contraseña es incorrecta'})
 
 

@@ -102,6 +102,30 @@ def home(request, program_slug):
                 raise Http404('No hay profesor o estudiante de este programa con ese usuario')
 
         return render(request, 'programs/msc_home.html', context)
+    elif program.type == 'dip':
+        context = {
+            'program': program,
+            'requesters': DipStudent.objects.filter(program=program, status='solicitante').__len__(),
+            'diplomantes': DipStudent.objects.filter(program=program, status='diplomante').__len__(),
+            'graduated': DipStudent.objects.filter(program=program, status='graduado').__len__(),
+            'last_requesters': DipStudent.objects.filter(program=program, status='solicitante').order_by(
+                '-request_date')[:4],
+            'last_aproved': DipStudent.objects.filter(program=program, status='diplomante').order_by('-init_date')[:4],
+            'last_graduated': DipStudent.objects.filter(program=program, status='graduado').order_by('-graduate_date')[
+                              :4],
+
+        }
+        try:
+            context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+        except ProgramMember.DoesNotExist:
+            try:
+                context['student'] = DipStudent.objects.get(user=request.user, program=program)
+            except DipStudent.DoesNotExist:
+                logout(request)
+                raise Http404('No hay profesor o estudiante de este programa con ese usuario')
+
+        return render(request, 'programs/dip_home.html', context)
+
     else:
         pass
 
