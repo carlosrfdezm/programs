@@ -52,10 +52,10 @@
                                         <i class="fas fa-wrench"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                        <a href="" class="dropdown-item">Solicitantes</a>
-                                        <a href="" class="dropdown-item">Diplomantes</a>
-                                        <a href="" class="dropdown-item">Graduados</a>
-                                        <a href="" class="dropdown-item">Todos</a>
+                                        <a href="{% url 'programs:dip_edition_students_list' program.slug edition.id 'requesters' %}" class="dropdown-item">Solicitantes</a>
+                                        <a href="{% url 'programs:dip_edition_students_list' program.slug edition.id 'aproved' %}" class="dropdown-item">Diplomantes</a>
+                                        <a href="{% url 'programs:dip_edition_students_list' program.slug edition.id 'graduated' %}" class="dropdown-item">Graduados</a>
+                                        <a href="{% url 'programs:dip_edition_students_list' program.slug edition.id 'all' %}" class="dropdown-item">Todos</a>
 
                                     </div>
                                 </div>

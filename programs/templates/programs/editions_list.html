@@ -95,7 +95,7 @@
                                                 {% elif program.type == 'dip' %}
                                                     <a class="btn btn-primary btn-sm text-white" href="{% url 'programs:create_dip_student' program.slug edition.id %}" title="Agregar estudiante"> <i class="fa fa-user-plus"></i></a>
                                                     <a class="btn btn-primary btn-sm text-white" href="{% url 'programs:create_edition_course' program.slug edition.id %}" title="Agregar curso"> <i class="fa fa-graduation-cap"></i></a>
-                                                    <a class="btn btn-success btn-sm text-white" href="" title="Ver estudiantes de esta edición"> <i class="fa fa-users"></i></a>
+                                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:dip_edition_students_list' program.slug edition.id 'all' %}" title="Ver estudiantes de esta edición"> <i class="fa fa-users"></i></a>
                                                     <a class="btn btn-success btn-sm text-white" href="{% url 'programs:edition_courses' program.slug edition.id %}" title="Ver cursos de esta edición"> <i class="fa fa-th-list"></i></a>
                                                     <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_program_edition' program.slug edition.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
                                                     <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_edition_{{ edition.id }}"><i class="fa fa-eraser"></i></a>

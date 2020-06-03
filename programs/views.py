@@ -637,6 +637,48 @@ def msc_edition_students_list(request, program_slug, edition_id, scope):
 
     else:
         return error_500(request, program, 'Usted no tiene acceso a esta página')
+    
+@login_required
+def dip_edition_students_list(request, program_slug, edition_id, scope):
+    program=Program.objects.get(slug=program_slug)
+    edition=ProgramEdition.objects.get(pk=edition_id)
+    if user_is_program_member(request.user, program) or user_is_program_student(request.user,program):
+        if program.type == 'dip':
+            if scope == 'all':
+                context = {
+                    'program': program,
+                    'students': DipStudent.objects.filter(program=program, edition=edition),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'all',
+                }
+            elif scope == 'requesters':
+                context = {
+                    'program': program,
+                    'students': DipStudent.objects.filter(program=program, edition=edition, status='solicitante'),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'Solicitantes',
+                }
+            elif scope == 'aproved':
+                context = {
+                    'program': program,
+                    'students': DipStudent.objects.filter(program=program, edition=edition, status='diplomante'),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'Maestrantes',
+                }
+            elif scope == 'graduated':
+                context = {
+                    'program': program,
+                    'students': DipStudent.objects.filter(program=program, edition=edition, status='graduado'),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'Graduados',
+                }
+
+            return render(request, 'programs/dip_students_list.html', context)
+        else:
+            return error_500(request, program, 'El programa debe ser un diplomadoa')
+
+    else:
+        return error_500(request, program, 'Usted no tiene acceso a esta página')
 
 @login_required
 def msc_all_students_list(request, program_slug, scope):
