@@ -1707,7 +1707,10 @@ def ajx_this_year_requests(request, program_slug):
             data_1.append(MscStudent.objects.filter(program=program,request_date__year=now().year, request_date__month=i).__len__())
             data_2.append(MscStudent.objects.filter(program=program, init_date__year=now().year, init_date__month=i).__len__())
         elif program.type == 'dip':
-            pass
+            data_1.append(DipStudent.objects.filter(program=program, request_date__year=now().year,
+                                                    request_date__month=i).__len__())
+            data_2.append(
+                DipStudent.objects.filter(program=program, init_date__year=now().year, init_date__month=i).__len__())
 
     data.append(data_1)
     data.append(data_2)
@@ -2234,7 +2237,13 @@ def ajx_students_by_state(request, program_slug):
         response_data.append(labels)
         response_data.append(data)
     elif program.type == 'dip':
-        return HttpResponse('Aun no esta listo este tipo de programa')
+        labels = ['Graduados', 'Solicitantes', 'Diplomantes']
+        data.append(DipStudent.objects.filter(program=program, status='graduado').__len__())
+        data.append(DipStudent.objects.filter(program=program, status='solicitante').__len__())
+        data.append(DipStudent.objects.filter(program=program, status='diplomante').__len__())
+
+        response_data.append(labels)
+        response_data.append(data)
 
     return HttpResponse(
         json.dumps(response_data),
