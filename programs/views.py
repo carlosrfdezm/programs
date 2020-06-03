@@ -2211,7 +2211,9 @@ def ajx_student_personal_msg(request, program_slug ):
                           [MscStudent.objects.get(pk=request.POST['student_id']).user.email, 'boris_perez@unah.edu.cu'],
                           fail_silently=False, html_message=request.POST['msg_body'])
             elif program.type == 'dip':
-                pass
+                send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
+                          [DipStudent.objects.get(pk=request.POST['student_id']).user.email, 'boris_perez@unah.edu.cu'],
+                          fail_silently=False, html_message=request.POST['msg_body'])
 
             return HttpResponse(
                 json.dumps([{'sended': 1}]),
