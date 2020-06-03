@@ -2091,7 +2091,12 @@ def ajx_students_by_age(request, program_slug):
                                               birth_date__year__lt=now().year - 40).__len__())
         data.append(MscStudent.objects.filter(program=program, birth_date__year__lte=now().year - 50).__len__())
     elif program.type == 'dip':
-        pass
+        data.append(DipStudent.objects.filter(program=program, birth_date__year__gte=now().year - 30).__len__())
+        data.append(DipStudent.objects.filter(program=program, birth_date__year__gte=now().year - 40,
+                                              birth_date__year__lt=now().year - 30).__len__())
+        data.append(DipStudent.objects.filter(program=program, birth_date__year__gte=now().year - 50,
+                                              birth_date__year__lt=now().year - 40).__len__())
+        data.append(DipStudent.objects.filter(program=program, birth_date__year__lte=now().year - 50).__len__())
 
 
     response_data.append(labels)
@@ -2281,7 +2286,20 @@ def ajx_students_massive_msg(request, program_slug ):
                     for student in MscStudent.objects.filter(program=program):
                         email_list.append(student.user.email)
             elif program.type == 'dip':
-                pass
+                if request.POST['msg_scope'] == 'requesters':
+                    for student in DipStudent.objects.filter(program=program, status='solicitante'):
+                        email_list.append(student.user.email)
+                elif request.POST['msg_scope'] == 'aproved':
+                    for student in DipStudent.objects.filter(program=program, status='diplomante'):
+                        email_list.append(student.user.email)
+
+                elif request.POST['msg_scope'] == 'graduated':
+                    for student in DipStudent.objects.filter(program=program, status='graduado'):
+                        email_list.append(student.user.email)
+
+                elif request.POST['msg_scope'] == 'all':
+                    for student in DipStudent.objects.filter(program=program):
+                        email_list.append(student.user.email)
 
             if email_list.__len__()<=10:
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
