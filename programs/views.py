@@ -935,6 +935,89 @@ def edit_msc_student(request, program_slug, edition_id, student_id):
         return error_500(request,program,'Usted no tiene privilegios para editar estudiantes de este programa.')
 
 
+
+@login_required
+def edit_dip_student(request, program_slug, edition_id, student_id):
+    program= Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            user=DipStudent.objects.get(pk=student_id).user
+            user.first_name=request.POST['student_name']
+            user.last_name=request.POST['student_surename']
+            user.email=request.POST['student_email']
+            user.save()
+
+            DipStudent.objects.filter(pk=student_id).update(
+                phone=request.POST['student_phone'],
+                country=request.POST['student_country'],
+                gender=request.POST['gender'],
+                dni=request.POST['student_dni'],
+                birth_date=request.POST['student_birth_date']
+
+            )
+            if 'request_date' in request.POST and not request.POST['request_date'] == '':
+                DipStudent.objects.filter(pk=student_id).update(
+                    request_date=request.POST['request_date']
+                )
+            if 'init_date' in request.POST and not request.POST['init_date'] == '':
+                DipStudent.objects.filter(pk=student_id).update(
+                    init_date=request.POST['init_date']
+                )
+            if 'graduate_date' in request.POST and not request.POST['graduate_date'] == '':
+                DipStudent.objects.filter(pk=student_id).update(
+                    graduate_date=request.POST['graduate_date']
+                )
+
+            DipStudent.objects.filter(pk=student_id).update(
+                status=request.POST['student_status']
+            )
+
+
+
+            try:
+                if request.FILES['student_picture']:
+                    student=DipStudent.objects.get(pk=student_id)
+                    student.picture=request.FILES['student_picture']
+                    student.save()
+            except:
+                pass
+
+            # for requirement in ProgramInitRequirements.objects.filter(program=program):
+            #     if 'student_requirement_' + str(requirement.id) in request.POST:
+            #         s_i_r=StudentInitRequirement.objects.get(msc_student=MscStudent.objects.get(pk=student_id), requirement=requirement)
+            #         s_i_r.accomplished=True
+            #         s_i_r.save()
+            #     else:
+            #         s_i_r = StudentInitRequirement.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
+            #                                                    requirement=requirement)
+            #         s_i_r.accomplished = False
+            #         s_i_r.save()
+            # for requirement in ProgramFinishRequirements.objects.filter(program=program):
+            #     if 'student_f_requirement_' + str(requirement.id) in request.POST:
+            #         s_f_r=StudentFinishRequirement.objects.get(msc_student=MscStudent.objects.get(pk=student_id), requirement=requirement)
+            #         s_f_r.accomplished=True
+            #         s_f_r.save()
+            #     else:
+            #         s_f_r = StudentFinishRequirement.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
+            #                                                      requirement=requirement)
+            #         s_f_r.accomplished = False
+            #         s_f_r.save()
+
+            return HttpResponseRedirect(reverse('programs:dip_all_students_list', args=[program_slug,'all']))
+        else:
+            context = {
+                'program': program,
+                'edition': ProgramEdition.objects.get(pk=edition_id),
+                'student': DipStudent.objects.get(pk=student_id),
+                # 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
+                # 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
+                # 'projects': InvestigationProject.objects.filter(program=program),
+            }
+            return render(request, 'programs/edit_dip_student.html', context)
+    else:
+        return error_500(request,program,'Usted no tiene privilegios para editar estudiantes de este programa.')
+
+
 def error_500(request, program, error_message):
     context={
         'program':program,
@@ -2357,7 +2440,7 @@ def program_student_picture(request, program_slug, student_id):
     elif program.type == 'msc':
         filename = MscStudent.objects.get(pk=student_id).picture.url
     elif program.type == 'dip':
-        pass
+        filename = DipStudent.objects.get(pk=student_id).picture.url
 
     if fs.exists(filename):
         with fs.open(filename) as img:
