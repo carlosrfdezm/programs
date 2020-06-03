@@ -30,7 +30,7 @@
 
                         <div class="info-box-content">
 
-                                <span class="info-box-text"><a href="">Solicitantes</a></span>
+                                <span class="info-box-text"><a href="{% url 'programs:dip_all_students_list' program.slug 'requesters' %}">Solicitantes</a></span>
 
                             <span class="info-box-number">
                   {{ requesters }}
@@ -47,7 +47,7 @@
 
 
                             <div class="info-box-content">
-                                <span class="info-box-text"><a href="">Diplomantes</a></span>
+                                <span class="info-box-text"><a href="{% url 'programs:dip_all_students_list' program.slug 'aproved' %}">Diplomantes</a></span>
                                 <span class="info-box-number">{{ masters }}</span>
                             </div>
 
@@ -65,7 +65,7 @@
                         <span class="info-box-icon bg-success elevation-1"><i class="fas fa-graduation-cap"></i></span>
 
                         <div class="info-box-content">
-                                <span class="info-box-text"><a href="">Graduados</a></span>
+                                <span class="info-box-text"><a href="{% url 'programs:dip_all_students_list' program.slug 'graduated' %}">Graduados</a></span>
                             <span class="info-box-number">{{ graduated }}</span>
                         </div>
                         <!-- /.info-box-content -->
@@ -265,7 +265,7 @@
                         <!-- /.card-body -->
                         <div class="card-footer text-center">
 
-                                <a href="">Ver todos los solicitantes</a>
+                                <a href="{% url 'programs:dip_all_students_list' program.slug 'requesters' %}">Ver todos los solicitantes</a>
 
                         </div>
                         <!-- /.card-footer -->
@@ -342,7 +342,7 @@
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer text-center">
-                            <a href="">
+                            <a href="{% url 'programs:dip_all_students_list' program.slug 'aproved' %}">
 
                                     Ver todos los diplomantes
 
@@ -416,7 +416,7 @@
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer text-center">
-                            <a href="{% url 'programs:students_list' program.slug 'graduated' %}">Ver todos los graduados</a>
+                            <a href="{% url 'programs:dip_all_students_list' program.slug 'graduated' %}">Ver todos los graduados</a>
                         </div>
                         <!-- /.card-footer -->
                     </div>

@@ -678,6 +678,47 @@ def msc_all_students_list(request, program_slug, scope):
 
     else:
         return error_500(request, program, 'Usted no tiene acceso a esta página')
+    
+@login_required
+def dip_all_students_list(request, program_slug, scope):
+    program=Program.objects.get(slug=program_slug)
+    if user_is_program_member(request.user, program) or user_is_program_student(request.user,program):
+        if program.type == 'dip':
+            if scope == 'all':
+                context = {
+                    'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
+                    'students': DipStudent.objects.filter(program=program),
+                    'scope': 'all',
+                }
+            elif scope == 'requesters':
+                context = {
+                    'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
+                    'students': DipStudent.objects.filter(program=program, status='solicitante'),
+                    'scope': 'Solicitantes',
+                }
+            elif scope == 'aproved':
+                context = {
+                    'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
+                    'students': DipStudent.objects.filter(program=program, status='diplomante'),
+                    'scope': 'Diplomantes',
+                }
+            elif scope == 'graduated':
+                context = {
+                    'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
+                    'students': DipStudent.objects.filter(program=program, status='graduado'),
+                    'scope': 'Graduados',
+                }
+
+            return render(request, 'programs/dip_students_list.html', context)
+        else:
+            return error_500(request, program, 'El programa debe ser un diplomado.')
+
+    else:
+        return error_500(request, program, 'Usted no tiene acceso a esta página')
 
 @login_required
 def members_list(request, program_slug, scope):

@@ -1,0 +1,417 @@
+{% extends 'programs/base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+
+{% block extra_css %}
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' %}">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
+{% endblock %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Estudiantes</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Estudiantes</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+
+                <!-- /.card -->
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">{% if scope == 'all' %}Estudiantes {% else %}{{ scope }} {% endif %} de {{  program }}
+                            {% if edition %}({{ edition }} edición){% endif %}
+                        </h3>
+                        {% if edition %}
+                            <div class="card-tools">
+                                {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                                {#                                    <i class="fas fa-minus"></i>#}
+                                {#                                </button>#}
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                                        <i class="fas fa-wrench"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                        <a href="" class="dropdown-item">Solicitantes</a>
+                                        <a href="" class="dropdown-item">Diplomantes</a>
+                                        <a href="" class="dropdown-item">Graduados</a>
+                                        <a href="" class="dropdown-item">Todos</a>
+
+                                    </div>
+                                </div>
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        {% else %}
+                            <div class="card-tools">
+                                {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                                {#                                    <i class="fas fa-minus"></i>#}
+                                {#                                </button>#}
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                                        <i class="fas fa-wrench"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                        {% for edition in editions %}
+                                            <a href="{% url 'programs:msc_edition_students_list' program.slug edition.id 'all' %}" class="dropdown-item">Edición {{ edition.order }} </a>
+                                        {% endfor %}
+
+                                    </div>
+                                </div>
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+
+
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            {% user_is_program_cs user program as user_is_program_cs %}
+
+                            <tr>
+                                <th class="text-center">Edición</th>
+                                <th>Nombre y apellidos</th>
+                                <th>Fecha<br>(solicitud)</th>
+                                <th>Estado</th>
+                                <th>Fecha de <br>nacimiento</th>
+                                <th>Número de <br>identidad</th>
+
+
+                                <th></th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for student in students %}
+                                {% init_requirements_accomplished student program as init_requirements_accomplished %}
+                                <tr id="tr_student_{{ student.id }}">
+                                    <td class="text-center">{{ student.edition }}</td>
+                                    <td>{{ student.user.last_name|upper }}, {{ student.user.first_name }}</td>
+                                    <td>{{ student.request_date|date:'Y-m-d' }}</td>
+                                    <td>{{ student.status|capfirst }}</td>
+                                    <td>{{ student.birth_date|date:'Y-m-d'}}</td>
+                                    <td>{{ student.dni }}</td>
+
+                                    {% if user_is_program_cs %}
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
+                                                {% if scope == 'Maestrantes' %}
+                                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.id %}" title="Ver evaluaciones" > <i class="fa fa-user-graduate"></i></a>
+                                                    <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:evaluate_student' program.slug student.id %}" title="Asignar evaluación"> <i class="fa fa-check-square"></i></a>
+                                                {% elif scope == 'Graduados' %}
+                                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.id %}" title="Ver evaluaciones" > <i class="fa fa-user-graduate"></i></a>
+
+                                                {% endif %}
+                                                <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_msc_student' program.slug student.edition.id student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_student_{{ student.id }}"><i class="fa fa-eraser"></i></a>
+
+                                            </div>
+                                        </td>
+                                    {% else %}
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+
+
+                                                <a class="btn btn-success btn-sm text-white  {% if user == student.user %}disabled{% endif %}" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
+
+                                            </div>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                                <div class="modal fade" id="modal_rm_student_{{ student.id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Eliminar estudiante</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <p class="text-center">¿Seguro que desea eliminar a {{ student }}?<br>Esto no se puede deshacer&hellip;</p>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_student_{{ student.id }}">Eliminar</button>
+                                            </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+                                <div class="modal fade" id="modal_msg_student_{{ student.id }}">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Enviar mensaje a {{ student }}</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form id="frm_msg_student_{{ student.id }}" method="post">
+                                                <div class="modal-body alert alert-success">
+
+                                                    <div class="form-row ">
+                                                        <div class="col-md-12">
+                                                            <input class="form-control" id="inp_msg_subject_{{ student.id }}" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
+
+                                                            <textarea class="form-control textarea col-md-12" id="txt_msg_body_{{ student.id }}"
+                                                                      name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
+                                                        </div>
+                                                        <div class="col-xs-12 text-right">
+                                                            <span id="total-characters"></span>
+                                                        </div>
+
+                                                    </div>
+
+
+
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+
+                            {% endfor %}
+
+
+
+
+                            </tbody>
+                            <tfoot>
+                            {#                            <tr>#}
+                            {#                                <th>Nombre y apellidos</th>#}
+                            {#                                <th>Fecha solicitud</th>#}
+                            {#                                <th>Estado</th>#}
+                            {#                                <th class="text-center">Requisitos</th>#}
+                            {#                                <th></th>#}
+                            {#                            </tr>#}
+                            </tfoot>
+                        </table>
+
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        {% csrf_token %}
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+    </div>
+{% endblock %}
+{% block extra_scripts %}
+    <!-- jQuery -->
+    <!-- Bootstrap 4 -->
+    <!-- DataTables -->
+    <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
+
+
+
+    <!-- AdminLTE App -->
+    {#    <script src="{% static 'programs/dist/js/adminlte.min.js' %}"></script>#}
+    <!-- AdminLTE for demo purposes -->
+    {#    <script src="{% static 'programs/dist/js/demo.js' %}"></script>#}
+    <!-- page script -->
+    <script>
+
+        $(document).ready(function () {
+            var myTable= $("#example1").DataTable({
+                language: {
+                    url: '{% static "programs/plugins/datatables/Spanish.json" %}'
+                }});
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+
+            {% for student in students %}
+                $('#btn_rm_student_{{ student.id }}').click(function () {
+                    var student_id={{ student.id }};
+                    var url = "{% url 'programs:ajx_delete_student' program.slug %}";
+
+                    {#$('#modal_rm_student_{{ student.id }}').modal('hide');#}
+
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'student_id':student_id,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].deleted == 1) {
+                                var row = myTable.row( $('#tr_student_{{ student.id }}') );
+                                row.remove().draw();
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Estudiante eliminado exitosamente'
+                                })
+
+                            } else if(json[0].deleted == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar al estudiante seleccionado.'
+                                })
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
+                });
+
+                $('#txt_msg_body_{{ student.id }}').summernote({
+                    lang: 'es-Es',
+                    placeholder: 'Escribe el mensaje aquí',
+                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                    dialogsInBody: true,
+                    dialogsFade: true,
+                    height: 200,
+                    toolbar: [
+                        // [groupName, [list of button]]
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                        {#['fontname', ['fontname']],#}
+                        {#['fontsize', ['fontsize']],#}
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['table', ['table']],
+                    ],
+
+                });
+
+
+                $('#frm_msg_student_{{ student.id }}').on('submit', function (e) {
+                    e.preventDefault();
+                    $('#modal_msg_student_{{ student.id }}').modal('hide');
+                    var url = "{% url 'programs:ajx_student_personal_msg' program.slug %}";
+
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'student_id': {{ student.id }},
+                            'msg_subject': $('#inp_msg_subject_{{ student.id }}').val(),
+                            'msg_body': $('#txt_msg_body_{{ student.id }}').val(),
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].sended == 1) {
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Mensaje enviado exitósamente'
+                                })
+
+                            }
+                            else if(json[0].sended == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido enviar el mensaje.'
+                                })
+
+                            }
+                            else if(json[0].sended == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'El texto del mensaje es muy largo.'
+                                })
+
+                            }
+                            console.log(json); // log the returned json to the console
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
+                    $('#frm_msg_student_{{ student.id }}')[0].reset();
+
+
+                });
+                $(document).on('hidden.bs.modal','#modal_msg_student_{{ student.id }}', function () {
+                    $('#frm_msg_student_{{ student.id }}')[0].reset();
+                    $('#txt_msg_body_{{ student.id }}').summernote('code', '');
+                })
+            {% endfor %}
+
+        })
+    </script>
+{% endblock %}
+</body>
+</html>
