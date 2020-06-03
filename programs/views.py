@@ -2455,7 +2455,8 @@ def ajx_students_by_sex(request, program_slug):
         response_data.append(MscStudent.objects.filter(program=program, gender='f').__len__())
         response_data.append(MscStudent.objects.filter(program=program,gender='m').__len__())
     elif program.type == 'dip':
-        pass
+        response_data.append(DipStudent.objects.filter(program=program, gender='f').__len__())
+        response_data.append(DipStudent.objects.filter(program=program, gender='m').__len__())
 
     return HttpResponse(
         json.dumps(response_data),
