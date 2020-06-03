@@ -2061,6 +2061,7 @@ def ajx_students_by_line(request, program_slug):
         elif program.type == 'msc':
             data.append(MscStudentTheme.objects.filter(line=line).__len__())
 
+
     response_data.append(labels)
     response_data.append(data)
 
@@ -2527,6 +2528,7 @@ def program_statistics(request, program_slug):
     if user_is_program_cs(request.user, program):
         context={
             'program':program,
+            'member': ProgramMember.objects.get(user=request.user, program=program),
         }
         return render(request, 'programs/statistics.html', context)
 
