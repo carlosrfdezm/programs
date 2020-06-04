@@ -2554,6 +2554,7 @@ def create_program_edition(request, program_slug):
             else:
                 context={
                     'program': program,
+                    'member':ProgramMember.objects.get(user=request.user, program=program),
                 }
                 return render(request, 'programs/create_edition.html', context)
         else:
@@ -3594,7 +3595,7 @@ def create_edition_course(request, program_slug, edition_id):
                 'member': ProgramMember.objects.get(user=request.user, program=program),
             }
             if edition.order > 1:
-                context['editions'] = ProgramEdition.objects.filter(order__lt=edition.order)
+                context['editions'] = ProgramEdition.objects.filter(program=program,order__lt=edition.order)
 
             return render(request, 'programs/create_edition_course.html', context)
     else:

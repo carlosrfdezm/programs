@@ -43,12 +43,8 @@
                                                 <label for="slc_edition">Importar cursos de ediciones previas:</label>
                                                 <select class="form-control" id="slc_edition" name="edition">
                                                     <option value="" selected>Seleccione una edición</option>
-                                                    {% for edition in editions %}
-                                                        <option value="{{ edition.id }}"  >{{ edition }}a edición</option>
-
-
-
-
+                                                    {% for ed in editions %}
+                                                        <option value="{{ ed.id }}"  >{{ ed.order }}a edición</option>
                                                     {% endfor %}
 
                                                 </select>
@@ -304,17 +300,11 @@
 
                             if (json[0].imported == 1) {
 
-
-
-
-
-
                                 Toast.fire({
                                     type: 'success',
                                     title: 'Cursos importados exitosamente'
                                 });
                                 var div='<div id="imported_courses" class="jumbotron"><h5>Cursos importados:</h5><ol>'
-                                alert(json[1].length);
 
                                 for (var i = 0; i <json[1].length; i++ ){
 
