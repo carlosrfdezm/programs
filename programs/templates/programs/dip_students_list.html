@@ -74,7 +74,7 @@
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right" role="menu">
                                         {% for edition in editions %}
-                                            <a href="{% url 'programs:msc_edition_students_list' program.slug edition.id 'all' %}" class="dropdown-item">Edición {{ edition.order }} </a>
+                                            <a href="{% url 'programs:dip_edition_students_list' program.slug edition.id 'all' %}" class="dropdown-item">Edición {{ edition.order }} </a>
                                         {% endfor %}
 
                                     </div>

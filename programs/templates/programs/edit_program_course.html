@@ -334,6 +334,28 @@
                 }
 
             });
+            $('#inp_init_date').change(function () {
+                $('#inp_end_date').removeAttr('readonly');
+                if($('#inp_end_date').val() != '' && $(this).val()>=$('#inp_end_date').val()) {
+                    Toast.fire({
+                                    type: 'error',
+                                    title: 'La fecha de fin del curso debe ser mayor que la de inicio del curso.'
+                                });
+                    $(this).val('');
+                }
+
+            });
+            $('#inp_end_date').change(function () {
+                if($(this).val()<=$('#inp_init_date').val()) {
+                    Toast.fire({
+                                    type: 'error',
+                                    title: 'La fecha de fin del curso debe ser mayor que la de inicio del curso.'
+                                });
+                    $(this).val('');
+                }
+
+
+            });
             $(document).on('click','#btn_add_prof', function () {
                 var old_new_prof = total_new_prof;
                 total_new_prof = total_new_prof+ 1;
