@@ -80,7 +80,7 @@
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label for="inp_end_date">Fecha de fin:</label>
-                                            <input type="date" class="form-control" id="inp_end_date" name="end_date" required >
+                                            <input type="date" class="form-control" id="inp_end_date" name="end_date" readonly required >
                                         </div>
 
                                     </div>
@@ -238,6 +238,30 @@
 
                 }
             });
+
+            $('#inp_init_date').change(function () {
+                $('#inp_end_date').removeAttr('readonly');
+                if($('#inp_end_date').val() != '' && $(this).val()>=$('#inp_end_date').val()) {
+                    Toast.fire({
+                                    type: 'error',
+                                    title: 'La fecha de fin del curso debe ser mayor que la de inicio del curso.'
+                                });
+                    $(this).val('');
+                }
+
+            })
+            $('#inp_end_date').change(function () {
+                if($(this).val()<=$('#inp_init_date').val()) {
+                    Toast.fire({
+                                    type: 'error',
+                                    title: 'La fecha de fin del curso debe ser mayor que la de inicio del curso.'
+                                });
+                    $(this).val('');
+                }
+
+
+            })
+
 
             $('#slc_edition').change(function () {
                 edition = $(this).val();
