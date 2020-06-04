@@ -2206,8 +2206,15 @@ def ajx_everybody_massive_msg(request, program_slug ):
             email_list = []
             for member in ProgramMember.objects.filter(program=program):
                 email_list.append(member.user.email)
-            for student in Student.objects.filter(program=program):
-                email_list.append(student.user.email)
+                if program.type == 'phd':
+                    for student in Student.objects.filter(program=program):
+                        email_list.append(student.user.email)
+                elif program.type == 'msc':
+                    for student in MscStudent.objects.filter(program=program):
+                        email_list.append(student.user.email)
+                elif program.type == 'dip':
+                    for student in DipStudent.objects.filter(program=program):
+                        email_list.append(student.user.email)
 
             if email_list.__len__()<=10:
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.get_full_name + request.user.email,
