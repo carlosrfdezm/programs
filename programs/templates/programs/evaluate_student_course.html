@@ -76,9 +76,9 @@
                                 </div>
                             </form>
                         {% else %}
-                            <div class="jumbotron ">
+                            <div class="jumbotron text-center">
                                 <h3 class="text-success text-center pt-4"><i class="fa fa-birthday-cake"></i> Este estudiante tiene todos los componentes evaluados.<i class="fa fa-birthday-cake"></i></h3>
-
+                                <a class="btn btn-sm btn-primary" href="{% url 'programs:student_evals' program.slug student.id %}" title="Ver evaluaciones"><i class="fa fa-graduation-cap"></i> Ver evaluaciones </a>
                             </div>
                         {% endif %}
                     </div>
