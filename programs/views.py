@@ -3247,6 +3247,79 @@ def docx_program_report(request, program_slug):
                         row_cells[2].text = 'Incumplidos'
             else:
                 document.add_heading('No hay maestrantes registrados en el programa', level=5)
+        elif program.type == 'dip':
+            if DipStudent.objects.filter(program=program):
+                document.add_heading('Estudiantes por estado', level=3)
+                table = document.add_table(rows=1, cols=4)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Solicitantes'
+                hdr_cells[1].text = 'Diplomantes'
+                hdr_cells[2].text = 'Graduados'
+                hdr_cells[3].text = 'Total'
+
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(
+                    DipStudent.objects.filter(program=program, status='Solicitante').__len__())
+                row_cells[1].text = str(
+                    DipStudent.objects.filter(program=program, status='Diplomante').__len__())
+                row_cells[2].text = str(
+                    DipStudent.objects.filter(program=program, status='Graduado').__len__())
+                row_cells[3].text = str(
+                    DipStudent.objects.filter(program=program).__len__())
+            else:
+                document.add_heading('No hay estudiantes registrados en el programa', level=5)
+
+            document.add_heading('Solicitantes de ingreso', level=3)
+            if DipStudent.objects.filter(program=program, status='Solicitante'):
+                table = document.add_table(rows=1, cols=2)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y Apellidos'
+                hdr_cells[1].text = 'Fecha de solicitud'
+
+
+                for student in DipStudent.objects.filter(program=program, status='Solicitante'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.request_date)
+
+            else:
+                document.add_heading('No hay solicitantes registrados en el programa', level=5)
+
+            document.add_heading('Graduados', level=3)
+            if DipStudent.objects.filter(program=program, status='Graduado'):
+                table = document.add_table(rows=1, cols=4)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Fecha de ingreso'
+                hdr_cells[2].text = 'Fecha de egreso'
+                hdr_cells[3].text = 'Edición'
+
+                for student in DipStudent.objects.filter(program=program, status='Graduado'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.init_date)
+                    row_cells[2].text = str(student.graduate_date)
+                    row_cells[3].text = str(student.edition.order)
+
+            else:
+                document.add_heading('No hay graduados registrados en el programa', level=5)
+
+            document.add_heading('Diplomantes', level=3)
+            if DipStudent.objects.filter(program=program, status='Diplomante'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Fecha de ingreso'
+                hdr_cells[2].text = 'Edición'
+
+                for student in DipStudent.objects.filter(program=program, status='Diplomante'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.init_date)
+                    row_cells[2].text = str(student.edition.order)
+
+            else:
+                document.add_heading('No hay diplomantes registrados en el programa', level=5)
 
         document.add_heading('Claustro', level=3)
         if ProgramMember.objects.filter(program=program):
@@ -3445,10 +3518,6 @@ def print_course_register(request, program_slug, course_id):
             return error_500(request, 'No se ha encontrado el archivo del reporte correspondiente')
     else:
         return error_500(request, program, 'En este tipo de programas no se puede exportar las actas.')
-
-
-
-
 
 @login_required
 def print_student_evals(request, program_slug, student_id):
