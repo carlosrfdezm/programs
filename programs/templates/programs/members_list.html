@@ -51,6 +51,7 @@
                             <tr>
                                 <th>Nombre y apellidos</th>
                                 <th>Rol</th>
+                                <th>Email</th>
                                 <th>País</th>
                                 <th></th>
 
@@ -61,6 +62,7 @@
                                 <tr id="tr_member_{{ member.id }}">
                                     <td>{{ member.user.last_name|upper }}, {{ member.user.first_name }}</td>
                                     <td>{{ member.role }}</td>
+                                    <td>{{ member.user.email }}</td>
                                     <td>{{ member.country }}</td>
 
                                     {% if user_is_program_cs %}
