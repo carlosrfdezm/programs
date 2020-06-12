@@ -386,3 +386,22 @@ class CourseEvaluation(models.Model):
 
     def __str__(self):
         return str(self.value)
+
+class StudentFormationPlan(models.Model):
+    phdstudent = models.OneToOneField(Student, on_delete=models.CASCADE)
+    planned_end_date = models.DateField()
+    elaboration_date = models.DateField(default=now)
+    last_update_date = models.DateField(null=True)
+
+    def __str__(self):
+        return str(self.planned_end_date)
+
+
+class FormationPlanActivities(models.Model):
+    formation_plan = models.ForeignKey(StudentFormationPlan, on_delete=models.CASCADE)
+    init_date = models.DateField(default=now)
+    end_date = models.DateField()
+    description = models.TextField(max_length=500)
+
+    def __str__(self):
+        return self.description

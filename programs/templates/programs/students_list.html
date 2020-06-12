@@ -52,7 +52,6 @@
                                     <th>Nombre y apellidos</th>
                                     <th>Fecha<br>(solicitud)</th>
                                     <th>Estado</th>
-                                    <th>Fecha de <br>nacimiento</th>
                                     <th>Número de <br>identidad</th>
                                     <th class="text-center">Requisitos<br> (ingreso)</th>
                                     {% if scope == 'Doctorandos' %}
@@ -71,7 +70,6 @@
                                         <td>{{ student.user.last_name|upper }}, {{ student.user.first_name }}</td>
                                         <td>{{ student.request_date|date:'Y-m-d' }}</td>
                                         <td>{{ student.phdstudent.status|capfirst }}</td>
-                                        <td>{{ student.birth_date|date:'Y-m-d'}}</td>
                                         <td>{{ student.dni }}</td>
                                         <td class="text-center">{% if init_requirements_accomplished %}
                                             <span class="text-success">
@@ -104,6 +102,7 @@
                                                     <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
                                                     {% if scope == 'Doctorandos' %}
                                                         <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.phdstudent.id %}" title="Ver evaluaciones">  <i class="fa fa-user-graduate"></i></a>
+                                                        <a class="btn btn-success btn-sm text-white" href="" title="Ver plan de formación">  <i class="fa fa-calendar-check"></i></a>
                                                         <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:evaluate_student' program.slug student.phdstudent.id %}" title="Asignar evaluación"> <i class="fa fa-check-square"></i></a>
                                                     {% elif scope == 'Graduados' %}
                                                         <a class="btn btn-success btn-sm text-white" href="" title="Ver evaluaciones">  <i class="fa fa-user-graduate"></i></a>
@@ -119,7 +118,9 @@
 
 
                                                     <a class="btn btn-success btn-sm text-white  {% if user == student.user %}disabled{% endif %}" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
-
+                                                    {% if user == student.user %}
+                                                        <a class="btn btn-warning btn-sm text-white  " href="" title="Actualizar plan de fomración" > <i class="fa fa-calendar-plus"></i></a>
+                                                    {% endif %}
                                                 </div>
                                             </td>
                                         {% endif %}
