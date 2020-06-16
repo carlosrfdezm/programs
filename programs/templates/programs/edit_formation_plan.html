@@ -68,12 +68,23 @@
                                 <hr>
                                 <h4>Actividades de formación:</h4>
 
-                                {% if activities  %}
-                                    {% for activity in activities %}
-                                        {{ activity }}
+                                {% if formation_plan.formationplanactivities_set.all  %}
+                                    {% for activity in formation_plan.formationplanactivities_set.all %}
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <p>{{ activity.description }}</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <p>Inicio: {{ activity.init_date|date:'Y-m-d' }}</p>
+                                            </div>
+                                        <div class="col-md-3">
+                                                <p>Fin: {{ activity.end_date|date:'Y-m-d' }}</p>
+                                            </div>
+                                        </div>
+
                                     {% endfor %}
                                 {% else %}
-                                    <div class="alert alert-info text-center align-content-center">
+                                    <div class="alert alert-info text-center align-content-center" id="div_alert">
                                         <h5>Usted aún no tiene actividades de formación en su plan. Agregue una <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button></h5>
                                     </div>
                                 {% endif %}
@@ -117,7 +128,7 @@
                 <div class="modal-content">
                     <form id="frm_add_activity" method="post">
                         <div class="modal-header">
-                            <h4 class="modal-title">Modificar evaluación</h4>
+                            <h4 class="modal-title">Agregar tarea al plan</h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -136,7 +147,7 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <textarea class="form-control" id="txt_activity_description" maxlength="500" placeholder="Descripción de la tarea. P.E: Redacción del primer capítulo."></textarea>
+                                <textarea class="form-control" id="txt_activity_description" maxlength="500" placeholder="Descripción de la tarea. P.E: Redacción del primer capítulo." required></textarea>
                             </div>
 
 
@@ -232,6 +243,71 @@
 
                     }
                 }
+
+            });
+            $('#frm_add_activity').on('submit', function (e) {
+                e.preventDefault();
+                alert($('#txt_activity_description').val());
+                $('#modal_add_activity').modal('hide');
+                var url = "{% url 'programs:ajx_create_activity' program.slug student.id %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'init_date': $('#inp_init_date').val(),
+                        'end_date': $('#inp_end_date').val(),
+                        'description':$('#txt_activity_description').val(),
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].created == 1) {
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Actividad agregada exitosamente.'
+                            })
+
+                        }
+                        else if(json[0].created == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar la actividad.'
+                            })
+
+                        }
+                        else if(json[0].created == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff el programa no es un doctorado.'
+                            })
+
+                        }
+                        else if(json[0].created == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede agregar actividades a este plan.'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        });
+                        console.log(json);
+                    }
+                });
+
+                $('#frm_msg_members')[0].reset();
+
 
             });
         });

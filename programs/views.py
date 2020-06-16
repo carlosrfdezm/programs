@@ -24,7 +24,8 @@ from programas.settings import MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
-    ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan
+    ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
+    FormationPlanActivities
 from programs.templatetags.extra_tags import finish_requirements_accomplished, student_init_requirement_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -1630,6 +1631,46 @@ def ajx_create_tuthor(request, program_slug, student_id):
                 json.dumps([{'created': 0}]),
                 content_type="application/json"
             )
+    else:
+        return HttpResponse(
+            json.dumps([{'created': 2}]),
+            content_type="application/json"
+        )
+
+@login_required
+def ajx_create_activity(request, program_slug, student_id):
+    program=Program.objects.get(slug=program_slug)
+    student=Student.objects.get(pk=student_id)
+
+    if program.type == 'phd':
+        if request.user == student.user:
+            if request.method == 'POST':
+                formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
+                new_activity = FormationPlanActivities(
+                    formation_plan=formation_plan,
+                    init_date=request.POST['init_date'],
+                    end_date=request.POST['end_date'],
+                    description=request.POST['description'],
+
+                )
+                new_activity.save()
+                return HttpResponse(
+                    json.dumps([{'created': 1,'init_date':new_activity.init_date,'end_date':new_activity.end_date, 'description':new_activity.description}]),
+                    content_type="application/json"
+                )
+
+            else:
+                return HttpResponse(
+                    json.dumps([{'created': 0}]),
+                    content_type="application/json"
+                )
+
+        else:
+            return HttpResponse(
+                json.dumps([{'created': 3}]),
+                content_type="application/json"
+            )
+
     else:
         return HttpResponse(
             json.dumps([{'created': 2}]),
@@ -3936,6 +3977,7 @@ def edit_formation_plan(request, program_slug, student_id):
                 'student':student,
                 'years': range(now().year,now().year+6),
                 'formation_plan':formation_plan,
+
             }
             return render(request, 'programs/edit_formation_plan.html', context)
     else:
