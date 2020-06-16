@@ -1,5 +1,6 @@
 {% extends 'programs/base.html' %}
 {% load static %}
+{% load extra_tags %}
 
 {% block content %}
     <div class="content-header">
@@ -290,7 +291,7 @@
 
                             <div class="card-tools">
 
-                                    <span class="badge badge-danger">Total: {{ doctorands }} doctorando{{ doctorands|pluralize }}</span>
+                                <span class="badge badge-danger">Total: {{ doctorands }} doctorando{{ doctorands|pluralize }}</span>
 
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
                                 </button>
@@ -304,15 +305,15 @@
                                 <ul class="users-list clearfix">
                                     {% for requester in last_aproved %}
 
-                                            <li>
-                                                {% if requester.student.picture %}
-                                                    <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
-                                                {% else %}
-                                                    <i class="text-danger fa fa-user fa-5x" style="margin-top: 6px" ></i>
-                                                {% endif %}
-                                                <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
-                                                <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
-                                            </li>
+                                        <li>
+                                            {% if requester.student.picture %}
+                                                <img src="{% url 'programs:program_student_picture' program.slug requester.student.id %}" alt="User Image">
+                                            {% else %}
+                                                <i class="text-danger fa fa-user fa-5x" style="margin-top: 6px" ></i>
+                                            {% endif %}
+                                            <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
+                                            <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
+                                        </li>
 
                                     {% endfor %}
 
@@ -444,6 +445,21 @@
 {% block extra_scripts %}
     <script>
         $(document).ready(function () {
+            {% if student %}
+                {% student_has_activities student as student_has_activities %}
+                {% if not student_has_activities %}
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 7000
+                    });
+                    Toast.fire({
+                        type: 'warning',
+                        title: 'Usted aún no tiene actividades en su plan de formación. Para agregarlas edite su plan de formación.'
+                    });
+                {% endif %}
+            {% endif %}
             var div_court='<div class="jumbotron" style="height: 205px;">'+
                 '<h3 class="text-center"><i class="text-warning fas fa-exclamation-triangle"></i> No hay datos disponibles. </h3>'+
                 '</div>';
