@@ -58,6 +58,8 @@
             <ul class="navbar-nav ml-auto">
                 <!-- Messages Dropdown Menu -->
                 {% user_is_program_cs user program as user_is_program_cs %}
+                {% user_is_program_member user program  as user_is_program_member %}
+                {% user_is_program_student user program  as user_is_program_student %}
                 {% if user_is_program_cs %}
                     <li class="nav-item dropdown">
                         <a class="nav-link" data-toggle="dropdown" href="#" title="Mensajes masivos">
@@ -140,7 +142,35 @@
                         {# Opciones para doctorados#}
 
                         {% if program.type == 'phd' %}
+                            {% if user_is_program_student %}
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link" title="Estudiantes y solicitantes">
+                                        <i class="nav-icon fas fa-users"></i>
+                                        <p>
+                                            Plan de formación
+                                            <i class="fas fa-angle-left right"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        {% if user == student.user %}
+                                            <li class="nav-item">
+                                                <a href="" class="nav-link">
+                                                    <i class="fa fa-plus nav-icon"></i>
+                                                    <p>Editar</p>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                        <li class="nav-item">
+                                            <a href="}" class="nav-link">
+                                                <i class="fa fa-check nav-icon"></i>
+                                                <p>Ver</p>
+                                            </a>
+                                        </li>
+                                        
 
+                                    </ul>
+                                </li>
+                            {% endif %}
 
                             <li class="nav-item has-treeview">
                                 <a href="#" class="nav-link" title="Estudiantes y solicitantes">
@@ -313,50 +343,52 @@
 
                                 </ul>
                             </li>
-                            <li class="nav-item has-treeview">
-                                <a href="#" class="nav-link" title="Actas del programa y de las Comisiones de Grado.">
-                                    <i class="nav-icon fas fa-file"></i>
-                                    <p>
-                                        Actas
-                                        <i class="fas fa-angle-left right"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    {% if user_is_program_cs %}
+                            {% if user_is_program_member %}
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link" title="Actas del programa y de las Comisiones de Grado.">
+                                        <i class="nav-icon fas fa-file"></i>
+                                        <p>
+                                            Actas
+                                            <i class="fas fa-angle-left right"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        {% if user_is_program_cs %}
+                                            <li class="nav-item">
+                                                <a href="{% url 'programs:create_program_brief' program.slug %}" class="nav-link">
+                                                    <i class="fa fa-plus nav-icon"></i>
+                                                    <p>Nueva</p>
+                                                </a>
+
+                                            </li>
+                                        {% endif %}
                                         <li class="nav-item">
-                                            <a href="{% url 'programs:create_program_brief' program.slug %}" class="nav-link">
-                                                <i class="fa fa-plus nav-icon"></i>
-                                                <p>Nueva</p>
+                                            <a href="{% url 'programs:program_brieffings' program.slug %}" class="nav-link">
+                                                <i class="fa fa-list-alt nav-icon"></i>
+                                                <p>Actas del programa</p>
                                             </a>
 
                                         </li>
-                                    {% endif %}
-                                    <li class="nav-item">
-                                        <a href="{% url 'programs:program_brieffings' program.slug %}" class="nav-link">
-                                            <i class="fa fa-list-alt nav-icon"></i>
-                                            <p>Actas del programa</p>
-                                        </a>
-
-                                    </li>
 
 
-                                    <li class="nav-item">
-                                        <a href="{% url 'programs:program_cgc_brieffings' program.slug %}" class="nav-link">
-                                            <i class="fa fa-list-ol nav-icon"></i>
-                                            <p>Actas de la CGC</p>
-                                        </a>
+                                        <li class="nav-item">
+                                            <a href="{% url 'programs:program_cgc_brieffings' program.slug %}" class="nav-link">
+                                                <i class="fa fa-list-ol nav-icon"></i>
+                                                <p>Actas de la CGC</p>
+                                            </a>
 
-                                    </li>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a href="{% url 'programs:program_cngc_brieffings' program.slug %}" class="nav-link">
-                                            <i class="fa fa-list-ul nav-icon"></i>
-                                            <p>Actas de la CNGC</p>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a href="{% url 'programs:program_cngc_brieffings' program.slug %}" class="nav-link">
+                                                <i class="fa fa-list-ul nav-icon"></i>
+                                                <p>Actas de la CNGC</p>
+                                            </a>
+                                        </li>
 
-                                </ul>
-                            </li>
+                                    </ul>
+                                </li>
+                            {% endif %}
                             {%  if user_is_program_cs %}
 
                                 <li class="nav-item">
@@ -747,34 +779,38 @@
 
                                 </ul>
                             </li>
-                            <li class="nav-item has-treeview">
-                                <a href="#" class="nav-link" title="Actas del programa y de las Comisiones de Grado.">
-                                    <i class="nav-icon fas fa-file"></i>
-                                    <p>
-                                        Actas
-                                        <i class="fas fa-angle-left right"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    {% if user_is_program_cs %}
+
+                            {% if user_is_program_member %}
+
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link" title="Actas del programa y de las Comisiones de Grado.">
+                                        <i class="nav-icon fas fa-file"></i>
+                                        <p>
+                                            Actas {{ user_is_program_member }}
+                                            <i class="fas fa-angle-left right"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        {% if user_is_program_cs %}
+                                            <li class="nav-item">
+                                                <a href="{% url 'programs:create_program_brief' program.slug %}" class="nav-link">
+                                                    <i class="fa fa-plus nav-icon"></i>
+                                                    <p>Nueva</p>
+                                                </a>
+
+                                            </li>
+                                        {% endif %}
                                         <li class="nav-item">
-                                            <a href="{% url 'programs:create_program_brief' program.slug %}" class="nav-link">
-                                                <i class="fa fa-plus nav-icon"></i>
-                                                <p>Nueva</p>
+                                            <a href="{% url 'programs:program_brieffings' program.slug %}" class="nav-link">
+                                                <i class="fa fa-list-alt nav-icon"></i>
+                                                <p>Actas del programa</p>
                                             </a>
 
                                         </li>
-                                    {% endif %}
-                                    <li class="nav-item">
-                                        <a href="{% url 'programs:program_brieffings' program.slug %}" class="nav-link">
-                                            <i class="fa fa-list-alt nav-icon"></i>
-                                            <p>Actas del programa</p>
-                                        </a>
 
-                                    </li>
-
-                                </ul>
-                            </li>
+                                    </ul>
+                                </li>
+                            {% endif %}
                             {%  if user_is_program_cs %}
                                 <li class="nav-item">
                                     <a href="{% url 'programs:program_statistics' program.slug %}" class="nav-link" title="Estadísticas del programa">

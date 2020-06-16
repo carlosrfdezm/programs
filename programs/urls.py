@@ -18,6 +18,7 @@ urlpatterns = [
     path('students/<int:student_id>/evaluate', views.evaluate_student, name='evaluate_student'),
     path('students/<int:student_id>/evaluations', views.student_evals, name='student_evals'),
     path('students/<int:student_id>/print/evals', views.print_student_evals, name='print_student_evals'),
+    path('students/<int:student_id>/plan/create', views.create_formation_plan, name='create_formation_plan'),
 
     #Paths de estudiantes de maestria
     path('msc/<int:edition_id>/students/create', views.create_msc_student, name='create_msc_student'),

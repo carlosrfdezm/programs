@@ -389,12 +389,12 @@ class CourseEvaluation(models.Model):
 
 class StudentFormationPlan(models.Model):
     phdstudent = models.OneToOneField(Student, on_delete=models.CASCADE)
-    planned_end_date = models.DateField()
+    planned_end_year = models.IntegerField()
     elaboration_date = models.DateField(default=now)
     last_update_date = models.DateField(null=True)
 
     def __str__(self):
-        return str(self.planned_end_date)
+        return str(self.planned_end_year)
 
 
 class FormationPlanActivities(models.Model):

@@ -24,7 +24,7 @@ from programas.settings import MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
-    ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor
+    ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan
 from programs.templatetags.extra_tags import finish_requirements_accomplished, student_init_requirement_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -73,7 +73,13 @@ def home(request, program_slug):
             context['member']=ProgramMember.objects.get(user=request.user,program=program)
         except ProgramMember.DoesNotExist:
             try:
-                context['student'] = Student.objects.get(user=request.user, program=program)
+                student = Student.objects.get(user=request.user, program=program)
+                context['student'] = student
+                try:
+                    formation_plan=StudentFormationPlan.objects.get(phdstudent=student)
+                except StudentFormationPlan.DoesNotExist:
+                    return HttpResponseRedirect(reverse('programs:create_formation_plan', args=[program_slug, student.id]))
+
             except Student.DoesNotExist:
                 logout(request)
                 raise Http404('No hay profesor o estudiante de este programa con ese usuario')
@@ -3878,4 +3884,29 @@ def student_evals(request, program_slug, student_id):
             return error_500(request, program, 'Usted no puede ver las evaluaciones de estudiantes')
     else:
         pass
+
+
+@login_required
+def create_formation_plan(request, program_slug, student_id):
+    program = Program.objects.get(slug=program_slug)
+    student = Student.objects.get(pk=student_id)
+    if request.user == student.user:
+        if request.method == 'POST':
+            new_plan = StudentFormationPlan(
+                phdstudent=student,
+                elaboration_date=now().date(),
+                last_update_date=now().date(),
+                planned_end_year=request.POST['planned_end_year'],
+            )
+            new_plan.save()
+            return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
+        else:
+            context = {
+                'program': program,
+                'student':student,
+                'years': range(now().year,now().year+6)
+            }
+            return render(request, 'programs/create_formation_plan.html', context)
+    else:
+        return error_500(request,program, 'Usted no tiene privilegios para crear el plan de formación de este estudiante.')
 

@@ -9,7 +9,8 @@ from django.db.models import Q
 from django.utils.timezone import now
 
 from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember, StudentFinishRequirement, \
-    ProgramFinishRequirements, CGC_Member, PhdStudent, PhdStudentTheme, InvestigationProject
+    ProgramFinishRequirements, CGC_Member, PhdStudent, PhdStudentTheme, InvestigationProject, Student, \
+    StudentFormationPlan
 
 register = template.Library()
 
@@ -124,6 +125,22 @@ def user_is_program_cs(user, program):
         return False
 
 @register.simple_tag
+def user_is_program_member(user, program):
+    try:
+        member=ProgramMember.objects.get(user=user, program=program)
+        return True
+    except ProgramMember.DoesNotExist:
+        return False
+
+@register.simple_tag
+def user_is_program_student(user, program):
+    try:
+        student=Student.objects.get(user=user, program=program)
+        return True
+    except:
+        return False
+
+@register.simple_tag
 def user_is_cgc_ps(user):
     try:
         member=CGC_Member.objects.get(user=user)
@@ -133,6 +150,17 @@ def user_is_cgc_ps(user):
             return False
 
     except:
+        return False
+
+@register.simple_tag
+def student_has_activities(student):
+    try:
+        formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
+        if formation_plan.formationplanactivities_set.all().__len__() > 0:
+            return True
+        else:
+            return False
+    except StudentFormationPlan.DoesNotExist:
         return False
 
 @register.simple_tag
