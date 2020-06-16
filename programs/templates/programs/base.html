@@ -154,7 +154,7 @@
                                     <ul class="nav nav-treeview">
                                         {% if user == student.user %}
                                             <li class="nav-item">
-                                                <a href="" class="nav-link">
+                                                <a href="{% url 'programs:edit_formation_plan' program.slug student.id %}" class="nav-link">
                                                     <i class="fa fa-plus nav-icon"></i>
                                                     <p>Editar</p>
                                                 </a>
