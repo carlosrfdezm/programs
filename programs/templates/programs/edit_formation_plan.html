@@ -259,6 +259,40 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
+        <div class="modal fade" id="modal_rm_activity">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form id="frm_rm_activity" data="" method="post">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Eliminar tarea del plan</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Usted desea eliminar la actividad:
+
+                            <div class="form-row">
+                                <textarea class="form-control text-center" id="txt_rm_activity_description" maxlength="500" placeholder="Descripción de la tarea. P.E: Redacción del primer capítulo." readonly></textarea>
+                            </div>
+
+                            Tenga en cuenta que esto no se puede deshacer.
+
+
+
+
+
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-danger" >Eliminar</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
         <!-- /.row -->
         </div><!-- /.container-fluid -->
     </section>
@@ -305,12 +339,8 @@
                 }
                 else{
                     var option = '<option value="'+meses[i]+'" >'+meses[i]+'</option>';
-
                 }
-
                 $('#slc_months').append(option);
-
-
             };
             $(document).on('hidden.bs.modal','#modal_add_activity', function () {
                 $('#frm_add_activity')[0].reset();
@@ -320,9 +350,10 @@
                 $('#frm_edit_activity')[0].reset();
                 {#$('#txt_msg_body_members').summernote('code', '');#}
             });
-
-
-
+            $(document).on('hidden.bs.modal','#modal_rm_activity', function () {
+                $('#frm_rm_activity')[0].reset();
+                {#$('#txt_msg_body_members').summernote('code', '');#}
+            });
             $('#slc_years').change(function () {
 
                 $('#slc_months option').remove();
@@ -365,6 +396,16 @@
                 $('#txt_edit_activity_description').val($(description_selector).text());
                 $('#frm_edit_activity').attr('data',activity_id);
                 $('#modal_edit_activity').modal('show');
+            });
+            $(document).on('click',"button[id*='btn_rm_activity']",function () {
+                var activity_id = $(this).attr('data');
+
+                var description_selector='#td_description_'+activity_id;
+
+
+                $('#txt_rm_activity_description').val($(description_selector).text());
+                $('#frm_rm_activity').attr('data',activity_id);
+                $('#modal_rm_activity').modal('show');
             });
             $('#frm_add_activity').on('submit', function (e) {
                 e.preventDefault();
@@ -515,6 +556,76 @@
                             Toast.fire({
                                 type: 'error',
                                 title: 'Usted no puede editar actividades a este plan.'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        });
+                        console.log(json);
+                    }
+                });
+
+                $('#frm_msg_members')[0].reset();
+
+
+            });
+            $('#frm_rm_activity').on('submit', function (e) {
+
+                e.preventDefault();
+                var activity_id = $(this).attr('data');
+
+                var url = "{% url 'programs:ajx_delete_activity' program.slug student.id %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'activity_id':activity_id,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Actividad eliminada exitosamente.'
+                            });
+
+                            $('#modal_rm_activity').modal('hide');
+                            var row = myTable.row( $('#tr_activity_'+activity_id) );
+                            row.remove().draw();
+
+
+
+                        }
+                        else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar la actividad.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff el programa no es un doctorado.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede elimina actividades a este plan.'
                             })
 
                         }

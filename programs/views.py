@@ -1712,6 +1712,44 @@ def ajx_edit_activity(request, program_slug, student_id):
             json.dumps([{'edited': 2}]),
             content_type="application/json"
         )
+def ajx_delete_activity(request, program_slug, student_id):
+    program=Program.objects.get(slug=program_slug)
+    student=Student.objects.get(pk=student_id)
+    activity = FormationPlanActivities.objects.get(pk=request.POST['activity_id'])
+
+    if program.type == 'phd':
+        if request.user == student.user:
+            if request.method == 'POST':
+                try:
+                    activity.delete()
+
+                    return HttpResponse(
+                        json.dumps([{'deleted': 1}]),
+                        content_type="application/json"
+                    )
+                except:
+                    return HttpResponse(
+                        json.dumps([{'deleted': 0}]),
+                        content_type="application/json"
+                    )
+
+            else:
+                return HttpResponse(
+                    json.dumps([{'deleted': 0}]),
+                    content_type="application/json"
+                )
+
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': 3}]),
+                content_type="application/json"
+            )
+
+    else:
+        return HttpResponse(
+            json.dumps([{'deleted': 2}]),
+            content_type="application/json"
+        )
 
 @login_required
 def ajx_import_courses(request, program_slug, edition_id):
