@@ -1655,7 +1655,8 @@ def ajx_create_activity(request, program_slug, student_id):
                 )
                 new_activity.save()
                 return HttpResponse(
-                    json.dumps([{'created': 1,'init_date':new_activity.init_date,'end_date':new_activity.end_date, 'description':new_activity.description}]),
+                    json.dumps([{'created': 1,'init_date':new_activity.init_date,'end_date':new_activity.end_date,
+                                 'description':new_activity.description, 'id':new_activity.id}]),
                     content_type="application/json"
                 )
 

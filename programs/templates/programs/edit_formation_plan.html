@@ -2,6 +2,15 @@
 {% load static %}
 {% load extra_tags %}
 
+{% block extra_css %}
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' %}">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
+{% endblock %}
+
 {% block content %}
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -66,26 +75,69 @@
 
                                 </div>
                                 <hr>
-                                <h4>Actividades de formación:</h4>
+                                <div class="row">
+                                    <div class="col-md-11">
+                                        <h4>Actividades de formación:</h4>
+                                    </div>
+                                    {% if formation_plan.formationplanactivities_set.all %}
+                                        <div class="col-md-1 text-right">
+                                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
 
                                 {% if formation_plan.formationplanactivities_set.all  %}
-                                    {% for activity in formation_plan.formationplanactivities_set.all %}
-                                        <div class="row">
-                                            <div class="col-md-5">
-                                                <p>{{ activity.description }}</p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <p>Inicio: {{ activity.init_date|date:'Y-m-d' }}</p>
-                                            </div>
-                                        <div class="col-md-3">
-                                                <p>Fin: {{ activity.end_date|date:'Y-m-d' }}</p>
-                                            </div>
-                                        </div>
+                                    <table id="example1" class="table table-striped">
+                                        <thead>
+                                        {% user_is_program_cs user program as user_is_program_cs %}
 
-                                    {% endfor %}
+                                        <tr>
+                                            <th>Fecha de Inicio</th>
+                                            <th>Descripción</th>
+
+                                            <th>Fecha de Fin</th>
+                                            <th></th>
+
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for activity in formation_plan.formationplanactivities_set.all %}
+                                            <tr id="tr_activity_{{ activity.id }}">
+                                                <td>{{ activity.init_date|date:"Y-m-d" }}</td>
+                                                <td>{{ activity.description }}</td>
+
+                                                <td>{{ activity.end_date|date:"Y-m-d"  }}</td>
+                                                <td class="text-center">
+                                                    <div class="btn-group col-md-1">
+                                                        <button class="btn btn-sm btn-warning" id="btn_edit_activity_{{ activity.id }}" title="Editar"><i class="fa fa-edit"></i> </button>
+                                                        <button class="btn btn-sm btn-danger" id="btn_rm_activity_{{ activity.id }}" title="Eliminar"><i class="fa fa-eraser"></i> </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+
+                                        {% endfor %}
+
+
+
+
+                                        </tbody>
+                                        <tfoot>
+                                        {#                            <tr>#}
+                                        {#                                <th>Nombre y apellidos</th>#}
+                                        {#                                <th>Fecha solicitud</th>#}
+                                        {#                                <th>Estado</th>#}
+                                        {#                                <th class="text-center">Requisitos</th>#}
+                                        {#                                <th></th>#}
+                                        {#                            </tr>#}
+                                        </tfoot>
+                                    </table>
                                 {% else %}
                                     <div class="alert alert-info text-center align-content-center" id="div_alert">
-                                        <h5>Usted aún no tiene actividades de formación en su plan. Agregue una <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button></h5>
+                                        <h5>Usted aún no tiene actividades de formación en su plan. Agregue una
+                                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button>
+                                        </h5>
                                     </div>
                                 {% endif %}
 
@@ -181,9 +233,16 @@
     <script src="../../dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="../../dist/js/demo.js"></script>
+    <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
 
     <script>
         $(document).ready(function () {
+            var total_activities = {{ formation_plan.formationplanactivities_set.all.count }};
+            var myTable= $("#example1").DataTable({
+                language: {
+                    url: '{% static "programs/plugins/datatables/Spanish.json" %}'
+                }});
 
             const Toast = Swal.mixin({
                 toast: true,
@@ -210,7 +269,11 @@
                 $('#slc_months').append(option);
 
 
-            }
+            };
+            $(document).on('hidden.bs.modal','#modal_add_activity', function () {
+                $('#frm_add_activity')[0].reset();
+                {#$('#txt_msg_body_members').summernote('code', '');#}
+            });
 
 
 
@@ -247,7 +310,6 @@
             });
             $('#frm_add_activity').on('submit', function (e) {
                 e.preventDefault();
-                alert($('#txt_activity_description').val());
                 $('#modal_add_activity').modal('hide');
                 var url = "{% url 'programs:ajx_create_activity' program.slug student.id %}";
 
@@ -268,7 +330,26 @@
                             Toast.fire({
                                 type: 'success',
                                 title: 'Actividad agregada exitosamente.'
-                            })
+                            });
+                            total_activities = total_activities+1;
+                            var btn_group = '<tr id="tr_activity_'+json[0].id+'">\n' +
+                                '                                                <td>'+json[0].init_date+'</td>\n' +
+                                '                                                <td>'+json[0].description+'</td>\n' +
+                                '\n' +
+                                '                                                <td>'+json[0].end_date+'</td>\n' +
+                                '                                                <td class="text-center">\n' +
+                                '                                                    <div class="btn-group col-md-1">\n' +
+                                '                                                        <button class="btn btn-sm btn-warning" id="btn_edit_activity_'+json[0].id+'" title="Editar"><i class="fa fa-edit"></i> </button>\n' +
+                                '                                                        <button class="btn btn-sm btn-danger" id="btn_rm_activity_'+json[0].id+'" title="Eliminar"><i class="fa fa-eraser"></i> </button>\n' +
+                                '                                                    </div>\n' +
+                                '                                                </td>\n' +
+                                '                                            </tr>'
+                            myTable.row.add(
+                                $(btn_group)
+                            ).draw();
+                            $('#inp_init_date').attr('value','');
+                            $('#inp_end_date').attr('value','');
+                            $('#txt_activity_description').attr('value','');
 
                         }
                         else if(json[0].created == 0){
