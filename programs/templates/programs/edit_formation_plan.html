@@ -104,14 +104,14 @@
                                         <tbody>
                                         {% for activity in formation_plan.formationplanactivities_set.all %}
                                             <tr id="tr_activity_{{ activity.id }}">
-                                                <td>{{ activity.init_date|date:"Y-m-d" }}</td>
-                                                <td>{{ activity.description }}</td>
+                                                <td id="td_init_date_{{ activity.id }}">{{ activity.init_date|date:"Y-m-d" }}</td>
+                                                <td id="td_description_{{ activity.id }}">{{ activity.description }}</td>
 
-                                                <td>{{ activity.end_date|date:"Y-m-d"  }}</td>
+                                                <td id="td_end_date_{{ activity.id }}">{{ activity.end_date|date:"Y-m-d"  }}</td>
                                                 <td class="text-center">
                                                     <div class="btn-group col-md-1">
-                                                        <button class="btn btn-sm btn-warning" id="btn_edit_activity_{{ activity.id }}" title="Editar"><i class="fa fa-edit"></i> </button>
-                                                        <button class="btn btn-sm btn-danger" id="btn_rm_activity_{{ activity.id }}" title="Eliminar"><i class="fa fa-eraser"></i> </button>
+                                                        <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_{{ activity.id }}" data="{{ activity.id }}" title="Editar"><i class="fa fa-edit"></i> </button>
+                                                        <button class="btn btn-sm btn-danger" type="button" id="btn_rm_activity_{{ activity.id }}" data="{{ activity.id }}" title="Eliminar"><i class="fa fa-eraser"></i> </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -217,6 +217,48 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
+        <div class="modal fade" id="modal_edit_activity">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form id="frm_edit_activity" data="" method="post">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Editar tarea del plan</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="inp_init_date">Fecha de inicio:</label>
+                                    <input type="date" class="form-control" id="inp_edit_init_date"  value="" required >
+                                    <p class="help text-sm text-gray">Fecha en que se inicia esta tarea</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="inp_end_date">Fecha de fin:</label>
+                                    <input type="date" class="form-control" id="inp_edit_end_date"  value="" required >
+                                    <p class="help text-sm text-gray">Fecha en que se finaliza esta tarea</p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <textarea class="form-control" id="txt_edit_activity_description" maxlength="500" placeholder="Descripción de la tarea. P.E: Redacción del primer capítulo." required></textarea>
+                            </div>
+
+
+
+
+
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success" >Guardar</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
         <!-- /.row -->
         </div><!-- /.container-fluid -->
     </section>
@@ -274,6 +316,10 @@
                 $('#frm_add_activity')[0].reset();
                 {#$('#txt_msg_body_members').summernote('code', '');#}
             });
+            $(document).on('hidden.bs.modal','#modal_edit_activity', function () {
+                $('#frm_edit_activity')[0].reset();
+                {#$('#txt_msg_body_members').summernote('code', '');#}
+            });
 
 
 
@@ -308,6 +354,18 @@
                 }
 
             });
+            $(document).on('click',"button[id*='btn_edit_activity']",function () {
+                var activity_id = $(this).attr('data');
+                var init_date_selector='#td_init_date_'+activity_id;
+                var end_date_selector='#td_end_date_'+activity_id;
+                var description_selector='#td_description_'+activity_id;
+
+                $('#inp_edit_init_date').val($(init_date_selector).text());
+                $('#inp_edit_end_date').val($(end_date_selector).text());
+                $('#txt_edit_activity_description').val($(description_selector).text());
+                $('#frm_edit_activity').attr('data',activity_id);
+                $('#modal_edit_activity').modal('show');
+            });
             $('#frm_add_activity').on('submit', function (e) {
                 e.preventDefault();
                 $('#modal_add_activity').modal('hide');
@@ -333,14 +391,14 @@
                             });
                             total_activities = total_activities+1;
                             var btn_group = '<tr id="tr_activity_'+json[0].id+'">\n' +
-                                '                                                <td>'+json[0].init_date+'</td>\n' +
-                                '                                                <td>'+json[0].description+'</td>\n' +
+                                '                                                <td id="td_init_date_'+json[0].id+'">'+json[0].init_date+'</td>\n' +
+                                '                                                <td id="td_description_'+json[0].id+'">'+json[0].description+'</td>\n' +
                                 '\n' +
-                                '                                                <td>'+json[0].end_date+'</td>\n' +
+                                '                                                <td id="td_end_date_'+json[0].id+'">'+json[0].end_date+'</td>\n' +
                                 '                                                <td class="text-center">\n' +
                                 '                                                    <div class="btn-group col-md-1">\n' +
-                                '                                                        <button class="btn btn-sm btn-warning" id="btn_edit_activity_'+json[0].id+'" title="Editar"><i class="fa fa-edit"></i> </button>\n' +
-                                '                                                        <button class="btn btn-sm btn-danger" id="btn_rm_activity_'+json[0].id+'" title="Eliminar"><i class="fa fa-eraser"></i> </button>\n' +
+                                '                                                        <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_'+json[0].id+'" data="'+json[0].id+'" title="Editar"><i class="fa fa-edit"></i> </button>\n' +
+                                '                                                        <button class="btn btn-sm btn-danger" type="button" id="btn_rm_activity_'+json[0].id+'" data="'+json[0].id+'" title="Eliminar"><i class="fa fa-eraser"></i> </button>\n' +
                                 '                                                    </div>\n' +
                                 '                                                </td>\n' +
                                 '                                            </tr>'
@@ -370,6 +428,93 @@
                             Toast.fire({
                                 type: 'error',
                                 title: 'Usted no puede agregar actividades a este plan.'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        });
+                        console.log(json);
+                    }
+                });
+
+                $('#frm_msg_members')[0].reset();
+
+
+            });
+            $('#frm_edit_activity').on('submit', function (e) {
+
+                e.preventDefault();
+                var activity_id = $(this).attr('data');
+
+                var url = "{% url 'programs:ajx_edit_activity' program.slug student.id %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'activity_id':activity_id,
+                        'init_date': $('#inp_edit_init_date').val(),
+                        'end_date': $('#inp_edit_end_date').val(),
+                        'description':$('#txt_edit_activity_description').val(),
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].edited == 1) {
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Actividad editada exitosamente.'
+                            });
+                            total_activities = total_activities+1;
+                            var btn_group = '<tr id="tr_activity_'+json[0].id+'">\n' +
+                                '                                                <td id="td_init_date_'+json[0].id+'">'+json[0].init_date+'</td>\n' +
+                                '                                                <td id="td_description_'+json[0].id+'">'+json[0].description+'</td>\n' +
+                                '\n' +
+                                '                                                <td id="td_end_date_'+json[0].id+'">'+json[0].end_date+'</td>\n' +
+                                '                                                <td class="text-center">\n' +
+                                '                                                    <div class="btn-group col-md-1">\n' +
+                                '                                                        <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_'+json[0].id+'" data="'+json[0].id+'" title="Editar"><i class="fa fa-edit"></i> </button>\n' +
+                                '                                                        <button class="btn btn-sm btn-danger" type="button" id="btn_rm_activity_'+json[0].id+'" data="'+json[0].id+'" title="Eliminar"><i class="fa fa-eraser"></i> </button>\n' +
+                                '                                                    </div>\n' +
+                                '                                                </td>\n' +
+                                '                                            </tr>'
+                            $('#modal_edit_activity').modal('hide');
+                            var row = myTable.row( $('#tr_activity_'+activity_id) );
+                            row.remove().draw();
+                            myTable.row.add(
+                                $(btn_group)
+                            ).draw();
+
+
+                        }
+                        else if(json[0].edited == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido editar la actividad.'
+                            })
+
+                        }
+                        else if(json[0].created == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff el programa no es un doctorado.'
+                            })
+
+                        }
+                        else if(json[0].created == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede editar actividades a este plan.'
                             })
 
                         }

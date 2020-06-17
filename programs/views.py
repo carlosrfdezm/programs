@@ -1677,6 +1677,41 @@ def ajx_create_activity(request, program_slug, student_id):
             json.dumps([{'created': 2}]),
             content_type="application/json"
         )
+def ajx_edit_activity(request, program_slug, student_id):
+    program=Program.objects.get(slug=program_slug)
+    student=Student.objects.get(pk=student_id)
+    activity = FormationPlanActivities.objects.get(pk=request.POST['activity_id'])
+
+    if program.type == 'phd':
+        if request.user == student.user:
+            if request.method == 'POST':
+                activity.init_date=request.POST['init_date']
+                activity.end_date=request.POST['end_date']
+                activity.description=request.POST['description']
+                activity.save()
+                return HttpResponse(
+                    json.dumps([{'edited': 1,'init_date':activity.init_date,'end_date':activity.end_date,
+                                 'description':activity.description, 'id':activity.id}]),
+                    content_type="application/json"
+                )
+
+            else:
+                return HttpResponse(
+                    json.dumps([{'edited': 0}]),
+                    content_type="application/json"
+                )
+
+        else:
+            return HttpResponse(
+                json.dumps([{'edited': 3}]),
+                content_type="application/json"
+            )
+
+    else:
+        return HttpResponse(
+            json.dumps([{'edited': 2}]),
+            content_type="application/json"
+        )
 
 @login_required
 def ajx_import_courses(request, program_slug, edition_id):
