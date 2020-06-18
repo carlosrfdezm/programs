@@ -1654,6 +1654,8 @@ def ajx_create_activity(request, program_slug, student_id):
 
                 )
                 new_activity.save()
+                formation_plan.last_update_date = now().date()
+                formation_plan.save()
                 return HttpResponse(
                     json.dumps([{'created': 1,'init_date':new_activity.init_date,'end_date':new_activity.end_date,
                                  'description':new_activity.description, 'id':new_activity.id}]),
@@ -1689,6 +1691,9 @@ def ajx_edit_activity(request, program_slug, student_id):
                 activity.end_date=request.POST['end_date']
                 activity.description=request.POST['description']
                 activity.save()
+                formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
+                formation_plan.last_update_date = now().date()
+                formation_plan.save()
                 return HttpResponse(
                     json.dumps([{'edited': 1,'init_date':activity.init_date,'end_date':activity.end_date,
                                  'description':activity.description, 'id':activity.id}]),
@@ -1712,6 +1717,7 @@ def ajx_edit_activity(request, program_slug, student_id):
             json.dumps([{'edited': 2}]),
             content_type="application/json"
         )
+
 def ajx_delete_activity(request, program_slug, student_id):
     program=Program.objects.get(slug=program_slug)
     student=Student.objects.get(pk=student_id)
@@ -1722,6 +1728,9 @@ def ajx_delete_activity(request, program_slug, student_id):
             if request.method == 'POST':
                 try:
                     activity.delete()
+                    formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
+                    formation_plan.last_update_date = now().date()
+                    formation_plan.save()
 
                     return HttpResponse(
                         json.dumps([{'deleted': 1}]),

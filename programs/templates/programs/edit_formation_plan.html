@@ -328,7 +328,7 @@
             });
 
             var today = new Date();
-
+            var dd = today.getDay();
             var mm = today.getMonth(); //January is 0!
             var yyyy = today.getFullYear();
             var meses =[ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre", "Noviembre", "Diciembre" ];
@@ -396,6 +396,7 @@
                 $('#txt_edit_activity_description').val($(description_selector).text());
                 $('#frm_edit_activity').attr('data',activity_id);
                 $('#modal_edit_activity').modal('show');
+
             });
             $(document).on('click',"button[id*='btn_rm_activity']",function () {
                 var activity_id = $(this).attr('data');
@@ -449,6 +450,18 @@
                             $('#inp_init_date').attr('value','');
                             $('#inp_end_date').attr('value','');
                             $('#txt_activity_description').attr('value','');
+                            var today = new Date();
+                            var dd = today.getDate();
+                            var mm = today.getMonth()+1; //January is 0!
+
+                            var yyyy = today.getFullYear();
+                            if(dd<10){dd='0'+dd}
+                            if(mm<10){mm='0'+mm}
+                            today = yyyy+'-'+mm+'-'+dd;
+
+
+                            $('#inp_last_update_date').val(today);
+
 
                         }
                         else if(json[0].created == 0){
@@ -536,6 +549,18 @@
                                 $(btn_group)
                             ).draw();
 
+                            var today = new Date();
+                            var dd = today.getDate();
+                            var mm = today.getMonth()+1; //January is 0!
+
+                            var yyyy = today.getFullYear();
+                            if(dd<10){dd='0'+dd}
+                            if(mm<10){mm='0'+mm}
+                            today = yyyy+'-'+mm+'-'+dd;
+
+
+                            $('#inp_last_update_date').val(today);
+
 
                         }
                         else if(json[0].edited == 0){
@@ -604,6 +629,18 @@
                             $('#modal_rm_activity').modal('hide');
                             var row = myTable.row( $('#tr_activity_'+activity_id) );
                             row.remove().draw();
+
+                            var today = new Date();
+                            var dd = today.getDate();
+                            var mm = today.getMonth()+1; //January is 0!
+
+                            var yyyy = today.getFullYear();
+                            if(dd<10){dd='0'+dd}
+                            if(mm<10){mm='0'+mm}
+                            today = yyyy+'-'+mm+'-'+dd;
+
+
+                            $('#inp_last_update_date').val(today);
 
 
 
