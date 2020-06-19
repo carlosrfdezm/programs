@@ -567,6 +567,8 @@ def students_list(request, program_slug, scope):
                 }
             if user_is_program_member(request.user, program):
                 context['member']=ProgramMember.objects.get(user=request.user, program=program)
+            elif user_is_program_student(request.user, program):
+                context['student']=Student.objects.get(user=request.user, program=program)
 
             return render(request, 'programs/students_list.html', context)
         elif program.type == 'msc':
@@ -796,6 +798,10 @@ def members_list(request, program_slug, scope):
             'members': ProgramMember.objects.filter(program=program, role='Tutor'),
             'scope': 'Tutores',
         }
+    if user_is_program_member(request.user, program):
+        context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+    elif user_is_program_student(request.user, program):
+        context['student'] = Student.objects.get(user=request.user, program=program)
 
     return render(request, 'programs/members_list.html', context)
 
@@ -1376,10 +1382,21 @@ def edit_line(request, program_slug, line_id):
 
 @login_required
 def program_lines(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
     context={
-        'program': Program.objects.get(slug=program_slug),
+        'program': program,
         'lines': InvestigationLine.objects.filter(program=Program.objects.get(slug=program_slug)),
     }
+    if user_is_program_member(request.user, program):
+        context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+    elif user_is_program_student(request.user, program):
+        if program.type =='phd':
+            context['student'] = Student.objects.get(user=request.user, program=program)
+        elif program.type =='msc':
+            context['student'] = MscStudent.objects.get(user=request.user, program=program)
+        elif program.type =='dip':
+            context['student'] = DipStudent.objects.get(user=request.user, program=program)
+
     return render(request, 'programs/lines_list.html', context)
 
 @login_required
@@ -1425,6 +1442,15 @@ def projects_list(request, program_slug):
         'program':program,
         'projects':InvestigationProject.objects.filter(program=program)
     }
+    if user_is_program_member(request.user, program):
+        context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+    elif user_is_program_student(request.user, program):
+        if program.type =='phd':
+            context['student'] = Student.objects.get(user=request.user, program=program)
+        elif program.type =='msc':
+            context['student'] = MscStudent.objects.get(user=request.user, program=program)
+        elif program.type =='dip':
+            context['student'] = DipStudent.objects.get(user=request.user, program=program)
     return render(request, 'programs/projects_list.html',context)
 
 @login_required
