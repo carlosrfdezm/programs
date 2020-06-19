@@ -144,8 +144,8 @@
                         {% if program.type == 'phd' %}
                             {% if user_is_program_student %}
                                 <li class="nav-item has-treeview">
-                                    <a href="#" class="nav-link" title="Estudiantes y solicitantes">
-                                        <i class="nav-icon fas fa-users"></i>
+                                    <a href="#" class="nav-link" title="Plan de formación">
+                                        <i class="nav-icon fas fa-calendar-check"></i>
                                         <p>
                                             Plan de formación
                                             <i class="fas fa-angle-left right"></i>
@@ -161,7 +161,7 @@
                                             </li>
                                         {% endif %}
                                         <li class="nav-item">
-                                            <a href="}" class="nav-link">
+                                            <a href="{% url 'programs:view_formation_plan' program.slug student.id %}" class="nav-link">
                                                 <i class="fa fa-check nav-icon"></i>
                                                 <p>Ver</p>
                                             </a>

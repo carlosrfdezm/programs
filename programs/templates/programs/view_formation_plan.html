@@ -1,0 +1,673 @@
+{% extends 'programs/base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block extra_css %}
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' %}">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
+{% endblock %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-9">
+                    <h1> Plan de formación individual </h1>
+                </div>
+                <div class="col-sm-3">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'cgc:cgc_home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Plan</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Plan de formación de {{ student }} </h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="inp_elaboration_date">Fecha de elaboración:</label>
+                                        <input type="date" class="form-control" id="inp_elaboration_date" name="elaboration_date" value="{{ formation_plan.elaboration_date|date:'Y-m-d' }}" readonly >
+                                        <p class="help text-sm text-gray">Fecha en que se elabora el plan</p>
+                                    </div>
+
+
+                                    <div class="form-group col-md-4">
+                                        <label for="inp_planned_end_year">Año de defensa previsto:</label>
+                                        <input type="number" class="form-control" value="{{ formation_plan.planned_end_year }}" readonly>
+                                        <p class="help text-sm text-gray">Fecha en que se prevee defender la tesis</p>
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="inp_last_update_date">Última actualización:</label>
+                                        <input type="date" class="form-control" id="inp_last_update_date" name="last_update_date" value="{{ formation_plan.last_update_date|date:'Y-m-d' }}" readonly required >
+                                        <p class="help text-sm text-gray">Última fecha de actualización del plan</p>
+                                    </div>
+
+
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4>Actividades de formación:</h4>
+                                    </div>
+
+                                </div>
+
+
+                                {% if formation_plan.formationplanactivities_set.all  %}
+                                    <table id="example1" class="table table-striped">
+                                        <thead>
+                                        {% user_is_program_cs user program as user_is_program_cs %}
+
+                                        <tr>
+                                            <th>Fecha de Inicio</th>
+                                            <th>Descripción</th>
+
+                                            <th>Fecha de Fin</th>
+
+
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for activity in formation_plan.formationplanactivities_set.all %}
+                                            <tr id="tr_activity_{{ activity.id }}">
+                                                <td id="td_init_date_{{ activity.id }}">{{ activity.init_date|date:"Y-m-d" }}</td>
+                                                <td id="td_description_{{ activity.id }}">{{ activity.description }}</td>
+
+                                                <td id="td_end_date_{{ activity.id }}">{{ activity.end_date|date:"Y-m-d"  }}</td>
+
+                                            </tr>
+
+
+                                        {% endfor %}
+
+
+
+
+                                        </tbody>
+                                        <tfoot>
+                                        {#                            <tr>#}
+                                        {#                                <th>Nombre y apellidos</th>#}
+                                        {#                                <th>Fecha solicitud</th>#}
+                                        {#                                <th>Estado</th>#}
+                                        {#                                <th class="text-center">Requisitos</th>#}
+                                        {#                                <th></th>#}
+                                        {#                            </tr>#}
+                                        </tfoot>
+                                    </table>
+                                {% else %}
+                                    <div class="alert alert-info text-center align-content-center" id="div_alert">
+                                        <h5>Usted aún no tiene actividades de formación en su plan. Agregue una
+                                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button>
+                                        </h5>
+                                    </div>
+                                {% endif %}
+
+
+
+                            </div>
+                            <div class="card-footer">
+
+                            </div>
+
+
+
+
+
+
+                    </div>
+                    <!-- /.card-body -->
+
+
+
+                </div>
+                <!-- /.card -->
+
+
+
+                <!-- /.card -->
+
+                <!-- Input addon -->
+                <!-- /.card -->
+                <!-- Horizontal Form -->
+                <!-- /.card -->
+
+            </div>
+            <!--/.col (left) -->
+            <!-- right column -->
+            <!--/.col (right) -->
+        </div>
+        <div class="modal fade" id="modal_add_activity">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form id="frm_add_activity" method="post">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Agregar tarea al plan</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="inp_init_date">Fecha de inicio:</label>
+                                    <input type="date" class="form-control" id="inp_init_date" name="init_date" value="" required >
+                                    <p class="help text-sm text-gray">Fecha en que se inicia esta tarea</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="inp_end_date">Fecha de fin:</label>
+                                    <input type="date" class="form-control" id="inp_end_date" name="end_date" value="" required >
+                                    <p class="help text-sm text-gray">Fecha en que se finaliza esta tarea</p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <textarea class="form-control" id="txt_activity_description" maxlength="500" placeholder="Descripción de la tarea. P.E: Redacción del primer capítulo." required></textarea>
+                            </div>
+
+
+
+
+
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success" id="btn_add_activity">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <div class="modal fade" id="modal_edit_activity">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form id="frm_edit_activity" data="" method="post">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Editar tarea del plan</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="inp_init_date">Fecha de inicio:</label>
+                                    <input type="date" class="form-control" id="inp_edit_init_date"  value="" required >
+                                    <p class="help text-sm text-gray">Fecha en que se inicia esta tarea</p>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="inp_end_date">Fecha de fin:</label>
+                                    <input type="date" class="form-control" id="inp_edit_end_date"  value="" required >
+                                    <p class="help text-sm text-gray">Fecha en que se finaliza esta tarea</p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <textarea class="form-control" id="txt_edit_activity_description" maxlength="500" placeholder="Descripción de la tarea. P.E: Redacción del primer capítulo." required></textarea>
+                            </div>
+
+
+
+
+
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success" >Guardar</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <div class="modal fade" id="modal_rm_activity">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form id="frm_rm_activity" data="" method="post">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Eliminar tarea del plan</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Usted desea eliminar la actividad:
+
+                            <div class="form-row">
+                                <textarea class="form-control text-center" id="txt_rm_activity_description" maxlength="500" placeholder="Descripción de la tarea. P.E: Redacción del primer capítulo." readonly></textarea>
+                            </div>
+
+                            Tenga en cuenta que esto no se puede deshacer.
+
+
+
+
+
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-danger" >Eliminar</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+{% block extra_scripts %}
+    <!-- jQuery -->
+    <script src="../../plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- bs-custom-file-input -->
+    <script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="../../dist/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="../../dist/js/demo.js"></script>
+    <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
+
+    <script>
+        $(document).ready(function () {
+            var total_activities = {{ formation_plan.formationplanactivities_set.all.count }};
+            var myTable= $("#example1").DataTable({
+                language: {
+                    url: '{% static "programs/plugins/datatables/Spanish.json" %}'
+                }});
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+
+            var today = new Date();
+            var dd = today.getDay();
+            var mm = today.getMonth(); //January is 0!
+            var yyyy = today.getFullYear();
+            var meses =[ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre", "Noviembre", "Diciembre" ];
+
+            for(var i = 0; i<= mm;i++){
+                if(i==mm){
+                    var option = '<option value="'+meses[i]+'"selected >'+meses[i]+'</option>';
+                }
+                else{
+                    var option = '<option value="'+meses[i]+'" >'+meses[i]+'</option>';
+                }
+                $('#slc_months').append(option);
+            };
+            $(document).on('hidden.bs.modal','#modal_add_activity', function () {
+                $('#frm_add_activity')[0].reset();
+                {#$('#txt_msg_body_members').summernote('code', '');#}
+            });
+            $(document).on('hidden.bs.modal','#modal_edit_activity', function () {
+                $('#frm_edit_activity')[0].reset();
+                {#$('#txt_msg_body_members').summernote('code', '');#}
+            });
+            $(document).on('hidden.bs.modal','#modal_rm_activity', function () {
+                $('#frm_rm_activity')[0].reset();
+                {#$('#txt_msg_body_members').summernote('code', '');#}
+            });
+            $('#slc_years').change(function () {
+
+                $('#slc_months option').remove();
+                $('#slc_months').append('<option value="" selected>Seleccione una opción</option>');
+
+                if($(this).val()== yyyy){
+                    for(var i = 0; i<= mm;i++){
+                        if(i==mm){
+                            var option = '<option value="'+meses[i]+'"selected >'+meses[i]+'</option>';
+                        }
+                        else{
+                            var option = '<option value="'+meses[i]+'" >'+meses[i]+'</option>';
+
+                        }
+
+                        $('#slc_months').append(option);
+
+
+                    }
+
+                }
+                else {
+                    for(var i = 0; i< meses.length; i++){
+
+                        var option = '<option value="'+meses[i]+'">'+meses[i]+'</option>';
+                        $('#slc_months').append(option);
+
+                    }
+                }
+
+            });
+            $(document).on('click',"button[id*='btn_edit_activity']",function () {
+                var activity_id = $(this).attr('data');
+                var init_date_selector='#td_init_date_'+activity_id;
+                var end_date_selector='#td_end_date_'+activity_id;
+                var description_selector='#td_description_'+activity_id;
+
+                $('#inp_edit_init_date').val($(init_date_selector).text());
+                $('#inp_edit_end_date').val($(end_date_selector).text());
+                $('#txt_edit_activity_description').val($(description_selector).text());
+                $('#frm_edit_activity').attr('data',activity_id);
+                $('#modal_edit_activity').modal('show');
+
+            });
+            $(document).on('click',"button[id*='btn_rm_activity']",function () {
+                var activity_id = $(this).attr('data');
+
+                var description_selector='#td_description_'+activity_id;
+
+
+                $('#txt_rm_activity_description').val($(description_selector).text());
+                $('#frm_rm_activity').attr('data',activity_id);
+                $('#modal_rm_activity').modal('show');
+            });
+            $('#frm_add_activity').on('submit', function (e) {
+                e.preventDefault();
+                $('#modal_add_activity').modal('hide');
+                var url = "{% url 'programs:ajx_create_activity' program.slug student.id %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'init_date': $('#inp_init_date').val(),
+                        'end_date': $('#inp_end_date').val(),
+                        'description':$('#txt_activity_description').val(),
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].created == 1) {
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Actividad agregada exitosamente.'
+                            });
+                            total_activities = total_activities+1;
+                            var btn_group = '<tr id="tr_activity_'+json[0].id+'">\n' +
+                                '                                                <td id="td_init_date_'+json[0].id+'">'+json[0].init_date+'</td>\n' +
+                                '                                                <td id="td_description_'+json[0].id+'">'+json[0].description+'</td>\n' +
+                                '\n' +
+                                '                                                <td id="td_end_date_'+json[0].id+'">'+json[0].end_date+'</td>\n' +
+                                '                                                <td class="text-center">\n' +
+                                '                                                    <div class="btn-group col-md-1">\n' +
+                                '                                                        <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_'+json[0].id+'" data="'+json[0].id+'" title="Editar"><i class="fa fa-edit"></i> </button>\n' +
+                                '                                                        <button class="btn btn-sm btn-danger" type="button" id="btn_rm_activity_'+json[0].id+'" data="'+json[0].id+'" title="Eliminar"><i class="fa fa-eraser"></i> </button>\n' +
+                                '                                                    </div>\n' +
+                                '                                                </td>\n' +
+                                '                                            </tr>'
+                            myTable.row.add(
+                                $(btn_group)
+                            ).draw();
+                            $('#inp_init_date').attr('value','');
+                            $('#inp_end_date').attr('value','');
+                            $('#txt_activity_description').attr('value','');
+                            var today = new Date();
+                            var dd = today.getDate();
+                            var mm = today.getMonth()+1; //January is 0!
+
+                            var yyyy = today.getFullYear();
+                            if(dd<10){dd='0'+dd}
+                            if(mm<10){mm='0'+mm}
+                            today = yyyy+'-'+mm+'-'+dd;
+
+
+                            $('#inp_last_update_date').val(today);
+
+
+                        }
+                        else if(json[0].created == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar la actividad.'
+                            })
+
+                        }
+                        else if(json[0].created == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff el programa no es un doctorado.'
+                            })
+
+                        }
+                        else if(json[0].created == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede agregar actividades a este plan.'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        });
+                        console.log(json);
+                    }
+                });
+
+                $('#frm_msg_members')[0].reset();
+
+
+            });
+            $('#frm_edit_activity').on('submit', function (e) {
+
+                e.preventDefault();
+                var activity_id = $(this).attr('data');
+
+                var url = "{% url 'programs:ajx_edit_activity' program.slug student.id %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'activity_id':activity_id,
+                        'init_date': $('#inp_edit_init_date').val(),
+                        'end_date': $('#inp_edit_end_date').val(),
+                        'description':$('#txt_edit_activity_description').val(),
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].edited == 1) {
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Actividad editada exitosamente.'
+                            });
+                            total_activities = total_activities+1;
+                            var btn_group = '<tr id="tr_activity_'+json[0].id+'">\n' +
+                                '                                                <td id="td_init_date_'+json[0].id+'">'+json[0].init_date+'</td>\n' +
+                                '                                                <td id="td_description_'+json[0].id+'">'+json[0].description+'</td>\n' +
+                                '\n' +
+                                '                                                <td id="td_end_date_'+json[0].id+'">'+json[0].end_date+'</td>\n' +
+                                '                                                <td class="text-center">\n' +
+                                '                                                    <div class="btn-group col-md-1">\n' +
+                                '                                                        <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_'+json[0].id+'" data="'+json[0].id+'" title="Editar"><i class="fa fa-edit"></i> </button>\n' +
+                                '                                                        <button class="btn btn-sm btn-danger" type="button" id="btn_rm_activity_'+json[0].id+'" data="'+json[0].id+'" title="Eliminar"><i class="fa fa-eraser"></i> </button>\n' +
+                                '                                                    </div>\n' +
+                                '                                                </td>\n' +
+                                '                                            </tr>'
+                            $('#modal_edit_activity').modal('hide');
+                            var row = myTable.row( $('#tr_activity_'+activity_id) );
+                            row.remove().draw();
+                            myTable.row.add(
+                                $(btn_group)
+                            ).draw();
+
+                            var today = new Date();
+                            var dd = today.getDate();
+                            var mm = today.getMonth()+1; //January is 0!
+
+                            var yyyy = today.getFullYear();
+                            if(dd<10){dd='0'+dd}
+                            if(mm<10){mm='0'+mm}
+                            today = yyyy+'-'+mm+'-'+dd;
+
+
+                            $('#inp_last_update_date').val(today);
+
+
+                        }
+                        else if(json[0].edited == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido editar la actividad.'
+                            })
+
+                        }
+                        else if(json[0].created == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff el programa no es un doctorado.'
+                            })
+
+                        }
+                        else if(json[0].created == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede editar actividades a este plan.'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        });
+                        console.log(json);
+                    }
+                });
+
+                $('#frm_msg_members')[0].reset();
+
+
+            });
+            $('#frm_rm_activity').on('submit', function (e) {
+
+                e.preventDefault();
+                var activity_id = $(this).attr('data');
+
+                var url = "{% url 'programs:ajx_delete_activity' program.slug student.id %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'activity_id':activity_id,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Actividad eliminada exitosamente.'
+                            });
+
+                            $('#modal_rm_activity').modal('hide');
+                            var row = myTable.row( $('#tr_activity_'+activity_id) );
+                            row.remove().draw();
+
+                            var today = new Date();
+                            var dd = today.getDate();
+                            var mm = today.getMonth()+1; //January is 0!
+
+                            var yyyy = today.getFullYear();
+                            if(dd<10){dd='0'+dd}
+                            if(mm<10){mm='0'+mm}
+                            today = yyyy+'-'+mm+'-'+dd;
+
+
+                            $('#inp_last_update_date').val(today);
+
+
+
+                        }
+                        else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar la actividad.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff el programa no es un doctorado.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede elimina actividades a este plan.'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        });
+                        console.log(json);
+                    }
+                });
+
+                $('#frm_msg_members')[0].reset();
+
+
+            });
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

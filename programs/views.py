@@ -4066,3 +4066,21 @@ def edit_formation_plan(request, program_slug, student_id):
     else:
         return error_500(request,program, 'Usted no tiene privilegios para editar el plan de formación de este estudiante.')
 
+@login_required
+def view_formation_plan(request, program_slug,student_id):
+    program = Program.objects.get(slug=program_slug)
+    student = Student.objects.get(pk=student_id)
+    try:
+        formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
+        context = {
+            'program': program,
+            'student': student,
+            'years': range(now().year, now().year + 6),
+            'formation_plan': formation_plan,
+
+        }
+        return render(request, 'programs/view_formation_plan.html', context)
+    except StudentFormationPlan.DoesNotExist:
+        return error_500(request, program, 'El estudiante aún no crea su plan de formación')
+
+
