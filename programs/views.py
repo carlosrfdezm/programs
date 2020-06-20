@@ -4100,11 +4100,17 @@ def view_formation_plan(request, program_slug,student_id):
         formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
         context = {
             'program': program,
-            'student': student,
             'years': range(now().year, now().year + 6),
             'formation_plan': formation_plan,
 
         }
+        if user_is_program_member(request.user, program):
+            context['member']=ProgramMember.objects.get(user=request.user, program=program)
+        elif user_is_program_student(request.user, program):
+            context['student']=student
+        else:
+            return error_500(request, program, 'Usted no tiene acceso a este plan de formación')
+
         return render(request, 'programs/view_formation_plan.html', context)
     except StudentFormationPlan.DoesNotExist:
         return error_500(request, program, 'El estudiante aún no crea su plan de formación')
