@@ -4040,31 +4040,37 @@ def student_evals(request, program_slug, student_id):
 def create_formation_plan(request, program_slug, student_id):
     program = Program.objects.get(slug=program_slug)
     student = Student.objects.get(pk=student_id)
-    if request.user == student.user:
-        if request.method == 'POST':
+    if program.type == 'phd':
+        if request.user == student.user:
+            if request.method == 'POST':
 
-            new_plan = StudentFormationPlan(
-                phdstudent=student,
-                elaboration_date=now().date(),
-                last_update_date=now().date(),
-                planned_end_year=request.POST['planned_end_year'],
-            )
-            new_plan.save()
-            return HttpResponseRedirect(reverse('programs:edit_formation_plan', args=[program_slug, student_id]))
-
-        else:
-            try:
-                formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
+                new_plan = StudentFormationPlan(
+                    phdstudent=student,
+                    elaboration_date=now().date(),
+                    last_update_date=now().date(),
+                    planned_end_year=request.POST['planned_end_year'],
+                )
+                new_plan.save()
                 return HttpResponseRedirect(reverse('programs:edit_formation_plan', args=[program_slug, student_id]))
-            except StudentFormationPlan.DoesNotExist:
-                context = {
-                    'program': program,
-                    'student':student,
-                    'years': range(now().year,now().year+6)
-                }
-                return render(request, 'programs/create_formation_plan.html', context)
+
+            else:
+                try:
+                    formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
+                    return HttpResponseRedirect(
+                        reverse('programs:edit_formation_plan', args=[program_slug, student_id]))
+                except StudentFormationPlan.DoesNotExist:
+                    context = {
+                        'program': program,
+                        'student': student,
+                        'years': range(now().year, now().year + 6)
+                    }
+                    return render(request, 'programs/create_formation_plan.html', context)
+        else:
+            return error_500(request, program,
+                             'Usted no tiene privilegios para crear el plan de formación de este estudiante.')
     else:
-        return error_500(request,program, 'Usted no tiene privilegios para crear el plan de formación de este estudiante.')
+        return error_500(request, program,
+                         'El programa no es un doctorado, los estudiantes no tienen plan de formación.')
 
 @login_required
 def edit_formation_plan(request, program_slug, student_id):
