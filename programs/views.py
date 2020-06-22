@@ -3769,6 +3769,80 @@ def print_student_evals(request, program_slug, student_id):
     else:
         return error_500(request,program, 'Solo el Coordinador y el Secretario pueden acceder a la vista de reportes')
 
+@login_required
+def print_student_plan(request, program_slug, student_id):
+    program = Program.objects.get(slug=program_slug)
+
+    if program.type == 'phd':
+        student=Student.objects.get(pk=student_id)
+        student_name=student.user.get_full_name()
+
+        if user_is_program_cs(request.user, program) or request.user == student.user:
+            document = Document()
+
+            document.add_heading(program.full_name.upper(), level=1)
+            document.add_heading('Plan de formación de '+student_name, level=2)
+
+            try:
+                formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Fecha de elaboración'
+                hdr_cells[1].text = 'Última actualización'
+                hdr_cells[2].text = 'Año de defensa previsto'
+
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(formation_plan.elaboration_date)
+                row_cells[1].text = str(formation_plan.last_update_date)
+                row_cells[2].text = str(formation_plan.planned_end_year)
+
+                document.add_heading('Tareas del plan de formación.' , level=3)
+
+                if formation_plan.formationplanactivities_set.all():
+                    table = document.add_table(rows=1, cols=4)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'No.'
+                    hdr_cells[1].text = 'Tarea'
+                    hdr_cells[2].text = 'Fecha de inicio'
+                    hdr_cells[3].text = 'Fecha de fin'
+                    index = 1
+                    for activity in formation_plan.formationplanactivities_set.all():
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(index)
+                        row_cells[1].text = str(activity.description)
+                        row_cells[2].text = str(activity.init_date)
+                        row_cells[3].text = str(activity.end_date)
+                        index += 1
+                else:
+                    document.add_heading('No tiene tareas', level=5)
+
+
+            except StudentFormationPlan.DoesNotExist:
+                return error_500(request, program,'El estudiante no tiene plan de formación.')
+
+        docname = 'Plan_formacion_'+slugify(student_name).upper()+'_'+program.slug.upper() + '.docx'
+        # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
+        docpath = MEDIA_ROOT + '/program_{0}/{1}'.format(program_slug, docname)
+        try:
+            document.save(docpath)
+        except:
+            return error_500(request, program, "Ha ocurrido un error al intentar guardar el documento solicitado")
+        fs = FileSystemStorage()
+
+        filename = docpath
+
+        if fs.exists(filename):
+
+            with fs.open(filename) as docx:
+                response = HttpResponse(docx, content_type='application/docx')
+                response['Content-Disposition'] = 'attachment; filename="'+docname+ '"'
+                return response
+        else:
+            return error_500(request, 'No se ha encontrado el archivo del reporte correspondiente')
+
+    else:
+        return error_500(request,program, 'Solo el Coordinador y el Secretario pueden acceder a la vista de reportes')
+
 
 # View para crear componente de programa doctoral
 @login_required

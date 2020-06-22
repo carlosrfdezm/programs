@@ -39,6 +39,21 @@
                     <div class="card card-primary">
                         <div class="card-header">
                             <h3 class="card-title">Plan de formación de {{ formation_plan.phdstudent }} </h3>
+
+                           <div class="card-tools">
+                            {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                            {#                                    <i class="fas fa-minus"></i>#}
+                            {#                                </button>#}
+                            <div class="btn-group">
+                                <a type="button" class="btn btn-tool " href="{% url 'programs:print_student_plan' program.slug formation_plan.phdstudent.id %}" title="Descargar plan" >
+                                    <i class="fa fa-download"></i>
+                                </a>
+
+                            </div>
+                            {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                            {#                    <i class="fas fa-times"></i>#}
+                            {#                  </button>#}
+                        </div>
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
