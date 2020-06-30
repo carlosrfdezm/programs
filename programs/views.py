@@ -181,10 +181,16 @@ def create_student(request, program_slug):
                                               request.POST['tuthor_institution_' + str(i)], request.POST['tuthor_email_' + str(i)], new_student)
                         new_theme = PhdStudentTheme(
                             phd_student=new_student,
-                            project=InvestigationProject.objects.get(pk=request.POST['investigation_project']),
                             line=InvestigationProject.objects.get(pk=request.POST['investigation_project']).line,
                             description=request.POST['theme'],
                         )
+                        try:
+                            project=InvestigationProject.objects.get(pk=request.POST['investigation_project'])
+                            new_theme.project = project
+                        except:
+                            pass
+
+
 
                         new_theme.save()
                     else:
@@ -255,13 +261,16 @@ def create_student(request, program_slug):
                                             request.POST['tuthor_email_' + str(i)],
                                             new_student))
 
-
-                new_theme=PhdStudentTheme(
+                new_theme = PhdStudentTheme(
                     phd_student=new_student,
-                    project=InvestigationProject.objects.get(pk=request.POST['investigation_project']),
                     line=InvestigationProject.objects.get(pk=request.POST['investigation_project']).line,
                     description=request.POST['theme'],
                 )
+                try:
+                    project = InvestigationProject.objects.get(pk=request.POST['investigation_project'])
+                    new_theme.project = project
+                except:
+                    pass
 
                 new_theme.save()
             else:
