@@ -163,8 +163,6 @@ def create_student(request, program_slug):
                         student.picture = request.FILES['picture']
                         student.save()
 
-
-
                     except:
                         pass
 
@@ -181,16 +179,14 @@ def create_student(request, program_slug):
                                               request.POST['tuthor_institution_' + str(i)], request.POST['tuthor_email_' + str(i)], new_student)
                         new_theme = PhdStudentTheme(
                             phd_student=new_student,
-                            line=InvestigationProject.objects.get(pk=request.POST['investigation_project']).line,
                             description=request.POST['theme'],
                         )
                         try:
                             project=InvestigationProject.objects.get(pk=request.POST['investigation_project'])
-                            new_theme.project = project
+                            new_theme.project = project,
+                            new_theme.line = project.line,
                         except:
                             pass
-
-
 
                         new_theme.save()
                     else:
@@ -241,8 +237,6 @@ def create_student(request, program_slug):
                 student.picture=request.FILES['picture']
                 student.save()
 
-
-
             except:
                 pass
 
@@ -263,12 +257,13 @@ def create_student(request, program_slug):
 
                 new_theme = PhdStudentTheme(
                     phd_student=new_student,
-                    line=InvestigationProject.objects.get(pk=request.POST['investigation_project']).line,
                     description=request.POST['theme'],
                 )
                 try:
                     project = InvestigationProject.objects.get(pk=request.POST['investigation_project'])
                     new_theme.project = project
+                    new_theme.line=project.line,
+
                 except:
                     pass
 
