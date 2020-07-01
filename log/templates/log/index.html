@@ -247,7 +247,7 @@
                     <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.{{forloop.counter0}}s">
                         <div class="member">
                             {% if member.picture %}
-                                <img src="{% url 'log:cgc_member_picture' member.id %}" class="img-fluid" style="width: 400px; height: auto;" alt="">
+                                <img src="{% url 'log:cgc_member_picture' member.id %}" class="img-fluid" style="width: 255px; height: 255px;" alt="">
                             {% elif member.gender == 'f' %}
                                 <img src="{% static 'log/img/team-2.jpg' %}" class="img-fluid" alt="">
                             {% elif member.gender == 'm' %}
