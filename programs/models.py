@@ -99,8 +99,8 @@ class CGC_Member(models.Model):
     gp_contact = models.URLField(help_text='URL del contacto de Google+',default='https://plus.google.com', blank=True)
     picture= models.ImageField(help_text='Foto', upload_to=cgc_photo_directory_path, null=True, blank=True)
     gender=models.CharField(max_length=1, choices=[('f','Femenino'),('m','Masculino')], help_text='Género')
-    phone = models.CharField(max_length=50, null=True)
-    degree = models.CharField(max_length=100, default='Doctor en Ciencias de...',
+    phone = models.CharField(max_length=50, null=True, blank=True)
+    degree = models.CharField(max_length=100, default='Doctor en Ciencias',
                               help_text='Grado cientifico')
     birth_date = models.DateField(default='1960-01-01', help_text='Fecha de nacimiento')
 
