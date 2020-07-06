@@ -133,7 +133,9 @@
                             {% else %}
                                 {% if user == student.user %}
                                     <div class="alert alert-info text-center align-content-center" id="div_alert">
-                                        <h5>Usted aún no tiene actividades de formación en su plan.<a href="{% url 'programs:edit_formation_plan' program.slug student.id %}">Editelo</a>  para agregarla
+                                        <h5>Usted aún no tiene actividades de formación en su plan.
+                                            <a href="{% url 'programs:edit_formation_plan' program.slug student.id %}">
+                                                Edítelo</a>  para agregarlas.
                                         </h5>
                                     </div>
 
