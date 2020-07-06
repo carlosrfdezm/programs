@@ -133,8 +133,7 @@
                             {% else %}
                                 {% if user == student.user %}
                                     <div class="alert alert-info text-center align-content-center" id="div_alert">
-                                        <h5>Usted aún no tiene actividades de formación en su plan. Agregue una
-                                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button>
+                                        <h5>Usted aún no tiene actividades de formación en su plan.<a href="{% url 'programs:edit_formation_plan' program.slug student.id %}">Editelo</a>  para agregarla
                                         </h5>
                                     </div>
 

@@ -75,71 +75,127 @@
 
                                 </div>
                                 <hr>
-                                <div class="row">
+                                <div class="row" id="div_activities_title">
                                     <div class="col-md-11">
                                         <h4>Actividades de formación:</h4>
                                     </div>
-                                    {% if formation_plan.formationplanactivities_set.all %}
-                                        <div class="col-md-1 text-right">
-                                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button>
+
+                                    <div class="col-md-1 text-right">
+                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button>
+                                    </div>
+
+                                </div>
+
+                                <div id="div_formation_activities">
+                                    {% if formation_plan.formationplanactivities_set.all  %}
+                                        <div id="div_table">
+                                            <table id="example1" class="table table-striped">
+                                                <thead>
+                                                {% user_is_program_cs user program as user_is_program_cs %}
+
+                                                <tr>
+                                                    <th>Fecha de Inicio</th>
+                                                    <th>Descripción</th>
+
+                                                    <th>Fecha de Fin</th>
+                                                    <th></th>
+
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for activity in formation_plan.formationplanactivities_set.all %}
+                                                    <tr id="tr_activity_{{ activity.id }}">
+                                                        <td id="td_init_date_{{ activity.id }}">{{ activity.init_date|date:"Y-m-d" }}</td>
+                                                        <td id="td_description_{{ activity.id }}">{{ activity.description }}</td>
+
+                                                        <td id="td_end_date_{{ activity.id }}">{{ activity.end_date|date:"Y-m-d"  }}</td>
+                                                        <td class="text-center">
+                                                            <div class="btn-group col-md-1">
+                                                                <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_{{ activity.id }}" data="{{ activity.id }}" title="Editar"><i class="fa fa-edit"></i> </button>
+                                                                <button class="btn btn-sm btn-danger" type="button" id="btn_rm_activity_{{ activity.id }}" data="{{ activity.id }}" title="Eliminar"><i class="fa fa-eraser"></i> </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+
+                                                {% endfor %}
+
+
+
+
+                                                </tbody>
+                                                <tfoot>
+                                                {#                            <tr>#}
+                                                {#                                <th>Nombre y apellidos</th>#}
+                                                {#                                <th>Fecha solicitud</th>#}
+                                                {#                                <th>Estado</th>#}
+                                                {#                                <th class="text-center">Requisitos</th>#}
+                                                {#                                <th></th>#}
+                                                {#                            </tr>#}
+                                                </tfoot>
+                                            </table>
+
+                                        </div>
+
+
+                                    {% else %}
+
+                                        <div class="alert alert-info text-center align-content-center" id="div_alert">
+                                            <h5>Usted aún no tiene actividades de formación en su plan. Agregue una
+{#                                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button>#}
+                                            </h5>
+                                        </div>
+                                        <div id="div_table"class="invisible">
+                                            <table id="example1" class="table table-striped">
+                                                <thead>
+                                                {% user_is_program_cs user program as user_is_program_cs %}
+
+                                                <tr>
+                                                    <th>Fecha de Inicio</th>
+                                                    <th>Descripción</th>
+
+                                                    <th>Fecha de Fin</th>
+                                                    <th></th>
+
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for activity in formation_plan.formationplanactivities_set.all %}
+                                                    <tr id="tr_activity_{{ activity.id }}">
+                                                        <td id="td_init_date_{{ activity.id }}">{{ activity.init_date|date:"Y-m-d" }}</td>
+                                                        <td id="td_description_{{ activity.id }}">{{ activity.description }}</td>
+
+                                                        <td id="td_end_date_{{ activity.id }}">{{ activity.end_date|date:"Y-m-d"  }}</td>
+                                                        <td class="text-center">
+                                                            <div class="btn-group col-md-1">
+                                                                <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_{{ activity.id }}" data="{{ activity.id }}" title="Editar"><i class="fa fa-edit"></i> </button>
+                                                                <button class="btn btn-sm btn-danger" type="button" id="btn_rm_activity_{{ activity.id }}" data="{{ activity.id }}" title="Eliminar"><i class="fa fa-eraser"></i> </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+
+                                                {% endfor %}
+
+
+
+
+                                                </tbody>
+                                                <tfoot>
+                                                {#                            <tr>#}
+                                                {#                                <th>Nombre y apellidos</th>#}
+                                                {#                                <th>Fecha solicitud</th>#}
+                                                {#                                <th>Estado</th>#}
+                                                {#                                <th class="text-center">Requisitos</th>#}
+                                                {#                                <th></th>#}
+                                                {#                            </tr>#}
+                                                </tfoot>
+                                            </table>
+
                                         </div>
                                     {% endif %}
                                 </div>
 
-
-                                {% if formation_plan.formationplanactivities_set.all  %}
-                                    <table id="example1" class="table table-striped">
-                                        <thead>
-                                        {% user_is_program_cs user program as user_is_program_cs %}
-
-                                        <tr>
-                                            <th>Fecha de Inicio</th>
-                                            <th>Descripción</th>
-
-                                            <th>Fecha de Fin</th>
-                                            <th></th>
-
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for activity in formation_plan.formationplanactivities_set.all %}
-                                            <tr id="tr_activity_{{ activity.id }}">
-                                                <td id="td_init_date_{{ activity.id }}">{{ activity.init_date|date:"Y-m-d" }}</td>
-                                                <td id="td_description_{{ activity.id }}">{{ activity.description }}</td>
-
-                                                <td id="td_end_date_{{ activity.id }}">{{ activity.end_date|date:"Y-m-d"  }}</td>
-                                                <td class="text-center">
-                                                    <div class="btn-group col-md-1">
-                                                        <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_{{ activity.id }}" data="{{ activity.id }}" title="Editar"><i class="fa fa-edit"></i> </button>
-                                                        <button class="btn btn-sm btn-danger" type="button" id="btn_rm_activity_{{ activity.id }}" data="{{ activity.id }}" title="Eliminar"><i class="fa fa-eraser"></i> </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-
-                                        {% endfor %}
-
-
-
-
-                                        </tbody>
-                                        <tfoot>
-                                        {#                            <tr>#}
-                                        {#                                <th>Nombre y apellidos</th>#}
-                                        {#                                <th>Fecha solicitud</th>#}
-                                        {#                                <th>Estado</th>#}
-                                        {#                                <th class="text-center">Requisitos</th>#}
-                                        {#                                <th></th>#}
-                                        {#                            </tr>#}
-                                        </tfoot>
-                                    </table>
-                                {% else %}
-                                    <div class="alert alert-info text-center align-content-center" id="div_alert">
-                                        <h5>Usted aún no tiene actividades de formación en su plan. Agregue una
-                                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button>
-                                        </h5>
-                                    </div>
-                                {% endif %}
 
 
 
@@ -408,7 +464,7 @@
                 $('#frm_rm_activity').attr('data',activity_id);
                 $('#modal_rm_activity').modal('show');
             });
-            $('#frm_add_activity').on('submit', function (e) {
+            $(document).on('submit','#frm_add_activity', function (e) {
                 e.preventDefault();
                 $('#modal_add_activity').modal('hide');
                 var url = "{% url 'programs:ajx_create_activity' program.slug student.id %}";
@@ -444,9 +500,42 @@
                                 '                                                    </div>\n' +
                                 '                                                </td>\n' +
                                 '                                            </tr>'
+                            if(total_activities == '1'){
+                                var div_title = '<div class="col-md-1 text-right">\n' +
+                                    '                                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button>\n' +
+                                    '                                        </div>';
+
+                                var div_table = '<div id="div_table">\n' +
+                                    '                                            <table id="example1" class="table table-striped">\n' +
+                                    '                                                <thead>\n' +
+                                    '                                                {% user_is_program_cs user program as user_is_program_cs %}\n' +
+                                    '\n' +
+                                    '                                                <tr>\n' +
+                                    '                                                    <th>Fecha de Inicio</th>\n' +
+                                    '                                                    <th>Descripción</th>\n' +
+                                    '\n' +
+                                    '                                                    <th>Fecha de Fin</th>\n' +
+                                    '                                                    <th></th>\n' +
+                                    '\n' +
+                                    '                                                </tr>\n' +
+                                    '                                                </thead>\n' +
+                                    '                                                <tbody>\n' +
+                                    '\n' +
+                                    '                                                </tbody>\n' +
+                                    '                                                <tfoot>\n' +
+                                    '                                                </tfoot>\n' +
+                                    '                                            </table>\n' +
+                                    '\n' +
+                                    '                                        </div>';
+                                $('#div_alert').remove();
+                                $('#div_table').removeClass('invisible');
+
+
+                            }
                             myTable.row.add(
                                 $(btn_group)
                             ).draw();
+
                             $('#inp_init_date').attr('value','');
                             $('#inp_end_date').attr('value','');
                             $('#txt_activity_description').attr('value','');
@@ -642,6 +731,19 @@
 
                             $('#inp_last_update_date').val(today);
 
+                            total_activities = total_activities-1;
+
+                            if(total_activities == 0){
+
+                                var div_alert = '<div class="alert alert-info text-center align-content-center" id="div_alert">\n' +
+                                    '                                        <h5>Usted aún no tiene actividades de formación en su plan. Agregue una\n' +
+                                    {#'                                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button>\n' +#}
+                                    '                                        </h5>\n' +
+                                    '                                    </div>';
+                                $('#div_table').addClass('invisible');
+                                $(div_alert).insertBefore($('#div_table'));
+                                {#$('#div_formation_activities').append($(div_alert));#}
+                            }
 
 
                         }
@@ -662,7 +764,7 @@
                         else if(json[0].deleted == 3){
                             Toast.fire({
                                 type: 'error',
-                                title: 'Usted no puede elimina actividades a este plan.'
+                                title: 'Usted no puede eliminar actividades a este plan.'
                             })
 
                         }
