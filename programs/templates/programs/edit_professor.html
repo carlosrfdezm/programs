@@ -215,10 +215,13 @@
                                     title: 'Este correo esta en uso por un miembro del programa'
                                 });
                                 $('#btn_save').addClass('disabled');
+                                $('#btn_save').attr('disabled', 'disabled');
 
                             }
                             else{
                                 $('#btn_save').removeClass('disabled');
+                                $('#btn_save').removeAttr('disabled');
+
 
                             }
                             console.log(json); // log the returned json to the console
