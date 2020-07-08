@@ -97,10 +97,10 @@
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                <div class="form-group col-md-2">
-                                            <label for="inp_birth_date">Fecha de nacimiento:</label>
-                                            <input type="date" class="form-control" id="inp_birth_date"  name="member_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" value="{{member.birth_date|date:'Y-m-d' }}" required>
-                                        </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="inp_birth_date">Fecha de nacimiento:</label>
+                                        <input type="date" class="form-control" id="inp_birth_date"  name="member_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" value="{{member.birth_date|date:'Y-m-d' }}" required>
+                                    </div>
                                     <div class="form-group col-md-4">
                                         <label for="inp_grade">Grado científico:</label>
                                         <input type="text" class="form-control" id="inp_grade"  name="grade" value="{{  member.degree }}" placeholder="p.e:Doctor en Ciencias de la Educación" required>
@@ -139,7 +139,7 @@
                             <!-- /.card-body -->
 
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <button type="submit" class="btn btn-primary" id="btn_save">Guardar</button>
                             </div>
                         </form>
                     </div>
@@ -176,54 +176,69 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
 
 
             {#bsCustomFileInput.init();#}
 
 
             $(document).on('keyup','#inp_email', function () {
-                var url = "{% url 'programs:ajx_usr_exists' program.slug %}"
-                $.ajax({
-                    url : url,
-                    type : "POST", // http method
-                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                        'email':$('#inp_email').val(),
-                    }, // data sent with the post request
+                var email = $('#inp_email').val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_usr_exists' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'email':email,
+                        }, // data sent with the post request
 
-                    // handle a successful response
-                    success : function(json) {
+                        // handle a successful response
+                        success : function(json) {
 
-                        if (json[0].exists == 1) {
+                            if (json[0].exists == 1) {
 
-                            Toast.fire({
-                                type: 'warning',
-                                title: 'Ya hay un usuario con ese correo, quiza ya es miembro de otro programa'
-                            })
+                                Toast.fire({
+                                    type: 'warning',
+                                    title: 'Ya hay un usuario con ese correo, quiza ya es miembro de otro programa'
+                                })
 
-                        } else if(json[0].exists == 2){
-                            Toast.fire({
-                                type: 'error',
-                                title: 'Este correo esta en uso por un miembro del programa'
-                            })
+                            } else if(json[0].exists == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Este correo esta en uso por un miembro del programa'
+                                });
+                                $('#btn_save').addClass('disabled');
 
+                            }
+                            else{
+                                $('#btn_save').removeClass('disabled');
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                         }
-                        console.log(json); // log the returned json to the console
-                        console.log("success"); // another sanity check
-
-
-
-
-                        {#$('#div_by_workshop').removeClass('hidden')#}
-
-                    },
-
-                    // handle a non-successful response
-                    error : function(xhr,errmsg,err) {
-                        $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                            " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                    }
-                });
+                    });
+                };
 
 
             });
