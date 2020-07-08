@@ -1203,7 +1203,14 @@ def edit_member(request, program_slug, member_id):
             user=ProgramMember.objects.get(pk=member_id).user
             user.first_name=request.POST['name']
             user.last_name=request.POST['surename']
-            user.email=request.POST['email']
+
+            try:
+                usuario = User.objects.get(email=request.POST['email'])
+                if usuario != ProgramMember.objects.get(pk=member_id).user:
+                    return error_500(request,program,'El correo que ha agregado ya está en uso por otro usuario')
+            except User.DoesNotExist:
+                user.email=request.POST['email']
+
             user.save()
             ProgramMember.objects.filter(pk=member_id).update(
                 role=request.POST['role'],
