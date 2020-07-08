@@ -1262,7 +1262,7 @@ def ajx_usr_exists(request,program_slug):
 
         try:
             user= User.objects.get(email=request.POST['email'])
-            if user_is_program_member(user, program ):
+            if user_is_program_member(user, program ) or user_is_program_student(user, program):
                 return HttpResponse(
                     json.dumps([{'exists': 2}]),
                     content_type="application/json"
