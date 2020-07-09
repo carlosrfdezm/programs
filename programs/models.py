@@ -155,6 +155,7 @@ class ProgramMember(models.Model):
     class Meta:
         verbose_name='Miembro del Programa'
         verbose_name_plural='Miembros del programa'
+        ordering=['weight']
 
     def __str__(self):
         return self.user.get_full_name()
