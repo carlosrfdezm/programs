@@ -1134,7 +1134,7 @@ def create_professor(request, program_slug):
                             pass
                         return HttpResponseRedirect(reverse('programs:members_list', args=[program_slug, 'all']))
                     except:
-                        pass
+                        return error_500(request, program, 'Ha ocurrido un error al guardar los datos del nuevo profesor')
 
                     return HttpResponseRedirect(reverse('programs:members_list', args=[program_slug, 'all']))
 
