@@ -229,9 +229,17 @@ class DipStudent(models.Model):
 class PhdStudent(models.Model):
     student = models.OneToOneField(Student,on_delete=models.CASCADE)
     status= models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'),('doctorando','Doctorando'), ('graduado', 'Graduado')])
+    category= models.CharField(max_length=15,default='interno', choices=[('interno', 'Interno'),('externo','Externo')])
+    center = models.CharField(max_length=150, default='Universidad Agraria de La Habana')
 
     def __str__(self):
         return self.student.user.username
+
+class InnerAreas(models.Model):
+    name = models.CharField(max_length=150, help_text='Areas administrativas para estudiantes internos')
+
+    def __str__(self):
+        return self.name
 
 # Modelo para verificar requisitos de ingreso al programa
 class ProgramInitRequirements(models.Model):
