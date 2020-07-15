@@ -238,6 +238,10 @@ class PhdStudent(models.Model):
 class InnerAreas(models.Model):
     name = models.CharField(max_length=150, help_text='Areas administrativas para estudiantes internos')
 
+    class Meta:
+        verbose_name = 'Area administrativa interna'
+        verbose_name_plural = 'Areas administrativas internas'
+
     def __str__(self):
         return self.name
 
