@@ -25,7 +25,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
-    FormationPlanActivities
+    FormationPlanActivities, InnerAreas
 from programs.templatetags.extra_tags import finish_requirements_accomplished, student_init_requirement_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -170,6 +170,8 @@ def create_student(request, program_slug):
                         new_student = PhdStudent(
                             student=student,
                             status='solicitante',
+                            category=request.POST['student_category'],
+                            center=request.POST['student_center'],
                         )
                         new_student.save()
                         for i in range(1,int(request.POST['total_tuthors'])+1):
@@ -244,6 +246,8 @@ def create_student(request, program_slug):
                 new_student = PhdStudent(
                     student=student,
                     status='solicitante',
+                    category=request.POST['student_category'],
+                    center=request.POST['student_center'],
                 )
                 new_student.save()
                 for i in range(1,int(request.POST['total_tuthors'])+1):
@@ -294,6 +298,7 @@ def create_student(request, program_slug):
                 'program': program,
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
                 'projects': InvestigationProject.objects.filter(program=program),
+                'inner_areas':InnerAreas.objects.all(),
             }
             if Program.objects.get(slug=program_slug).type == 'phd':
                 return render(request, 'programs/create_phd_student.html', context)

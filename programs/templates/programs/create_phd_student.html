@@ -41,7 +41,7 @@
                             {% csrf_token %}
                             <div class="card-body">
                                 <div class="form-row">
-                                    <div class="form-group col-md-3">
+                                    <div class="form-group col-md-4">
                                         <label for="inp_name">Nombre(s):</label>
                                         <input type="text" class="form-control" id="inp_name" name="student_name" placeholder="Nombre(s)" required>
                                     </div>
@@ -49,11 +49,19 @@
                                         <label for="inp_name">Apellidos:</label>
                                         <input type="text" class="form-control" id="inp_surename" name="student_surename" placeholder="Apellidos" required>
                                     </div>
-                                    <div class="form-group col-md-2">
+                                    <div class="form-group col-md-4">
                                         <label for="inp_dni">DNI:</label>
                                         <input type="text" class="form-control" id="inp_dni" name="student_dni" placeholder="DNI o pasaporte" maxlength="11" required>
                                     </div>
-                                    <div class="form-group col-md-3">
+
+                                </div>
+                                <div class="form-row">
+                                <div class="form-group col-md-3">
+                                        <label for="inp_email">Email:</label>
+                                        <input type="email" class="form-control" id="inp_email"  name="student_email" placeholder="Email" required>
+                                    </div>
+                                <div class="form-group col-md-3">
+
                                         <label for="slc_gender">Género:</label>
                                         <select class="form-control" id="slc_gender" name="gender" required>
                                             <option value="" >Seleccione una opción</option>
@@ -61,21 +69,19 @@
                                             <option value="m" >Masculino</option>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group col-md-2">
+                                    <div class="form-group col-md-3">
                                         <label for="inp_birth_date">Fecha de nacimiento:</label>
                                         <input type="date" class="form-control" id="inp_birth_date"  name="student_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" required>
                                     </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="inp_email">Email:</label>
-                                        <input type="email" class="form-control" id="inp_email"  name="student_email" placeholder="Email" required>
-                                    </div>
+
                                     <div class="form-group col-md-3">
                                         <label for="inp_phone">Teléfono:</label>
                                         <input type="text" class="form-control" id="inp_phone"  name="student_phone" placeholder="Teléfono" >
                                     </div>
-                                    <div class="form-group col-md-4">
+
+                                </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
                                         <label for="slc_country">País:</label>
                                         <select class="form-control" id="slc_country" name="student_country" required>
                                             {% country_list as country_list%}
@@ -85,7 +91,21 @@
 
                                         </select>
                                     </div>
-                                </div>
+                             <div class="form-group col-md-3">
+                                        <label for="slc_category">Categoría:</label>
+                                        <select class="form-control" id="slc_category" name="student_category" required>
+                                            <option value="" selected>Seleccione una opción</option>
+                                            <option value="interno" >Interno</option>
+                                            <option value="externo" >Externo</option>
+                                        </select>
+                                    </div>
+                            <div class="form-group col-md-6" id="div_workcenter">
+                                <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>
+                                <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante">
+
+                            </div>
+                            </div>
+
                                 <hr>
                                 <h4><strong>Tema de investigación:</strong></h4>
 
@@ -428,6 +448,31 @@
                     });
                     return false;
                 }
+            });
+
+            $(document).on('change','#slc_category',function () {
+                if($(this).val()=='interno'){
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                        '                                <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>\n' +
+                        '                                <select class="form-control" id="slc_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
+                        '<option value="" selected>Seleccione una opción</option>'+
+                        {% for inner_area in inner_areas %}
+                            '<option value="{{ inner_area }}">{{ inner_area }}</option>'+
+                        {% endfor %}
+                        ''+
+
+                        '</select>'+
+                        '                            </div>')
+                }
+                else if($(this).val()=='externo'){
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                        '                                <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>\n' +
+                        '                                <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
+                        '\n' +
+                        '                            </div>');
+
+                }
+
             });
 
         });
