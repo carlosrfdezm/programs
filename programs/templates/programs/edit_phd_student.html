@@ -44,7 +44,7 @@
 
                                     <div class="form-row">
 
-                                        <div class="form-group col-md-2">
+                                        <div class="form-group col-md-3">
                                             <label for="inp_name">Nombre(s):</label>
                                             <input type="text" class="form-control" id="inp_name" name="student_name" placeholder="Nombre(s)" value="{{ student.user.first_name }}" required>
                                         </div>
@@ -52,18 +52,11 @@
                                             <label for="inp_name">Apellidos:</label>
                                             <input type="text" class="form-control" id="inp_surename" name="student_surename" placeholder="Apellidos" value="{{  student.user.last_name }}" required>
                                         </div>
-                                        <div class="form-group col-md-2">
+                                        <div class="form-group col-md-3">
                                             <label for="inp_dni">DNI:</label>
                                             <input type="text" class="form-control" id="inp_dni" name="student_dni" placeholder="DNI o pasaporte" maxlength="11" value="{{ student.dni }}" required>
                                         </div>
-                                        <div class="form-group col-md-2">
-                                            <label for="slc_gender">Género:</label>
-                                            <select class="form-control" id="slc_gender" name="gender" required>
-                                                <option value="" >Seleccione una opción</option>
-                                                <option value="f" {% if student.gender == 'f' %}selected{% endif %}  >Femenino</option>
-                                                <option value="m" {% if student.gender == 'm' %}selected{% endif %}>Masculino</option>
-                                            </select>
-                                        </div>
+
                                         <div class="form-group col-md-2">
                                             <label for="slc_status">Estado:</label>
                                             <select class="form-control" id="slc_status" name="student_status" required>
@@ -76,19 +69,31 @@
                                         </div>
                                     </div>
                                     <div class="form-row">
-                                        <div class="form-group col-md-2">
-                                            <label for="inp_birth_date">Fecha de nacimiento:</label>
-                                            <input type="date" class="form-control" id="inp_birth_date"  name="student_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" value="{{ student.birth_date|date:'Y-m-d' }}" required>
-                                        </div>
+
                                         <div class="form-group col-md-3">
                                             <label for="inp_email">Email:</label>
                                             <input type="email" class="form-control" id="inp_email"  name="student_email" placeholder="Email" value="{{student.user.email }}" required>
                                         </div>
                                         <div class="form-group col-md-3">
+                                            <label for="slc_gender">Género:</label>
+                                            <select class="form-control" id="slc_gender" name="gender" required>
+                                                <option value="" >Seleccione una opción</option>
+                                                <option value="f" {% if student.gender == 'f' %}selected{% endif %}  >Femenino</option>
+                                                <option value="m" {% if student.gender == 'm' %}selected{% endif %}>Masculino</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label for="inp_birth_date">Fecha de nacimiento:</label>
+                                            <input type="date" class="form-control" id="inp_birth_date"  name="student_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" value="{{ student.birth_date|date:'Y-m-d' }}" required>
+                                        </div>
+                                        <div class="form-group col-md-3">
                                             <label for="inp_phone">Teléfono:</label>
                                             <input type="text" class="form-control" id="inp_phone"  name="student_phone"  value="{% if student.phone %}{{ student.phone }}{% endif %}" placeholder="Teléfono" >
                                         </div>
-                                        <div class="form-group col-md-4">
+
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-3">
                                             <label for="slc_country">País:</label>
                                             <select class="form-control" id="slc_country" name="student_country" required>
                                                 {% country_list as country_list%}
@@ -98,6 +103,32 @@
 
                                             </select>
                                         </div>
+                                        <div class="form-group col-md-3">
+                                            <label for="slc_category">Categoría:</label>
+                                            <select class="form-control" id="slc_category" name="student_category" required>
+                                                <option value="" selected>Seleccione una opción</option>
+                                                <option value="interno" {% if phd_student.category == 'interno' %}selected{% endif %} >Interno</option>
+                                                <option value="externo" {% if phd_student.category == 'externo' %}selected{% endif %}>Externo</option>
+                                            </select>
+                                        </div>
+                                        {% if phd_student.category == 'externo' %}
+                                            <div class="form-group col-md-6" id="div_workcenter">
+                                                <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>
+                                                <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante" value="{{ phd_student.center }}">
+
+                                            </div>
+                                        {% elif phd_student.category == 'interno' %}
+                                            <div class="form-group col-md-6" id="div_workcenter">
+                                                <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>
+                                                <select class="form-control" id="slc_center" required="" name="student_center" placeholder="Centro de trabajo del estudiante">
+                                                    <option value="" >Seleccione una opción</option>
+                                                    {% for area in inner_areas %}
+                                                        <option value="{{ area.name }}" {% if area.name == phd_student.center %}selected{% endif %}>{{ area }}</option>
+                                                    {% endfor %}
+
+                                                </select>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                     <hr>
                                     <h4><strong>Tema de investigación:</strong></h4>
@@ -285,21 +316,10 @@
                                 </div>
                             </form>
                         </div>
-                        <!-- /.card -->
 
-
-
-                        <!-- /.card -->
-
-                        <!-- Input addon -->
-                        <!-- /.card -->
-                        <!-- Horizontal Form -->
-                        <!-- /.card -->
 
                     </div>
-                    <!--/.col (left) -->
-                    <!-- right column -->
-                    <!--/.col (right) -->
+
                 </div>
                 <!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -367,7 +387,6 @@
     });
 </script>
 {% block extra_scripts %}
-
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -724,6 +743,30 @@
 
                 $('#modal_add_tuthor').modal('hide');
 
+
+            });
+            $(document).on('change','#slc_category',function () {
+                if($(this).val()=='interno'){
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                        '                                <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>\n' +
+                        '                                <select class="form-control" id="slc_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
+                        '<option value="" selected>Seleccione una opción</option>'+
+                        {% for inner_area in inner_areas %}
+                            '<option value="{{ inner_area }}">{{ inner_area }}</option>'+
+                        {% endfor %}
+                        ''+
+
+                        '</select>'+
+                        '                            </div>')
+                }
+                else if($(this).val()=='externo'){
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                        '                                <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>\n' +
+                        '                                <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
+                        '\n' +
+                        '                            </div>');
+
+                }
 
             });
 

@@ -847,7 +847,9 @@ def edit_student(request, program_slug, student_id):
                 )
 
             PhdStudent.objects.filter(student=Student.objects.get(pk=student_id)).update(
-                status=request.POST['student_status']
+                status=request.POST['student_status'],
+                category=request.POST['student_category'],
+                center=request.POST['student_center'],
             )
 
             student_theme, created = PhdStudentTheme.objects.get_or_create(
@@ -897,9 +899,11 @@ def edit_student(request, program_slug, student_id):
             context = {
                 'program': program,
                 'student': Student.objects.get(pk=student_id),
+                'phd_student':PhdStudent.objects.get(student=Student.objects.get(pk=student_id), student__program=program),
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
                 'projects': InvestigationProject.objects.filter(program=program),
+                'inner_areas': InnerAreas.objects.all(),
             }
             return render(request, 'programs/edit_phd_student.html', context)
     else:
@@ -993,6 +997,7 @@ def edit_msc_student(request, program_slug, edition_id, student_id):
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
                 'projects': InvestigationProject.objects.filter(program=program),
+
             }
             return render(request, 'programs/edit_msc_student.html', context)
     else:
