@@ -2131,6 +2131,43 @@ def ajx_by_year_requests(request, program_slug):
         content_type="application/json"
     )
 
+
+@login_required
+def ajx_students_by_country(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    response_data=[]
+    countries = []
+    data = []
+    if program.type == 'phd':
+        for student in Student.objects.filter(program=program):
+            if not student.country in countries:
+                countries.append(student.country)
+
+        for country in countries:
+            data.append(Student.objects.filter(program=program,country=country).__len__())
+
+    if program.type == 'msc':
+        for student in MscStudent.objects.filter(program=program):
+            if not student.country in countries:
+                countries.append(student.country)
+        for country in countries:
+            data.append(MscStudent.objects.filter(program=program,country=country).__len__())
+    if program.type == 'dip':
+        for student in DipStudent.objects.filter(program=program):
+            if not student.country in countries:
+                countries.append(student.country)
+
+        for country in countries:
+            data.append(DipStudent.objects.filter(program=program,country=country).__len__())
+
+    response_data.append(countries)
+    response_data.append(data)
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
 @login_required
 def ajx_students_by_edition(request, program_slug):
     program = Program.objects.get(slug=program_slug)
