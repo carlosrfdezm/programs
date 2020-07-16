@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from programs.models import InvestigationLine, Student, MscStudent, Tuthor, StudentFormationPlan, InnerAreas
+from programs.models import InvestigationLine, Student, MscStudent, Tuthor, StudentFormationPlan, InnerAreas, \
+    PhdStudent, DipStudent
 from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember
 
 # Register your models here.
@@ -34,9 +35,15 @@ class ProgramMemberAdmin(admin.ModelAdmin):
 
 admin.site.register(ProgramMember, ProgramMemberAdmin)
 
+class PhdStudentAdmin(admin.ModelAdmin):
+    list_display = ('student','status', 'category')
+
+admin.site.register(PhdStudent, PhdStudentAdmin)
+
 admin.site.register(InvestigationLine)
-admin.site.register(Student)
+
 admin.site.register(MscStudent)
+admin.site.register(DipStudent)
 admin.site.register(Tuthor)
 admin.site.register(StudentFormationPlan)
 admin.site.register(InnerAreas)
