@@ -219,6 +219,103 @@
 
                 <!-- /.col -->
             </div>
+            <div class="row">
+                <div class="col-md-4 col-sm-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Estudiantes por categoría</strong></h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
+                                {##}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+
+                                    <div class="chart-responsive" id="div_ChartCategory">
+                                        <canvas id="donutChartCategory"  height="209px"></canvas>
+                                    </div>
+                                    <div class="mt-4 text-center small">
+
+
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Estudiantes por países</strong></h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
+                                {##}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+                                    <div class="chart" id="div_StudentsChartAge">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="requestChartAge" height="280" style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+
+                <!-- /.col -->
+            </div>
             {% if program.type == 'msc' or program.type == 'dip' %}
             <div class="row">
                 <div class="col-md-6 col-sm-6">
@@ -958,6 +1055,61 @@
                     }
                     else {
                         $('#div_ChartGender').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+            $.ajax({
+                url : "{% url 'programs:ajx_students_by_category' program.slug %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json.length;i++){
+                        total = total+json[i];
+                    }
+                    if(total>0){
+                        var donutChartCanvas = $('#donutChartCategory').get(0).getContext('2d')
+                        var donutData        = {
+                            labels: [
+                                'Internos', 'Externos'
+                            ],
+                            datasets: [
+                                {
+                                    data: json,
+                                    backgroundColor : ['#00a65a','#f56954'],
+                                }
+                            ]
+                        };
+                        var donutOptions     = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: true,
+                            },
+
+                        };
+                        //Create pie or douhnut chart
+                        // You can switch between pie and douhnut using the method below.
+                        var donutChart = new Chart(donutChartCanvas, {
+                            type: 'doughnut',
+                            data: donutData,
+                            options: donutOptions
+                        });
+                    }
+                    else {
+                        $('#div_ChartCategory').replaceWith(div_court);
 
                     }
 

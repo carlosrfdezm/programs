@@ -2666,6 +2666,28 @@ def ajx_students_by_sex(request, program_slug):
         content_type="application/json"
     )
 
+
+@login_required
+def ajx_students_by_category(request, program_slug):
+
+    response_data=[]
+    program=Program.objects.get(slug=program_slug)
+    if program.type == 'phd':
+        response_data.append(PhdStudent.objects.filter(student__program=program, category='interno').__len__())
+        response_data.append(PhdStudent.objects.filter(student__program=program, category='externo').__len__())
+    elif program.type == 'msc':
+        response_data.append(MscStudent.objects.filter(program=program, category='interno').__len__())
+        response_data.append(MscStudent.objects.filter(program=program, category='externo').__len__())
+    elif program.type == 'dip':
+        response_data.append(DipStudent.objects.filter(program=program, category='interno').__len__())
+        response_data.append(DipStudent.objects.filter(program=program, category='externo').__len__())
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+
 def program_member_picture(request, program_slug, member_id):
     fs = FileSystemStorage()
     # filename = Papers.objects.get(pk=paper_id).file_url +  str(Papers.objects.get(pk=paper_id).file)

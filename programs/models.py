@@ -202,6 +202,9 @@ class MscStudent(models.Model):
     status = models.CharField(max_length=15,default='solicitante', choices=[('solicitante', 'Solicitante'), ('maestrante', 'Maestrante'),
                                                       ('graduado', 'Graduado')])
     edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
+    category = models.CharField(max_length=15, default='interno',
+                                choices=[('interno', 'Interno'), ('externo', 'Externo')])
+    center = models.CharField(max_length=150, default='Universidad Agraria de La Habana')
 
     def __str__(self):
         return self.user.get_full_name()
@@ -222,6 +225,9 @@ class DipStudent(models.Model):
                                                       ('graduado', 'Graduado')])
     edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
     faculty = models.CharField(max_length=100, help_text='Nombre de la Facultad a la que pertenece')
+    category = models.CharField(max_length=15, default='interno',
+                                choices=[('interno', 'Interno'), ('externo', 'Externo')])
+    center = models.CharField(max_length=150, default='Universidad Agraria de La Habana')
 
     def __str__(self):
         return self.user.get_full_name()

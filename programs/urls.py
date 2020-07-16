@@ -80,6 +80,7 @@ urlpatterns = [
     path('ajx/statistics/students/status', views.ajx_students_by_state, name='ajx_students_by_state'),
     path('ajx/statistics/students/gender', views.ajx_students_by_sex, name='ajx_students_by_sex'),
     path('ajx/statistics/students/line', views.ajx_students_by_line, name='ajx_students_by_line'),
+    path('ajx/statistics/students/category', views.ajx_students_by_category, name='ajx_students_by_category'),
     path('ajx/statistics/students/age', views.ajx_students_by_age, name='ajx_students_by_age'),
     path('ajx/statistics/students/editions', views.ajx_students_by_edition, name='ajx_students_by_edition'),
     path('ajx/statistics/students/graduated/editions', views.ajx_graduated_by_edition, name='ajx_graduated_by_edition'),
