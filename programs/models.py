@@ -424,3 +424,11 @@ class FormationPlanActivities(models.Model):
 
     def __str__(self):
         return self.description
+
+
+class PostgMember(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    charge=models.CharField(max_length=20, choices=(('Director', 'Director'),('Metodólogo', 'Metodólogo')))
+
+    def __str__(self):
+        return self.user.get_full_name

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from programs.models import InvestigationLine, Student, MscStudent, Tuthor, StudentFormationPlan, InnerAreas, \
-    PhdStudent, DipStudent
+    PhdStudent, DipStudent, PostgMember
 from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember
 
 # Register your models here.
@@ -47,3 +47,4 @@ admin.site.register(DipStudent)
 admin.site.register(Tuthor)
 admin.site.register(StudentFormationPlan)
 admin.site.register(InnerAreas)
+admin.site.register(PostgMember)
