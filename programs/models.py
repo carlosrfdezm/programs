@@ -429,6 +429,7 @@ class FormationPlanActivities(models.Model):
 class PostgMember(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE)
     charge=models.CharField(max_length=20, choices=(('Director', 'Director'),('Metodólogo', 'Metodólogo')))
+    gender = models.CharField(max_length=1, default='f', choices=[('f', 'Femenino'), ('m', 'Masculino')])
 
     def __str__(self):
-        return self.user.get_full_name
+        return self.user.get_full_name()

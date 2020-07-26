@@ -2,7 +2,7 @@ from django.urls import path
 
 
 from . import views
-from . import cgc_views as views
+from . import postg_views as views
 
 app_name = 'programs'
 
@@ -10,7 +10,7 @@ urlpatterns = [
 
 
     #URLS DE POSTG
-    path('index', views.cgc_home, name='cgc_home'),
+    path('', views.index, name='postg_index'),
 
 
 
