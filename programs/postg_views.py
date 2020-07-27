@@ -38,3 +38,26 @@ def index(request):
         'programs': Program.objects.all().order_by('-type'),
     }
     return render(request, 'programs/postg/postg_index.html', context)
+
+@login_required
+def home(request):
+    try:
+        postg_member=PostgMember.objects.get(user=request.user)
+        context={
+            'member':postg_member,
+        }
+        return render(request, 'programs/postg/postg_home.html', context)
+
+    except PostgMember.DoesNotExist:
+        return error_500(request,"Usted no es miembro de la Direccion de Postgrado")
+
+
+
+
+def error_500(request, error_message):
+    context={
+
+        'error_message':error_message,
+    }
+    return render(request,'programs/cgc/cgc_error_500.html', context)
+

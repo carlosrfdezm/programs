@@ -11,6 +11,7 @@ urlpatterns = [
 
     #URLS DE POSTG
     path('', views.index, name='postg_index'),
+    path('home', views.home, name='postg_home'),
 
 
 

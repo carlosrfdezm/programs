@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 from programs.apps import ProgramsConfig
-from programs.models import Program, ProgramMember, CGC_Member, Student, MscStudent, PhdStudent, DipStudent
+from programs.models import Program, ProgramMember, CGC_Member, Student, MscStudent, PhdStudent, DipStudent, PostgMember
 
 
 def index(request):
@@ -35,8 +35,25 @@ def cgc_login(request):
 
             return HttpResponseRedirect(reverse('cgc:cgc_home'))
 
-        except:
+        except CGC_Member.DoesNotExist:
             return HttpResponse('Pagina de error de acceso cgc')
+
+def postg_login(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(request, username=username, password=password)
+
+    if user is None:
+        return HttpResponseRedirect(reverse('log:index'))
+    elif user is not None:
+        try:
+            postg_member=PostgMember.objects.get(user=user)
+            login(request,user)
+
+            return HttpResponseRedirect(reverse('postg:postg_home'))
+
+        except PostgMember.DoesNotExist:
+            return HttpResponse('Pagina de error de acceso postg')
 
 
 

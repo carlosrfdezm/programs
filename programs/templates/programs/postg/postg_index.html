@@ -318,7 +318,7 @@
                 <div class="form">
                     <div id="sendmessage">Your message has been sent. Thank you!</div>
                     <div id="errormessage"></div>
-                    <form action="{% url 'log:my_login' %}" method="post" role="form" class="contactForm">
+                    <form action="{% url 'log:postg_login' %}" method="post" role="form" class="contactForm">
                         {% csrf_token %}
                         <div class="form-row">
                             <div class="form-group col-md-6">
@@ -328,7 +328,6 @@
                             <div class="form-group col-md-6">
                                 <input type="password" class="form-control" name="password" id="email" placeholder="Contraseña" data-rule="password" data-msg="Por favor introduzca una contraseña válida." />
                                 <div class="validation"></div>
-                                <input type="hidden" name="program_slug" value="{{ program.slug }}">
                             </div>
                         </div>
 
