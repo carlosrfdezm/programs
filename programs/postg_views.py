@@ -61,3 +61,70 @@ def error_500(request, error_message):
     }
     return render(request,'programs/cgc/cgc_error_500.html', context)
 
+def logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('postg:postg_home'))
+
+@login_required
+def ajx_postg_phd_students_by_program(request):
+    response_data=[]
+    labels = []
+    data = []
+    for program in Program.objects.filter(type='phd'):
+        labels.append(program.slug.upper())
+        data.append(program.student_set.all().__len__())
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+    response_data.append(labels)
+    response_data.append(data)
+
+
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_postg_msc_students_by_program(request):
+    response_data=[]
+    labels = []
+    data = []
+    for program in Program.objects.filter(type='msc'):
+        labels.append(program.slug.upper())
+        data.append(program.mscstudent_set.all().__len__())
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+    response_data.append(labels)
+    response_data.append(data)
+
+
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+
+@login_required
+def ajx_postg_dip_students_by_program(request):
+    response_data=[]
+    labels = []
+    data = []
+    for program in Program.objects.filter(type='dip'):
+        labels.append(program.slug.upper())
+        data.append(program.dipstudent_set.all().__len__())
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+    response_data.append(labels)
+    response_data.append(data)
+
+
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )

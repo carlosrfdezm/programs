@@ -11,7 +11,13 @@ urlpatterns = [
 
     #URLS DE POSTG
     path('', views.index, name='postg_index'),
+    path('logout', views.logout, name='postg_logout'),
     path('home', views.home, name='postg_home'),
+
+
+    path('ajx/students/by/phd_programs', views.ajx_postg_phd_students_by_program, name='ajx_postg_phd_students_by_program'),
+    path('ajx/students/by/msc_programs', views.ajx_postg_msc_students_by_program, name='ajx_postg_msc_students_by_program'),
+    path('ajx/students/by/dip_programs', views.ajx_postg_dip_students_by_program, name='ajx_postg_dip_students_by_program'),
 
 
 
