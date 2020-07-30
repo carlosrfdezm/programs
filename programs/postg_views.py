@@ -45,6 +45,10 @@ def home(request):
         postg_member=PostgMember.objects.get(user=request.user)
         context={
             'member':postg_member,
+            'phd_programs': Program.objects.filter(type='phd').__len__(),
+            'msc_programs': Program.objects.filter(type='msc').__len__(),
+            'dip_programs': Program.objects.filter(type='dip').__len__(),
+            'postg_members': PostgMember.objects.all().__len__(),
         }
         return render(request, 'programs/postg/postg_home.html', context)
 
@@ -93,7 +97,7 @@ def ajx_postg_msc_students_by_program(request):
     data = []
     for program in Program.objects.filter(type='msc'):
         labels.append(program.slug.upper())
-        data.append(program.mscstudent_set.all().__len__())
+        data.append(program.mscstudent_set.filter(status='maestrante').__len__())
 
     # locale.setlocale(locale.LC_ALL, 'es-ES')
     response_data.append(labels)
@@ -115,16 +119,28 @@ def ajx_postg_dip_students_by_program(request):
     data = []
     for program in Program.objects.filter(type='dip'):
         labels.append(program.slug.upper())
-        data.append(program.dipstudent_set.all().__len__())
+        data.append(program.dipstudent_set.filter(status='diplomante').__len__())
 
     # locale.setlocale(locale.LC_ALL, 'es-ES')
     response_data.append(labels)
     response_data.append(data)
 
-
-
-
     return HttpResponse(
         json.dumps(response_data),
         content_type="application/json"
     )
+
+@login_required
+def programs(request, program_type):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+
+        context={
+            'member': postg_member,
+            'programs': Program.objects.filter(type=program_type),
+            'program_type': program_type,
+
+        }
+        return render(request, "programs/postg/postg_programs_list.html", context)
+    except PostgMember.DoesNotExist:
+        return error_500(request, 'Usted no es miembro de la Direccion de Postgrado')

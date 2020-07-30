@@ -26,12 +26,11 @@
             <div class="row">
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box">
-                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-check"></i></span>
+                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-graduation-cap"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text"><a href="" title="Solicitantes de ingreso a los programas doctorales">Doctorandos</a></span>
-                            <span class="info-box-number">
-                  {{ requesters }}
+                            <span class="info-box-text"><a href="{% url 'postg:programs' 'phd' %}" title="Programas doctorales">Doctorados</a></span>
+                            <span class="info-box-number">{{ phd_programs }}
                 </span>
                         </div>
                         <!-- /.info-box-content -->
@@ -45,8 +44,8 @@
 
 
                         <div class="info-box-content">
-                            <span class="info-box-text"><a href="" title="Estudiantes ingresados a los programas doctorales">Maestrantes</a></span>
-                            <span class="info-box-number">{{ doctorands }}</span>
+                            <span class="info-box-text"><a href="{% url 'postg:programs' 'msc' %}" title="Programas de maestría">Maestrías</a></span>
+                            <span class="info-box-number">{{ msc_programs }}</span>
                         </div>
 
                         <!-- /.info-box-content -->
@@ -60,11 +59,11 @@
 
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="info-box mb-3">
-                        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-graduation-cap"></i></span>
+                        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-check"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text"><a href="" title="Graduados de los programas doctorales">Diplomantes</a></span>
-                            <span class="info-box-number">{{ graduated }}</span>
+                            <span class="info-box-text"><a href="{% url 'postg:programs' 'dip' %}" title="Diplomados">Diplomados</a></span>
+                            <span class="info-box-number">{{ dip_programs }}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
@@ -76,8 +75,8 @@
                         <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text"><a href="" title="Miembros de la CGC-UNAH-Complejo">Miembros</a></span>
-                            <span class="info-box-number">{{ members }}</span>
+                            <span class="info-box-text"><a href="" title="Miembros de la Dirección de Postgrado">Miembros</a></span>
+                            <span class="info-box-number">{{ postg_members }}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
@@ -362,8 +361,8 @@
                             datasets: [
                                 {
                                     label               : 'Maestrantes',
-                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
-                                    borderColor         : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    backgroundColor     : ['rgba(139,255,116,0.67)','rgba(44,56,255,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    borderColor         : ['rgba(139,255,116,0.67)','rgba(44,56,255,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
                                     pointRadius          : 2,
                                     pointColor          : '#3b8bba',
                                     pointStrokeColor    : 'rgba(60,141,188,1)',
@@ -443,9 +442,9 @@
                             labels:json[0],
                             datasets: [
                                 {
-                                    label               : 'Maestrantes',
-                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
-                                    borderColor         : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    label               : 'Diplomantes',
+                                    backgroundColor     : ['rgba(255,36,36,0.67)','rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)'],
+                                    borderColor         : ['rgba(255,36,36,0.67)','rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)'],
                                     pointRadius          : 2,
                                     pointColor          : '#3b8bba',
                                     pointStrokeColor    : 'rgba(60,141,188,1)',

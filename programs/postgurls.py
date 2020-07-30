@@ -13,6 +13,8 @@ urlpatterns = [
     path('', views.index, name='postg_index'),
     path('logout', views.logout, name='postg_logout'),
     path('home', views.home, name='postg_home'),
+    path('programs/<str:program_type>', views.programs, name='programs'),
+
 
 
     path('ajx/students/by/phd_programs', views.ajx_postg_phd_students_by_program, name='ajx_postg_phd_students_by_program'),

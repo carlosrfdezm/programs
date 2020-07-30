@@ -10,7 +10,7 @@ from django.utils.timezone import now
 
 from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember, StudentFinishRequirement, \
     ProgramFinishRequirements, CGC_Member, PhdStudent, PhdStudentTheme, InvestigationProject, Student, \
-    StudentFormationPlan
+    StudentFormationPlan, MscStudent, DipStudent
 
 register = template.Library()
 
@@ -194,6 +194,10 @@ def user_programs_comite_member(user):
 def program_requesters(program):
     if program.type == 'phd':
         return PhdStudent.objects.filter(status='solicitante', student__program=program).__len__()
+    elif program.type == 'msc':
+        return MscStudent.objects.filter(status='solicitante', program=program).__len__()
+    elif program.type == 'dip':
+        return DipStudent.objects.filter(status='solicitante', program=program).__len__()
     else:
         return 'Error'
 
@@ -201,6 +205,10 @@ def program_requesters(program):
 def program_aproved(program):
     if program.type == 'phd':
         return PhdStudent.objects.filter(status='doctorando', student__program=program).__len__()
+    elif program.type == 'msc':
+        return MscStudent.objects.filter(status='maestrante', program=program).__len__()
+    elif program.type == 'dip':
+        return DipStudent.objects.filter(status='diplomante', program=program).__len__()
     else:
         return 'Error'
 
@@ -208,6 +216,10 @@ def program_aproved(program):
 def program_graduated(program):
     if program.type == 'phd':
         return PhdStudent.objects.filter(status='graduado', student__program=program).__len__()
+    elif program.type == 'msc':
+        return MscStudent.objects.filter(status='graduado', program=program).__len__()
+    elif program.type == 'dip':
+        return DipStudent.objects.filter(status='graduado', program=program).__len__()
     else:
         return 'Error'
 
