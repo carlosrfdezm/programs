@@ -159,3 +159,19 @@ def members(request):
         return render(request, "programs/postg/postg_members_list.html", context)
     except PostgMember.DoesNotExist:
         return error_500(request, 'Usted no es miembro de la Dirección de Postgrado')
+
+
+
+@login_required
+def lines(request):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+
+        context={
+            'member': postg_member,
+            'programs': Program.objects.all(),
+
+        }
+        return render(request, "programs/postg/postg_lines_list.html", context)
+    except PostgMember.DoesNotExist:
+        return error_500(request, 'Usted no es miembro de la Dirección de Postgrado')
