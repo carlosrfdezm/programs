@@ -433,3 +433,11 @@ class PostgMember(models.Model):
 
     def __str__(self):
         return self.user.get_full_name()
+
+class Document(models.Model):
+    name = models.CharField(max_length=100, null=False)
+    description = models.TextField(max_length=300, null=True)
+    type = models.CharField(max_length=20, null=False, default='acta',choices=[('acta', 'Acta'),('resolucion', 'Resolución'),('informe', 'Informe')])
+
+    def __str__(self):
+        return self.name
