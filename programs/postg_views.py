@@ -175,3 +175,27 @@ def lines(request):
         return render(request, "programs/postg/postg_lines_list.html", context)
     except PostgMember.DoesNotExist:
         return error_500(request, 'Usted no es miembro de la Dirección de Postgrado')
+
+
+@login_required
+def program_students(request, program_slug):
+    program = Program.objects.get(slug = program_slug)
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+
+        context = {
+            'member': postg_member,
+            'program': program,
+
+        }
+        if program.type == 'phd':
+            context['students'] = PhdStudent.objects.filter(student__program=program)
+        elif program.type == 'msc':
+            context['students'] = MscStudent.objects.filter(program=program)
+        elif program.type == 'dip':
+            context['students'] = DipStudent.objects.filter(program=program)
+
+        return render(request, "programs/postg/postg_students_list.html", context)
+    except PostgMember.DoesNotExist:
+        return error_500(request, 'Usted no es miembro de la Dirección de Postgrado')
+

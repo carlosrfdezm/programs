@@ -14,6 +14,7 @@ urlpatterns = [
     path('logout', views.logout, name='postg_logout'),
     path('home', views.home, name='postg_home'),
     path('programs/<str:program_type>', views.programs, name='programs'),
+    path('<str:program_slug>/students/', views.program_students, name='program_students'),
     path('members/', views.members, name='members'),
     path('lines/', views.lines, name='lines'),
 

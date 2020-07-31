@@ -118,7 +118,7 @@
 
             <!-- Sidebar Menu -->
             <nav class="mt-2">
-                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
                     <!-- Add icons to the links using the .nav-icon class
                          with font-awesome or any other icon font library -->
                     <li class="nav-item">
@@ -206,30 +206,19 @@
                         <ul class="nav nav-treeview">
 
                             <li class="nav-item">
-                                <a href="{% url 'cgc:create_cgc_brief' %}" class="nav-link" title="Nueva acta de la CGC UNAH-Complejo">
-                                    <i class="fa fa-folder-plus"></i>
-                                    <p>Nueva acta CGC</p>
+                                <a href="" class="nav-link" title="Nueva acta de la CGC UNAH-Complejo">
+                                    <i class="fa fa-file"></i>
+                                    <p>Nuevo</p>
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="{% url 'cgc:create_cngc_brief' %}" class="nav-link" title="Nueva acta de la Comisión Nacional de Grados">
-                                    <i class="fa fa-file"></i>
-                                    <p>Nueva acta CNGC</p>
+                                <a href="" class="nav-link" title="Nueva acta de la Comisión Nacional de Grados">
+                                    <i class="fa fa-folder-open"></i>
+                                    <p>Ver documentos</p>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="{% url 'cgc:cgc_brieffings' %}" class="nav-link" title="Ver actas de la CGC UNAH-Complejo">
-                                    <i class="fa fa-list-ol"></i>
-                                    <p>Actas CGC</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'cgc:cngc_brieffings' %}" class="nav-link" title="Ver actas de la Comisión Nacional de Grados">
-                                    <i class="fa fa-list-ul"></i>
-                                    <p>Actas CNGC</p>
-                                </a>
-                            </li>
+
 
                         </ul>
                     </li>
@@ -242,15 +231,7 @@
                         </a>
 
                     </li>
-                    <li class="nav-item">
-                        <a href="{% url 'cgc:programs_projects' %}" class="nav-link" title="Proyectos asociados a programas">
-                            <i class="nav-icon fas fa-edit"></i>
-                            <p>
-                                Proyectos
-                            </p>
-                        </a>
 
-                    </li>
 
                     <li class="nav-item">
                         <a href="{% url 'cgc:cgc_statistics' %}" class="nav-link" title="Estadísticas del programa">
