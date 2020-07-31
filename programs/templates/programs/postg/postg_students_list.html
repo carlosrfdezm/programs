@@ -50,16 +50,16 @@
                                 </button>
 
                                 <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                    <a href="" class="dropdown-item">Solicitantes</a>
+                                    <a href="{% url 'postg:program_students' program.slug 'requesters' %}" class="dropdown-item">Solicitantes</a>
                                     {% if program.type == 'phd' %}
-                                        <a href="" class="dropdown-item">Doctorandos</a>
+                                        <a href="{% url 'postg:program_students' program.slug 'approved' %}" class="dropdown-item">Doctorandos</a>
                                     {% elif program.type == 'msc' %}
-                                        <a href="" class="dropdown-item">Maestrantes</a>
+                                        <a href="{% url 'postg:program_students' program.slug 'approved' %}" class="dropdown-item">Maestrantes</a>
                                     {% elif program.type == 'dip' %}
-                                        <a href="" class="dropdown-item">Diplomantes</a>
+                                        <a href="{% url 'postg:program_students' program.slug 'approved' %}" class="dropdown-item">Diplomantes</a>
                                     {% endif %}
-                                    <a href="" class="dropdown-item">Graduados</a>
-                                    <a href="" class="dropdown-item">Todos</a>
+                                    <a href="{% url 'postg:program_students' program.slug 'graduated' %}" class="dropdown-item">Graduados</a>
+                                    <a href="{% url 'postg:program_students' program.slug 'all' %}" class="dropdown-item">Todos</a>
 
                                 </div>
 

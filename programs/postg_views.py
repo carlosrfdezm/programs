@@ -178,7 +178,7 @@ def lines(request):
 
 
 @login_required
-def program_students(request, program_slug):
+def program_students(request, program_slug, scope):
     program = Program.objects.get(slug = program_slug)
     try:
         postg_member = PostgMember.objects.get(user=request.user)
@@ -186,14 +186,37 @@ def program_students(request, program_slug):
         context = {
             'member': postg_member,
             'program': program,
-
+            'scope':scope,
         }
         if program.type == 'phd':
-            context['students'] = PhdStudent.objects.filter(student__program=program)
+            if scope == 'all':
+                context['students'] = PhdStudent.objects.filter(student__program=program)
+            elif scope == 'requesters':
+                context['students'] = PhdStudent.objects.filter(student__program=program, status='solicitante')
+            elif scope == 'approved':
+                context['students'] = PhdStudent.objects.filter(student__program=program, status='doctorando')
+            elif scope == 'graduated':
+                context['students'] = PhdStudent.objects.filter(student__program=program, status='graduado')
+                
         elif program.type == 'msc':
-            context['students'] = MscStudent.objects.filter(program=program)
+            if scope == 'all':
+                context['students'] = MscStudent.objects.filter(program=program)
+            elif scope == 'requesters':
+                context['students'] = MscStudent.objects.filter(program=program, status='solicitante')
+            elif scope == 'approved':
+                context['students'] = MscStudent.objects.filter(program=program, status='maestrante')
+            elif scope == 'graduated':
+                context['students'] = MscStudent.objects.filter(program=program, status='graduado')
+            
         elif program.type == 'dip':
-            context['students'] = DipStudent.objects.filter(program=program)
+            if scope == 'all':
+                context['students'] = DipStudent.objects.filter(program=program)
+            elif scope == 'requesters':
+                context['students'] = DipStudent.objects.filter(program=program, status='solicitante')
+            elif scope == 'approved':
+                context['students'] = DipStudent.objects.filter(program=program, status='diplomante')
+            elif scope == 'graduated':
+                context['students'] = DipStudent.objects.filter(program=program, status='graduado')
 
         return render(request, "programs/postg/postg_students_list.html", context)
     except PostgMember.DoesNotExist:
