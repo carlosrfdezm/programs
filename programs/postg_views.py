@@ -63,7 +63,12 @@ def error_500(request, error_message):
 
         'error_message':error_message,
     }
-    return render(request,'programs/cgc/cgc_error_500.html', context)
+    try:
+        context['member'] = PostgMember.objects.get(user=request.user)
+    except Exception:
+        pass
+
+    return render(request,'programs/postg/postg_error_500.html', context)
 
 def logout(request):
     logout(request)
@@ -176,6 +181,20 @@ def lines(request):
     except PostgMember.DoesNotExist:
         return error_500(request, 'Usted no es miembro de la Dirección de Postgrado')
 
+@login_required
+def lines(request):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+
+        context={
+            'member': postg_member,
+            'programs': Program.objects.all(),
+
+        }
+        return render(request, "programs/postg/postg_lines_list.html", context)
+    except PostgMember.DoesNotExist:
+        return error_500(request, 'Usted no es miembro de la Dirección de Postgrado')
+
 
 @login_required
 def program_students(request, program_slug, scope):
@@ -197,6 +216,9 @@ def program_students(request, program_slug, scope):
                 context['students'] = PhdStudent.objects.filter(student__program=program, status='doctorando')
             elif scope == 'graduated':
                 context['students'] = PhdStudent.objects.filter(student__program=program, status='graduado')
+            else:
+                return error_500(request,
+                                 'El contexto "' + scope + '" no se admite. Debe ser "all", "approved", "requesters" o "graduated" ')
                 
         elif program.type == 'msc':
             if scope == 'all':
@@ -207,6 +229,9 @@ def program_students(request, program_slug, scope):
                 context['students'] = MscStudent.objects.filter(program=program, status='maestrante')
             elif scope == 'graduated':
                 context['students'] = MscStudent.objects.filter(program=program, status='graduado')
+            else:
+                return error_500(request,
+                                 'El contexto "' + scope + '" no se admite. Debe ser "all", "approved", "requesters" o "graduated" ')
             
         elif program.type == 'dip':
             if scope == 'all':
@@ -217,8 +242,41 @@ def program_students(request, program_slug, scope):
                 context['students'] = DipStudent.objects.filter(program=program, status='diplomante')
             elif scope == 'graduated':
                 context['students'] = DipStudent.objects.filter(program=program, status='graduado')
+            else:
+                return error_500(request, 'El contexto "'+ scope +'" no se admite. Debe ser "all", "approved", "requesters" o "graduated" ')
+
+
+
 
         return render(request, "programs/postg/postg_students_list.html", context)
     except PostgMember.DoesNotExist:
         return error_500(request, 'Usted no es miembro de la Dirección de Postgrado')
 
+
+@login_required
+def program_members(request, program_slug, scope):
+    program = Program.objects.get(slug=program_slug)
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+
+        context = {
+            'member': postg_member,
+            'program': program,
+            'scope': scope,
+        }
+
+        if scope == 'all':
+            context['program_members'] = ProgramMember.objects.filter(program=program)
+        elif scope == 'committee':
+            context['program_members'] = ProgramMember.objects.filter(Q(role='Coordinador')| Q(role='Secretario')| Q(role='Miembro'),program=program)
+        elif scope == 'proffessor':
+            context['program_members'] = ProgramMember.objects.filter(program=program, role='Profesor')
+        elif scope == 'tuthor':
+            context['program_members'] = ProgramMember.objects.filter(program=program, role='Tutor')
+        else:
+            return error_500(request,
+                             'El contexto "' + scope + '" no se admite. Por favor acceda desde algún enlace válido del sitio ')
+
+        return render(request, "programs/postg/postg_program_members_list.html", context)
+    except PostgMember.DoesNotExist:
+        return error_500(request, 'Usted no es miembro de la Dirección de Postgrado')

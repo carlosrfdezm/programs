@@ -17,20 +17,13 @@
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
-                    {% if program_type == 'phd' %}
-                        <h1>Programas doctorales</h1>
-                    {% elif program_type == 'msc' %}
-                        <h1>Maestrías</h1>
-                    {% elif program_type == 'dip' %}
-                        <h1>Diplomados</h1>
-                    {% endif %}
-
+                <div class="col-sm-9">
+                    <h1>Claustro de {{ program}}</h1>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{% url 'cgc:cgc_home'  %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Programas</li>
+                        <li class="breadcrumb-item active">Miembros</li>
                     </ol>
                 </div>
             </div>
@@ -46,7 +39,32 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Programas</h3>
+                        <h3 class="card-title">Miembros de {{ program}} </h3>
+                        <div class="card-tools">
+                            {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                            {#                                    <i class="fas fa-minus"></i>#}
+                            {#                                </button>#}
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fas fa-wrench"></i>
+                                </button>
+
+                                <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                    <a href="{% url 'postg:program_members' program.slug 'committee' %}" class="dropdown-item">Cte. Académico</a>
+
+                                    <a href="{% url 'postg:program_members' program.slug 'proffessor' %}" class="dropdown-item">Profesores</a>
+
+                                    <a href="{% url 'postg:program_members' program.slug 'tuthor' %}" class="dropdown-item">Tutores</a>
+
+                                    <a href="{% url 'postg:program_members' program.slug 'all' %}" class="dropdown-item">Todos</a>
+
+                                </div>
+
+                            </div>
+                            {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                            {#                    <i class="fas fa-times"></i>#}
+                            {#                  </button>#}
+                        </div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -55,57 +73,22 @@
                             {% user_is_cgc_ps user as user_is_program_cs %}
 
                             <tr>
-                                <th>Nombre</th>
-                                <th>Centro </th>
-                                <th class="text-center">Solicitantes</th>
-                                {% if program_type == 'phd' %}
-                                    <th class="text-center">Doctorandos</th>
+                                <th>Nombre y apellidos</th>
+                                <th>Rol</th>
 
-                                {% elif program_type == 'msc' %}
-                                    <th class="text-center">Maestrantes</th>
-
-                                {% elif program_type == 'dip' %}
-                                    <th class="text-center">Diplomantes</th>
-
-                                {% endif %}
-                                <th class="text-center">Graduados</th>
-                                <th></th>
 
                             </tr>
                             </thead>
                             <tbody>
-                            {% for program in programs %}
+                            {% for pmember in program_members %}
 
-                                <tr id="tr_program_{{ program.id }}">
-                                    <td>{{ program.full_name }}</td>
-                                    <td>{{ program.center }}</td>
-                                    <td class="text-center"><a href="" title="Ver solicitantes de este programa"><span class="badge badge-warning">{% program_requesters program %}</span></a>  </td>
-                                    {% if program_type == 'phd' %}
-                                        <td class="text-center"><a href="" title="Ver doctorandos"><span class="badge badge-primary">{% program_aproved program %}</span></a> </td>
-                                    {% elif program_type == 'msc' %}
-                                        <td class="text-center"><a href="" title="Ver maestrantes"><span class="badge badge-primary">{% program_aproved program %}</span></a> </td>
-                                    {% elif program_type == 'dip' %}
-                                        <td class="text-center"><a href="" title="Ver diplomantes"><span class="badge badge-primary">{% program_aproved program %}</span></a> </td>
-                                    {% endif %}
-                                    <td class="text-center"><a href="" title="Ver graduados"><span class="badge badge-success">{% program_graduated program %}</span></a> </td>
-                                    <td class="text-center">
-                                        <div class="btn-group" role="group">
-                                            <a class="btn btn-success btn-sm text-white" href="{% url 'postg:program_students' program.slug 'all' %}" title="Ver estudiantes" > <i class="fa fa-users"></i></a>
-
-                                            <a class="btn btn-primary btn-sm text-white" href="{% url 'postg:program_members' program.slug 'all' %}" title="Ver claustro"> <i class="fa fa-chalkboard-teacher"></i></a>
-                                            <a class="btn btn-danger btn-sm text-white" href="" title="Estadísticas del programa" ><i class="fa fa-chart-bar"></i></a>
-
-                                        </div>
-                                    </td>
-
+                                <tr id="tr_member_{{member.id }}">
+                                    <td>{{ pmember.user.last_name|upper }}, {{pmember.user.first_name }}</td>
+                                    <td>{{ pmember.role }}</td>
 
                                 </tr>
 
-
                             {% endfor %}
-
-
-
 
                             </tbody>
                             <tfoot>
