@@ -18,12 +18,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Líneas de investigación</h1>
+                    <h1>Proyectos de investigación</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{% url 'cgc:cgc_home'  %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Líneas</li>
+                        <li class="breadcrumb-item active">Proyectos</li>
                     </ol>
                 </div>
             </div>
@@ -39,7 +39,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Líneas de investigación de los Programas doctorales. </h3>
+                        <h3 class="card-title">Proyectos de investigación de {{ line }}. </h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -48,50 +48,26 @@
                             {% user_is_cgc_ps user as user_is_program_cs %}
 
                             <tr>
-                                <th>Tipo</th>
-                                <th>Programa</th>
-                                <th>Líneas de investigación </th>
+                                <th>Nombre del proyecto</th>
+                                <th class="text-center">Estudiantes vinculados </th>
 
                             </tr>
                             </thead>
                             <tbody>
-                            {% for program in programs %}
+                            {% for project in projects %}
 
                                 <tr id="tr_program_{{ program.id }}">
-                                    <td>
-                                        {% if program.type == 'phd' %}
-                                            Doctorado
-                                        {% elif program.type == 'msc' %}
-                                            Maestría
-                                        {% elif program.type == 'dip' %}
-                                            Diplomado
-                                        {% endif %}
-                                    </td>
-                                    <td >{{ program.full_name }}</td>
-                                    <td>
-                                        {% if program.investigationline_set.all %}
-                                            <ol>
-                                                {% for line in program.investigationline_set.all %}
-                                                    <li>
-                                                        <div class="row">
-                                                            <div class="col-md-11">
-                                                                <a href="{% url 'postg:line_projects' line.id %}" title="Ver proyectos asociados" >{{ line|truncatewords:7 }}</a>
-                                                            </div>
-                                                            <div class="col-md-1">
-                                                                {% line_projects line as line_projects%}
-                                                                <span class="badge {% if line_projects != 0 %}badge-primary{% else %}badge-danger{% endif %}" id="a_line_{{ line.id }}" class="" title="Proyectos vinculados">{{ line_projects }} </span>
+                                    <td>{{ project.name }}</td>
+                                    <td class="text-center" >
 
-                                                            </div>
-                                                        </div>
+                                        {% project_students project as project_students%}
+                                        <a href="{% url 'cgc:cgc_project_students_list' project.id %}" title="Ver estudiantes vinculados">
+                                            <span class="badge {% if project_students != 0 %}badge-primary{% else %}badge-danger{% endif %}" id="a_project_{{ project.id }}" title="Ver estudiantes vinculados">{{ project_students }} </span>
 
-                                                    </li>
-                                                {% endfor %}
-                                            </ol>
-                                        {% else %}
+                                        </a>
 
-                                            <i class="fa fa-exclamation-triangle text-warning"></i> Este programa no tiene Líneas de investigación asignadas
 
-                                        {% endif %}
+
                                     </td>
 
 
@@ -165,6 +141,8 @@
                 showConfirmButton: false,
                 timer: 7000
             });
+            $('[data-toggle="popover"]').popover();
+
 
 
         })

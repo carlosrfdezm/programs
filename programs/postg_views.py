@@ -457,3 +457,20 @@ def ajx_students_by_age(request, program_slug):
         json.dumps(response_data),
         content_type="application/json"
     )
+
+
+@login_required
+def postg_by_line_projects_list(request, line_id):
+    line = InvestigationLine.objects.get(pk=line_id)
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+        context={
+            'member':postg_member,
+            'line': line,
+            'projects': InvestigationProject.objects.filter(line=line),
+        }
+        return render(request, 'programs/postg/postg_by_line_projects_list.html', context)
+
+
+    except PostgMember.DoesNotExist:
+        return error_500(request,  'Usted no tiene privilegios para acceder a esta página')
