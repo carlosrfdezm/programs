@@ -1,0 +1,1130 @@
+{% extends 'programs/postg/postg_base.html' %}
+{% load static %}
+
+{% block cgc_content %}
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">Estadísticas de {{ program.full_name }}</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item active"><a href="">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Estadísticas</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+
+
+            <div class="row">
+                <div class="col-md-8 col-sm-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Solicitudes de ingreso vs Ingresos</strong></h5>
+
+                            <div class="card-tools">
+                                {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                                {#                                    <i class="fas fa-minus"></i>#}
+                                {#                                </button>#}
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                                        <i class="fas fa-wrench"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">
+
+                                    </div>
+                                </div>
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+                                    <div class="chart" id="div_ChartLastYears">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="requestChartLastYears" height="280" style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Estudiantes por género</strong></h5>
+
+                            <div class="card-tools">
+                                {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                                {#                                    <i class="fas fa-minus"></i>#}
+                                {#                                </button>#}
+                                {#                                                                <div class="btn-group">#}
+                                {#                                                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                                                        <i class="fas fa-wrench"></i>#}
+                                {#                                                                    </button>#}
+                                {#                                                                    <div class="dropdown-menu dropdown-menu-right" role="menu">#}
+                                {#                                                                        <a href="#" class="dropdown-item">Action</a>#}
+                                {#                                                                        <a href="#" class="dropdown-item">Another action</a>#}
+                                {#                                                                        <a href="#" class="dropdown-item">Something else here</a>#}
+                                {#                                                                        <a class="dropdown-divider"></a>#}
+                                {#                                                                        <a href="#" class="dropdown-item">Separated link</a>#}
+                                {#                                                                    </div>#}
+                                {#                                                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- /.col -->
+                                <div class="col-md-12 col-sm-12">
+
+
+                                    <div class="chart-responsive" id="div_ChartGender">
+                                        <canvas id="donutChartGender"  height="209px"></canvas>
+                                    </div>
+                                    <div class="mt-4 text-center small">
+
+
+                                    </div>
+                                    <!-- /.progress-group -->
+                                </div>
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+
+                <!-- /.col -->
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Estudiantes por Línea de investigación</strong></h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
+                                {##}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+
+                                    <div class="chart" id="div_requestChartLines">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="requestChartLines"  style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Estudiantes por rango etario</strong></h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
+                                {##}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+                                    <div class="chart" id="div_StudentsChartAge">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="requestChartAge" height="280" style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+
+                <!-- /.col -->
+            </div>
+            {% if program.type == 'msc' or program.type == 'dip' %}
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Estudiantes por ediciones</strong></h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
+                                {##}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+
+                                    <div class="chart" id="div_barChartEditionStudents">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="barChartEditionStudents"  style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Graduados por ediciones</strong></h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
+                                {##}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+                                    <div class="chart" id="div_barChartEditionsGraduated">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="barChartEditionsGraduated" height="280" style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+
+                <!-- /.col -->
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-4 col-sm-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Profesores por grado científico</strong></h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
+                                {##}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+
+                                    <div class="chart" id="div_donutChartDegree">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="donutChartDegree"  style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Profesores por rango etario </strong></h5>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
+                                {##}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+                                    <div class="chart" id="div_ChartAge">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="requestChartMemberAge" height="280" style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+
+                <!-- /.col -->
+            </div>
+
+
+            <!-- /.row -->
+
+            <!-- Main row -->
+            <!-- /.row -->
+        </div><!--/. container-fluid -->
+        {% csrf_token %}
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        $(document).ready(function () {
+            var div_court='<div class="jumbotron" style="height: 205px;">'+
+                '<h3 class="text-center"><i class="text-warning fas fa-exclamation-triangle"></i> No hay datos disponibles. </h3>'+
+                '</div>';
+
+            $.ajax({
+                url : "{% url 'cgc:ajx_program_last_years_requests' program.slug %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json[1][0].length;i++){
+
+                        total = total + json[1][0][i]+json[1][1][i];
+
+                    }
+                    if(total>0){
+                        for(var j=0;j<json[0].length; j++){
+                            $('#div_st_1').append('<a class="dropdown-item stat" data="'+json[0][j]+'">Año '+json[0][j]+'</a>')
+                        }
+                        var areaChartData = {
+                            labels  : json[0],
+                            datasets: [
+                                {
+                                    label               : 'Solicitudes de ingreso',
+                                    backgroundColor     : 'rgba(55,66,255,0.6)',
+                                    borderColor         : 'rgba(11,15,255,0.8)',
+                                    pointRadius          : 2,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[1][0],
+                                },
+                                {
+                                    label               : 'Ingresos',
+                                    backgroundColor     : 'rgba(2,255,0,0.9)',
+                                    borderColor         : 'rgba(20,188,18,0.8)',
+                                    pointRadius          : 2,
+                                    pointColor          : '#153bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[1][1],
+                                },
+
+                            ]
+                        };
+
+                        var areaChartOptions = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: true
+                            },
+                            scales: {
+                                xAxes: [{
+                                    gridLines : {
+                                        display : false,
+                                    }
+                                }],
+                                yAxes: [{
+
+                                    gridLines : {
+                                        display : false,
+                                    },
+
+                                }]
+                            }
+                        };
+                        var areaChartCanvas=$('#requestChartLastYears');
+                        var areaChart       = new Chart(areaChartCanvas, {
+                            type: 'line',
+                            data: areaChartData,
+                            options: areaChartOptions
+                        });
+                        console.log(json);
+                    }
+
+                    else {
+                        $('#div_ChartLastYears').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+            $.ajax({
+                url : "{% url 'postg:ajx_postg_program_students_by_line' program.slug %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    console.log(json);
+                    var total = 0;
+                    for(var i=0;i<json[1].length;i++){
+
+                        total = total + json[1][i];
+
+                    }
+                    if(total>0){
+
+                        var barChartData = {
+                            labels  : json[0],
+                            datasets: [
+                                {
+                                    label               : 'Estudiantes vinculados',
+                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    borderColor         : 'rgba(11,15,255,0.8)',
+                                    pointRadius          : 2,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[1],
+                                },
+
+
+                            ]
+                        };
+
+                        var barChartOptions = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: false
+                            },
+                            scales: {
+                                xAxes: [{
+                                    gridLines : {
+                                        display : false,
+                                    }
+                                }],
+                                yAxes: [{
+
+                                    gridLines : {
+                                        display : false,
+                                    },
+
+                                }]
+                            }
+                        };
+                        var barChartCanvas=$('#requestChartLines');
+                        var barChart       = new Chart(barChartCanvas, {
+                            type: 'bar',
+                            data: barChartData,
+                            options: barChartOptions
+                        });
+                        console.log(json);
+                    }
+
+                    else {
+                        $('#div_requestChartLines').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+            $.ajax({
+                url : "{% url 'postg:ajx_postg_program_students_by_edition' program.slug %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json[1].length;i++){
+
+                        total = total + json[1][i];
+
+                    }
+                    if(total>0){
+
+                        var barChartData = {
+                            labels  : json[0],
+                            datasets: [
+                                {
+                                    label               : 'Estudiantes',
+                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    borderColor         : 'rgba(11,15,255,0.8)',
+                                    pointRadius          : 2,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[1],
+                                },
+
+
+                            ]
+                        };
+
+                        var barChartOptions = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: false
+                            },
+                            scales: {
+                                xAxes: [{
+                                    gridLines : {
+                                        display : false,
+                                    }
+                                }],
+                                yAxes: [{
+
+                                    gridLines : {
+                                        display : false,
+                                    },
+
+                                }]
+                            }
+                        };
+                        var barChartCanvas=$('#barChartEditionStudents');
+                        var barChart       = new Chart(barChartCanvas, {
+                            type: 'bar',
+                            data: barChartData,
+                            options: barChartOptions
+                        });
+                        console.log(json);
+                    }
+
+                    else {
+                        $('#div_barChartEditionStudents').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+            $.ajax({
+                url : "{% url 'postg:ajx_postg_program_graduated_by_edition' program.slug %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json[1].length;i++){
+
+                        total = total + json[1][i];
+
+                    }
+                    if(total>0){
+
+                        var barChartData = {
+                            labels  : json[0],
+                            datasets: [
+                                {
+                                    label               : 'Graduados',
+                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    borderColor         : 'rgba(11,15,255,0.8)',
+                                    pointRadius          : 2,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[1],
+                                },
+
+
+                            ]
+                        };
+
+                        var barChartOptions = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: false
+                            },
+                            scales: {
+                                xAxes: [{
+                                    gridLines : {
+                                        display : false,
+                                    }
+                                }],
+                                yAxes: [{
+
+                                    gridLines : {
+                                        display : false,
+                                    },
+
+                                }]
+                            }
+                        };
+                        var barChartCanvas=$('#barChartEditionsGraduated');
+                        var barChart       = new Chart(barChartCanvas, {
+                            type: 'bar',
+                            data: barChartData,
+                            options: barChartOptions
+                        });
+                        console.log(json);
+                    }
+
+                    else {
+                        $('#div_barChartEditionsGraduated').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+            $.ajax({
+                url : "{% url 'postg:ajx_postg_program_students_by_age' program.slug %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json[1].length;i++){
+
+                        total = total + json[1][i];
+
+                    }
+                    if(total>0){
+
+                        var barChartData = {
+                            labels  : json[0],
+                            datasets: [
+                                {
+                                    label               : 'Estudiantes en el rango',
+                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    borderColor         : 'rgba(11,15,255,0.8)',
+                                    pointRadius          : 2,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[1],
+                                },
+
+
+                            ]
+                        };
+
+                        var barChartOptions = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: false
+                            },
+                            scales: {
+                                xAxes: [{
+                                    gridLines : {
+                                        display : false,
+                                    }
+                                }],
+                                yAxes: [{
+
+                                    gridLines : {
+                                        display : false,
+                                    },
+
+                                }]
+                            }
+                        };
+                        var barChartCanvas=$('#requestChartAge');
+                        var barChart       = new Chart(barChartCanvas, {
+                            type: 'bar',
+                            data: barChartData,
+                            options: barChartOptions
+                        });
+                        console.log(json);
+                    }
+
+                    else {
+                        $('#div_StudentsChartAge').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+            $.ajax({
+                url : "{% url 'cgc:ajx_program_members_by_age' program.slug %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json[1].length;i++){
+
+                        total = total + json[1][i];
+
+                    }
+                    if(total>0){
+
+                        var barChartData = {
+                            labels  : json[0],
+                            datasets: [
+                                {
+                                    label               : 'Profesores en el rango',
+                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    borderColor         : 'rgba(11,15,255,0.8)',
+                                    pointRadius          : 2,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[1],
+                                },
+
+
+                            ]
+                        };
+
+                        var barChartOptions = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: false
+                            },
+                            scales: {
+                                xAxes: [{
+                                    gridLines : {
+                                        display : false,
+                                    }
+                                }],
+                                yAxes: [{
+
+                                    gridLines : {
+                                        display : false,
+                                    },
+
+                                }]
+                            }
+                        };
+                        var barChartCanvas=$('#requestChartMemberAge');
+                        var barChart       = new Chart(barChartCanvas, {
+                            type: 'bar',
+                            data: barChartData,
+                            options: barChartOptions
+                        });
+                        console.log(json);
+                    }
+
+                    else {
+                        $('#div_ChartAge').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+
+            $.ajax({
+                url : "{% url 'postg:ajx_postg_program_students_by_gender' program.slug %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json.length;i++){
+                        total = total+json[i];
+                    }
+                    if(total>0){
+                        var donutChartCanvas = $('#donutChartGender').get(0).getContext('2d')
+                        var donutData        = {
+                            labels: [
+                                'Femenino', 'Masculino'
+                            ],
+                            datasets: [
+                                {
+                                    data: json,
+                                    backgroundColor : ['#00a65a','#f56954'],
+                                }
+                            ]
+                        };
+                        var donutOptions     = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: true,
+                            },
+
+                        };
+                        //Create pie or douhnut chart
+                        // You can switch between pie and douhnut using the method below.
+                        var donutChart = new Chart(donutChartCanvas, {
+                            type: 'doughnut',
+                            data: donutData,
+                            options: donutOptions
+                        });
+                    }
+                    else {
+                        $('#div_ChartGender').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+            $.ajax({
+                url : "{% url 'postg:ajx_postg_program_members_by_grade' program.slug %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json[1].length;i++){
+                        total = total+json[1][i];
+                    }
+                    if(total>0){
+                        var donutChartCanvas = $('#donutChartDegree').get(0).getContext('2d')
+                        var donutData        = {
+                            labels: json[0],
+                            datasets: [
+                                {
+                                    data: json[1],
+                                    backgroundColor : ['#f56954', '#00a65a', '#a69806', 'rgba(166,162,20,0.71)', '#00a65a'],
+                                }
+                            ]
+                        };
+                        var donutOptions     = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: false,
+                            },
+
+                        };
+                        //Create pie or douhnut chart
+                        // You can switch between pie and douhnut using the method below.
+                        var donutChart = new Chart(donutChartCanvas, {
+                            type: 'doughnut',
+                            data: donutData,
+                            options: donutOptions
+                        });
+                    }
+                    else {
+                        $('#div_donutChartDegree').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+
+            $(document).on('click', 'a.dropdown-item', function () {
+                $.ajax({
+                    url : "{% url 'cgc:ajx_program_by_year_requests' program.slug %}", // the endpoint
+                    type : "POST", // http method
+                    data : { 'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'year':$(this).attr('data')
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+                        var total = 0;
+                        for(var i=0;i<json[1][0].length;i++){
+
+                            total = total + json[1][0][i]+json[1][1][i];
+
+                        }
+                        if(total>0){
+
+                            var areaChartData = {
+                                labels  : json[0],
+                                datasets: [
+                                    {
+                                        label               : 'Solicitudes de ingreso',
+                                        backgroundColor     : 'rgba(55,66,255,0.6)',
+                                        borderColor         : 'rgba(11,15,255,0.8)',
+                                        pointRadius          : 2,
+                                        pointColor          : '#3b8bba',
+                                        pointStrokeColor    : 'rgba(60,141,188,1)',
+                                        pointHighlightFill  : '#fff',
+                                        pointHighlightStroke: 'rgba(60,141,188,1)',
+                                        data                : json[1][0],
+                                    },
+                                    {
+                                        label               : 'Ingresos',
+                                        backgroundColor     : 'rgba(2,255,0,0.9)',
+                                        borderColor         : 'rgba(20,188,18,0.8)',
+                                        pointRadius          : 2,
+                                        pointColor          : '#153bba',
+                                        pointStrokeColor    : 'rgba(60,141,188,1)',
+                                        pointHighlightFill  : '#fff',
+                                        pointHighlightStroke: 'rgba(60,141,188,1)',
+                                        data                : json[1][1],
+                                    },
+
+                                ]
+                            };
+
+                            var areaChartOptions = {
+                                maintainAspectRatio : false,
+                                responsive : true,
+                                legend: {
+                                    display: true
+                                },
+                                scales: {
+                                    xAxes: [{
+                                        gridLines : {
+                                            display : false,
+                                        }
+                                    }],
+                                    yAxes: [{
+
+                                        gridLines : {
+                                            display : false,
+                                        },
+
+                                    }]
+                                }
+                            };
+
+                            var areaChartCanvas=$('#requestChartLastYears');
+                            var areaChart       = new Chart(areaChartCanvas, {
+                                type: 'line',
+                                data: areaChartData,
+                                options: areaChartOptions
+                            });
+                            console.log(json);
+                        }
+
+                        else {
+                            var div_court='<div id="div_pie" class="card-body"><div class="alert alert-warning"><h5 class="text-center">No hay datos disponibles.</h5></div></div>'
+                            $('#div_pie').replaceWith(div_court);
+
+                        }
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                            " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                    }
+                });
+            });
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+        });
+    </script>
+{% endblock %}

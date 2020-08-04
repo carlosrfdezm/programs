@@ -280,3 +280,180 @@ def program_members(request, program_slug, scope):
         return render(request, "programs/postg/postg_program_members_list.html", context)
     except PostgMember.DoesNotExist:
         return error_500(request, 'Usted no es miembro de la Dirección de Postgrado')
+
+@login_required
+def program_statistics(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+        context={
+            'member':postg_member,
+            'program':program,
+        }
+
+        return render(request, 'programs/postg/postg_program_statistics.html', context)
+    except PostgMember.DoesNotExist:
+        return error_500(request, 'Usted no tiene privilegios para acceder a esta página')
+
+
+@login_required
+def ajx_members_by_grade(request, program_slug):
+    response_data=[]
+    grades=[]
+    data=[]
+
+    program = Program.objects.get(slug=program_slug)
+    for member in ProgramMember.objects.filter(program=program):
+        if not member.degree in grades:
+            grades.append(member.degree)
+
+    for degree in grades:
+        data.append(ProgramMember.objects.filter(program=program, degree=degree).__len__())
+
+    response_data.append(grades)
+    response_data.append(data)
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_students_by_line(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    response_data=[]
+    labels = []
+    data = []
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+    i=0
+    for line in InvestigationLine.objects.filter(program=Program.objects.get(slug=program_slug)):
+        i += 1
+        labels.append(line.name.split()[0])
+        if program.type == 'phd':
+            data.append(PhdStudentTheme.objects.filter(line=line).__len__())
+        elif program.type == 'msc':
+            data.append(MscStudentTheme.objects.filter(line=line).__len__())
+
+
+    response_data.append(labels)
+    response_data.append(data)
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+
+@login_required
+def ajx_students_by_edition(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    response_data=[]
+    labels = []
+    data = []
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for edition in ProgramEdition.objects.filter(program=program):
+        labels.append('Edición '+str(edition.order))
+        if program.type == 'msc':
+            data.append(MscStudent.objects.filter(Q(status='maestrante')|Q(status='graduado'), program=program, edition=edition).__len__())
+        elif program.type == 'dip':
+            data.append(DipStudent.objects.filter(Q(status='diplomante')|Q(status='graduado'), program=program, edition=edition).__len__())
+
+
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+
+@login_required
+def ajx_graduated_by_edition(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    response_data = []
+    labels = []
+    data = []
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for edition in ProgramEdition.objects.filter(program=program):
+        labels.append('Edición ' + str(edition.order))
+        if program.type == 'msc':
+            data.append(
+                MscStudent.objects.filter(program=program, edition=edition, status='graduado').__len__())
+        elif program.type == 'dip':
+            data.append(
+                DipStudent.objects.filter(program=program, edition=edition, status='graduado').__len__())
+
+    response_data.append(labels)
+    response_data.append(data)
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_students_by_gender(request, program_slug):
+
+    response_data=[]
+    program=Program.objects.get(slug=program_slug)
+    if program.type == 'phd':
+        response_data.append(Student.objects.filter(program=program, gender='f').__len__())
+        response_data.append(Student.objects.filter(program=program, gender='m').__len__())
+    elif program.type == 'msc':
+        response_data.append(MscStudent.objects.filter(program=program, gender='f').__len__())
+        response_data.append(MscStudent.objects.filter(program=program,gender='m').__len__())
+    elif program.type == 'dip':
+        response_data.append(DipStudent.objects.filter(program=program, gender='f').__len__())
+        response_data.append(DipStudent.objects.filter(program=program, gender='m').__len__())
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_students_by_age(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    response_data=[]
+    labels = ['<30 años','30-40','40-50','>50 años']
+    data = []
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+    i=0
+    if program.type == 'phd':
+        data.append(Student.objects.filter(program=program,birth_date__year__gte=now().year-30 ).__len__())
+        data.append(Student.objects.filter(program=program,birth_date__year__gte=now().year-40, birth_date__year__lt=now().year-30 ).__len__() )
+        data.append(Student.objects.filter(program=program,birth_date__year__gte=now().year-50, birth_date__year__lt=now().year-40 ).__len__() )
+        data.append(Student.objects.filter(program=program, birth_date__year__lte=now().year-50 ).__len__() )
+    elif program.type == 'msc':
+        data.append(MscStudent.objects.filter(program=program, birth_date__year__gte=now().year - 30).__len__())
+        data.append(MscStudent.objects.filter(program=program, birth_date__year__gte=now().year - 40,
+                                              birth_date__year__lt=now().year - 30).__len__())
+        data.append(MscStudent.objects.filter(program=program, birth_date__year__gte=now().year - 50,
+                                              birth_date__year__lt=now().year - 40).__len__())
+        data.append(MscStudent.objects.filter(program=program, birth_date__year__lte=now().year - 50).__len__())
+    elif program.type == 'dip':
+        data.append(DipStudent.objects.filter(program=program, birth_date__year__gte=now().year - 30).__len__())
+        data.append(DipStudent.objects.filter(program=program, birth_date__year__gte=now().year - 40,
+                                              birth_date__year__lt=now().year - 30).__len__())
+        data.append(DipStudent.objects.filter(program=program, birth_date__year__gte=now().year - 50,
+                                              birth_date__year__lt=now().year - 40).__len__())
+        data.append(DipStudent.objects.filter(program=program, birth_date__year__lte=now().year - 50).__len__())
+
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
