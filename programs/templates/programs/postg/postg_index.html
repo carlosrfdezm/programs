@@ -195,7 +195,7 @@
                 {% for member in members %}
                     <div class="col-lg-3 col-md-6">
                         <div class="member">
-                            <div class="pic" >{% if member.picture %}<img src="{% url 'programs:program_member_picture' program.slug member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.gender == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% elif member.gender == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% endif %}</div>
+                            <div class="pic" >{% if member.picture %}<img src="{% url 'postg:postg_member_picture' member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.gender == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% elif member.gender == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% endif %}</div>
                             <div class="details">
                                 <h6 class="text-bold">{{member|truncatewords:3}}</h6>
                                 <span title="{{ member.charge }}">{{ member.charge|truncatewords:3 }}</span>

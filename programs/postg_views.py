@@ -498,12 +498,18 @@ def create_postg_member(request):
                             gender=request.POST['gender']
 
                         )
-                        try:
-                            new_postg_member.picture = request.POST['picture']
-                        except:
-                            pass
 
                         new_postg_member.save()
+
+                        try:
+
+                            picture = request.FILES['picture']
+                            new_postg_member.picture = picture
+                            new_postg_member.save()
+
+                        except:
+                            print( Exception)
+
 
                         return HttpResponseRedirect(reverse('postg:members'))
 
@@ -527,12 +533,17 @@ def create_postg_member(request):
                         gender=request.POST['gender']
 
                     )
-                    try:
-                        new_postg_member.picture = request.POST['picture']
-                    except:
-                        pass
-
                     new_postg_member.save()
+
+                    try:
+
+                        picture = request.FILES['picture']
+                        new_postg_member.picture = picture
+                        new_postg_member.save()
+
+                    except:
+                        print(Exception)
+
 
                     return HttpResponseRedirect(reverse('postg:members'))
 
@@ -581,3 +592,14 @@ def ajx_postg_usr_exists(request):
             json.dumps([{'exists': 0}]),
             content_type="application/json"
         )
+
+def postg_member_picture(request, member_id):
+    fs = FileSystemStorage()
+    # filename = Papers.objects.get(pk=paper_id).file_url +  str(Papers.objects.get(pk=paper_id).file)
+    filename = PostgMember.objects.get(pk=member_id).picture.url
+    if fs.exists(filename):
+        with fs.open(filename) as img:
+            response = HttpResponse(img, content_type='image/jpeg')
+            return response
+    else:
+        return HttpResponse('Error')

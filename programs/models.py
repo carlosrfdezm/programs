@@ -433,8 +433,8 @@ class FormationPlanActivities(models.Model):
 class PostgMember(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE)
     charge=models.CharField(max_length=20, choices=(('Director', 'Director'),('Metodólogo', 'Metodólogo'),('Técnico', 'Técnico')))
-    grade = models.CharField(max_length=100,null=True)
-    phone = models.CharField(max_length=20,null=True)
+    grade = models.CharField(max_length=100,null=True, blank=True)
+    phone = models.CharField(max_length=20,null=True, blank=True)
     picture = models.ImageField(help_text='Foto', upload_to=postg_member_directory_path, null=True, blank=True)
     gender = models.CharField(max_length=1, default='f', choices=[('f', 'Femenino'), ('m', 'Masculino')])
 
