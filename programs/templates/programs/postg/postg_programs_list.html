@@ -79,15 +79,15 @@
                                 <tr id="tr_program_{{ program.id }}">
                                     <td>{{ program.full_name }}</td>
                                     <td>{{ program.center }}</td>
-                                    <td class="text-center"><a href="" title="Ver solicitantes de este programa"><span class="badge badge-warning">{% program_requesters program %}</span></a>  </td>
+                                    <td class="text-center"><a href="{% url 'postg:program_students' program.slug 'requesters' %}" title="Ver solicitantes de este programa"><span class="badge badge-warning">{% program_requesters program %}</span></a>  </td>
                                     {% if program_type == 'phd' %}
-                                        <td class="text-center"><a href="" title="Ver doctorandos"><span class="badge badge-primary">{% program_aproved program %}</span></a> </td>
+                                        <td class="text-center"><a href="{% url 'postg:program_students' program.slug 'approved' %}" title="Ver doctorandos"><span class="badge badge-primary">{% program_aproved program %}</span></a> </td>
                                     {% elif program_type == 'msc' %}
-                                        <td class="text-center"><a href="" title="Ver maestrantes"><span class="badge badge-primary">{% program_aproved program %}</span></a> </td>
+                                        <td class="text-center"><a href="{% url 'postg:program_students' program.slug 'approved' %}" title="Ver maestrantes"><span class="badge badge-primary">{% program_aproved program %}</span></a> </td>
                                     {% elif program_type == 'dip' %}
-                                        <td class="text-center"><a href="" title="Ver diplomantes"><span class="badge badge-primary">{% program_aproved program %}</span></a> </td>
+                                        <td class="text-center"><a href="{% url 'postg:program_students' program.slug 'approved' %}" title="Ver diplomantes"><span class="badge badge-primary">{% program_aproved program %}</span></a> </td>
                                     {% endif %}
-                                    <td class="text-center"><a href="" title="Ver graduados"><span class="badge badge-success">{% program_graduated program %}</span></a> </td>
+                                    <td class="text-center"><a href="{% url 'postg:program_students' program.slug 'graduated' %}" title="Ver graduados"><span class="badge badge-success">{% program_graduated program %}</span></a> </td>
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
                                             <a class="btn btn-success btn-sm text-white" href="{% url 'postg:program_students' program.slug 'all' %}" title="Ver estudiantes" > <i class="fa fa-users"></i></a>
