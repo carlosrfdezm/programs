@@ -475,3 +475,109 @@ def postg_by_line_projects_list(request, line_id):
     except PostgMember.DoesNotExist:
         return error_500(request,  'Usted no tiene privilegios para acceder a esta página')
 
+
+@login_required
+def create_postg_member(request):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+
+        if postg_member.charge == 'Director':
+            if request.method == 'POST':
+                try:
+                    user = User.objects.get(email=request.POST['email'])
+                    try:
+                        postg_member = PostgMember.objects.get(user=user)
+
+                        return error_500(request, 'Ya existe un miembro de la direccion con ese correo' )
+                    except PostgMember.DoesNotExist:
+                        new_postg_member = PostgMember(
+                            user=user,
+                            charge=request.POST['charge'],
+                            grade=request.POST['grade'],
+                            phone=request.POST['phone'],
+                            gender=request.POST['gender']
+
+                        )
+                        try:
+                            new_postg_member.picture = request.POST['picture']
+                        except:
+                            pass
+
+                        new_postg_member.save()
+
+                        return HttpResponseRedirect(reverse('postg:members'))
+
+                except User.DoesNotExist:
+                    passwd = 'POSTG' + str(random.randint(1000000, 9999999))
+                    user = User.objects.create_user(
+                        request.POST['email'],
+                        request.POST['email'],
+                        passwd,  # Cambiar despues por contrase;a generada
+
+                    )
+                    user.first_name = request.POST['name']
+                    user.last_name = request.POST['surename']
+                    user.save()
+
+                    new_postg_member = PostgMember(
+                        user=user,
+                        charge=request.POST['charge'],
+                        grade=request.POST['grade'],
+                        phone=request.POST['phone'],
+                        gender=request.POST['gender']
+
+                    )
+                    try:
+                        new_postg_member.picture = request.POST['picture']
+                    except:
+                        pass
+
+                    new_postg_member.save()
+
+                    return HttpResponseRedirect(reverse('postg:members'))
+
+
+            else:
+                context = {
+                    'member': postg_member,
+
+                }
+                return render(request, 'programs/postg/postg_create_member.html', context)
+        else:
+            return error_500(request, 'Usted no tiene privilegios para acceder a esta página')
+
+    except PostgMember.DoesNotExist:
+        return error_500(request,'Usted no tiene privilegios para acceder a esta página')
+
+
+@login_required
+def ajx_postg_usr_exists(request):
+
+    if request.method=='POST':
+
+        try:
+            user= User.objects.get(email=request.POST['email'])
+            try:
+                postg_member = PostgMember.objects.get(user=user)
+
+                return HttpResponse(
+                    json.dumps([{'exists': 2}]),
+                    content_type="application/json"
+                )
+            except PostgMember.DoesNotExist:
+                return HttpResponse(
+                    json.dumps([{'exists': 1}]),
+                    content_type="application/json"
+                )
+
+
+        except User.DoesNotExist:
+            return HttpResponse(
+                json.dumps([{'exists': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'exists': 0}]),
+            content_type="application/json"
+        )

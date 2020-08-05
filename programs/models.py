@@ -25,6 +25,10 @@ def member_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     return 'program_{0}/members/{1}/{2}'.format(instance.program.slug,instance.id, filename)
 
+def postg_member_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/postg/members/<member_id>/<filename>
+    return 'postg/members/{0}'.format(instance.id, filename)
+
 def student_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     return 'program_{0}/students/{1}/{2}'.format(instance.program.slug,instance.id, filename)
@@ -428,7 +432,10 @@ class FormationPlanActivities(models.Model):
 
 class PostgMember(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE)
-    charge=models.CharField(max_length=20, choices=(('Director', 'Director'),('Metodólogo', 'Metodólogo')))
+    charge=models.CharField(max_length=20, choices=(('Director', 'Director'),('Metodólogo', 'Metodólogo'),('Técnico', 'Técnico')))
+    grade = models.CharField(max_length=100,null=True)
+    phone = models.CharField(max_length=20,null=True)
+    picture = models.ImageField(help_text='Foto', upload_to=postg_member_directory_path, null=True, blank=True)
     gender = models.CharField(max_length=1, default='f', choices=[('f', 'Femenino'), ('m', 'Masculino')])
 
     def __str__(self):

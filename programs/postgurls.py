@@ -18,11 +18,12 @@ urlpatterns = [
     path('<str:program_slug>/members/<str:scope>', views.program_members, name='program_members'),
     path('<str:program_slug>/statistics', views.program_statistics, name='program_statistics'),
     path('members/', views.members, name='members'),
+    path('member/create', views.create_postg_member, name='create_postg_member'),
     path('lines/', views.lines, name='lines'),
     path('line/<int:line_id>/projects', views.postg_by_line_projects_list, name='line_projects'),
 
 
-
+    path('ajx/user/exists',views.ajx_postg_usr_exists, name='ajx_postg_usr_exists'),
     path('ajx/students/by/phd_programs', views.ajx_postg_phd_students_by_program, name='ajx_postg_phd_students_by_program'),
     path('ajx/students/by/msc_programs', views.ajx_postg_msc_students_by_program, name='ajx_postg_msc_students_by_program'),
     path('ajx/students/by/dip_programs', views.ajx_postg_dip_students_by_program, name='ajx_postg_dip_students_by_program'),
@@ -33,14 +34,5 @@ urlpatterns = [
     path('ajx/<str:program_slug>/students/by/age', views.ajx_students_by_age, name='ajx_postg_program_students_by_age'),
     path('ajx/<str:program_slug>/graduated/by/edition', views.ajx_graduated_by_edition, name='ajx_postg_program_graduated_by_edition'),
 
-
-
-
-
-
-
-    # path('login', views.mylogin, name='my_login'),
-    # path('logout/<str:court_slug>/', views.mylogout, name='my_logout'),
-    # path('cngc/member/<int:member_id>/pic', views.cngc_member_picture, name='cngc_member_picture'),
 
 ]

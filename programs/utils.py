@@ -38,6 +38,7 @@ def user_is_cgc_member(user):
     except:
         return False
 
+
 def user_is_cgc_ps(user):
     try:
         member=CGC_Member.objects.get(user=user)
