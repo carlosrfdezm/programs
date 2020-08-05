@@ -68,7 +68,7 @@
                                             <div class="btn-group">
 
                                                 <a class="btn btn-sm btn-warning" href="{% url 'postg:edit_postg_member' pmember.id %}" title="Editar acta"><i class="fa fa-edit"></i> </a>
-                                                <button class="btn btn-sm btn-danger" type="button" data-toggle="modal" data-target="#modal_rm_pmember_{{ pmember.id }}" title="Eliminar miembro"><i class="fa fa-eraser"></i> </button>
+                                                <button class="btn btn-sm btn-danger {% if pmember.user == user %}disabled{% endif %}" type="button" data-toggle="modal" data-target="#modal_rm_member_{{ pmember.id }}" title="Eliminar miembro"><i class="fa fa-eraser"></i> </button>
 
 
                                             </div>
@@ -76,7 +76,7 @@
                                     {% endif %}
                                 </tr>
 
-                                <div class="modal fade" id="modal_rm_member_{{ member.id }}">
+                                <div class="modal fade" id="modal_rm_member_{{ pmember.id }}">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -92,14 +92,14 @@
 
                                                     </div>
                                                     <div class="col-md-10">
-                                                        <p class="text-center">¿Seguro que desea eliminar a {{ member }}?<br>Esto no se puede deshacer&hellip;</p>
+                                                        <p class="text-center">¿Seguro que desea eliminar a {{ pmember }}?<br>Esto no se puede deshacer&hellip;</p>
                                                     </div>
                                                 </div>
 
                                             </div>
                                             <div class="modal-footer justify-content-between">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_member_{{ member.id }}">Eliminar</button>
+                                                <button type="button" class="btn btn-danger " data-dismiss="modal" data="{{  pmember.id }}" id="btn_rm_member_{{ pmember.id }}">Eliminar</button>
                                             </div>
                                         </div>
                                         <!-- /.modal-content -->
@@ -163,13 +163,13 @@
                 timer: 7000
             });
 
-            {% for member in members %}
-                $('#btn_rm_member_{{ member.id }}').click(function () {
+            {% for pmember in members %}
+                $('#btn_rm_member_{{ pmember.id }}').click(function () {
 
-                    var member_id={{ member.id }};
-                    var url = "{% url 'cgc:ajx_cgc_delete_member' %}";
+                    var member_id={{ pmember.id }};
+                    var url = "{% url 'postg:ajx_delete_member' %}";
 
-                    $('#modal_rm_member_{{ member.id }}').modal('hide');
+                    $('#modal_rm_member_{{ pmember.id }}').modal('hide');
 
                     $.ajax({
                         url : url,
@@ -182,25 +182,25 @@
                         success : function(json) {
 
                             if (json[0].deleted == 1) {
-                                var row = myTable.row( $('#tr_member_{{ member.id }}') );
+                                var row = myTable.row( $('#tr_pmember_{{ pmember.id }}') );
                                 row.remove().draw();
 
                                 Toast.fire({
                                     type: 'success',
-                                    title: 'Profesor eliminado exitósamente'
+                                    title: 'Miembro eliminado exitósamente'
                                 })
 
                             } else if(json[0].deleted == 0){
                                 Toast.fire({
                                     type: 'error',
-                                    title: 'No se ha podido eliminar al profesor seleccionado.'
+                                    title: 'No se ha podido eliminar al trabajador seleccionado.'
                                 })
 
                             }
                             else if(json[0].deleted == 2){
                                 Toast.fire({
                                     type: 'error',
-                                    title: 'Usted no tiene privilegios para eliminar miembros de la CGC.'
+                                    title: 'Usted no tiene privilegios para eliminar miembros de la Dir. de Postgrado.'
                                 })
 
                             }

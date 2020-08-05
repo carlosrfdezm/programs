@@ -35,6 +35,7 @@ urlpatterns = [
     path('ajx/<str:program_slug>/students/by/gender', views.ajx_students_by_gender, name='ajx_postg_program_students_by_gender'),
     path('ajx/<str:program_slug>/students/by/age', views.ajx_students_by_age, name='ajx_postg_program_students_by_age'),
     path('ajx/<str:program_slug>/graduated/by/edition', views.ajx_graduated_by_edition, name='ajx_postg_program_graduated_by_edition'),
+    path('ajx/member/delete', views.ajx_delete_member, name='ajx_delete_member'),
 
 
 ]

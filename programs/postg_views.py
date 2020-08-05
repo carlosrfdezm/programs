@@ -599,6 +599,39 @@ def edit_postg_member(request, member_id):
         return error_500(request, 'Usted no tiene privilegios para acceder a esta página')
 
 @login_required
+def ajx_delete_member(request):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+        if postg_member.charge == 'Director':
+            if request.method == 'POST':
+                pmember = PostgMember.objects.get(pk=request.POST['member_id'])
+                pmember.delete()
+                return HttpResponse(
+                    json.dumps([{'deleted': 1}]),
+                    content_type="application/json"
+                )
+            else:
+                return HttpResponse(
+                    json.dumps([{'deleted': 2}]),
+                    content_type="application/json"
+                )
+
+
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': 0}]),
+                content_type="application/json"
+            )
+    except PostgMember.DoesNotExist:
+        return HttpResponse(
+            json.dumps([{'deleted': 0}]),
+            content_type="application/json"
+        )
+
+
+
+
+@login_required
 def ajx_postg_usr_exists(request):
 
     if request.method=='POST':
