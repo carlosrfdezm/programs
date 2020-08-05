@@ -629,6 +629,80 @@ def ajx_delete_member(request):
         )
 
 
+@login_required
+def ajx_postg_program_last_years_requests(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    response_data=[]
+    labels = []
+    data = []
+    data_1=[]
+    data_2=[]
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for i in range(now().year-4,now().year+1):
+        labels.append(i)
+        if program.type == 'phd':
+            data_1.append(Student.objects.filter(program=program, request_date__year=i).__len__())
+            data_2.append(Student.objects.filter(program=program, init_date__year=i).__len__())
+        elif program.type == 'msc':
+            data_1.append(MscStudent.objects.filter(program=program, request_date__year=i).__len__())
+            data_2.append(MscStudent.objects.filter(program=program, init_date__year=i).__len__())
+        elif program.type == 'dip':
+            data_1.append(DipStudent.objects.filter(program=program, request_date__year=i).__len__())
+            data_2.append(DipStudent.objects.filter(program=program, init_date__year=i).__len__())
+
+
+    data.append(data_1)
+    data.append(data_2)
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_postg_program_by_year_requests(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    year=request.POST['year']
+    response_data=[]
+    labels = []
+    data = []
+    data_1=[]
+    data_2=[]
+    meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio",
+             8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
+
+    # locale.setlocale(locale.LC_ALL, 'es-ES')
+
+    for i in range(1,13):
+        labels.append(meses[i])
+        if program.type == 'phd':
+            data_1.append(Student.objects.filter(program=program, request_date__year=year,request_date__month=i).__len__())
+            data_2.append(Student.objects.filter(program=program, init_date__year=year,init_date__month=i).__len__())
+        elif program.type == 'msc':
+            data_1.append(MscStudent.objects.filter(program=program, request_date__year=year, request_date__month=i).__len__())
+            data_2.append(MscStudent.objects.filter(program=program, init_date__year=year, init_date__month=i).__len__())
+        elif program.type == 'dip':
+            data_1.append(DipStudent.objects.filter(program=program, request_date__year=year, request_date__month=i).__len__())
+            data_2.append(DipStudent.objects.filter(program=program, init_date__year=year, init_date__month=i).__len__())
+
+
+    data.append(data_1)
+    data.append(data_2)
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
 
 
 @login_required

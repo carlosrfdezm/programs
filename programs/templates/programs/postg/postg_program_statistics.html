@@ -428,7 +428,7 @@
                 '</div>';
 
             $.ajax({
-                url : "{% url 'cgc:ajx_program_last_years_requests' program.slug %}", // the endpoint
+                url : "{% url 'postg:ajx_postg_program_last_years_requests' program.slug %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -1026,7 +1026,7 @@
 
             $(document).on('click', 'a.dropdown-item', function () {
                 $.ajax({
-                    url : "{% url 'cgc:ajx_program_by_year_requests' program.slug %}", // the endpoint
+                    url : "{% url 'postg:ajx_postg_program_by_years_requests' program.slug %}", // the endpoint
                     type : "POST", // http method
                     data : { 'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
                         'year':$(this).attr('data')
