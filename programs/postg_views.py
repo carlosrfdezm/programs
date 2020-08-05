@@ -555,11 +555,48 @@ def create_postg_member(request):
                 }
                 return render(request, 'programs/postg/postg_create_member.html', context)
         else:
-            return error_500(request, 'Usted no tiene privilegios para acceder a esta página')
+            return error_500(request, 'Usted no tiene privilegios para agregar nuevos miembros a la Dir. de Postgrado ')
 
     except PostgMember.DoesNotExist:
         return error_500(request,'Usted no tiene privilegios para acceder a esta página')
 
+
+@login_required
+def edit_postg_member(request, member_id):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+        if postg_member.charge == 'Director':
+            if request.method == 'POST':
+                pmember = PostgMember.objects.get(pk=member_id)
+                pmember.user.first_name = request.POST['name']
+                pmember.user.last_name = request.POST['surename']
+                pmember.user.email = request.POST['email']
+                pmember.user.save()
+
+                pmember.charge = request.POST['charge']
+                pmember.gender = request.POST['gender']
+                pmember.phone = request.POST['phone']
+                pmember.grade = request.POST['grade']
+
+                try:
+                    pmember.picture = request.FILES['picture']
+                except:
+                    print(Exception)
+
+                pmember.save()
+
+                return HttpResponseRedirect(reverse('postg:members'))
+            else:
+                context={
+                    'member': postg_member,
+                    'pmember': PostgMember.objects.get(pk=member_id),
+                }
+
+                return render(request, 'programs/postg/postg_edit_member.html', context)
+        else:
+            return error_500(request, 'Usted no tiene privilegios para editar miembros de la Dir. de Postgrado ')
+    except PostgMember.DoesNotExist:
+        return error_500(request, 'Usted no tiene privilegios para acceder a esta página')
 
 @login_required
 def ajx_postg_usr_exists(request):

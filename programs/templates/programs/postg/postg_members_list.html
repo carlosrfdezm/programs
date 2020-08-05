@@ -67,7 +67,7 @@
                                         <td class="text-center">
                                             <div class="btn-group">
 
-                                                <a class="btn btn-sm btn-warning" href="" title="Editar acta"><i class="fa fa-edit"></i> </a>
+                                                <a class="btn btn-sm btn-warning" href="{% url 'postg:edit_postg_member' pmember.id %}" title="Editar acta"><i class="fa fa-edit"></i> </a>
                                                 <button class="btn btn-sm btn-danger" type="button" data-toggle="modal" data-target="#modal_rm_pmember_{{ pmember.id }}" title="Eliminar miembro"><i class="fa fa-eraser"></i> </button>
 
 

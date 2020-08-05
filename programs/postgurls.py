@@ -20,6 +20,7 @@ urlpatterns = [
     path('members/', views.members, name='members'),
     path('member/create', views.create_postg_member, name='create_postg_member'),
     path('member/<int:member_id>/picture', views.postg_member_picture, name='postg_member_picture'),
+    path('member/<int:member_id>/edit', views.edit_postg_member, name='edit_postg_member'),
     path('lines/', views.lines, name='lines'),
     path('line/<int:line_id>/projects', views.postg_by_line_projects_list, name='line_projects'),
 
