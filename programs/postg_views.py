@@ -19,13 +19,12 @@ from django.utils.text import slugify, phone2numeric
 from django.utils.timezone import now
 
 from programas.settings import MEDIA_URL, MEDIA_ROOT
-from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
-    ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
-    InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, CGC_Member, \
-    CGCBrief, CNGCBrief, PostgMember
-from programs.templatetags.extra_tags import init_requirements_accomplished, finish_requirements_accomplished
-from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
-    user_is_cgc_member, user_is_cgc_ps
+from programs.models import Program, PhdStudent, Student,  \
+    ProgramMember, InvestigationLine, PhdStudentTheme, \
+    InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, \
+    PostgMember
+from programs.models import Document as PostgDoc
+
 
 from docx import Document
 from docx.shared import Inches
@@ -747,3 +746,47 @@ def postg_member_picture(request, member_id):
             return response
     else:
         return HttpResponse('Error')
+
+
+@login_required
+def postg_new_document(request):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+        if request.method == 'POST':
+            new_doc = PostgDoc(
+                year=request.POST['year'],
+                month=request.POST['month'],
+                description=request.POST['description'],
+                type=request.POST['type'],
+                doc=request.FILES['doc'],
+            )
+
+            new_doc.save()
+
+            return HttpResponseRedirect(reverse('postg:documents'))
+        else:
+            years=[]
+            for year in range(now().year-4, now().year+1):
+                years.append(year)
+            context={
+                'member':postg_member,
+                'years':years,
+            }
+
+            return render(request, 'programs/postg/postg_create_document.html', context)
+    except PostgMember.DoesNotExist:
+        return error_500(request, 'Usted no tiene privilegios para acceder a esta página')
+
+
+@login_required
+def postg_documents(request):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+        context={
+            'member':postg_member,
+            'documents': PostgDoc.objects.all(),
+        }
+
+        return render(request, 'programs/postg/postg_documents_list.html', context)
+    except PostgMember.DoesNotExist:
+        return error_500(request, 'Usted no tiene privilegios para acceder a esta página')

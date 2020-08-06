@@ -21,6 +21,10 @@ def program_brief_path(instance, filename):
     return 'program_{0}/brieffings/{1}/{2}/{3}'.format(instance.program.slug, instance.year,
                                                                        instance.month, new_brief_name)
 
+def postg_document_path(instance, filename):
+    return 'postg/docs/{0}'.format(instance.year, filename)
+
+
 def member_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     return 'program_{0}/members/{1}/{2}'.format(instance.program.slug,instance.id, filename)
@@ -443,8 +447,11 @@ class PostgMember(models.Model):
 
 class Document(models.Model):
     name = models.CharField(max_length=100, null=False)
+    year = models.IntegerField(null=False)
+    month = models.CharField(max_length=12)
     description = models.TextField(max_length=300, null=True)
     type = models.CharField(max_length=20, null=False, default='acta',choices=[('acta', 'Acta'),('resolucion', 'Resolución'),('informe', 'Informe')])
+    doc = models.FileField(upload_to=postg_document_path)
 
     def __str__(self):
         return self.name

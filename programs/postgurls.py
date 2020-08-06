@@ -23,6 +23,8 @@ urlpatterns = [
     path('member/<int:member_id>/edit', views.edit_postg_member, name='edit_postg_member'),
     path('lines/', views.lines, name='lines'),
     path('line/<int:line_id>/projects', views.postg_by_line_projects_list, name='line_projects'),
+    path('document/create', views.postg_new_document, name='new_document'),
+    path('documents', views.postg_documents, name='documents'),
 
 
     path('ajx/user/exists',views.ajx_postg_usr_exists, name='ajx_postg_usr_exists'),
