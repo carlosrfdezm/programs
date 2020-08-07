@@ -779,13 +779,26 @@ def postg_new_document(request):
 
 
 @login_required
-def postg_documents(request):
+def postg_documents(request, scope):
+    print(scope)
     try:
         postg_member = PostgMember.objects.get(user=request.user)
         context={
             'member':postg_member,
-            'documents': PostgDoc.objects.all(),
+
         }
+        if scope == 'all':
+            context['documents']= PostgDoc.objects.all()
+        elif scope == 'brief':
+            context['documents']=  PostgDoc.objects.filter(type='acta')
+        elif scope == 'reports':
+            context['documents']=  PostgDoc.objects.filter(type='informe')
+        elif scope == 'resolutions':
+            context['documents']=  PostgDoc.objects.filter(type='resolucion')
+        else:
+            return error_500(request,'El contexto es incorrecto. Intente acceder desde uno de los enlaces publicados en el sitio.')
+
+
 
         return render(request, 'programs/postg/postg_documents_list.html', context)
     except PostgMember.DoesNotExist:

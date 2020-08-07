@@ -40,6 +40,28 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Documentos de la Dirección de Postgrado </h3>
+                        <div class="card-tools">
+                            {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                            {#                                    <i class="fas fa-minus"></i>#}
+                            {#                                </button>#}
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fas fa-wrench"></i>
+                                </button>
+
+                                <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                    <a href="{% url 'postg:documents' 'brief' %}" class="dropdown-item">Actas</a>
+                                    <a href="{% url 'postg:documents' 'reports' %}" class="dropdown-item">Informes</a>
+                                    <a href="{% url 'postg:documents' 'resolutions' %}" class="dropdown-item">Resoluciones</a>
+                                    <a href="{% url 'postg:documents' 'all' %}" class="dropdown-item">Todos</a>
+
+                                </div>
+
+                            </div>
+                            {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                            {#                    <i class="fas fa-times"></i>#}
+                            {#                  </button>#}
+                        </div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
