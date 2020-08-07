@@ -763,7 +763,7 @@ def postg_new_document(request):
 
             new_doc.save()
 
-            return HttpResponseRedirect(reverse('postg:documents'))
+            return HttpResponseRedirect(reverse('postg:documents', args=['all']))
         else:
             years=[]
             for year in range(now().year-4, now().year+1):
