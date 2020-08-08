@@ -629,6 +629,41 @@ def ajx_delete_member(request):
 
 
 @login_required
+def ajx_delete_document(request):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+        if postg_member.charge == 'Director':
+            if request.method == 'POST':
+                document = PostgDoc.objects.get(pk=request.POST['document_id'])
+                try:
+                    document.doc.delete()
+                except:
+                    pass
+
+                document.delete()
+                return HttpResponse(
+                    json.dumps([{'deleted': 1}]),
+                    content_type="application/json"
+                )
+            else:
+                return HttpResponse(
+                    json.dumps([{'deleted': 2}]),
+                    content_type="application/json"
+                )
+
+
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': 0}]),
+                content_type="application/json"
+            )
+    except PostgMember.DoesNotExist:
+        return HttpResponse(
+            json.dumps([{'deleted': 0}]),
+            content_type="application/json"
+        )
+
+@login_required
 def ajx_postg_program_last_years_requests(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     response_data=[]
@@ -777,6 +812,78 @@ def postg_new_document(request):
     except PostgMember.DoesNotExist:
         return error_500(request, 'Usted no tiene privilegios para acceder a esta página')
 
+@login_required
+def postg_edit_document(request, document_id):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+        if request.method == 'POST':
+            doc = PostgDoc.objects.get(pk=document_id)
+            old_year = doc.year
+            old_month = doc.month
+            old_type = doc.type
+
+            doc.year = request.POST['year']
+            doc.month = request.POST['month']
+            doc.type = request.POST['type']
+            doc.description = request.POST['description']
+            doc.save()
+
+            if str(old_year) != doc.year or old_month != doc.month or old_type != doc.type:
+                initial_path = doc.doc.url
+                print('Initial path:',initial_path)
+                doc_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
+                old_name = doc.doc.name
+                doc.doc.name =  '/postg/docs/{1}/{0}_{1}_{2}.{3}'.format(doc.type.capitalize() , doc.year,doc.month, doc_ext)
+                doc.save()
+                new_path = MEDIA_ROOT+doc.doc.name
+                print('New path:',new_path)
+                try:
+                    if not os.path.exists(MEDIA_ROOT+'/postg/docs/{0}'.format(doc.year)):
+                        os.makedirs(MEDIA_ROOT+'/postg/docs/{0}'.format(doc.year))
+
+                    os.rename(initial_path, new_path)
+                except:
+                    print('Exception:', 'No se pudo mover el archivo')
+                    doc.doc.name = old_name
+                    doc.save
+
+            try:
+                doc_file = request.FILES['doc']
+                print(doc_file)
+                doc_ext = doc_file.name.split('.')[doc_file.name.split('.').__len__() - 1]
+                print(doc_ext)
+                fs = FileSystemStorage()
+                doc_name = 'postg/docs/{0}/{1}_{2}_{3}.{4}'.format(doc.year, doc.type.capitalize(), doc.year, doc.month,
+                                                                        doc_ext)
+                print(doc_name)
+                if doc.doc:
+                    doc.doc.delete()
+
+
+                filename = fs.save(doc_name, doc_file)
+                doc.doc = filename
+                doc.save()
+
+            except:
+                pass
+
+            return HttpResponseRedirect(reverse('postg:documents', args=['all']))
+
+
+        else:
+            years=[]
+            for year in range(now().year-4, now().year+1):
+                years.append(year)
+            context={
+                'member':postg_member,
+                'years':years,
+                'document':PostgDoc.objects.get(pk=document_id),
+            }
+
+            return render(request, 'programs/postg/postg_edit_document.html', context)
+    except PostgMember.DoesNotExist:
+        return error_500(request, 'Usted no tiene privilegios para acceder a esta página')
+
 
 @login_required
 def postg_documents(request, scope):
@@ -803,3 +910,37 @@ def postg_documents(request, scope):
         return render(request, 'programs/postg/postg_documents_list.html', context)
     except PostgMember.DoesNotExist:
         return error_500(request, 'Usted no tiene privilegios para acceder a esta página')
+
+
+@login_required
+def postg_document_view(request, document_id):
+
+    doc = PostgDoc.objects.get(pk=document_id)
+
+    fs = FileSystemStorage()
+
+    filename =doc.doc.url
+
+    if fs.exists(filename):
+        file_name= filename.split('/')[filename.split('/').__len__()-1]
+        doc_ext =filename.split('.')[filename.split('.').__len__()-1]
+
+        if doc_ext =='doc' or doc_ext=='docx' or doc_ext == 'odt':
+
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/doc')
+                response['Content-Disposition'] =  "inline; filename=" +'"'+  file_name+'"'
+
+                return response
+
+        elif doc_ext == 'pdf' :
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/pdf')
+                response['Content-Disposition'] = "inline; filename=" +'"'+ file_name + '"'
+
+                return response
+
+    else:
+
+
+        return error_500(request, 'No existe el archivo solicitado')

@@ -87,8 +87,8 @@
                                     <td>{{document.description|truncatewords:5 }}</td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <a class="btn btn-sm btn-primary" href="" title="Descargar documento"><i class="fa fa-download"></i> </a>
-                                            <a class="btn btn-sm btn-warning" href="" title="Editar documento"><i class="fa fa-edit"></i> </a>
+                                            <a class="btn btn-sm btn-primary" href="{% url 'postg:view_document' document.id %}" title="Descargar documento"><i class="fa fa-download"></i> </a>
+                                            <a class="btn btn-sm btn-warning" href="{% url 'postg:edit_document' document.id %}" title="Editar documento"><i class="fa fa-edit"></i> </a>
                                             <button class="btn btn-sm btn-danger" type="button" data-toggle="modal" data-target="#modal_rm_document_{{ document.id }}" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
 
                                         </div>
@@ -169,28 +169,82 @@
     {#    <script src="{% static 'programs/dist/js/demo.js' %}"></script>#}
     <!-- page script -->
     <script>
-        $(function () {
-            $("#example1").DataTable({
+
+        $(document).ready(function () {
+            var myTable = $("#example1").DataTable({
                 language: {
                     url: '{% static "programs/plugins/datatables/Spanish.json" %}'
                 }});
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-            });
-        });
-        $(document).ready(function () {
+
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
                 timer: 7000
             });
-            $('[data-toggle="popover"]').popover();
+
+            {% for document in documents %}
+                $('#btn_rm_document_{{ document.id }}').click(function () {
+
+                    var document_id={{ document.id }};
+                    var url = "{% url 'postg:ajx_delete_document' %}";
+
+                    $('#modal_rm_document_{{ document.id }}').modal('hide');
+
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'document_id':document_id,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].deleted == 1) {
+                                var row = myTable.row( $('#tr_document_{{ document.id }}') );
+                                row.remove().draw();
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Documento eliminado exitósamente'
+                                })
+
+                            } else if(json[0].deleted == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar el documento seleccionado.'
+                                })
+
+                            }
+                            else if(json[0].deleted == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Usted no tiene privilegios para eliminar documentos de la Dir. de Postgrado.'
+                                })
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            $('#div_by_workshop').removeClass('hidden')
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
+                });
+            {% endfor %}
 
 
 

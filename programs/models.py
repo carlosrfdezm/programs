@@ -22,7 +22,10 @@ def program_brief_path(instance, filename):
                                                                        instance.month, new_brief_name)
 
 def postg_document_path(instance, filename):
-    return 'postg/docs/{0}'.format(instance.year, filename)
+    file_ext = filename.split('.')[filename.split('.').__len__() - 1]
+    file_name = '{0}_{1}_{2}.{3}'.format(instance.type.capitalize() , instance.year,instance.month, file_ext)
+
+    return 'postg/docs/{0}/{1}'.format(instance.year, file_name)
 
 
 def member_directory_path(instance, filename):
@@ -31,7 +34,7 @@ def member_directory_path(instance, filename):
 
 def postg_member_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/postg/members/<member_id>/<filename>
-    return 'postg/members/{0}'.format(instance.id, filename)
+    return 'postg/members/{0}/{1}'.format(instance.id, filename)
 
 def student_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>

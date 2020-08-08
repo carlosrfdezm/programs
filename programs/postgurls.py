@@ -24,6 +24,8 @@ urlpatterns = [
     path('lines/', views.lines, name='lines'),
     path('line/<int:line_id>/projects', views.postg_by_line_projects_list, name='line_projects'),
     path('document/create', views.postg_new_document, name='new_document'),
+    path('document/<int:document_id>/edit', views.postg_edit_document, name='edit_document'),
+    path('document/<int:document_id>/view', views.postg_document_view, name='view_document'),
     path('documents/<str:scope>', views.postg_documents, name='documents'),
 
 
@@ -40,6 +42,7 @@ urlpatterns = [
     path('ajx/<str:program_slug>/requests/', views.ajx_postg_program_last_years_requests, name='ajx_postg_program_last_years_requests'),
     path('ajx/<str:program_slug>/by/year/requests/', views.ajx_postg_program_by_year_requests, name='ajx_postg_program_by_years_requests'),
     path('ajx/member/delete', views.ajx_delete_member, name='ajx_delete_member'),
+    path('ajx/document/delete', views.ajx_delete_document, name='ajx_delete_document'),
 
 
 ]

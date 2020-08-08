@@ -416,6 +416,8 @@ def cgc_brief_view(request, brief_id):
 
 
         return error_500(request, 'No existe el archivo solicitado')
+
+
 def cngc_brief_view(request, brief_id):
 
     brieffing = CNGCBrief.objects.get(pk=brief_id)
