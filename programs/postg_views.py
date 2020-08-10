@@ -828,47 +828,57 @@ def postg_edit_document(request, document_id):
             doc.description = request.POST['description']
             doc.save()
 
-            if str(old_year) != doc.year or old_month != doc.month or old_type != doc.type:
-                initial_path = doc.doc.url
-                print('Initial path:',initial_path)
-                doc_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
-                old_name = doc.doc.name
-                doc.doc.name =  '/postg/docs/{1}/{0}_{1}_{2}.{3}'.format(doc.type.capitalize() , doc.year,doc.month, doc_ext)
-                doc.save()
-                new_path = MEDIA_ROOT+doc.doc.name
-                print('New path:',new_path)
-                try:
-                    if not os.path.exists(MEDIA_ROOT+'/postg/docs/{0}'.format(doc.year)):
-                        os.makedirs(MEDIA_ROOT+'/postg/docs/{0}'.format(doc.year))
-
-                    os.rename(initial_path, new_path)
-                except:
-                    print('Exception:', 'No se pudo mover el archivo')
-                    doc.doc.name = old_name
-                    doc.save
-
             try:
                 doc_file = request.FILES['doc']
-                print(doc_file)
                 doc_ext = doc_file.name.split('.')[doc_file.name.split('.').__len__() - 1]
-                print(doc_ext)
-                fs = FileSystemStorage()
-                doc_name = 'postg/docs/{0}/{1}_{2}_{3}.{4}'.format(doc.year, doc.type.capitalize(), doc.year, doc.month,
-                                                                        doc_ext)
-                print(doc_name)
-                if doc.doc:
-                    doc.doc.delete()
+                doc_name = 'postg/docs/{0}/{1}_{2}_{3}.{4}'.format(doc.year, doc.type.capitalize(), doc.year,doc.month, doc_ext)
 
+
+
+                fs = FileSystemStorage()
 
                 filename = fs.save(doc_name, doc_file)
+                old_doc = doc.doc.url
+
+                # doc.doc.delete()
                 doc.doc = filename
                 doc.save()
+                try:
+                    fd = FileSystemStorage()
+                    fd.delete(old_doc)
+                    print('Archivo eliminado exitosamente')
+                except:
+                    print('No se pudo eliminar el archivo:', old_doc)
+
 
             except:
-                pass
+                print('No viene archivo, pero hay que mover el que esta')
+                if str(old_year) != doc.year or old_month != doc.month or old_type != doc.type:
+                    initial_path = doc.doc.url
+
+                    print('Initial path:', initial_path)
+                    doc_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
+                    old_name = doc.doc.name
+
+                    doc.doc.name = '/postg/docs/{1}/{0}_{1}_{2}.{3}'.format(doc.type.capitalize(), doc.year, doc.month,
+                                                                            doc_ext)
+                    doc.save()
+                    new_path = MEDIA_ROOT + doc.doc.name
+                    print('New path:', new_path)
+                    try:
+                        if not os.path.exists(MEDIA_ROOT + '/postg/docs/{0}'.format(doc.year)):
+                            os.makedirs(MEDIA_ROOT + '/postg/docs/{0}'.format(doc.year))
+                        # TODO: Verificar que la nueva url no este tomada y hacer algo al respecto
+
+                        os.rename(initial_path, new_path)
+                    except:
+                        print('Exception:', 'No se pudo mover el archivo')
+                        # doc.doc.name = old_name
+                        # doc.save
+                else:
+                    pass
 
             return HttpResponseRedirect(reverse('postg:documents', args=['all']))
-
 
         else:
             years=[]
