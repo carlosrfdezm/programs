@@ -806,6 +806,7 @@ def postg_new_document(request):
             context={
                 'member':postg_member,
                 'years':years,
+                'current_year':now().year,
             }
 
             return render(request, 'programs/postg/postg_create_document.html', context)
