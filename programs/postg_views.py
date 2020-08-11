@@ -869,9 +869,16 @@ def postg_edit_document(request, document_id):
                     try:
                         if not os.path.exists(MEDIA_ROOT + '/postg/docs/{0}'.format(doc.year)):
                             os.makedirs(MEDIA_ROOT + '/postg/docs/{0}'.format(doc.year))
-                        # TODO: Verificar que la nueva url no este tomada y hacer algo al respecto
+                        fn = FileSystemStorage(MEDIA_ROOT)
+                        if fn.exists(doc.doc.name[1:]):
+                            new_name = '/'+ fn.get_available_name(doc.doc.name[1:])
+                            doc.doc.name = new_name
+                            doc.save()
+                            new_path = MEDIA_ROOT+doc.doc.name
+                            os.rename(initial_path, new_path)
 
-                        os.rename(initial_path, new_path)
+                        else:
+                            os.rename(initial_path, new_path)
                     except:
                         print('Exception:', 'No se pudo mover el archivo')
                         # doc.doc.name = old_name
