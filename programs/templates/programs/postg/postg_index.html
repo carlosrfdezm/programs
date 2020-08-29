@@ -64,7 +64,7 @@
     <div class="container">
 
         <div id="logo" class="pull-left">
-            <h1><a href="#body" class="scrollto">Dirección de Postgrado</a></h1>
+            <h1><a href="#body" class="scrollto">Dirección de Posgrado</a></h1>
             <!-- Uncomment below if you prefer to use an image logo -->
             <!-- <a href="#body"><img src="{% static 'programs/index/img/logo.png' %}" alt="" title="" /></a>-->
         </div>
@@ -101,7 +101,7 @@
         <h2>{{ program }}</h2>
         <div>
             <a href="#contact" class="btn-get-started scrollto">Iniciar sesion</a>
-            <a href="#team" class="btn-projects scrollto">Claustro</a>
+            <a href="#team" class="btn-projects scrollto">Miembros</a>
         </div>
     </div>
 
@@ -195,7 +195,7 @@
                 {% for member in members %}
                     <div class="col-lg-3 col-md-6">
                         <div class="member">
-                            <div class="pic" >{% if member.picture %}<img src="{% url 'postg:postg_member_picture' member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.gender == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% elif member.gender == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% endif %}</div>
+                            <div class="pic" >{% if member.picture %}<img src="{% url 'postg:postg_member_picture' member.id %}" style="height: 200px; width: 200px" alt="">{% elif member.gender == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% elif member.gender == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% endif %}</div>
                             <div class="details">
                                 <h6 class="text-bold">{{member|truncatewords:3}}</h6>
                                 <span title="{{ member.charge }}">{{ member.charge|truncatewords:3 }}</span>
