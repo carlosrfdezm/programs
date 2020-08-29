@@ -233,22 +233,22 @@
                         <ul class="nav nav-treeview">
 
                             <li class="nav-item">
-                                <a href="" class="nav-link" title="Nuevo documento de la Dir. de Posgrado">
+                                <a href="{% url 'postg:reports' 'current_year' %}" class="nav-link" title="Nuevo documento de la Dir. de Posgrado">
                                     <i class="fa fa-calendar-check"></i>
                                     <p>Año en curso</p>
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="" class="nav-link" title="Documentos de la Dir. de Posgrado">
-                                    <i class="fa fa-calendar-alt"></i>
+                                <a href="{% url 'postg:reports' 'last_year' %}" class="nav-link" title="Documentos de la Dir. de Posgrado">
+                                    <i class="fa fa-calendar-times"></i>
                                     <p>Año pasado</p>
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="" class="nav-link" title="Documentos de la Dir. de Posgrado">
-                                    <i class="fa fa-calendar-times"></i>
+                                <a href="{% url 'postg:reports' 'five_years' %}" class="nav-link" title="Documentos de la Dir. de Posgrado">
+                                    <i class="fa fa-calendar-alt"></i>
                                     <p>Último quinquenio</p>
                                 </a>
                             </li>

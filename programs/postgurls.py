@@ -27,6 +27,7 @@ urlpatterns = [
     path('document/<int:document_id>/edit', views.postg_edit_document, name='edit_document'),
     path('document/<int:document_id>/view', views.postg_document_view, name='view_document'),
     path('documents/<str:scope>', views.postg_documents, name='documents'),
+    path('reports/<str:scope>', views.docx_postg_report, name='reports'),
 
 
     path('ajx/user/exists',views.ajx_postg_usr_exists, name='ajx_postg_usr_exists'),
