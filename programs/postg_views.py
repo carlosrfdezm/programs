@@ -31,11 +31,18 @@ from docx.shared import Inches
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 def index(request):
+
     context={
         'members':PostgMember.objects.all(),
-        'director':PostgMember.objects.get(charge='Director'),
         'programs': Program.objects.all().order_by('-type'),
     }
+    try:
+        director = PostgMember.objects.get(charge='Director')
+        context['director']= director
+
+    except PostgMember.DoesNotExist:
+        pass
+
     return render(request, 'programs/postg/postg_index.html', context)
 
 @login_required
