@@ -35,6 +35,7 @@ def index(request):
     context={
         'members':PostgMember.objects.all(),
         'programs': Program.objects.all().order_by('-type'),
+        'public_docs': PostgDoc.objects.filter(is_public=True),
     }
     try:
         director = PostgMember.objects.get(charge='Director')
@@ -982,6 +983,42 @@ def postg_document_view(request, document_id):
 
 
         return error_500(request, 'No existe el archivo solicitado')
+
+def postg_public_document_view(request, document_id):
+
+    doc = PostgDoc.objects.get(pk=document_id)
+
+    fs = FileSystemStorage()
+
+    filename =doc.doc.url
+
+    if doc.is_public:
+
+        if fs.exists(filename) :
+            file_name= filename.split('/')[filename.split('/').__len__()-1]
+            doc_ext =filename.split('.')[filename.split('.').__len__()-1]
+
+            if doc_ext =='doc' or doc_ext=='docx' or doc_ext == 'odt':
+
+                with fs.open(filename) as brief:
+                    response = HttpResponse(brief, content_type='application/doc')
+                    response['Content-Disposition'] =  "inline; filename=" +'"'+  file_name+'"'
+
+                    return response
+
+            elif doc_ext == 'pdf' :
+                with fs.open(filename) as brief:
+                    response = HttpResponse(brief, content_type='application/pdf')
+                    response['Content-Disposition'] = "inline; filename=" +'"'+ file_name + '"'
+
+                    return response
+
+        else:
+            return error_500(request, 'No existe el archivo solicitado')
+    else:
+
+        return error_500(request, 'El documento solicitado no es publico')
+
 
 @login_required
 def docx_postg_report(request, scope):

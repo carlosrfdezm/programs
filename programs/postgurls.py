@@ -26,6 +26,7 @@ urlpatterns = [
     path('document/create', views.postg_new_document, name='new_document'),
     path('document/<int:document_id>/edit', views.postg_edit_document, name='edit_document'),
     path('document/<int:document_id>/view', views.postg_document_view, name='view_document'),
+    path('document/public/<int:document_id>/view', views.postg_public_document_view, name='view_public_document'),
     path('documents/<str:scope>', views.postg_documents, name='documents'),
     path('reports/<str:scope>', views.docx_postg_report, name='reports'),
 
