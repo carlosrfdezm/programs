@@ -977,10 +977,59 @@ def docx_postg_report(request, scope):
         document = Document()
         docname = ''
         if scope == 'current_year':
+            docname = 'Reporte_Posgrado_Año_' + str(now().year) + '.docx'
+
             document.add_heading('Resumen de los programas de posgrado en la UNAH y el Complejo', level=1)
             document.add_heading('Año '+ str(now().year), level=2)
             document.add_heading('Programas doctorales', level=2)
-            docname = 'Reporte_Posgrado_Año_' + str(now().year) + '.docx'
+            if Program.objects.filter(type='phd'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre'
+                hdr_cells[1].text = 'Coordinador'
+                hdr_cells[2].text = 'Email'
+
+                for program in Program.objects.filter(type='phd'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = program.full_name
+                    row_cells[1].text = str(ProgramMember.objects.get(program=program, role='Coordinador'))
+                    row_cells[2].text = program.email
+            else:
+                document.add_heading('Aun no se registran programas doctorales en este sitio', level=3)
+
+            document.add_heading('Programas de Maestría', level=2)
+            if Program.objects.filter(type='msc'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre'
+                hdr_cells[1].text = 'Coordinador'
+                hdr_cells[2].text = 'Email'
+
+                for program in Program.objects.filter(type='msc'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = program.full_name
+                    row_cells[1].text = str(ProgramMember.objects.get(program=program, role='Coordinador'))
+                    row_cells[2].text = program.email
+            else:
+                document.add_heading('Aun no se registran programas de maestría en este sitio', level=3)
+
+            document.add_heading('Diplomados', level=2)
+            if Program.objects.filter(type='dip'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre'
+                hdr_cells[1].text = 'Coordinador'
+                hdr_cells[2].text = 'Email'
+
+                for program in Program.objects.filter(type='dip'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = program.full_name
+                    row_cells[1].text = str(ProgramMember.objects.get(program=program, role='Coordinador'))
+                    row_cells[2].text = program.email
+            else:
+                document.add_heading('Aun no se registran diplomados en este sitio', level=3)
+
+
         elif scope == 'last_year':
             document.add_heading('Resumen de los programas de posgrado en la UNAH y el Complejo', level=1)
             document.add_heading('Año '+ str(now().year-1), level=2)
