@@ -802,7 +802,12 @@ def postg_new_document(request):
                 type=request.POST['type'],
                 doc=request.FILES['doc'],
             )
+            try:
+                if request.POST['is_public'] == 'on':
+                    new_doc.is_public = True
 
+            except:
+                pass
             new_doc.save()
 
             return HttpResponseRedirect(reverse('postg:documents', args=['all']))
