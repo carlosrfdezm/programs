@@ -455,6 +455,7 @@ class Document(models.Model):
     description = models.TextField(max_length=300, null=True)
     type = models.CharField(max_length=20, null=False, default='acta',choices=[('acta', 'Acta'),('resolucion', 'Resolución'),('informe', 'Informe')])
     doc = models.FileField(upload_to=postg_document_path)
+    is_public = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
