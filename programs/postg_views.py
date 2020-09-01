@@ -842,6 +842,14 @@ def postg_edit_document(request, document_id):
             doc.save()
 
             try:
+                if request.POST['is_public']== 'on':
+                    doc.is_public = True
+                    doc.save()
+            except:
+                doc.is_public = False
+                doc.save()
+
+            try:
                 doc_file = request.FILES['doc']
                 doc_ext = doc_file.name.split('.')[doc_file.name.split('.').__len__() - 1]
                 doc_name = 'postg/docs/{0}/{1}_{2}_{3}.{4}'.format(doc.year, doc.type.capitalize(), doc.year,doc.month, doc_ext)
