@@ -2998,77 +2998,76 @@ def program_docs_by_year(request, program_slug, year):
 
 
 @login_required
-def edit_program_brief(request,program_slug, brief_id):
+def edit_program_doc(request,program_slug, doc_id):
     program = Program.objects.get(slug=program_slug)
-    brief = ProgramBrief.objects.get(pk=brief_id)
+    doc = ProgramDocument.objects.get(pk=doc_id)
 
     if user_is_program_cs(request.user, program):
         if request.method == 'POST':
             try:
-                old_year=brief.year
-                old_month=brief.month
+                old_year=doc.year
+                old_month=doc.month
+                old_type = doc.type
 
-                if str(old_year) != request.POST['year'] or old_month != request.POST['month']:
-                    initial_path = ProgramBrief.objects.get(pk=brief_id).brief.path
-
-
-
-                    brief_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
+                if str(old_year) != request.POST['year'] or old_month != request.POST['month'] or old_type != request.POST['type'] :
+                    initial_path = ProgramDocument.objects.get(pk=doc_id).doc.path
 
 
-                    index =ProgramBrief.objects.filter(program=program, month=request.POST['month'], year=request.POST['year']).__len__()
-                    if index>0:
-                        brief.brief.name = 'program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
-                                                                                       'Acta-'+slugify(program.short_name)+'-' + request.POST['month'] + '-' +
-                                                                                       request.POST['year'] +'-'+str(index+1)+'-'+str(brief_id)+ '.' + brief_ext)
-                        new_path= MEDIA_ROOT+ '/program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
-                                                                                           'Acta-'+slugify(program.short_name)+'-' + request.POST['month'] + '-' +
-                                                                                           request.POST['year']+'-' +str(index+1)+'-'+str(brief_id)+ '.' + brief_ext)
-                    else:
-                        brief.brief.name = 'program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug,
-                                                                                       request.POST['year'],
-                                                                                       request.POST['month'],
-                                                                                       'Acta-' + slugify(
-                                                                                           program.short_name) + '-' +
-                                                                                       request.POST['month'] + '-' +
-                                                                                       request.POST['year'] + '-1.' + brief_ext)
-                        new_path = MEDIA_ROOT + '/program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug,
-                                                                                             request.POST['year'],
-                                                                                             request.POST['month'],
-                                                                                             'Acta-' + slugify(
-                                                                                                 program.short_name) + '-' +
-                                                                                             request.POST['month'] + '-' +
-                                                                                             request.POST['year'] + '-1.' + brief_ext)
+
+                    doc_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
+
+
+                    index =ProgramDocument.objects.filter(program=program, month=request.POST['month'], year=request.POST['year']).__len__()
+
+                    doc_name = '{0}-{1}-{2}-{3}-{4}.{5}'.format(request.POST['type'].capitalize(), program_slug, doc.month , doc.year ,str(index+1), doc_ext)
+                    doc.doc.name = 'program_{0}/documents/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],doc_name)
+                    new_path= MEDIA_ROOT+ '/program_{0}/documents/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'], doc_name)
+
 
 
                     os.renames(initial_path, new_path)
-                    brief.year = request.POST['year']
-                    brief.month = request.POST['month']
+                    doc.year = request.POST['year']
+                    doc.month = request.POST['month']
+                    doc.type = request.POST['type']
+                    doc.description = request.POST['description']
 
-                    brief.save()
+                    try:
+                        if request.POST['is_public'] == 'on':
+                            doc.is_public = True
+                    except:
+                        doc.is_public = False
+
+                    doc.save()
+                else:
+                    doc.description = request.POST['description']
+                    doc.save()
+
                 try:
-                    brief_file = request.FILES['brief']
+                    doc_file = request.FILES['doc']
                     fs = FileSystemStorage()
-                    brief_name = brief.brief.path.split('/')[brief.brief.path.split('/').__len__() - 1]
-                    brief_ext = brief_file.name.split('.')[brief_file.name.split('.').__len__() - 1]
+                    doc_name = doc.doc.path.split('/')[doc.doc.path.split('/').__len__() - 1]
+                    doc_ext = doc_file.name.split('.')[doc_file.name.split('.').__len__() - 1]
 
-                    new_brief_name = 'program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
-                                                                                 brief_name.split('.')[brief_name.split('.').__len__() - 2]+'.'+brief_ext)
-                    brief.brief.delete()
+                    doc_name = '{0}-{1}-{2}-{3}-{4}.{5}'.format(request.POST['type'].capitalize(), program_slug, request.POST['month'],
+                                                                request.POST['year'], str(index + 1), doc_ext)
 
-                    filename = fs.save(new_brief_name, brief_file)
+                    new_doc_name = 'program_{0}/documents/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
+                                                                                 doc_name)
+                    doc.doc.delete()
 
-                    ProgramBrief.objects.filter(pk=brief_id).update(
-                        brief=filename,
+                    filename = fs.save(new_doc_name, doc_file)
+
+                    ProgramDocument.objects.filter(pk=doc_id).update(
+                        doc=filename,
 
                     )
                 except:
                     pass
 
-                return HttpResponseRedirect(reverse('programs:program_brieffings_by_year', args=[program_slug, ProgramBrief.objects.get(pk=brief_id).year]))
+                return HttpResponseRedirect(reverse('programs:program_docs_by_year', args=[program_slug, ProgramDocument.objects.get(pk=doc_id).year]))
 
             except:
-                return error_500(request,program, 'Ha ocurrido un error al editar el acta')
+                return error_500(request,program, 'Ha ocurrido un error al editar el documento')
 
 
         else:
@@ -3081,9 +3080,9 @@ def edit_program_brief(request,program_slug, brief_id):
                 'current_month': meses[now().month],
                 'years':range(now().year-10,now().year+1),
                 'current_year':now().year,
-                'brieffing': ProgramBrief.objects.get(pk=brief_id),
+                'doc': ProgramDocument.objects.get(pk=doc_id),
             }
-            return render(request, 'programs/edit_program_brief.html',context)
+            return render(request, 'programs/edit_program_doc.html', context)
     else:
         return error_500(request,'Usted no tiene privilegios para agregar actas.')
 

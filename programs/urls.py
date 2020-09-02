@@ -102,7 +102,7 @@ urlpatterns = [
 
     path('statistics', views.program_statistics, name='program_statistics'),
     path('documents/create', views.create_program_doc, name='create_program_doc'),
-    path('documents/<int:brief_id>/edit', views.edit_program_brief, name='edit_program_brief'),
+    path('documents/<int:doc_id>/edit', views.edit_program_doc, name='edit_program_doc'),
     path('documents/<int:doc_id>/view', views.program_doc_view, name='program_doc_view'),
     path('documents/list', views.program_documents, name='program_brieffings'),
     path('documents/download', views.program_brief_zip_download, name='program_brief_zip_download'),
