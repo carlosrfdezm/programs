@@ -190,7 +190,7 @@ class Student(models.Model):
     picture=models.ImageField(upload_to=student_directory_path, null=True)
     gender=models.CharField(max_length=1, default='f')
     birth_date=models.DateField(default=now)
-    dni=models.CharField(max_length=11, default='12345678901')
+    dni=models.CharField(max_length=24, default='12345678901')
 
     def __str__(self):
         return self.user.get_full_name()
@@ -217,7 +217,7 @@ class MscStudent(models.Model):
     picture=models.ImageField(upload_to=student_directory_path, null=True, blank=True)
     gender=models.CharField(max_length=1, default='f')
     birth_date=models.DateField(default=now)
-    dni=models.CharField(max_length=11, default='12345678901')
+    dni=models.CharField(max_length=24, default='12345678901')
     status = models.CharField(max_length=15,default='solicitante', choices=[('solicitante', 'Solicitante'), ('maestrante', 'Maestrante'),
                                                       ('graduado', 'Graduado')])
     edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
@@ -239,7 +239,7 @@ class DipStudent(models.Model):
     picture=models.ImageField(upload_to=student_directory_path, null=True, blank=True)
     gender=models.CharField(max_length=1, default='f')
     birth_date=models.DateField(default=now)
-    dni=models.CharField(max_length=11, default='12345678901')
+    dni=models.CharField(max_length=24, default='12345678901')
     status = models.CharField(max_length=15,default='solicitante', choices=[('solicitante', 'Solicitante'), ('diplomante', 'Diplomante'),
                                                       ('graduado', 'Graduado')])
     edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
