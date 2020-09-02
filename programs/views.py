@@ -3009,6 +3009,9 @@ def edit_program_doc(request,program_slug, doc_id):
                 old_month=doc.month
                 old_type = doc.type
 
+                index = ProgramDocument.objects.filter(program=program, month=request.POST['month'],
+                                                       year=request.POST['year']).__len__()
+
                 if str(old_year) != request.POST['year'] or old_month != request.POST['month'] or old_type != request.POST['type'] :
                     initial_path = ProgramDocument.objects.get(pk=doc_id).doc.path
 
@@ -3017,9 +3020,9 @@ def edit_program_doc(request,program_slug, doc_id):
                     doc_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
 
 
-                    index =ProgramDocument.objects.filter(program=program, month=request.POST['month'], year=request.POST['year']).__len__()
 
-                    doc_name = '{0}-{1}-{2}-{3}-{4}.{5}'.format(request.POST['type'].capitalize(), program_slug, doc.month , doc.year ,str(index+1), doc_ext)
+
+                    doc_name = '{0}-{1}-{2}-{3}-{4}.{5}'.format(request.POST['type'].capitalize(), program_slug, request.POST['month'] , request.POST['year'] ,str(index+1), doc_ext)
                     doc.doc.name = 'program_{0}/documents/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],doc_name)
                     new_path= MEDIA_ROOT+ '/program_{0}/documents/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'], doc_name)
 
@@ -3040,29 +3043,31 @@ def edit_program_doc(request,program_slug, doc_id):
                     doc.save()
                 else:
                     doc.description = request.POST['description']
+                    try:
+                        if request.POST['is_public'] == 'on':
+                            doc.is_public = True
+                    except:
+                        doc.is_public = False
+
                     doc.save()
 
                 try:
                     doc_file = request.FILES['doc']
                     fs = FileSystemStorage()
-                    doc_name = doc.doc.path.split('/')[doc.doc.path.split('/').__len__() - 1]
                     doc_ext = doc_file.name.split('.')[doc_file.name.split('.').__len__() - 1]
 
-                    doc_name = '{0}-{1}-{2}-{3}-{4}.{5}'.format(request.POST['type'].capitalize(), program_slug, request.POST['month'],
-                                                                request.POST['year'], str(index + 1), doc_ext)
+                    doc_name = '{0}-{1}-{2}-{3}-{4}.{5}'.format(request.POST['type'].capitalize(), program_slug, request.POST['month'],request.POST['year'], str(index + 1), doc_ext)
+                    new_doc_name = 'program_{0}/documents/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],doc_name)
 
-                    new_doc_name = 'program_{0}/documents/{1}/{2}/{3}'.format(program_slug, request.POST['year'], request.POST['month'],
-                                                                                 doc_name)
                     doc.doc.delete()
 
                     filename = fs.save(new_doc_name, doc_file)
 
-                    ProgramDocument.objects.filter(pk=doc_id).update(
-                        doc=filename,
+                    doc.doc = filename
+                    doc.save()
 
-                    )
-                except:
-                    pass
+                except Exception:
+                    print('Exception: No se puede actualizar el archivo')
 
                 return HttpResponseRedirect(reverse('programs:program_docs_by_year', args=[program_slug, ProgramDocument.objects.get(pk=doc_id).year]))
 
