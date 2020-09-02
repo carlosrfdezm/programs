@@ -2886,20 +2886,20 @@ def create_program_doc(request, program_slug):
         return error_500(request,'Usted no tiene privilegios para agregar actas.')
 
 @login_required
-def program_brieffings(request, program_slug):
+def program_documents(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     if user_is_program_member(request.user, program):
         years=[]
-        for brieffing in ProgramBrief.objects.filter(program=program):
-            if not brieffing.year in years:
-                years.append(brieffing.year)
+        for document in ProgramDocument.objects.filter(program=program):
+            if not document.year in years:
+                years.append(document.year)
 
         context={
             'program':program,
             'years': sorted(years),
-            'brieffings': ProgramBrief.objects.filter(program=program),
+            'documents': ProgramDocument.objects.filter(program=program),
         }
-        return render(request, 'programs/program_brieffings_list.html',context)
+        return render(request, 'programs/program_documents_list.html',context)
     else:
         return error_500(request,'Usted no puede ver las actas de este programa')
 
@@ -2978,21 +2978,21 @@ def program_cngc_brieffings_by_year(request, program_slug, year):
         return error_500(request,program, 'Usted no puede ver las actas de la CNGC')
 
 @login_required
-def program_brieffings_by_year(request, program_slug, year):
+def program_docs_by_year(request, program_slug, year):
     program = Program.objects.get(slug=program_slug)
     if user_is_program_member(request.user, program):
         years=[]
-        for brieffing in ProgramBrief.objects.filter(program=program):
-            if not brieffing.year in years:
-                years.append(brieffing.year)
+        for doc in ProgramDocument.objects.filter(program=program):
+            if not doc.year in years:
+                years.append(doc.year)
 
         context={
             'year': year,
             'program':program,
             'years': sorted(years),
-            'brieffings': ProgramBrief.objects.filter(program=program, year=year),
+            'documents': ProgramDocument.objects.filter(program=program, year=year),
         }
-        return render(request, 'programs/program_brieffings_list.html',context)
+        return render(request, 'programs/program_documents_list.html', context)
     else:
         return error_500(request,'Usted no puede ver las actas de este programa')
 
@@ -3190,15 +3190,15 @@ def program_cngc_brief_view(request,program_slug, brief_id):
 
 
 @login_required
-def ajx_delete_program_brieffing(request, program_slug):
+def ajx_delete_program_document(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     if user_is_program_cs(request.user, program ):
         if request.method=='POST':
-            brief_id=request.POST['brief_id']
+            doc_id=request.POST['doc_id']
             try:
 
-                ProgramBrief.objects.get(pk=brief_id).brief.delete()
-                ProgramBrief.objects.get(pk=brief_id).delete()
+                ProgramDocument.objects.get(pk=doc_id).doc.delete()
+                ProgramDocument.objects.get(pk=doc_id).delete()
 
 
                 return HttpResponse(
