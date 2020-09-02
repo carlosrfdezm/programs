@@ -2863,7 +2863,7 @@ def create_program_doc(request, program_slug):
                     pass
 
                 new_doc.save()
-                return HttpResponseRedirect(reverse('programs:program_brieffings_by_year', args=[program_slug, new_doc.year]))
+                return HttpResponseRedirect(reverse('programs:program_docs_by_year', args=[program_slug, new_doc.year]))
 
             except:
 
