@@ -101,19 +101,22 @@ urlpatterns = [
 
 
     path('statistics', views.program_statistics, name='program_statistics'),
-    path('brieffings/create', views.create_program_brief, name='create_program_brief'),
-    path('brieffings/<int:brief_id>/edit', views.edit_program_brief, name='edit_program_brief'),
-    path('brieffings/<int:brief_id>/view', views.program_brief_view, name='program_brief_view'),
+    path('documents/create', views.create_program_doc, name='create_program_doc'),
+    path('documents/<int:brief_id>/edit', views.edit_program_brief, name='edit_program_brief'),
+    path('documents/<int:brief_id>/view', views.program_brief_view, name='program_brief_view'),
+    path('documents/list', views.program_brieffings, name='program_brieffings'),
+    path('documents/download', views.program_brief_zip_download, name='program_brief_zip_download'),
+    path('documents/year/<int:year>/list', views.program_brieffings_by_year, name='program_brieffings_by_year'),
+    path('documents/year/<int:year>/download', views.program_by_year_brief_zip_download, name='program_by_year_brief_zip_download'),
     path('cgc/brieffings', views.program_cgc_brieffings, name='program_cgc_brieffings'),
+
+
     path('cgc/brieffings/<int:year>', views.program_cgc_brieffings_by_year, name='program_cgc_brieffings_by_year'),
     path('cgc/brieffings/<int:brief_id>/view', views.program_cgc_brief_view, name='program_cgc_brief_view'),
     path('cngc/brieffings', views.program_cngc_brieffings, name='program_cngc_brieffings'),
     path('cngc/brieffings/<int:year>', views.program_cngc_brieffings_by_year, name='program_cngc_brieffings_by_year'),
     path('cngc/brieffings/<int:brief_id>/view', views.program_cngc_brief_view, name='program_cngc_brief_view'),
-    path('brieffings/list', views.program_brieffings, name='program_brieffings'),
-    path('brieffings/download', views.program_brief_zip_download, name='program_brief_zip_download'),
-    path('brieffings/year/<int:year>/list', views.program_brieffings_by_year, name='program_brieffings_by_year'),
-    path('brieffings/year/<int:year>/download', views.program_by_year_brief_zip_download, name='program_by_year_brief_zip_download'),
+
 
 
 

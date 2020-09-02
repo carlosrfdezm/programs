@@ -25,7 +25,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
-    FormationPlanActivities, InnerAreas
+    FormationPlanActivities, InnerAreas, ProgramDocument
 from programs.templatetags.extra_tags import finish_requirements_accomplished, student_init_requirement_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -2842,26 +2842,28 @@ def edit_program_edition(request, program_slug, edition_id):
 
 
 @login_required
-def create_program_brief(request, program_slug):
+def create_program_doc(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     if user_is_program_cs(request.user, program):
         if request.method == 'POST':
             try:
 
-                # fs = FileSystemStorage()
-                # brief_ext = brief.name.split('.')[brief.name.split('.').__len__() - 1]
-                # new_brief_name ='program_{0}/brieffings/{1}/{2}/{3}'.format(program_slug, request.POST['year'],request.POST['month'], 'Acta_Programa_'+request.POST['month']+'_'+ request.POST['year']+'.'+brief_ext)
-                # filename = fs.save(new_brief_name, brief)
-
-                new_brief = ProgramBrief(
+                new_doc = ProgramDocument(
                     program=program,
-                    # brief=filename,
-                    brief=request.FILES['brief'],
+                    doc=request.FILES['doc'],
+                    type=request.POST['type'],
                     year=request.POST['year'],
                     month=request.POST['month'],
+                    description=request.POST['description']
                 )
-                new_brief.save()
-                return HttpResponseRedirect(reverse('programs:program_brieffings_by_year', args=[program_slug, new_brief.year]))
+                try:
+                    if request.POST['is_public']== 'on':
+                        new_doc.is_public = True
+                except:
+                    pass
+
+                new_doc.save()
+                return HttpResponseRedirect(reverse('programs:program_brieffings_by_year', args=[program_slug, new_doc.year]))
 
             except:
 
@@ -2879,7 +2881,7 @@ def create_program_brief(request, program_slug):
                 'years':range(now().year-10,now().year+1),
                 'current_year':now().year,
             }
-            return render(request, 'programs/create_program_brief.html',context)
+            return render(request, 'programs/create_program_doc.html',context)
     else:
         return error_500(request,'Usted no tiene privilegios para agregar actas.')
 

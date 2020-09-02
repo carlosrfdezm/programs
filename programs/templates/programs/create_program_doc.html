@@ -8,12 +8,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-9">
-                    <h1>Agregar nueva acta de {{ program }}</h1>
+                    <h1>Agregar nuevo documento en {{ program.short_name }}</h1>
                 </div>
                 <div class="col-sm-3">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{% url 'cgc:cgc_home' %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Nueva acta</li>
+                        <li class="breadcrumb-item active">Nuevo doc</li>
                     </ol>
                 </div>
             </div>
@@ -29,15 +29,15 @@
                     <!-- general form elements -->
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Acta</h3>
+                            <h3 class="card-title">Documento</h3>
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
-                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_program_brief' program.slug %}">
+                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_program_doc' program.slug %}">
                             {% csrf_token %}
                             <div class="card-body">
                                 <div class="form-row align-items-center">
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-md-3">
                                         <label for="slc_years">Año:</label>
                                         <select class="form-control" id="slc_years" name="year" required>
                                             <option value="" selected>Seleccione una opción</option>
@@ -47,7 +47,7 @@
                                             {% endfor %}
                                         </select>
                                     </div>
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-md-3">
 
                                         <label for="slc_months">Mes:</label>
                                         <select class="form-control" id="slc_months" name="month" required>
@@ -55,12 +55,42 @@
 
                                         </select>
                                     </div>
-
                                     <div class="form-group col-md-4">
-                                        <label for="exampleInputFile">Acta:</label>
-                                        <input type="file" class="form-control-file" id="exampleInputFile" name="brief" accept=".doc, .docx, .odt, .pdf" required>
+
+                                        <label for="slc_type">Tipo de documento:</label>
+                                        <select class="form-control" id="slc_type" name="type" required>
+                                            <option value="" selected>Seleccione una opción</option>
+                                            <option value="acta" >Acta</option>
+                                            <option value="informe" >Informe</option>
+                                            <option value="resolucion" >Resolución</option>
+
+                                        </select>
                                     </div>
 
+                                    <div class="form-group col-md-2">
+                                        <label for="chk_public">Contexto:</label>
+                                        <div id="chk_public" class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="is_public"> Es público?
+                                            </label>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-12">
+                                        <textarea class="form-control" id="txt_doc_description" name="description" rows="3" maxlength="300" placeholder="Descripción del documento." required></textarea>
+
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="exampleInputFile">Archivo:</label>
+                                        <input type="file" class="form-control-file" id="exampleInputFile" name="doc" accept=".doc, .docx, .odt, .pdf" required>
+                                    </div>
                                 </div>
 
 
