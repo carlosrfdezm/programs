@@ -85,7 +85,11 @@
                 {#                        <li><a href="#">Drop Down 5</a></li>#}
                 {#                    </ul>#}
                 {#                </li>#}
-                <li><a href="#services">Ayuda</a></li>
+                {% if public_docs %}
+                    <li><a href="#services">Documentos</a></li>
+                {% else %}
+                    <li><a href="#services">Ayuda</a></li>
+                {% endif %}
                 <li><a href="#contact">Login</a></li>
 
             </ul>
@@ -135,33 +139,33 @@
                 </div>
                 {% if not lines %}
 
-                <div class="col-lg-6 content">
-                    <h2>Formación doctoral en Cuba</h2>
-                    <h3>El proceso de formación doctoral contribuye a crear el
-                        potencial humano de alta calificación, esencial para el avance de la
-                        ciencia, la tecnología y la innovación.</h3>
-                    <h3>El Sistema Nacional de Grados Científicos está integrado por los órganos ejecutivos siguientes:</h3>
+                    <div class="col-lg-6 content">
+                        <h2>Formación doctoral en Cuba</h2>
+                        <h3>El proceso de formación doctoral contribuye a crear el
+                            potencial humano de alta calificación, esencial para el avance de la
+                            ciencia, la tecnología y la innovación.</h3>
+                        <h3>El Sistema Nacional de Grados Científicos está integrado por los órganos ejecutivos siguientes:</h3>
 
-                    <ul>
-                        <li><i class="ion-android-checkmark-circle"></i> la Comisión Nacional de Grados Científicos, que lo preside;</li>
-                        <li><i class="ion-android-checkmark-circle"></i> las instituciones autorizadas para la formación de doctores,
-                            aprobadas por la Comisión Nacional de Grados Científicos, sus
-                            comisiones de grados científicos y comités de doctorado; y</li>
-                        <li><i class="ion-android-checkmark-circle"></i> los tribunales de grado.</li>
-                    </ul>
+                        <ul>
+                            <li><i class="ion-android-checkmark-circle"></i> la Comisión Nacional de Grados Científicos, que lo preside;</li>
+                            <li><i class="ion-android-checkmark-circle"></i> las instituciones autorizadas para la formación de doctores,
+                                aprobadas por la Comisión Nacional de Grados Científicos, sus
+                                comisiones de grados científicos y comités de doctorado; y</li>
+                            <li><i class="ion-android-checkmark-circle"></i> los tribunales de grado.</li>
+                        </ul>
 
-                </div>
+                    </div>
                 {% else %}
                     <div class="col-lg-6 content">
-                    <h2>Líneas de investigación</h2>
+                        <h2>Líneas de investigación</h2>
 
-                    <ul>
-                        {% for line in lines %}
-                        <li><i class="ion-android-checkmark-circle"></i> {{ line.name }}</li>
-                        {% endfor %}
-                    </ul>
+                        <ul>
+                            {% for line in lines %}
+                                <li><i class="ion-android-checkmark-circle"></i> {{ line.name }}</li>
+                            {% endfor %}
+                        </ul>
 
-                </div>
+                    </div>
                 {% endif %}
             </div>
 
@@ -239,6 +243,30 @@
     <!--==========================
       Services Section
     ============================-->
+{% if public_docs %}
+    <section id="services">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Documentos de consulta</h2>
+                    <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+                </div>
+
+                {% for doc in public_docs %}
+
+                    <div class="row">
+                        <div class="col-md-10 offset-1">
+                            <p title="{{ doc.description }}">{{ doc.description|truncatewords:15 }}</p>
+                        </div>
+                        <div class="col-md-1">
+                            <a href="" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
+                        </div>
+
+                    </div>
+                {% endfor %}
+
+            </div>
+        </section>
+{% else %}
     <section id="services">
         <div class="container">
             <div class="section-header">
@@ -295,6 +323,7 @@
 
         </div>
     </section><!-- #services -->
+{% endif %}
 
 
 

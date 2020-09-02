@@ -38,6 +38,7 @@ def index(request, program_slug):
         context = {
             'program': program,
             'lines': InvestigationLine.objects.filter(program=program),
+            'public_docs':ProgramDocument.objects.filter(program=program, is_public=True),
 
         }
         if program.type == 'phd':
