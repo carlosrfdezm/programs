@@ -21,6 +21,14 @@ def program_brief_path(instance, filename):
     return 'program_{0}/brieffings/{1}/{2}/{3}'.format(instance.program.slug, instance.year,
                                                                        instance.month, new_brief_name)
 
+def program_document_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
+    doc_ext = filename.split('.')[filename.split('.').__len__() - 1]
+    index = ProgramBrief.objects.filter(program=instance.program, year=instance.year, month=instance.month).__len__()
+    new_doc_name = '{0}-{1}-{2}-{3}-{4}.{5}'.format(instance.type.capitalize(),slugify(instance.program.short_name), instance.month , instance.year ,str(index+1), doc_ext)
+
+    return 'program_{0}/brieffings/{1}/{2}/{3}'.format(instance.program.slug, instance.year,instance.month, new_doc_name)
+
 def postg_document_path(instance, filename):
     file_ext = filename.split('.')[filename.split('.').__len__() - 1]
     file_name = '{0}_{1}_{2}.{3}'.format(instance.type.capitalize() , instance.year,instance.month, file_ext)
@@ -455,6 +463,20 @@ class Document(models.Model):
     description = models.TextField(max_length=300, null=True)
     type = models.CharField(max_length=20, null=False, default='acta',choices=[('acta', 'Acta'),('resolucion', 'Resolución'),('informe', 'Informe')])
     doc = models.FileField(upload_to=postg_document_path)
+    is_public = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+
+class ProgramDocument(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, null=False)
+    year = models.IntegerField(null=False)
+    month = models.CharField(max_length=12)
+    description = models.TextField(max_length=300, null=True)
+    type = models.CharField(max_length=20, null=False, default='acta',choices=[('acta', 'Acta'),('resolucion', 'Resolución'),('informe', 'Informe')])
+    doc = models.FileField(upload_to=program_document_path)
     is_public = models.BooleanField(default=False)
 
     def __str__(self):
