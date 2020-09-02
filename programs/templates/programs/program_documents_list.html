@@ -81,8 +81,10 @@
                             {% if year %}
                                 <tr>
                                     <th>Mes</th>
-                                    <th>Subida</th>
-                                    <th> </th>
+                                    <th>Tipo </th>
+
+                                    <th>Descripción</th>
+                                    <th></th>
 
                                 </tr>
                             {% else %}
@@ -103,6 +105,8 @@
                                         <td>{{ doc.year }}</td>
                                     {% endif %}
                                     <td>{{ doc.month }}</td>
+                                    <td>{{ doc.type|capfirst }}</td>
+
                                     <td>{{ doc.description|truncatewords:7 }}</td>
                                     <td class="text-right">
                                         <div class="btn-group">

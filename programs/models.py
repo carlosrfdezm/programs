@@ -461,7 +461,7 @@ class Document(models.Model):
     year = models.IntegerField(null=False)
     month = models.CharField(max_length=12)
     description = models.TextField(max_length=300, null=True)
-    type = models.CharField(max_length=20, null=False, default='acta',choices=[('acta', 'Acta'),('resolucion', 'Resolución'),('informe', 'Informe')])
+    type = models.CharField(max_length=20, null=False, default='acta',choices=[('acta', 'Acta'),('resolucion', 'Resolución'),('informe', 'Informe'),('otro', 'Otro')])
     doc = models.FileField(upload_to=postg_document_path)
     is_public = models.BooleanField(default=False)
 
@@ -474,7 +474,7 @@ class ProgramDocument(models.Model):
     year = models.IntegerField(null=False)
     month = models.CharField(max_length=12)
     description = models.TextField(max_length=300, null=True)
-    type = models.CharField(max_length=20, null=False, default='acta',choices=[('acta', 'Acta'),('resolucion', 'Resolución'),('informe', 'Informe')])
+    type = models.CharField(max_length=20, null=False, default='acta',choices=[('acta', 'Acta'),('resolucion', 'Resolución'),('informe', 'Informe'),('otro', 'Otro')])
     doc = models.FileField(upload_to=program_document_path)
     is_public = models.BooleanField(default=False)
 
