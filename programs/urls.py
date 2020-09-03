@@ -104,6 +104,7 @@ urlpatterns = [
     path('documents/create', views.create_program_doc, name='create_program_doc'),
     path('documents/<int:doc_id>/edit', views.edit_program_doc, name='edit_program_doc'),
     path('documents/<int:doc_id>/view', views.program_doc_view, name='program_doc_view'),
+    path('documents/<int:doc_id>/public/view', views.public_program_doc_view, name='public_program_doc_view'),
     path('documents/list', views.program_documents, name='program_brieffings'),
     path('documents/download', views.program_brief_zip_download, name='program_brief_zip_download'),
     path('documents/year/<int:year>/list', views.program_docs_by_year, name='program_docs_by_year'),
