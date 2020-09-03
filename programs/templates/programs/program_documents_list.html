@@ -105,7 +105,9 @@
                                         <td>{{ doc.year }}</td>
                                     {% endif %}
                                     <td>{{ doc.month }}</td>
-                                    <td>{{ doc.type|capfirst }}</td>
+                                    {% if year %}
+                                        <td>{{ doc.type|capfirst }}</td>
+                                    {% endif %}
 
                                     <td>{{ doc.description|truncatewords:7 }}</td>
                                     <td class="text-right">
@@ -179,12 +181,11 @@
             </div>
         </div>
         <!-- /.col -->
-        </div>
         {% csrf_token %}
         <!-- /.row -->
     </section>
     <!-- /.content -->
-    </div>
+
 {% endblock %}
 {% block extra_scripts %}
     <!-- jQuery -->
@@ -260,7 +261,6 @@
                             })
 
                         }
-                        cons
                         console.log(json); // log the returned json to the console
                         console.log("success"); // another sanity check
 
