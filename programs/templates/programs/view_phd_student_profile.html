@@ -38,97 +38,114 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_student' program.slug student.id %}">
+                            <form role="presentation" method="post" enctype="multipart/form-data" >
                                 {% csrf_token %}
                                 <div class="card-body">
+                                    <div class="form-row align-items-center pb-2">
+                                        <div class="col-md-1 text-center">
+                                            {% if student.picture %}
+                                                <img class="rounded" src="{% url 'programs:program_student_picture' program.slug student.id %}" style="width: 100px;">
+                                            {% elif student.gender == 'm' %}
+                                                <i class="fa fa-male fa-5x"></i>
+                                            {% elif student.gender == 'f' %}
+                                                <i class="fa fa-female fa-5x"></i>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
 
                                     <div class="form-row">
 
+
                                         <div class="form-group col-md-3">
                                             <label for="inp_name">Nombre(s):</label>
-                                            <input type="text" class="form-control" id="inp_name" name="student_name" placeholder="Nombre(s)" value="{{ student.user.first_name }}" required>
+                                            <input type="text" class="form-control" readonly id="inp_name" name="student_name" placeholder="Nombre(s)" value="{{ student.user.first_name }}" required>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label for="inp_name">Apellidos:</label>
-                                            <input type="text" class="form-control" id="inp_surename" name="student_surename" placeholder="Apellidos" value="{{  student.user.last_name }}" required>
+                                            <input type="text" class="form-control" readonly id="inp_surename" name="student_surename" placeholder="Apellidos" value="{{  student.user.last_name }}" required>
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label for="inp_dni">DNI:</label>
-                                            <input type="text" class="form-control" id="inp_dni" name="student_dni" placeholder="DNI o pasaporte" maxlength="11" value="{{ student.dni }}" required>
+                                            <input type="text" class="form-control" readonly id="inp_dni" name="student_dni" placeholder="DNI o pasaporte" maxlength="11" value="{{ student.dni }}" required>
                                         </div>
 
                                         <div class="form-group col-md-2">
-                                            <label for="slc_status">Estado:</label>
-                                            <select class="form-control" id="slc_status" name="student_status" required>
-                                                <option value="">Seleccione un estado</option>
-                                                <option value="solicitante" {% if student.phdstudent.status == 'solicitante' %}selected{% endif %}>Solicitante</option>
-                                                <option value="doctorando" {% if student.phdstudent.status == 'doctorando' %}selected{% endif %}>Doctorando</option>
-                                                <option value="graduado" {% if student.phdstudent.status == 'graduado' %}selected{% endif %}>Graduado</option>
+                                            <label for="inp_status">Estado:</label>
+                                            <input type="text" class="form-control" readonly id="inp_status"  placeholder="Estado" maxlength="11" value="{{ phd_student.status|capfirst }}" required>
 
-                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-row">
 
                                         <div class="form-group col-md-3">
                                             <label for="inp_email">Email:</label>
-                                            <input type="email" class="form-control" id="inp_email"  name="student_email" placeholder="Email" value="{{student.user.email }}" required>
+                                            <input type="email" class="form-control" readonly id="inp_email"  name="student_email" placeholder="Email" value="{{student.user.email }}" required>
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label for="slc_gender">Género:</label>
-                                            <select class="form-control" id="slc_gender" name="gender" required>
-                                                <option value="" >Seleccione una opción</option>
-                                                <option value="f" {% if student.gender == 'f' %}selected{% endif %}  >Femenino</option>
-                                                <option value="m" {% if student.gender == 'm' %}selected{% endif %}>Masculino</option>
-                                            </select>
+                                            <input class="form-control" readonly value="{% if student.gender == 'f' %}Femenino{% else %} Masculino{% endif %}">
+
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label for="inp_birth_date">Fecha de nacimiento:</label>
-                                            <input type="date" class="form-control" id="inp_birth_date"  name="student_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" value="{{ student.birth_date|date:'Y-m-d' }}" required>
+                                            <input type="date" class="form-control" id="inp_birth_date"  readonly name="student_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" value="{{ student.birth_date|date:'Y-m-d' }}" required>
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label for="inp_phone">Teléfono:</label>
-                                            <input type="text" class="form-control" id="inp_phone"  name="student_phone"  value="{% if student.phone %}{{ student.phone }}{% endif %}" placeholder="Teléfono" >
+                                            <input type="text" class="form-control" id="inp_phone" readonly  name="student_phone"  value="{% if student.phone %}{{ student.phone }}{% endif %}" placeholder="Teléfono" >
                                         </div>
 
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-3">
                                             <label for="slc_country">País:</label>
-                                            <select class="form-control" id="slc_country" name="student_country" required>
-                                                {% country_list as country_list%}
-                                                {% for country in country_list %}
-                                                    <option value="{{ country }}" {% if student.country == country %}selected{% endif %}>{{ country }}</option>
-                                                {% endfor %}
+                                            <input class="form-control" readonly value="{{ student.country }}">
 
-                                            </select>
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label for="slc_category">Categoría:</label>
-                                            <select class="form-control" id="slc_category" name="student_category" required>
-                                                <option value="" selected>Seleccione una opción</option>
-                                                <option value="interno" {% if phd_student.category == 'interno' %}selected{% endif %} >Interno</option>
-                                                <option value="externo" {% if phd_student.category == 'externo' %}selected{% endif %}>Externo</option>
-                                            </select>
+                                            <input class="form-control" readonly value="{{ phd_student.category|capfirst }}">
+
                                         </div>
                                         {% if phd_student.category == 'externo' %}
                                             <div class="form-group col-md-6" id="div_workcenter">
                                                 <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>
-                                                <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante" value="{{ phd_student.center }}">
+                                                <input class="form-control" type="text" id="inp_center" required name="student_center" readonly placeholder="Centro de trabajo del estudiante" value="{{ phd_student.center }}">
 
                                             </div>
                                         {% elif phd_student.category == 'interno' %}
                                             <div class="form-group col-md-6" id="div_workcenter">
                                                 <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>
-                                                <select class="form-control" id="slc_center" required name="student_center" >
-                                                    <option value="" >Seleccione una opción</option>
-                                                    {% for area in inner_areas %}
-                                                        <option value="{{ area.name }}" {% if area.name == phd_student.center %}selected{% endif %}>{{ area }}</option>
-                                                    {% endfor %}
+                                                <input class="form-control" type="text" id="inp_center" required name="student_center" readonly placeholder="Centro de trabajo del estudiante" value="{{ phd_student.center }}">
 
-                                                </select>
+
                                             </div>
                                         {% endif %}
+                                    </div>
+                                <div class="form-row">
+
+
+
+
+                                        <div class="form-group col-md-4">
+                                            <label for="inp_request_date">Fecha de solicitud: </label>
+                                            <input type="date" readonly class="form-control" id="inp_request_date" name="request_date" value="{{ student.request_date|date:'Y-m-d' }}" required>
+                                        </div>
+
+
+
+                                        <div class="form-group col-md-4">
+                                            <label  for="inp_init_date">Fecha de ingreso: </label>
+                                            <input type="date" readonly class="form-control" id="inp_init_date" name="init_date" value="{{ student.init_date|date:'Y-m-d' }}">
+
+                                        </div>
+
+                                        <div class="form-group col-md-4">
+                                            <label for="inp_graduate_date">Fecha de egreso: </label>
+                                            <input type="date" readonly class="form-control" id="inp_graduate_date" name="graduate_date" value="{{ student.graduate_date|date:'Y-m-d' }}">
+                                        </div>
+
                                     </div>
                                     <hr>
                                     <h4><strong>Tema de investigación:</strong></h4>
@@ -136,82 +153,31 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="txt_theme">Tema:</label>
-                                            <textarea class="form-control" id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2">{{ student.phdstudent.phdstudenttheme }}</textarea>
+                                            <textarea class="form-control" readonly id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2">{{ student.phdstudent.phdstudenttheme }}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="slc_project">Proyecto asociado:</label>
-                                            <select class="form-control" id="slc_project" name="investigation_project" >
-                                                <option value="" >Seleccione una opción</option>
+                                            <input class="form-control" readonly value="{{ student.phdstudent.phdstudenttheme.project }}">
 
-                                                {% for project in projects %}
-                                                    <option value="{{ project.id }}" {% if project.id == student.phdstudent.phdstudenttheme.project.id %}selected{% endif %} >{{ project|truncatewords:10 }}</option>
-                                                {% endfor %}
-
-                                            </select>
                                         </div>
                                     </div>
                                     <hr>
                                     <div class="form-row">
-                                        <div class="col-md-11">
+                                        <div class="col-md-12">
                                             <h4><strong>Tutores:</strong></h4>
                                         </div>
-                                        <div class="col-md-1 pl-4">
-                                            <button type="button" class="btn btn-warning btn-sm text-white" id="btn_add_tuthor" data-toggle="modal" data-target="#modal_add_tuthor" title="Agregar tutor"><i class="fa fa-plus"></i> </button>
-                                        </div>
+
                                     </div>
                                     {% if student.phdstudent.tuthor_set.all %}
                                         {% for tuthor in student.phdstudent.tuthor_set.all %}
-                                            <div class="form-row align-items-center pb-2" id="div_tuthor_{{tuthor.id}}">
-                                                <div class="col-md-2">
-                                                    <input type="email" class="form-control" readonly id="inp_tuthor_email_{{ tuthor.id }}" data="{{ tuthor.id }}" name="tuthor_email_{{ tuthor.id }}" placeholder="Email del tutor" value="{{ tuthor.professor.user.email }}" required></input>
+                                            <div class="form-row">
+                                                <div class="form-group col-md-12">
+                                                    <input class="form-control" readonly value="{{ tuthor.professor.user.get_full_name }}">
                                                 </div>
-                                                <div class="col-md-2">
-                                                    <input type="text" class="form-control" readonly id="inp_tuthor_name_{{ tuthor.id }}" name="tuthor_name_{{ tuthor.id }}" placeholder="Nombre(s) del tutor" value="{{ tuthor.professor.user.first_name }}" required></input>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <input type="text" class="form-control" readonly id="inp_tuthor_lastname_{{ tuthor.id }}" name="tuthor_lastname_{{ tuthor.id }}" placeholder="Apellidos del tutor" value="{{ tuthor.professor.user.last_name }}" required></input>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <input type="text" class="form-control" readonly id="inp_tuthor_institution_{{ tuthor.id }}" name="tuthor_institution_{{ tuthor.id }}" placeholder="Institución del tutor" value="{{ tuthor.professor.institution }}" required></input>
-                                                </div>
-                                                <div class="col-md-1 pl-4 ">
-                                                    <button type="button" class="text-white btn btn-sm btn-danger" id="btn_modal_rm_tuthor_{{ tuthor.id }}" data="{{ tuthor.id }}" data-toggle="modal" data-target="#modal_rm_tuthor_{{ tuthor.id }}" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>
-                                                </div>
-
-
                                             </div>
-                                            <div class="modal fade" id="modal_rm_tuthor_{{ tuthor.id }}">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Eliminar tutor</h4>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div class="row">
-                                                                <div class="col-md-2">
-                                                                    <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
 
-                                                                </div>
-                                                                <div class="col-md-10">
-                                                                    <p class="text-center">¿Seguro que desea eliminar a {{ tuthor }}?<br>Esto no se puede deshacer&hellip;</p>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="modal-footer justify-content-between">
-                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                            <button type="button" class="btn btn-danger" data-dismiss="modal" data="{{ tuthor.id }}" id="btn_rm_tuthor_{{ tuthor.id }}">Eliminar</button>
-                                                        </div>
-                                                    </div>
-                                                    <!-- /.modal-content -->
-                                                </div>
-                                                <!-- /.modal-dialog -->
-                                            </div>
                                         {% endfor %}
                                     {% else %}
                                         <div class="alert alert-warning col-md-10 offset-1" id="div_no_tuthors">
@@ -223,97 +189,56 @@
 
                                     </section>
                                     <hr>
-                                    <h5><strong>Requisitos</strong></h5>
-                                    <div class="form-row">
-                                        <div class="col-md-4">
-                                            <h5>De ingreso:</h5>
-                                            <div class="form-group">
+                                    <h5><strong>Requisitos de ingreso</strong></h5>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="table table-striped table-bordered">
+                                                <tr>
+                                                    <th class="col-md-11">Descripción</th>
+                                                    <th class="text-center col-md-1">Cumplido</th>
+                                                </tr>
                                                 {% for requirement in init_requirements %}
                                                     {% student_init_requirement_accomplished student requirement as student_init_requirement_accomplished %}
-
-                                                    <div class="form-check">
-                                                        <input type="checkbox" class="form-check-input" id="inp_requirement_{{ requirement.id }}" name="student_requirement_{{ requirement.id }}" {% if student_init_requirement_accomplished %} checked {% endif %}>
-
-                                                        <label class="form-check-label" for="inp_requirement_{{ requirement.id }}">{{ requirement.name }}</label>
-                                                    </div>
-
+                                                    <tr>
+                                                        <td>{{ requirement.description }}</td>
+                                                        <td class="text-center">{% if student_init_requirement_accomplished %}<i class="text-success fa fa-toggle-on" title="Si"></i>{% else %}<i class="text-danger fa fa-toggle-off" title="No"></i>{% endif %} </td>
+                                                    </tr>
 
                                                 {% endfor %}
-                                                <div class="help">
-                                                    <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
-                                                </div>
-                                            </div>
-                                        </div>
 
-                                        <div class="col-md-4">
-                                            <h5>De egreso:</h5>
-                                            <div class="form-group">
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <h5><strong>Requisitos de egreso</strong></h5>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="table table-striped table-bordered">
+                                                <tr>
+                                                    <th class="col-md-11">Descripción</th>
+                                                    <th class="text-center col-md-1">Cumplido</th>
+                                                </tr>
                                                 {% for requirement in finish_requirements %}
                                                     {% student_finish_requirement_accomplished student requirement as student_finish_requirement_accomplished %}
-
-                                                    <div class="form-check">
-                                                        <input type="checkbox" class="form-check-input" id="inp_f_requirement_{{ requirement.id }}" name="student_f_requirement_{{ requirement.id }}" {% if student_finish_requirement_accomplished %} checked {% endif %}>
-
-                                                        <label class="form-check-label" for="inp_f_requirement_{{ requirement.id }}">{{ requirement.name }}</label>
-                                                    </div>
-
+                                                    <tr>
+                                                        <td>{{ requirement.description }}</td>
+                                                        <td class="text-center">{% if student_finish_requirement_accomplished %}<i class="text-success fa fa-toggle-on" title="Si"></i>{% else %}<i class="text-danger fa fa-toggle-off" title="No"></i>{% endif %} </td>
+                                                    </tr>
 
                                                 {% endfor %}
-                                                <div class="help">
-                                                    <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group row">
-                                                <label class="col-sm-5" for="inp_request_date">Fecha de solicitud: </label>
-                                                <div class="col-sm-7">
-                                                    <input type="date" class="form-control" id="inp_request_date" name="request_date" value="{{ student.request_date|date:'Y-m-d' }}" required>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="col-sm-5" for="inp_init_date">Fecha de ingreso: </label>
-                                                <div class="col-sm-7">
-                                                    <input type="date" class="form-control" id="inp_init_date" name="init_date" value="{{ student.init_date|date:'Y-m-d' }}">
 
-                                                </div>
-                                            </div>
+                                            </table>
 
-                                            <div class="form-group row">
-                                                <label class="col-sm-5" for="inp_graduate_date">Fecha de egreso: </label>
-                                                <div class="col-sm-7">
-                                                    <input type="date" class="form-control" id="inp_graduate_date" name="graduate_date" value="{{ student.graduate_date|date:'Y-m-d' }}">
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                    <div class="form-row align-items-center">
-                                        <div class="col-md-1 text-center">
-                                            {% if student.picture %}
-                                                <img class="rounded" src="{% url 'programs:program_student_picture' program.slug student.id %}" style="width: 100px;">
-                                            {% elif student.gender == 'm' %}
-                                                <i class="fa fa-male fa-3x"></i>
-                                            {% elif student.gender == 'f' %}
-                                                <i class="fa fa-female fa-3x"></i>
-                                            {% endif %}
-                                        </div>
-                                        <div class="form-group col-md-11">
-                                            <label for="exampleInputFile">Foto: </label>
-                                            <input type="file" class="form-control-file" id="exampleInputFile" name="student_picture" accept="image/*">
-                                            <div class="help text-sm text-gray">
-                                                {{ student.picture }}
-                                            </div>
                                         </div>
                                     </div>
+
+
 
                                 </div>
                                 <!-- /.card-body -->
 
-                                <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary" id="btn_save">Guardar</button>
-                                </div>
+
                             </form>
                         </div>
 
