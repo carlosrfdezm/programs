@@ -2,6 +2,8 @@
 {% load static %}
 {% load extra_tags %}
 
+{% user_is_program_cs user program as user_is_program_cs %}
+
 {% block content %}
     <div class="content-header">
         <div class="container-fluid">
@@ -238,7 +240,7 @@
                                             {% else %}
                                                 <i class="text-info fa fa-user fa-5x" style="margin-top: 6px" ></i>
                                             {% endif %}
-                                            <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
+                                            <a class="users-list-name"  {% if user_is_program_cs %}href="{% url 'programs:edit_student' program.slug requester.student.id %}"{% endif %}>{{ requester.student}}</a>
                                             <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
                                         </li>
                                     {% endfor %}
@@ -311,7 +313,7 @@
                                             {% else %}
                                                 <i class="text-danger fa fa-user fa-5x" style="margin-top: 6px" ></i>
                                             {% endif %}
-                                            <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
+                                            <a class="users-list-name" {% if user_is_program_cs %} href="{% url 'programs:edit_student' program.slug requester.student.id %}" {% endif %}>{{ requester.student}}</a>
                                             <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
                                         </li>
 
@@ -390,7 +392,7 @@
                                             {% else %}
                                                 <i class="text-success fa fa-user fa-5x" style="margin-top: 6px" ></i>
                                             {% endif %}
-                                            <a class="users-list-name" href="{% url 'programs:edit_student' program.slug requester.student.id %}">{{ requester.student}}</a>
+                                            <a class="users-list-name" {% if user_is_program_cs %}href="{% url 'programs:edit_student' program.slug requester.student.id %}"{% endif %}>{{ requester.student}}</a>
                                             <span class="users-list-date">{{ requester.student.request_date|date:'Y-m-d'}}</span>
                                         </li>
                                     {% endfor %}
