@@ -1473,6 +1473,14 @@ def students_by_line(request, program_slug, line_id):
         'line':line,
         'students':Student.objects.filter(phdstudent__phdstudenttheme__line=line)
     }
+    if user_is_program_student(request.user, program):
+        if program.type =='phd':
+            context['student'] = Student.objects.get(user=request.user, program=program)
+        elif program.type =='msc':
+            context['student'] = MscStudent.objects.get(user=request.user, program=program)
+        elif program.type =='dip':
+            context['student'] = DipStudent.objects.get(user=request.user, program=program)
+
     return render(request, 'programs/students_by_line.html', context)
 
 @login_required
