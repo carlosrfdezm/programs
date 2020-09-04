@@ -911,6 +911,49 @@ def edit_student(request, program_slug, student_id):
         return error_500(request,program,'Usted no tiene privilegios para editar estudiantes de este programa.')
 
 @login_required
+def view_student_profile(request, program_slug, student_id):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_member(request.user, program) or Student.objects.get(user=request.user)==Student.objects.get(pk=student_id):
+        if program.type == 'phd':
+            context = {
+                'program': program,
+                'student': Student.objects.get(pk=student_id),
+                'phd_student': PhdStudent.objects.get(student=Student.objects.get(pk=student_id),
+                                                      student__program=program),
+                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
+                'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
+                'projects': InvestigationProject.objects.filter(program=program),
+                'inner_areas': InnerAreas.objects.all(),
+            }
+            return render(request, 'programs/view_phd_student_profile.html', context)
+        elif program.type == 'msc':
+            context = {
+                'program': program,
+                'student': MscStudent.objects.get(pk=student_id),
+                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
+                'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
+                'projects': InvestigationProject.objects.filter(program=program),
+                'inner_areas': InnerAreas.objects.all(),
+            }
+            return render(request, 'programs/view_msc_student_profile.html', context)
+        elif program.type == 'dip':
+            context = {
+                'program': program,
+                'student': DipStudent.objects.get(pk=student_id),
+                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
+                'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
+                'projects': InvestigationProject.objects.filter(program=program),
+                'inner_areas': InnerAreas.objects.all(),
+            }
+            return render(request, 'programs/view_dip_student_profile.html', context)
+        else:
+            return error_500(request, program, 'Tipo de programa no implementado.')
+
+    else:
+        return error_500(request, program, 'Usted no tiene acceso al perfil de este estudiante')
+
+
+@login_required
 def edit_msc_student(request, program_slug, edition_id, student_id):
     program= Program.objects.get(slug=program_slug)
     if user_is_program_cs(request.user, program):
