@@ -449,16 +449,25 @@
         $(document).ready(function () {
             {% if student %}
                 {% student_has_activities student as student_has_activities %}
-                {% if not student_has_activities %}
-                    const Toast = Swal.mixin({
+                {% student_has_init_requirement_pending student program as init_requirement_pending %}
+                const Toast = Swal.mixin({
                         toast: true,
                         position: 'top-end',
                         showConfirmButton: false,
                         timer: 7000
                     });
+                {% if not student_has_activities %}
+
                     Toast.fire({
                         type: 'warning',
                         title: 'Usted aún no tiene actividades en su plan. Para agregarlas edite su plan de formación.'
+                    });
+                {% endif %}
+                {% if init_requirement_pending %}
+
+                    Toast.fire({
+                        type: 'warning',
+                        title: 'Usted tiene requisitos de ingreso pendientes, revise su perfil para ver cuales y actualice su expediente.'
                     });
                 {% endif %}
             {% endif %}

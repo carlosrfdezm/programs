@@ -111,6 +111,22 @@ def student_finish_requirement_accomplished(student, program_requirement):
     else:
         return False
 
+@register.simple_tag
+def student_has_init_requirement_pending(student, program):
+    has_pending = False
+    if program.type == 'phd':
+        for requirement in StudentInitRequirement.objects.filter(student=student):
+            if not requirement.accomplished:
+                has_pending=True
+    elif program.type == 'msc':
+        for requirement in StudentInitRequirement.objects.filter(msc_student=student):
+            if not requirement.accomplished:
+                has_pending=True
+
+    return has_pending
+
+
+
 
 @register.simple_tag
 def user_is_program_cs(user, program):
