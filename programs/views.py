@@ -2874,6 +2874,18 @@ def editions_list(request, program_slug):
         'program': program,
         'editions': ProgramEdition.objects.filter(program=program)
     }
+    if program.type == 'msc':
+        try:
+            context['student']=MscStudent.objects.get(user=request.user)
+        except MscStudent.DoesNotExist:
+            pass
+    elif program.type == 'dip':
+        try:
+            context['student']=DipStudent.objects.get(user=request.user)
+        except DipStudent.DoesNotExist:
+            pass
+
+
     return render(request, 'programs/editions_list.html', context)
 
 @login_required
