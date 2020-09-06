@@ -732,6 +732,10 @@ def msc_all_students_list(request, program_slug, scope):
                     'students': MscStudent.objects.filter(program=program, status='graduado'),
                     'scope': 'Graduados',
                 }
+            try:
+                context['student']=MscStudent.objects.get(user=request.user)
+            except MscStudent.DoesNotExist:
+                pass
 
             return render(request, 'programs/msc_students_list.html', context)
         else:

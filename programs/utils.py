@@ -2,7 +2,7 @@ import random
 
 from django.contrib.auth.models import User
 
-from programs.models import ProgramMember, Student, CGC_Member, Tuthor
+from programs.models import ProgramMember, Student, CGC_Member, Tuthor, MscStudent, DipStudent
 from django.core.mail import send_mail
 from django.template import loader
 
@@ -50,11 +50,24 @@ def user_is_cgc_ps(user):
         return False
 
 def user_is_program_student(user, program):
-    try:
-        student=Student.objects.get(user=user, program=program)
-        return True
-    except:
-        return False
+    if program.type == 'phd':
+        try:
+            student=Student.objects.get(user=user, program=program)
+            return True
+        except:
+            return False
+    elif program.type == 'msc':
+        try:
+            student=MscStudent.objects.get(user=user, program=program)
+            return True
+        except:
+            return False
+    elif program.type == 'dip':
+        try:
+            student=DipStudent.objects.get(user=user, program=program)
+            return True
+        except:
+            return False
 
 #Los mensajes pueden ser de tipo wm (welcome_message), nc (new court), o custom (enviado por otro miembro)
 def utils_send_email(request, type, sender_email, member, subject, body, program, psw):

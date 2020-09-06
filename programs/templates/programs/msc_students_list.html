@@ -110,15 +110,15 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for student in students %}
+                            {% for msc_student in students %}
                                 {% init_requirements_accomplished student program as init_requirements_accomplished %}
-                                <tr id="tr_student_{{ student.id }}">
-                                    <td class="text-center">{{ student.edition }}</td>
-                                    <td>{{ student.user.last_name|upper }}, {{ student.user.first_name }}</td>
-                                    <td>{{ student.request_date|date:'Y-m-d' }}</td>
-                                    <td>{{ student.status|capfirst }}</td>
-                                    <td>{{ student.birth_date|date:'Y-m-d'}}</td>
-                                    <td>{{ student.dni }}</td>
+                                <tr id="tr_student_{{ msc_student.id }}">
+                                    <td class="text-center">{{ msc_student.edition }}</td>
+                                    <td>{{ msc_student.user.last_name|upper }}, {{ msc_student.user.first_name }}</td>
+                                    <td>{{ msc_student.request_date|date:'Y-m-d' }}</td>
+                                    <td>{{ msc_student.status|capfirst }}</td>
+                                    <td>{{ msc_student.birth_date|date:'Y-m-d'}}</td>
+                                    <td>{{ msc_student.dni }}</td>
                                     <td class="text-center">{% if init_requirements_accomplished %}
                                         <span class="text-success">
                                              <i class="fas fa-check" title="Requisitos cumplidos"></i>
@@ -146,16 +146,16 @@
                                     {% if user_is_program_cs %}
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
-                                                <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
+                                                <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ msc_student.id }}"> <i class="fa fa-envelope"></i></a>
                                                 {% if scope == 'Maestrantes' %}
-                                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.id %}" title="Ver evaluaciones" > <i class="fa fa-user-graduate"></i></a>
-                                                    <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:evaluate_student' program.slug student.id %}" title="Asignar evaluación"> <i class="fa fa-check-square"></i></a>
+                                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug msc_student.id %}" title="Ver evaluaciones" > <i class="fa fa-user-graduate"></i></a>
+                                                    <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:evaluate_student' program.slug msc_student.id %}" title="Asignar evaluación"> <i class="fa fa-check-square"></i></a>
                                                 {% elif scope == 'Graduados' %}
-                                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.id %}" title="Ver evaluaciones" > <i class="fa fa-user-graduate"></i></a>
+                                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug msc_student.id %}" title="Ver evaluaciones" > <i class="fa fa-user-graduate"></i></a>
 
                                                 {% endif %}
-                                                <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_msc_student' program.slug student.edition.id student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
-                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_student_{{ student.id }}"><i class="fa fa-eraser"></i></a>
+                                                <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_msc_student' program.slug msc_student.edition.id msc_student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_student_{{ msc_student.id }}"><i class="fa fa-eraser"></i></a>
 
                                             </div>
                                         </td>
@@ -164,13 +164,13 @@
                                             <div class="btn-group" role="group">
 
 
-                                                <a class="btn btn-success btn-sm text-white  {% if user == student.user %}disabled{% endif %}" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
+                                                <a class="btn btn-success btn-sm text-white  {% if user == msc_student.user %}disabled{% endif %}" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ msc_student.id }}"> <i class="fa fa-envelope"></i></a>
 
                                             </div>
                                         </td>
                                     {% endif %}
                                 </tr>
-                                <div class="modal fade" id="modal_rm_student_{{ student.id }}">
+                                <div class="modal fade" id="modal_rm_student_{{ msc_student.id }}">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -193,14 +193,14 @@
                                             </div>
                                             <div class="modal-footer justify-content-between">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_student_{{ student.id }}">Eliminar</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_student_{{ msc_student.id }}">Eliminar</button>
                                             </div>
                                         </div>
                                         <!-- /.modal-content -->
                                     </div>
                                     <!-- /.modal-dialog -->
                                 </div>
-                                <div class="modal fade" id="modal_msg_student_{{ student.id }}">
+                                <div class="modal fade" id="modal_msg_student_{{ msc_student.id }}">
                                     <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -209,14 +209,14 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
-                                            <form id="frm_msg_student_{{ student.id }}" method="post">
+                                            <form id="frm_msg_student_{{ msc_student.id }}" method="post">
                                                 <div class="modal-body alert alert-success">
 
                                                     <div class="form-row ">
                                                         <div class="col-md-12">
-                                                            <input class="form-control" id="inp_msg_subject_{{ student.id }}" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
+                                                            <input class="form-control" id="inp_msg_subject_{{ msc_student.id }}" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
 
-                                                            <textarea class="form-control textarea col-md-12" id="txt_msg_body_{{ student.id }}"
+                                                            <textarea class="form-control textarea col-md-12" id="txt_msg_body_{{ msc_student.id }}"
                                                                       name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
                                                         </div>
                                                         <div class="col-xs-12 text-right">
