@@ -913,7 +913,14 @@ def edit_student(request, program_slug, student_id):
 @login_required
 def view_student_profile(request, program_slug, student_id):
     program = Program.objects.get(slug=program_slug)
-    if user_is_program_member(request.user, program) or Student.objects.get(user=request.user)==Student.objects.get(pk=student_id):
+    user_is_student = False
+    if program.type == 'phd' and Student.objects.get(user=request.user)==Student.objects.get(pk=student_id):
+        user_is_student = True
+    elif program.type == 'msc' and MscStudent.objects.get(user=request.user, program=program)==MscStudent.objects.get(pk=student_id, program=program):
+        user_is_student = True
+    elif program.type == 'dip' and DipStudent.objects.get(user=request.user, program=program)==DipStudent.objects.get(pk=student_id, program=program):
+        user_is_student = True
+    if user_is_program_member(request.user, program) or user_is_student:
         if program.type == 'phd':
             context = {
                 'program': program,
@@ -933,6 +940,7 @@ def view_student_profile(request, program_slug, student_id):
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
                 'projects': InvestigationProject.objects.filter(program=program),
+                'edition':MscStudent.objects.get(pk=student_id).edition,
                 'inner_areas': InnerAreas.objects.all(),
             }
             return render(request, 'programs/view_msc_student_profile.html', context)
@@ -943,6 +951,7 @@ def view_student_profile(request, program_slug, student_id):
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
                 'projects': InvestigationProject.objects.filter(program=program),
+                'edition': DipStudent.objects.get(pk=student_id).edition,
                 'inner_areas': InnerAreas.objects.all(),
             }
             return render(request, 'programs/view_dip_student_profile.html', context)

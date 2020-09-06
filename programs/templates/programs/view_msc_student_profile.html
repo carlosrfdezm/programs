@@ -72,7 +72,7 @@
 
                                         <div class="form-group col-md-2">
                                             <label for="inp_status">Estado:</label>
-                                            <input type="text" class="form-control" readonly id="inp_status"  placeholder="Estado" maxlength="11" value="{{ phd_student.status|capfirst }}" required>
+                                            <input type="text" class="form-control" readonly id="inp_status"  placeholder="Estado" maxlength="11" value="{{ student.status|capfirst }}" required>
 
                                         </div>
                                     </div>
@@ -96,6 +96,7 @@
                                             <input type="text" class="form-control" id="inp_phone" readonly  name="student_phone"  value="{% if student.phone %}{{ student.phone }}{% endif %}" placeholder="Teléfono" >
                                         </div>
 
+
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-3">
@@ -103,27 +104,28 @@
                                             <input class="form-control" readonly value="{{ student.country }}">
 
                                         </div>
+
                                         <div class="form-group col-md-3">
                                             <label for="slc_category">Categoría:</label>
-                                            <input class="form-control" readonly value="{{ phd_student.category|capfirst }}">
+                                            <input class="form-control" readonly value="{{ student.category|capfirst }}">
 
                                         </div>
-                                        {% if phd_student.category == 'externo' %}
+                                        {% if student.category == 'externo' %}
                                             <div class="form-group col-md-6" id="div_workcenter">
                                                 <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>
-                                                <input class="form-control" type="text" id="inp_center" required name="student_center" readonly placeholder="Centro de trabajo del estudiante" value="{{ phd_student.center }}">
+                                                <input class="form-control" type="text" id="inp_center" required name="student_center" readonly placeholder="Centro de trabajo del estudiante" value="{{ student.center }}">
 
                                             </div>
-                                        {% elif phd_student.category == 'interno' %}
+                                        {% elif student.category == 'interno' %}
                                             <div class="form-group col-md-6" id="div_workcenter">
                                                 <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>
-                                                <input class="form-control" type="text" id="inp_center" required name="student_center" readonly placeholder="Centro de trabajo del estudiante" value="{{ phd_student.center }}">
+                                                <input class="form-control" type="text" id="inp_center" required name="student_center" readonly placeholder="Centro de trabajo del estudiante" value="{{ student.center }}">
 
 
                                             </div>
                                         {% endif %}
                                     </div>
-                                <div class="form-row">
+                                    <div class="form-row">
 
 
 
@@ -153,7 +155,7 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="txt_theme">Tema:</label>
-                                            <textarea class="form-control" readonly id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2">{{ student.phdstudent.phdstudenttheme }}</textarea>
+                                            <textarea class="form-control" readonly id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2">{{ student.mscstudenttheme }}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-row">
