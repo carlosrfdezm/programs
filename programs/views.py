@@ -2550,18 +2550,18 @@ def ajx_students_massive_msg(request, program_slug ):
             if program.type == 'phd':
                 if request.POST['msg_scope'] == 'requesters':
                     for student in PhdStudent.objects.filter(program=program ,status='solicitante' ):
-                        email_list.append(student.user.email)
+                        email_list.append(student.student.user.email)
                 elif request.POST['msg_scope']=='aproved':
                     for student in PhdStudent.objects.filter(program=program ,status='doctorando' ):
-                        email_list.append(student.user.email)
+                        email_list.append(student.student.user.email)
 
                 elif request.POST['msg_scope']=='graduated':
                     for student in PhdStudent.objects.filter(program=program, status='graduado'):
-                        email_list.append(student.user.email)
+                        email_list.append(student.student.user.email)
 
                 elif request.POST['msg_scope']=='all':
                     for student in PhdStudent.objects.filter(program=program):
-                        email_list.append(student.user.email)
+                        email_list.append(student.student.user.email)
             elif program.type == 'msc':
                 if request.POST['msg_scope'] == 'requesters':
                     for student in MscStudent.objects.filter(program=program, status='solicitante'):
