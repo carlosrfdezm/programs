@@ -946,7 +946,7 @@
                         </div>
                         <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary" id="btn_msg_member">Enviar</button>
+                            <button type="submit" class="btn btn-primary" id="btn_msg_students">Enviar</button>
                         </div>
                     </form>
                 </div>
@@ -1165,7 +1165,7 @@
         $('#frm_msg_students').on('submit', function (e) {
             e.preventDefault();
             $('#modal_msg_students').modal('hide');
-            var url = "";
+            var url = "{% url 'programs:ajx_students_massive_msg' program.slug %}";
 
             $.ajax({
                 url : url,

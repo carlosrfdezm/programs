@@ -2551,20 +2551,22 @@ def ajx_students_massive_msg(request, program_slug ):
                 email_list.append(professor.user.email)
 
             if program.type == 'phd':
+
                 if request.POST['msg_scope'] == 'requesters':
-                    for student in PhdStudent.objects.filter(program=program ,status='solicitante' ):
-                        email_list.append(student.student.user.email)
+                    for student in Student.objects.filter(program=program ,phdstudent__status='solicitante' ):
+                        email_list.append(student.user.email)
                 elif request.POST['msg_scope']=='aproved':
-                    for student in PhdStudent.objects.filter(program=program ,status='doctorando' ):
-                        email_list.append(student.student.user.email)
+                    for student in Student.objects.filter(program=program ,phdstudent__status='doctorando' ):
+                        email_list.append(student.user.email)
 
                 elif request.POST['msg_scope']=='graduated':
-                    for student in PhdStudent.objects.filter(program=program, status='graduado'):
-                        email_list.append(student.student.user.email)
+                    for student in Student.objects.filter(program=program, phdstudent__status='graduado'):
+                        email_list.append(student.user.email)
 
                 elif request.POST['msg_scope']=='all':
-                    for student in PhdStudent.objects.filter(program=program):
-                        email_list.append(student.student.user.email)
+                    for student in Student.objects.filter(program=program):
+                        email_list.append(student.user.email)
+
             elif program.type == 'msc':
                 if request.POST['msg_scope'] == 'requesters':
                     for student in MscStudent.objects.filter(program=program, status='solicitante'):
@@ -2620,6 +2622,7 @@ def ajx_students_massive_msg(request, program_slug ):
                 content_type="application/json"
             )
         except:
+            print(Exception)
             return HttpResponse(
                 json.dumps([{'sended': 0}]),
                 content_type="application/json"
