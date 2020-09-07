@@ -902,8 +902,9 @@ def edit_student(request, program_slug, student_id):
             return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug,'all']))
         else:
             context = {
+                'member': ProgramMember.objects.get(user=request.user, program=program),
                 'program': program,
-                'student': Student.objects.get(pk=student_id),
+                'doc_student': Student.objects.get(pk=student_id),
                 'phd_student':PhdStudent.objects.get(student=Student.objects.get(pk=student_id), student__program=program),
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
