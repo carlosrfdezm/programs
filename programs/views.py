@@ -735,7 +735,10 @@ def msc_all_students_list(request, program_slug, scope):
             try:
                 context['student']=MscStudent.objects.get(user=request.user)
             except MscStudent.DoesNotExist:
-                pass
+                try:
+                    context['member']=ProgramMember.objects.get(user=request.user, program=program)
+                except ProgramMember.DoesNotExist:
+                    pass
 
             return render(request, 'programs/msc_students_list.html', context)
         else:
@@ -1050,8 +1053,9 @@ def edit_msc_student(request, program_slug, edition_id, student_id):
         else:
             context = {
                 'program': program,
+                'member': ProgramMember.objects.get(user=request.user, program=program),
                 'edition': ProgramEdition.objects.get(pk=edition_id),
-                'student': MscStudent.objects.get(pk=student_id),
+                'msc_student': MscStudent.objects.get(pk=student_id),
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
                 'projects': InvestigationProject.objects.filter(program=program),

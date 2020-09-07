@@ -111,7 +111,7 @@
                             </thead>
                             <tbody>
                             {% for msc_student in students %}
-                                {% init_requirements_accomplished student program as init_requirements_accomplished %}
+                                {% init_requirements_accomplished msc_student program as init_requirements_accomplished %}
                                 <tr id="tr_student_{{ msc_student.id }}">
                                     <td class="text-center">{{ msc_student.edition }}</td>
                                     <td>{{ msc_student.user.last_name|upper }}, {{ msc_student.user.first_name }}</td>
@@ -129,7 +129,7 @@
                                         </span>
                                     {% endif %} </td>
                                     {% if scope == 'Maestrantes' %}
-                                        {% finish_requirements_accomplished student program as finish_requirements_accomplished %}
+                                        {% finish_requirements_accomplished msc_student program as finish_requirements_accomplished %}
 
                                         <td class="text-center">
                                             {% if finish_requirements_accomplished %}
