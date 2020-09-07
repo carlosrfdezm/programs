@@ -2544,7 +2544,7 @@ def ajx_everybody_massive_msg(request, program_slug ):
 @login_required
 def ajx_students_massive_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
-    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 1000:
+    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 1500:
         try:
             email_list = ['boris_perez@unah.edu.cu']
             for professor in ProgramMember.objects.filter(Q(role='Coordinador')|Q(role='Secretario'), program=program):
@@ -2627,7 +2627,7 @@ def ajx_students_massive_msg(request, program_slug ):
                 json.dumps([{'sended': 0}]),
                 content_type="application/json"
             )
-    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 1000:
+    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 1500:
         return HttpResponse(
             json.dumps([{'sended': 2}]),
             content_type="application/json"
