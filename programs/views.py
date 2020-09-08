@@ -2546,7 +2546,7 @@ def ajx_students_massive_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
     if request.method == 'POST' and request.POST['msg_body'].__len__() <= 1500:
         try:
-            email_list = ['boris_perez@unah.edu.cu']
+            email_list = []
             for professor in ProgramMember.objects.filter(Q(role='Coordinador')|Q(role='Secretario'), program=program):
                 email_list.append(professor.user.email)
 
