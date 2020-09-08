@@ -876,6 +876,22 @@ def edit_student(request, program_slug, student_id):
                     is_master=False,
                     msc_title='',
                 )
+            try:
+                if request.POST['have_prorrogue']== 'True':
+                    Student.objects.filter(pk=student_id).update(
+                        have_prorrogue=True,
+                        prorrogue_end_date=request.POST['prorrogue_end_date'],
+                    )
+                else:
+                    Student.objects.filter(pk=student_id).update(
+                        have_prorrogue=False,
+                        prorrogue_end_date='',
+                    )
+            except:
+                Student.objects.filter(pk=student_id).update(
+                    have_prorrogue=False,
+                    prorrogue_end_date='',
+                )
 
 
 
