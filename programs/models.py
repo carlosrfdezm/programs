@@ -193,6 +193,8 @@ class Student(models.Model):
     dni=models.CharField(max_length=24, default='12345678901')
     is_master = models.BooleanField(default=False)
     msc_title = models.CharField(max_length=100, null=True, blank=True)
+    have_prorrogue = models.BooleanField(default=False)
+    prorrogue_end_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return self.user.get_full_name()
