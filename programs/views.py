@@ -2424,7 +2424,7 @@ def ajx_member_personal_msg(request, program_slug ):
 @login_required
 def ajx_member_massive_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
-    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 500:
+    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 1500:
         try:
             email_list = []
             if request.POST['msg_scope'] == 'comite':
@@ -2471,7 +2471,7 @@ def ajx_member_massive_msg(request, program_slug ):
                 json.dumps([{'sended': 0}]),
                 content_type="application/json"
             )
-    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 500:
+    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 1500:
         return HttpResponse(
             json.dumps([{'sended': 2}]),
             content_type="application/json"
