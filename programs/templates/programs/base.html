@@ -1109,7 +1109,7 @@
         $('#frm_msg_member').on('submit', function (e) {
             e.preventDefault();
             $('#modal_msg_members').modal('hide');
-            var url = "";
+            var url = "{% url 'programs:ajx_member_massive_msg' program.slug %}";
 
             $.ajax({
                 url : url,
