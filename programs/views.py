@@ -885,12 +885,12 @@ def edit_student(request, program_slug, student_id):
                 else:
                     Student.objects.filter(pk=student_id).update(
                         have_prorrogue=False,
-                        prorrogue_end_date='',
+                        prorrogue_end_date=None,
                     )
             except:
                 Student.objects.filter(pk=student_id).update(
                     have_prorrogue=False,
-                    prorrogue_end_date='',
+                    prorrogue_end_date=None,
                 )
 
 
