@@ -155,7 +155,14 @@ def create_student(request, program_slug):
                         gender=request.POST['gender'],
                         dni=request.POST['student_dni'],
                         birth_date=request.POST['student_birth_date'],
+
                     )
+                    try:
+                        if request.POST['is_master']=='True':
+                            student.is_master=True
+                            student.msc_title = request.POST['msc_title']
+                    except:
+                        pass
                     student.save()
 
                     utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
@@ -853,6 +860,25 @@ def edit_student(request, program_slug, student_id):
                 Student.objects.filter(pk=student_id).update(
                     graduate_date=request.POST['graduate_date']
                 )
+            try:
+                if request.POST['is_master']== 'True':
+                    Student.objects.filter(pk=student_id).update(
+                        is_master=True,
+                        msc_title=request.POST['msc_title'],
+                    )
+                else:
+                    Student.objects.filter(pk=student_id).update(
+                        is_master=False,
+                        msc_title='',
+                    )
+            except:
+                Student.objects.filter(pk=student_id).update(
+                    is_master=False,
+                    msc_title='',
+                )
+
+
+
 
             PhdStudent.objects.filter(student=Student.objects.get(pk=student_id)).update(
                 status=request.POST['student_status'],

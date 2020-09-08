@@ -105,6 +105,20 @@
 
                                     </div>
                                 </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="chk_is_msc" name="is_master" value="False">
+
+                                            <label class="form-check-label" for="chk_is_msc">Es máster</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-9 invisible" id="div_is_master">
+                                        <input class="form-control" type="text" id="inp_msc_title" required maxlength="100" name="msc_title" placeholder="Título de maestría del estudiante">
+
+                                    </div>
+
+                                </div>
 
                                 <hr>
                                 <h4><strong>Tema de investigación:</strong></h4>
@@ -295,6 +309,19 @@
                     $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
                     $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
 
+                }
+            });
+
+            $('#chk_is_msc').change(function (){
+                if($(this).val()=='False'){
+                    $(this).attr('value','True');
+                    $('#div_is_master').removeClass('invisible');
+                    $('#inp_msc_title').attr('required');
+                }
+                else {
+                    $(this).attr('value', 'False');
+                    $('#div_is_master').addClass('invisible');
+                    $('#inp_msc_title').removeAttr('required');
                 }
             });
 
