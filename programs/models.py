@@ -5,6 +5,7 @@ from django.core.validators import MinLengthValidator
 from django.utils.text import slugify
 from django.utils.timezone import now
 
+
 def program_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     return 'program_{0}/imgs/{1}'.format(instance.slug, filename)
@@ -309,6 +310,9 @@ class StudentInitRequirement(models.Model):
         return 'Requirement'
 
 
+
+
+
 class StudentFinishRequirement(models.Model):
     student = models.ForeignKey(Student, null=True, on_delete=models.CASCADE)
     msc_student= models.ForeignKey(MscStudent, null=True, on_delete=models.CASCADE)
@@ -484,3 +488,32 @@ class ProgramDocument(models.Model):
 
     def __str__(self):
         return self.description
+
+# Modelo para gestionar expedientes de aspirantes
+class ProgramFileDoc(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    doc_name = models.CharField(max_length=100, help_text='Nombre del documento', verbose_name='Nombre del documento')
+    is_init_requirenment = models.BooleanField(default=False, help_text='Marcar si el documento es un requisito de ingreso', verbose_name='Es Requisito de ingreso')
+    is_finish_requirenment = models.BooleanField(default=False, help_text='Marcar si el documento es un requisito de egreso', verbose_name='Es Requisito de egreso')
+    just_for_nationals = models.BooleanField(default=False, help_text='Marcar si el documento es un requisito solo para aspirantes nacionales', verbose_name='Solo para nacionales')
+    get_old = models.BooleanField(default=False, help_text='Marcar si el documento caduca', verbose_name='Caduca')
+    type = models.CharField(max_length=20, null=False, default='student',
+                            choices=[('student', 'Estudiante'), ('program', 'Programa'), ('comission', 'Comisión de grados')], verbose_name='Provisto por', help_text='Quién provee el documento')
+
+    class Meta:
+        verbose_name='Documento para el expediente de los estudiantes'
+        verbose_name_plural='Documentos para el expediente de los estudiantes'
+
+    def __str__(self):
+        return self.doc_name
+
+class StudentFileDocument(models.Model):
+    student= models.ForeignKey(Student, null=True, on_delete=models.CASCADE)
+    msc_student= models.ForeignKey(MscStudent, null=True, on_delete=models.CASCADE)
+    dip_student= models.ForeignKey(DipStudent, null=True, on_delete=models.CASCADE)
+    program_file_document= models.ForeignKey(ProgramFileDoc, on_delete=models.CASCADE)
+    accomplished = models.BooleanField(default=False, help_text='Verdadero si esta satisfecho, Falso si lo contrario')
+    caducity_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.program_file_document
