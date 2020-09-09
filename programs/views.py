@@ -25,7 +25,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
-    FormationPlanActivities, InnerAreas, ProgramDocument
+    FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument
 from programs.templatetags.extra_tags import finish_requirements_accomplished, student_init_requirement_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -202,20 +202,20 @@ def create_student(request, program_slug):
                     else:
                         return HttpResponse('Tipo de programa aun por crear')
 
-                    for requirement in ProgramInitRequirements.objects.filter(program=program):
+                    for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
 
                         if 'student_requirement_' + str(requirement.id) in request.POST:
-                            new_student_requirement = StudentInitRequirement(
+                            new_student_requirement = StudentFileDocument(
                                 student=student,
-                                requirement=requirement,
+                                program_file_document=requirement,
                                 accomplished=True,
                             )
                             new_student_requirement.save()
 
                         else:
-                            new_student_requirement = StudentInitRequirement(
+                            new_student_requirement = StudentFileDocument(
                                 student=student,
-                                requirement=requirement,
+                                program_file_document=requirement,
                             )
                             new_student_requirement.save()
 
@@ -283,20 +283,20 @@ def create_student(request, program_slug):
             else:
                 return HttpResponse('Tipo de programa aun por crear')
 
-            for requirement in ProgramInitRequirements.objects.filter(program=program):
+            for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
 
                 if 'student_requirement_' + str(requirement.id) in request.POST:
-                    new_student_requirement = StudentInitRequirement(
+                    new_student_requirement = StudentFileDocument(
                         student=student,
-                        requirement=requirement,
+                        program_file_document=requirement,
                         accomplished=True,
                     )
                     new_student_requirement.save()
 
                 else:
-                    new_student_requirement = StudentInitRequirement(
+                    new_student_requirement = StudentFileDocument(
                         student=student,
-                        requirement=requirement,
+                        program_file_document=requirement,
                     )
                     new_student_requirement.save()
 
@@ -304,7 +304,7 @@ def create_student(request, program_slug):
         else:
             context = {
                 'program': program,
-                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
+                'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
                 'projects': InvestigationProject.objects.filter(program=program),
                 'inner_areas':InnerAreas.objects.all(),
             }
