@@ -10,7 +10,7 @@ from django.utils.timezone import now
 
 from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember, StudentFinishRequirement, \
     ProgramFinishRequirements, CGC_Member, PhdStudent, PhdStudentTheme, InvestigationProject, Student, \
-    StudentFormationPlan, MscStudent, DipStudent
+    StudentFormationPlan, MscStudent, DipStudent, StudentFileDocument
 
 register = template.Library()
 
@@ -91,6 +91,20 @@ def student_init_requirement_accomplished(student, program_requirement):
         student_requirement, created=StudentInitRequirement.objects.get_or_create(student=student, requirement=program_requirement)
     elif program_requirement.program.type == 'msc':
         student_requirement, created=StudentInitRequirement.objects.get_or_create(msc_student=student, requirement=program_requirement)
+
+    if student_requirement.accomplished:
+        return True
+    else:
+        return False
+
+@register.simple_tag
+def student_requirement_accomplished(student, program_requirement):
+    if program_requirement.program.type == 'phd':
+        student_requirement, created=StudentFileDocument.objects.get_or_create(student=student, program_file_document=program_requirement)
+    elif program_requirement.program.type == 'msc':
+        student_requirement, created=StudentFileDocument.objects.get_or_create(msc_student=student, program_file_document=program_requirement)
+    elif program_requirement.program.type == 'dip':
+        student_requirement, created=StudentFileDocument.objects.get_or_create(dip_student=student, program_file_document=program_requirement)
 
     if student_requirement.accomplished:
         return True

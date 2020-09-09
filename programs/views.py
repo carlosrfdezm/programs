@@ -923,24 +923,24 @@ def edit_student(request, program_slug, student_id):
             except:
                 pass
 
-            for requirement in ProgramInitRequirements.objects.filter(program=program):
-                if 'student_requirement_' + str(requirement.id) in request.POST:
-                    s_i_r=StudentInitRequirement.objects.get(student=Student.objects.get(pk=student_id), requirement=requirement)
+            for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+                if 'student_new_requirement_' + str(requirement.id) in request.POST:
+                    s_i_r=StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id), program_file_document=requirement)
                     s_i_r.accomplished=True
                     s_i_r.save()
                 else:
-                    s_i_r = StudentInitRequirement.objects.get(student=Student.objects.get(pk=student_id),
-                                                               requirement=requirement)
+                    s_i_r = StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id),
+                                                               program_file_document=requirement)
                     s_i_r.accomplished = False
                     s_i_r.save()
-            for requirement in ProgramFinishRequirements.objects.filter(program=program):
-                if 'student_f_requirement_' + str(requirement.id) in request.POST:
-                    s_f_r=StudentFinishRequirement.objects.get(student=Student.objects.get(pk=student_id), requirement=requirement)
+            for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+                if 'student_new_f_requirement_' + str(requirement.id) in request.POST:
+                    s_f_r=StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id), program_file_document=requirement)
                     s_f_r.accomplished=True
                     s_f_r.save()
                 else:
-                    s_f_r = StudentFinishRequirement.objects.get(student=Student.objects.get(pk=student_id),
-                                                                 requirement=requirement)
+                    s_f_r = StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id),
+                                                                 program_file_document=requirement)
                     s_f_r.accomplished = False
                     s_f_r.save()
 
@@ -952,6 +952,8 @@ def edit_student(request, program_slug, student_id):
                 'doc_student': Student.objects.get(pk=student_id),
                 'phd_student':PhdStudent.objects.get(student=Student.objects.get(pk=student_id), student__program=program),
                 'init_requirements': ProgramInitRequirements.objects.filter(program=program),
+                'new_init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'new_finish_requirements': ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True),
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
                 'projects': InvestigationProject.objects.filter(program=program),
                 'inner_areas': InnerAreas.objects.all(),

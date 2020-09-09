@@ -139,7 +139,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group col-md-5 {% if not doc_student.is_master %}invisible{% endif %}" id="div_is_master">
-                                                                                    <label for="inp_msc_title">Título de maestría:</label>
+                                            <label for="inp_msc_title">Título de maestría:</label>
 
                                             <input class="form-control" type="text" id="inp_msc_title"  maxlength="100" name="msc_title" placeholder="Título de maestría del estudiante" {% if doc_student.is_master %}value="{{ doc_student.msc_title }}"{% endif %}>
 
@@ -283,6 +283,75 @@
                                                         <input type="checkbox" class="form-check-input" id="inp_f_requirement_{{ requirement.id }}" name="student_f_requirement_{{ requirement.id }}" {% if student_finish_requirement_accomplished %} checked {% endif %}>
 
                                                         <label class="form-check-label" for="inp_f_requirement_{{ requirement.id }}">{{ requirement.name }}</label>
+                                                    </div>
+
+
+                                                {% endfor %}
+                                                <div class="help">
+                                                    <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group row">
+                                                <label class="col-sm-5" for="inp_request_date">Fecha de solicitud: </label>
+                                                <div class="col-sm-7">
+                                                    <input type="date" class="form-control" id="inp_request_date" name="request_date" value="{{ doc_student.request_date|date:'Y-m-d' }}" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="col-sm-5" for="inp_init_date">Fecha de ingreso: </label>
+                                                <div class="col-sm-7">
+                                                    <input type="date" class="form-control" id="inp_init_date" name="init_date" value="{{ doc_student.init_date|date:'Y-m-d' }}">
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-sm-5" for="inp_graduate_date">Fecha de egreso: </label>
+                                                <div class="col-sm-7">
+                                                    <input type="date" class="form-control" id="inp_graduate_date" name="graduate_date" value="{{ doc_student.graduate_date|date:'Y-m-d' }}">
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <hr>
+                                    <h5><strong>Nuevos requisitos</strong></h5>
+                                    <div class="form-row">
+                                        <div class="col-md-4">
+                                            <h5>De ingreso:</h5>
+                                            <div class="form-group">
+                                                {% for requirement in new_init_requirements %}
+                                                    {% student_requirement_accomplished doc_student requirement as new_student_init_requirement_accomplished %}
+
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" id="inp_requirement_{{ requirement.id }}" name="student_new_requirement_{{ requirement.id }}" {% if new_student_init_requirement_accomplished %} checked {% endif %}>
+
+                                                        <label class="form-check-label" for="inp_requirement_{{ requirement.id }}">{{ requirement.doc_name }}</label>
+                                                    </div>
+
+
+                                                {% endfor %}
+                                                <div class="help">
+                                                    <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <h5>De egreso:</h5>
+                                            <div class="form-group">
+                                                {% for requirement in new_finish_requirements %}
+                                                    {% student_requirement_accomplished doc_student requirement as new_student_finish_requirement_accomplished %}
+
+
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" id="inp_new_f_requirement_{{ requirement.id }}" name="student_new_f_requirement_{{ requirement.id }}" {% if new_student_finish_requirement_accomplished %} checked {% endif %}>
+
+                                                        <label class="form-check-label" for="inp_new_f_requirement_{{ requirement.id }}">{{ requirement.doc_name }}</label>
                                                     </div>
 
 
