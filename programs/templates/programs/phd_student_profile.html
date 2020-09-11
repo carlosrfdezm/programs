@@ -74,7 +74,7 @@
                         <!-- About Me Box -->
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Sobre mi</h3>
+                                <h3 class="card-title">De mi investigación</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -108,9 +108,10 @@
                             <div class="card-header p-2">
                                 <ul class="nav nav-pills">
                                     <li class="nav-item"><a class="nav-link active" href="#personal" data-toggle="tab">Datos personales</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#messages" data-toggle="tab">Mensajes</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Tareas</a></li>
                                     <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Expediente</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Tareas</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#messages" data-toggle="tab">Mensajes</a></li>
+
                                 </ul>
                             </div><!-- /.card-header -->
                             <div class="card-body">
@@ -346,132 +347,50 @@
                                         <!-- The timeline -->
                                         <div class="timeline timeline-inverse">
                                             {% if  student.studentformationplan.formationplanactivities_set %}
-                                                {% et_now as now %}
+
                                                 {% for activity in student.studentformationplan.formationplanactivities_set.all %}
+                                                    {% is_past activity.init_date as is_past %}
                                                     <!-- timeline time label -->
                                                     <div class="time-label">
-                                                        <span {% if activity.init_date > now|date:'Y-m-d' %}class="bg-danger"{% else %}class="bg-warning"{% endif %}>
+                                                        <span {% if is_past %}class="bg-success"{% else %}class="bg-danger"{% endif %}>
                                                           {{ activity.init_date|date:'Y-m-d'}}{{ now|date:'Y-m-d' }}
                                                         </span>
                                                     </div>
                                                     <!-- /.timeline-label -->
                                                     <!-- timeline item -->
                                                     <div>
-                                                        {% if activity.init_date > now %}
-                                                            <i class="fas fa-code bg-success"></i>
+                                                        {% if is_past %}
+                                                            <i class="fas fa-code bg-primary"></i>
                                                         {% else %}
-                                                            <i class="fas fa-code-branch bg-success"></i>
+                                                            <i class="fas fa-calendar-alt bg-warning"></i>
 
                                                         {% endif %}
 
                                                         <div class="timeline-item">
-                                                            <span class="time"><i class="far fa-clock"></i> 12:05</span>
+                                                            {% if is_past %}
+                                                                <span class="time" title="Completada"><i class="fa fa-toggle-on"></i></span>
+                                                            {% else %}
+                                                                <span class="time" title="Pendiente"><i class="fa fa-toggle-off"></i></span>
+                                                            {% endif %}
 
-                                                            <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
+                                                            <h3 class="timeline-header"><p class="{% if is_past %}text-blue{% else %}text-warning{% endif %} text-bold">{% if is_past %}Tarea completada{% else %}Tarea pendiente{% endif %}</p></h3>
 
                                                             <div class="timeline-body">
-                                                                Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
-                                                                weebly ning heekya handango imeem plugg dopplr jibjab, movity
-                                                                jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
-                                                                quora plaxo ideeli hulu weebly balihoo...
+                                                                {{activity}}
                                                             </div>
-                                                            <div class="timeline-footer">
-                                                                <a href="#" class="btn btn-primary btn-sm">Read more</a>
-                                                                <a href="#" class="btn btn-danger btn-sm">Delete</a>
-                                                            </div>
+                                                            {#                                                            <div class="timeline-footer">#}
+                                                            {#                                                                <a href="#" class="btn btn-primary btn-sm" title="Editar"><i class="fa fa-edit"></i></a>#}
+                                                            {#                                                                <a href="#" class="btn btn-danger btn-sm" title="eliminar"><i class="fa fa-eraser"></i></a>#}
+                                                            {#                                                            </div>#}
                                                         </div>
                                                     </div>
                                                     <!-- END timeline item -->
                                                 {% endfor %}
                                             {% endif %}
-                                            <!-- timeline time label -->
-                                            <div class="time-label">
-                                                <span class="bg-danger">
-                                                  10 Feb. 2014
-                                                </span>
-                                            </div>
-                                            <!-- /.timeline-label -->
-                                            <!-- timeline item -->
-                                            <div>
-                                                <i class="fas fa-envelope bg-primary"></i>
 
-                                                <div class="timeline-item">
-                                                    <span class="time"><i class="far fa-clock"></i> 12:05</span>
-
-                                                    <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
-
-                                                    <div class="timeline-body">
-                                                        Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
-                                                        weebly ning heekya handango imeem plugg dopplr jibjab, movity
-                                                        jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
-                                                        quora plaxo ideeli hulu weebly balihoo...
-                                                    </div>
-                                                    <div class="timeline-footer">
-                                                        <a href="#" class="btn btn-primary btn-sm">Read more</a>
-                                                        <a href="#" class="btn btn-danger btn-sm">Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- END timeline item -->
-                                            <!-- timeline item -->
-                                            <div>
-                                                <i class="fas fa-user bg-info"></i>
-
-                                                <div class="timeline-item">
-                                                    <span class="time"><i class="far fa-clock"></i> 5 mins ago</span>
-
-                                                    <h3 class="timeline-header border-0"><a href="#">Sarah Young</a> accepted your friend request
-                                                    </h3>
-                                                </div>
-                                            </div>
-                                            <!-- END timeline item -->
-                                            <!-- timeline item -->
-                                            <div>
-                                                <i class="fas fa-comments bg-warning"></i>
-
-                                                <div class="timeline-item">
-                                                    <span class="time"><i class="far fa-clock"></i> 27 mins ago</span>
-
-                                                    <h3 class="timeline-header"><a href="#">Jay White</a> commented on your post</h3>
-
-                                                    <div class="timeline-body">
-                                                        Take me to your leader!
-                                                        Switzerland is small and neutral!
-                                                        We are more like Germany, ambitious and misunderstood!
-                                                    </div>
-                                                    <div class="timeline-footer">
-                                                        <a href="#" class="btn btn-warning btn-flat btn-sm">View comment</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- END timeline item -->
-                                            <!-- timeline time label -->
-                                            <div class="time-label">
-                                                <span class="bg-success">
-                                                  3 Jan. 2014
-                                                </span>
-                                            </div>
-                                            <!-- /.timeline-label -->
-                                            <!-- timeline item -->
-                                            <div>
-                                                <i class="fas fa-camera bg-purple"></i>
-
-                                                <div class="timeline-item">
-                                                    <span class="time"><i class="far fa-clock"></i> 2 days ago</span>
-
-                                                    <h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
-
-                                                    <div class="timeline-body">
-                                                        <img src="http://placehold.it/150x100" alt="...">
-                                                        <img src="http://placehold.it/150x100" alt="...">
-                                                        <img src="http://placehold.it/150x100" alt="...">
-                                                        <img src="http://placehold.it/150x100" alt="...">
-                                                    </div>
-                                                </div>
-                                            </div>
                                             <!-- END timeline item -->
                                             <div>
-                                                <i class="far fa-clock bg-gray"></i>
+                                                <i class="fas fa-certificate bg-gray"></i>
                                             </div>
                                         </div>
                                     </div>

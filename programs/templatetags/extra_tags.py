@@ -68,8 +68,11 @@ def init_requirements_accomplished(student, program):
     return accomplished
 
 @register.simple_tag
-def et_now():
-    return now()
+def is_past(date):
+    if date < now().date():
+        return True
+    else:
+        return False
 
 @register.simple_tag
 def finish_requirements_accomplished(student, program):
