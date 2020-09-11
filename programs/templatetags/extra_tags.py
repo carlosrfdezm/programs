@@ -68,6 +68,10 @@ def init_requirements_accomplished(student, program):
     return accomplished
 
 @register.simple_tag
+def et_now():
+    return now()
+
+@register.simple_tag
 def finish_requirements_accomplished(student, program):
     accomplished=True
     if program.type == 'phd':

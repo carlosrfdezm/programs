@@ -1,0 +1,978 @@
+{% extends 'programs/base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block content %}
+    {% if student %}
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Perfil</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Perfil de usuario</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+
+                        <!-- Profile Image -->
+                        <div class="card card-primary card-outline">
+                            <div class="card-body box-profile">
+                                <div class="text-center">
+                                    {% if student.picture %}
+                                        <img class="profile-user-img img-fluid img-circle"
+                                             src="../../dist/img/user4-128x128.jpg"
+                                             alt="User profile picture">
+                                    {% elif student.gender == 'm' %}
+                                        <img class="profile-user-img img-fluid img-circle" src="{% static 'programs/dist/img/avatar5.png' %}" alt="">
+                                    {% elif student.gender == 'f' %}
+                                        <img class="profile-user-img img-fluid img-circle" src="{% static 'programs/dist/img/avatar3.png' %}" alt="">
+                                    {% endif %}
+                                </div>
+
+                                <h3 class="profile-username text-center">{{ student }}</h3>
+
+                                <p class="text-muted text-center">{{ student.phdstudent.status|capfirst }}</p>
+
+                                <ul class="list-group list-group-unbordered mb-3">
+                                    <li class="list-group-item">
+                                        <b>Solicitud</b> <a class="float-right">{{ student.request_date|date:'M/Y'}}</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <b>Ingreso</b> <a class="float-right">{% if student.init_date %}{{ student.init_date|date:'M/Y' }}{% else %}----{% endif %}</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <b>Egreso</b> <a class="float-right">{% if student.finish_date != None %}{{ student.finish_date|date:'M/Y' }}{% else %}----{% endif %}</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <b>Defensa prevista</b> <a class="float-right">{% if student.studentformationplan.planned_end_year != None %}{{ student.studentformationplan.planned_end_year }}{% else %}----{% endif %}</a>
+                                    </li>
+                                </ul>
+
+
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+
+                        <!-- About Me Box -->
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Sobre mi</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <strong><i class="fas fa-book mr-1"></i> Tema</strong>
+
+                                <p class="text-muted">
+                                    {{ student.phdstudent.phdstudenttheme}}
+                                </p>
+
+                                <hr>
+
+                                <strong><i class="fas fa-user-friends mr-1"></i> Tutores</strong>
+
+                                <p class="text-muted">
+                                <ul>
+                                    {% for tuthor in student.phdstudent.tuthor_set.all %}
+                                        <li>{{ tuthor }}</li>
+                                    {% endfor %}
+                                </ul>
+                                </p>
+
+
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-header p-2">
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item"><a class="nav-link active" href="#personal" data-toggle="tab">Datos personales</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#messages" data-toggle="tab">Mensajes</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Tareas</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Expediente</a></li>
+                                </ul>
+                            </div><!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="tab-content">
+                                    <div class="tab-pane" id="messages">
+                                        <!-- Post -->
+                                        <div class="post">
+                                            <div class="user-block">
+                                                <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
+                                                <span class="username">
+                          <a href="#">Jonathan Burke Jr.</a>
+                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                        </span>
+                                                <span class="description">Shared publicly - 7:30 PM today</span>
+                                            </div>
+                                            <!-- /.user-block -->
+                                            <p>
+                                                Lorem ipsum represents a long-held tradition for designers,
+                                                typographers and the like. Some people hate it and argue for
+                                                its demise, but others ignore the hate as they create awesome
+                                                tools to help create filler text for everyone from bacon lovers
+                                                to Charlie Sheen fans.
+                                            </p>
+
+                                            <p>
+                                                <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
+                                                <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
+                                                <span class="float-right">
+                          <a href="#" class="link-black text-sm">
+                            <i class="far fa-comments mr-1"></i> Comments (5)
+                          </a>
+                        </span>
+                                            </p>
+
+                                            <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
+                                        </div>
+                                        <!-- /.post -->
+
+                                        <!-- Post -->
+                                        <div class="post clearfix">
+                                            <div class="user-block">
+                                                <img class="img-circle img-bordered-sm" src="../../dist/img/user7-128x128.jpg" alt="User Image">
+                                                <span class="username">
+                          <a href="#">Sarah Ross</a>
+                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                        </span>
+                                                <span class="description">Sent you a message - 3 days ago</span>
+                                            </div>
+                                            <!-- /.user-block -->
+                                            <p>
+                                                Lorem ipsum represents a long-held tradition for designers,
+                                                typographers and the like. Some people hate it and argue for
+                                                its demise, but others ignore the hate as they create awesome
+                                                tools to help create filler text for everyone from bacon lovers
+                                                to Charlie Sheen fans.
+                                            </p>
+
+                                            <form class="form-horizontal">
+                                                <div class="input-group input-group-sm mb-0">
+                                                    <input class="form-control form-control-sm" placeholder="Response">
+                                                    <div class="input-group-append">
+                                                        <button type="submit" class="btn btn-danger">Send</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- /.post -->
+
+                                        <!-- Post -->
+                                        <div class="post">
+                                            <div class="user-block">
+                                                <img class="img-circle img-bordered-sm" src="../../dist/img/user6-128x128.jpg" alt="User Image">
+                                                <span class="username">
+                          <a href="#">Adam Jones</a>
+                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                        </span>
+                                                <span class="description">Posted 5 photos - 5 days ago</span>
+                                            </div>
+                                            <!-- /.user-block -->
+                                            <div class="row mb-3">
+                                                <div class="col-sm-6">
+                                                    <img class="img-fluid" src="../../dist/img/photo1.png" alt="Photo">
+                                                </div>
+                                                <!-- /.col -->
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <img class="img-fluid mb-3" src="../../dist/img/photo2.png" alt="Photo">
+                                                            <img class="img-fluid" src="../../dist/img/photo3.jpg" alt="Photo">
+                                                        </div>
+                                                        <!-- /.col -->
+                                                        <div class="col-sm-6">
+                                                            <img class="img-fluid mb-3" src="../../dist/img/photo4.jpg" alt="Photo">
+                                                            <img class="img-fluid" src="../../dist/img/photo1.png" alt="Photo">
+                                                        </div>
+                                                        <!-- /.col -->
+                                                    </div>
+                                                    <!-- /.row -->
+                                                </div>
+                                                <!-- /.col -->
+                                            </div>
+                                            <!-- /.row -->
+
+                                            <p>
+                                                <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
+                                                <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
+                                                <span class="float-right">
+                          <a href="#" class="link-black text-sm">
+                            <i class="far fa-comments mr-1"></i> Comments (5)
+                          </a>
+                        </span>
+                                            </p>
+
+                                            <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
+                                        </div>
+                                        <!-- /.post -->
+                                    </div>
+                                    <div class="tab-pane" id="settings">
+                                        <!-- Post -->
+                                        <div class="post">
+                                            <div class="user-block">
+                                                <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
+                                                <span class="username">
+                          <a href="#">Jonathan Burke Jr.</a>
+                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                        </span>
+                                                <span class="description">Shared publicly - 7:30 PM today</span>
+                                            </div>
+                                            <!-- /.user-block -->
+                                            <p>
+                                                Lorem ipsum represents a long-held tradition for designers,
+                                                typographers and the like. Some people hate it and argue for
+                                                its demise, but others ignore the hate as they create awesome
+                                                tools to help create filler text for everyone from bacon lovers
+                                                to Charlie Sheen fans.
+                                            </p>
+
+                                            <p>
+                                                <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
+                                                <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
+                                                <span class="float-right">
+                          <a href="#" class="link-black text-sm">
+                            <i class="far fa-comments mr-1"></i> Comments (5)
+                          </a>
+                        </span>
+                                            </p>
+
+                                            <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
+                                        </div>
+                                        <!-- /.post -->
+
+                                        <!-- Post -->
+                                        <div class="post clearfix">
+                                            <div class="user-block">
+                                                <img class="img-circle img-bordered-sm" src="../../dist/img/user7-128x128.jpg" alt="User Image">
+                                                <span class="username">
+                          <a href="#">Sarah Ross</a>
+                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                        </span>
+                                                <span class="description">Sent you a message - 3 days ago</span>
+                                            </div>
+                                            <!-- /.user-block -->
+                                            <p>
+                                                Lorem ipsum represents a long-held tradition for designers,
+                                                typographers and the like. Some people hate it and argue for
+                                                its demise, but others ignore the hate as they create awesome
+                                                tools to help create filler text for everyone from bacon lovers
+                                                to Charlie Sheen fans.
+                                            </p>
+
+                                            <form class="form-horizontal">
+                                                <div class="input-group input-group-sm mb-0">
+                                                    <input class="form-control form-control-sm" placeholder="Response">
+                                                    <div class="input-group-append">
+                                                        <button type="submit" class="btn btn-danger">Send</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- /.post -->
+
+                                        <!-- Post -->
+                                        <div class="post">
+                                            <div class="user-block">
+                                                <img class="img-circle img-bordered-sm" src="../../dist/img/user6-128x128.jpg" alt="User Image">
+                                                <span class="username">
+                          <a href="#">Adam Jones</a>
+                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                        </span>
+                                                <span class="description">Posted 5 photos - 5 days ago</span>
+                                            </div>
+                                            <!-- /.user-block -->
+                                            <div class="row mb-3">
+                                                <div class="col-sm-6">
+                                                    <img class="img-fluid" src="../../dist/img/photo1.png" alt="Photo">
+                                                </div>
+                                                <!-- /.col -->
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <img class="img-fluid mb-3" src="../../dist/img/photo2.png" alt="Photo">
+                                                            <img class="img-fluid" src="../../dist/img/photo3.jpg" alt="Photo">
+                                                        </div>
+                                                        <!-- /.col -->
+                                                        <div class="col-sm-6">
+                                                            <img class="img-fluid mb-3" src="../../dist/img/photo4.jpg" alt="Photo">
+                                                            <img class="img-fluid" src="../../dist/img/photo1.png" alt="Photo">
+                                                        </div>
+                                                        <!-- /.col -->
+                                                    </div>
+                                                    <!-- /.row -->
+                                                </div>
+                                                <!-- /.col -->
+                                            </div>
+                                            <!-- /.row -->
+
+                                            <p>
+                                                <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
+                                                <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
+                                                <span class="float-right">
+                          <a href="#" class="link-black text-sm">
+                            <i class="far fa-comments mr-1"></i> Comments (5)
+                          </a>
+                        </span>
+                                            </p>
+
+                                            <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
+                                        </div>
+                                        <!-- /.post -->
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                    <div class="tab-pane" id="timeline">
+                                        <!-- The timeline -->
+                                        <div class="timeline timeline-inverse">
+                                            {% if  student.studentformationplan.formationplanactivities_set %}
+                                                {% et_now as now %}
+                                                {% for activity in student.studentformationplan.formationplanactivities_set.all %}
+                                                    <!-- timeline time label -->
+                                                    <div class="time-label">
+                                                        <span {% if activity.init_date > now|date:'Y-m-d' %}class="bg-danger"{% else %}class="bg-warning"{% endif %}>
+                                                          {{ activity.init_date|date:'Y-m-d'}}{{ now|date:'Y-m-d' }}
+                                                        </span>
+                                                    </div>
+                                                    <!-- /.timeline-label -->
+                                                    <!-- timeline item -->
+                                                    <div>
+                                                        {% if activity.init_date > now %}
+                                                            <i class="fas fa-code bg-success"></i>
+                                                        {% else %}
+                                                            <i class="fas fa-code-branch bg-success"></i>
+
+                                                        {% endif %}
+
+                                                        <div class="timeline-item">
+                                                            <span class="time"><i class="far fa-clock"></i> 12:05</span>
+
+                                                            <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
+
+                                                            <div class="timeline-body">
+                                                                Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
+                                                                weebly ning heekya handango imeem plugg dopplr jibjab, movity
+                                                                jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
+                                                                quora plaxo ideeli hulu weebly balihoo...
+                                                            </div>
+                                                            <div class="timeline-footer">
+                                                                <a href="#" class="btn btn-primary btn-sm">Read more</a>
+                                                                <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- END timeline item -->
+                                                {% endfor %}
+                                            {% endif %}
+                                            <!-- timeline time label -->
+                                            <div class="time-label">
+                                                <span class="bg-danger">
+                                                  10 Feb. 2014
+                                                </span>
+                                            </div>
+                                            <!-- /.timeline-label -->
+                                            <!-- timeline item -->
+                                            <div>
+                                                <i class="fas fa-envelope bg-primary"></i>
+
+                                                <div class="timeline-item">
+                                                    <span class="time"><i class="far fa-clock"></i> 12:05</span>
+
+                                                    <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
+
+                                                    <div class="timeline-body">
+                                                        Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
+                                                        weebly ning heekya handango imeem plugg dopplr jibjab, movity
+                                                        jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
+                                                        quora plaxo ideeli hulu weebly balihoo...
+                                                    </div>
+                                                    <div class="timeline-footer">
+                                                        <a href="#" class="btn btn-primary btn-sm">Read more</a>
+                                                        <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- END timeline item -->
+                                            <!-- timeline item -->
+                                            <div>
+                                                <i class="fas fa-user bg-info"></i>
+
+                                                <div class="timeline-item">
+                                                    <span class="time"><i class="far fa-clock"></i> 5 mins ago</span>
+
+                                                    <h3 class="timeline-header border-0"><a href="#">Sarah Young</a> accepted your friend request
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                            <!-- END timeline item -->
+                                            <!-- timeline item -->
+                                            <div>
+                                                <i class="fas fa-comments bg-warning"></i>
+
+                                                <div class="timeline-item">
+                                                    <span class="time"><i class="far fa-clock"></i> 27 mins ago</span>
+
+                                                    <h3 class="timeline-header"><a href="#">Jay White</a> commented on your post</h3>
+
+                                                    <div class="timeline-body">
+                                                        Take me to your leader!
+                                                        Switzerland is small and neutral!
+                                                        We are more like Germany, ambitious and misunderstood!
+                                                    </div>
+                                                    <div class="timeline-footer">
+                                                        <a href="#" class="btn btn-warning btn-flat btn-sm">View comment</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- END timeline item -->
+                                            <!-- timeline time label -->
+                                            <div class="time-label">
+                                                <span class="bg-success">
+                                                  3 Jan. 2014
+                                                </span>
+                                            </div>
+                                            <!-- /.timeline-label -->
+                                            <!-- timeline item -->
+                                            <div>
+                                                <i class="fas fa-camera bg-purple"></i>
+
+                                                <div class="timeline-item">
+                                                    <span class="time"><i class="far fa-clock"></i> 2 days ago</span>
+
+                                                    <h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
+
+                                                    <div class="timeline-body">
+                                                        <img src="http://placehold.it/150x100" alt="...">
+                                                        <img src="http://placehold.it/150x100" alt="...">
+                                                        <img src="http://placehold.it/150x100" alt="...">
+                                                        <img src="http://placehold.it/150x100" alt="...">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- END timeline item -->
+                                            <div>
+                                                <i class="far fa-clock bg-gray"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /.tab-pane -->
+
+                                    <div class="active tab-pane" id="personal">
+                                        <form class="form-horizontal">
+                                            <div class="form-group row">
+                                                <label for="inputName" class="col-sm-2 col-form-label">Nombre</label>
+                                                <div class="col-sm-10">
+                                                    <input type="email" class="form-control" id="inputName" placeholder="Name" readonly value="{{ student }}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+                                                <div class="col-sm-10">
+                                                    <input type="email" class="form-control" id="inputEmail" readonly value="{{ student.user.email }}" placeholder="Email">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="inputName2" class="col-sm-2 col-form-label">Centro</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="inputName2" readonly value="{{ student.phdstudent.center }}" placeholder="Name">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="inputExperience" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" type="date" readonly value="{{ student.birth_date|date:'Y-m-d' }}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="inputSkills" class="col-sm-2 col-form-label">Teléfono</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="inputSkills" readonly value="{{ student.phone }}" placeholder="Teléfono">
+                                                </div>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                </div>
+                                <!-- /.tab-content -->
+                            </div><!-- /.card-body -->
+                        </div>
+                        <!-- /.nav-tabs-custom -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <div class="modal fade" id="modal_add_tuthor">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Agregar nuevo tutor a {{ student }}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="frm_add_tuthor" method="post">
+                        <div class="modal-body alert alert-success">
+
+                            <div class="form-row align-items-center pb-2" id="div_tuthor_1">
+                                <div class="col-md-2">
+                                    <input type="email" class="form-control" id="inp_tuthor_email" data="1" name="tuthor_email" placeholder="Email del tutor" required></input>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" readonly  id="inp_tuthor_name" name="tuthor_name" placeholder="Nombre(s) del tutor" required></input>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" readonly  id="inp_tuthor_lastname" name="tuthor_lastname" placeholder="Apellidos del tutor" required></input>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" readonly  id="inp_tuthor_institution" name="tuthor_institution" placeholder="Institución del tutor" required></input>
+                                </div>
+
+
+
+                            </div>
+
+
+
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    {% endif %}
+    <!-- /.content -->
+{% endblock %}
+<!-- jQuery -->
+<script src="../../plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- bs-custom-file-input -->
+<script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="../../dist/js/demo.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        bsCustomFileInput.init();
+    });
+</script>
+{% block extra_scripts %}
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var tutores = {{ student.phdstudent.tuthor_set.all.count }};
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+            {#bsCustomFileInput.init();#}
+
+
+            $(document).on('keyup','#inp_email', function () {
+                var email = $('#inp_email').val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_usr_exists' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'email':email,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].exists == 1) {
+
+                                Toast.fire({
+                                    type: 'warning',
+                                    title: 'Ya hay un usuario con ese correo, quiza ya es miembro de otro programa'
+                                })
+
+                            } else if(json[0].exists == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Este correo esta en uso por un miembro del programa'
+                                });
+                                $('#btn_save').addClass('disabled');
+                                $('#btn_save').attr('disabled', 'disabled');
+
+                            }
+                            else{
+                                $('#btn_save').removeClass('disabled');
+                                $('#btn_save').removeAttr('disabled');
+
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                };
+
+
+            });
+            $(document).on('keyup', '#inp_tuthor_email', function () {
+                var index = $(this).attr('data');
+                var email = $(this).val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'tuthor_email':email,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0] == 1) {
+
+                                $('#inp_tuthor_name').attr('readonly','readonly');
+                                $('#inp_tuthor_lastname').attr('readonly','readonly');
+                                $('#inp_tuthor_institution').attr('readonly','readonly');
+                                $('#inp_tuthor_name').val(json[1][0]);
+                                $('#inp_tuthor_lastname').val(json[1][1]);
+                                $('#inp_tuthor_institution').val(json[1][2]);
+
+                            } else if(json[0] == 0){
+
+                                $('#inp_tuthor_name').removeAttr('readonly');
+                                $('#inp_tuthor_lastname').removeAttr('readonly');
+                                $('#inp_tuthor_institution').removeAttr('readonly');
+
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                }
+                else{
+                    $('#inp_tuthor_name_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
+
+                }
+            });
+
+            $(document).on('change','#exampleInputFile', function () {
+                var fileUpload = this;
+                var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
+                if (regex.test(fileUpload.value.toLowerCase())) {
+                    if (typeof (fileUpload.files) != "undefined") {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(fileUpload.files[0]);
+                        reader.onload = function (e) {
+                            var image = new Image();
+                            image.src = e.target.result;
+                            image.onload = function () {
+                                var height = this.height;
+                                var width = this.width;
+                                if (height < 200 || width < 200) {
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada es muy pequeña, debe tener al menos 400px x 400 px'
+                                    });
+                                    $('#exampleInputFile').val('');
+                                    return false;
+                                }else
+                                if(height != width ){
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada debe ser cuadrada y de dimensión 200px, o superior.'
+                                    });
+                                    $('#exampleInputFile').val('');
+                                    return false;
+                                }
+                            };
+                        }
+                    } else {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Este navegador no soporta HTML5, debe actualizarlo.'
+                        });
+                        return false;
+                    }
+                } else {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Por favor seleccione una imagen.'
+                    });
+                    return false;
+                }
+            });
+            $('#slc_status').change(function () {
+
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth()+1; //January is 0!
+
+                var yyyy = today.getFullYear();
+                if(dd<10){dd='0'+dd}
+                if(mm<10){mm='0'+mm}
+                today = yyyy+'-'+mm+'-'+dd;
+
+                if($(this).val()=='doctorando'){
+                    $('#inp_init_date').val(today);
+                }
+                if($(this).val()=='graduado'){
+                    $('#inp_graduate_date').val(today);
+                }
+
+            });
+            $(document).on('click',"button[id*='btn_rm_tuthor']",function () {
+                var tuthor_id = $(this).attr('data');
+                var div_selector = '#div_tuthor_'+ tuthor_id;
+                var url = "{% url 'programs:ajx_delete_tuthor' program.slug %}";
+
+                $('#modal_rm_tuthor_{{ tuthor.id }}').modal('hide');
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'tuthor_id':tuthor_id,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+                            tutores = tutores-1
+
+                            $(div_selector).remove();
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Tutor eliminado exitósamente'
+                            });
+                            if (tutores == 0){
+                                $('#div_new_tuthors').append('<div class="alert alert-warning col-md-10 offset-1" id="div_no_tuthors">\n' +
+                                    '                                        <h4 class="text-center"><i class="text-white fa fa-exclamation-triangle"></i> Este estudiante no tiene tutores asignados</h4>\n' +
+                                    '                                        </div>')
+                            }
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar al tutor seleccionado.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede eliminar al tutor seleccionado.'
+                            })
+
+                        }
+                        cons
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        $('#div_by_workshop').removeClass('hidden')
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+                $(div_selector).remove();
+
+            });
+            $('#frm_add_tuthor').on('submit', function (e) {
+                e.preventDefault();
+                var url = "{% url 'programs:ajx_create_tuthor' program.slug student.id%}";
+
+
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'tuthor_name':$('#inp_tuthor_name').val(),
+                        'tuthor_email':$('#inp_tuthor_email').val(),
+                        'tuthor_lastname':$('#inp_tuthor_lastname').val(),
+                        'tuthor_institution':$('#inp_tuthor_institution').val(),
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+
+
+                        $('#frm_add_tuthor')[0].reset();
+
+                        if (json[0].created == 1) {
+                            tutores = tutores +1;
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Tutor agregado exitosamente'
+                            })
+
+                            var new_tuthor_div = '<div class="form-row align-items-center pb-2" id="div_tuthor_'+json[0].id+'">\n' +
+                                '                                    <div class="col-md-2">\n' +
+                                '                                        <input type="email" class="form-control" readonly id="inp_tuthor_email_'+json[0].id+'" data="'+json[0].id+'" name="tuthor_email_'+json[0].id+'" placeholder="Email del tutor" value="'+json[0].email +'"  required="">\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="col-md-2">\n' +
+                                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_name_'+json[0].id+'" name="tuthor_name_'+json[0].id+'" placeholder="Nombre(s) del tutor" value="'+json[0].name +'" required="">\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="col-md-3">\n' +
+                                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_lastname_'+json[0].id+'" name="tuthor_lastname_'+json[0].id+'" placeholder="Apellidos del tutor" value="'+json[0].lastname +'" required="">\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="col-md-4">\n' +
+                                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_institution_'+json[0].id+'" name="tuthor_institution_'+json[0].id+'" placeholder="Institución del tutor" value="'+json[0].institution +'" required="">\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="col-md-1 pl-4 " id="div_rm_tuthor_'+json[0].id+'">\n' +
+                                '                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+json[0].id+'" data="'+json[0].id+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' +
+                                '                                    </div>\n' +
+                                '\n' +
+                                '\n' +
+                                '                                </div>';
+                            $('#div_no_tuthors').remove();
+                            $('#div_new_tuthors').append(new_tuthor_div);
+
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar al tutor indicado.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede agregar tutores.'
+                            })
+
+                        }
+                        cons
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        $('#div_by_workshop').removeClass('hidden')
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        });
+                        $('#frm_add_tuthor')[0].reset();
+                    }
+                });
+
+                $('#modal_add_tuthor').modal('hide');
+
+
+            });
+            $(document).on('change','#slc_category',function () {
+                if($(this).val()=='interno'){
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                        '                                <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>\n' +
+                        '                                <select class="form-control" id="slc_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
+                        '<option value="" selected>Seleccione una opción</option>'+
+                        {% for inner_area in inner_areas %}
+                            '<option value="{{ inner_area }}">{{ inner_area }}</option>'+
+                        {% endfor %}
+                        ''+
+
+                        '</select>'+
+                        '                            </div>')
+                }
+                else if($(this).val()=='externo'){
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                        '                                <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>\n' +
+                        '                                <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
+                        '\n' +
+                        '                            </div>');
+
+                }
+
+            });
+
+
+
+        });
+    </script>
+{% endblock %}
+

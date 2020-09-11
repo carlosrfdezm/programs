@@ -984,7 +984,7 @@ def view_student_profile(request, program_slug, student_id):
                 'projects': InvestigationProject.objects.filter(program=program),
                 'inner_areas': InnerAreas.objects.all(),
             }
-            return render(request, 'programs/view_phd_student_profile.html', context)
+            return render(request, 'programs/phd_student_profile.html', context)
         elif program.type == 'msc':
             context = {
                 'program': program,
