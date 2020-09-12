@@ -929,7 +929,11 @@ def edit_student(request, program_slug, student_id):
                     s_i_r.accomplished=True
                     if requirement.get_old:
                         try:
-                            s_i_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
+                            if request.POST['student_new_requirement_' + str(requirement.id)]=='True':
+                                s_i_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
+                            else:
+                                s_i_r.caducity_date = None
+
                         except:
                             s_i_r.caducity_date = None
 
@@ -950,7 +954,11 @@ def edit_student(request, program_slug, student_id):
                     s_f_r.accomplished=True
                     if requirement.get_old:
                         try:
-                            s_f_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
+                            if request.POST['student_new_f_requirement_' + str(requirement.id)]== 'True':
+                                s_f_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
+                            else:
+                                s_f_r.caducity_date = None
+
                         except:
                             s_f_r.caducity_date = None
 

@@ -581,10 +581,33 @@
 
                     $(this).attr('value','True');
                     $('#inp_doc_caducity_date_'+doc_id).attr('required', 'required');
+                    $('#inp_doc_caducity_date_'+doc_id).removeAttr('readonly');
                 }
                 else {
                     $(this).attr('value', 'False');
                     $('#inp_doc_caducity_date_'+doc_id).removeAttr('required');
+                    $('#inp_doc_caducity_date_'+doc_id).val("DD-MM-YYYY");
+                    $('#inp_doc_caducity_date_'+doc_id).attr('readonly',true);
+
+
+                }
+
+            });
+            $(document).on('click',"input[id*='inp_student_new_f_requirement']",function (){
+                alert($(this).val());
+                var doc_id = $(this).attr('data');
+                if($(this).val()=='False'){
+
+                    $(this).attr('value','True');
+                    $('#inp_doc_caducity_date_'+doc_id).attr('required', 'required');
+                    $('#inp_doc_caducity_date_'+doc_id).removeAttr('readonly');
+                }
+                else {
+                    $(this).attr('value', 'False');
+                    $('#inp_doc_caducity_date_'+doc_id).removeAttr('required');
+                    $('#inp_doc_caducity_date_'+doc_id).val("DD-MM-YYYY");
+                    $('#inp_doc_caducity_date_'+doc_id).attr('readonly',true);
+
 
                 }
 
