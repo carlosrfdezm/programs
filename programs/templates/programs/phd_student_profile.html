@@ -230,131 +230,72 @@
                                         <!-- /.post -->
                                     </div>
                                     <div class="tab-pane" id="file_docs">
-                                        {% for doc in student.studentfiledocument_set.all %}
-                                            <!-- Post -->
-                                            <div class="post">
-                                                <div class="user-block">
-                                                    {% if doc.type == 'student' %}
-                                                        <i class="fa fa-user text-success"></i>
-                                                    {% elif doc.type == 'program' %}
-                                                        <i class="fa fa-user-graduate text-primary"></i>
-                                                    {% elif doc.type == 'comission' %}
-                                                        <i class="fa fa-graduation-cap text-warning"></i>
-                                                    {% endif %}
-                                                    <span class="username">
-                          <a href="#">Jonathan Burke Jr.</a>
-                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                        </span>
-                                                    <span class="description">Shared publicly - 7:30 PM today</span>
-                                                </div>
-                                                <!-- /.user-block -->
-                                                <p>
-                                                    Lorem ipsum represents a long-held tradition for designers,
-                                                    typographers and the like. Some people hate it and argue for
-                                                    its demise, but others ignore the hate as they create awesome
-                                                    tools to help create filler text for everyone from bacon lovers
-                                                    to Charlie Sheen fans.
-                                                </p>
 
-                                                <p>
-                                                    <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
-                                                    <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
-                                                    <span class="float-right">
-                          <a href="#" class="link-black text-sm">
-                            <i class="far fa-comments mr-1"></i> Comments (5)
-                          </a>
-                        </span>
-                                                </p>
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-center">Resp.</th>
+                                                <th >Nombre del documento</th>
+                                                <th class="text-center">Listo</th>
+                                                <th class="text-center">Caduca</th>
 
-                                                <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
-                                            </div>
-                                            <!-- /.post -->
-                                        {% endfor %}
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for doc in program.programfiledoc_set.all %}
+                                                <!-- Post -->
 
-                                        <!-- Post -->
-                                        <div class="post clearfix">
-                                            <div class="user-block">
-                                                <img class="img-circle img-bordered-sm" src="../../dist/img/user7-128x128.jpg" alt="User Image">
-                                                <span class="username">
-                          <a href="#">Sarah Ross</a>
-                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                        </span>
-                                                <span class="description">Sent you a message - 3 days ago</span>
-                                            </div>
-                                            <!-- /.user-block -->
-                                            <p>
-                                                Lorem ipsum represents a long-held tradition for designers,
-                                                typographers and the like. Some people hate it and argue for
-                                                its demise, but others ignore the hate as they create awesome
-                                                tools to help create filler text for everyone from bacon lovers
-                                                to Charlie Sheen fans.
-                                            </p>
+                                                <tr>
+                                                    <td class="text-center">
+                                                        {% if doc.type == 'student' %}
+                                                            <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                        {% elif doc.type == 'program' %}
+                                                            <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                        {% elif doc.type == 'comission' %}
+                                                            <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {{ doc }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {% student_requirement_accomplished student doc as doc_accomplished %}
+                                                        {% if doc_accomplished %}
+                                                            <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
+                                                        {% else %}
+                                                            <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
 
-                                            <form class="form-horizontal">
-                                                <div class="input-group input-group-sm mb-0">
-                                                    <input class="form-control form-control-sm" placeholder="Response">
-                                                    <div class="input-group-append">
-                                                        <button type="submit" class="btn btn-danger">Send</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <!-- /.post -->
+                                                        {% endif %}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {% if doc.get_old %}
+                                                            {% student_doc_caducity_date student doc as caducity_date %}
+                                                            {{ caducity_date|date:'Y-m-d' }}
+                                                        {% else %}
+                                                            --------
+                                                        {% endif  %}
+                                                    </td>
+                                                </tr>
+                                                <!-- /.post -->
+                                            {% endfor %}
+
+                                            </tbody>
+
+
+                                        </table>
+
+
 
                                         <!-- Post -->
-                                        <div class="post">
-                                            <div class="user-block">
-                                                <img class="img-circle img-bordered-sm" src="../../dist/img/user6-128x128.jpg" alt="User Image">
-                                                <span class="username">
-                          <a href="#">Adam Jones</a>
-                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
-                        </span>
-                                                <span class="description">Posted 5 photos - 5 days ago</span>
-                                            </div>
-                                            <!-- /.user-block -->
-                                            <div class="row mb-3">
-                                                <div class="col-sm-6">
-                                                    <img class="img-fluid" src="../../dist/img/photo1.png" alt="Photo">
-                                                </div>
-                                                <!-- /.col -->
-                                                <div class="col-sm-6">
-                                                    <div class="row">
-                                                        <div class="col-sm-6">
-                                                            <img class="img-fluid mb-3" src="../../dist/img/photo2.png" alt="Photo">
-                                                            <img class="img-fluid" src="../../dist/img/photo3.jpg" alt="Photo">
-                                                        </div>
-                                                        <!-- /.col -->
-                                                        <div class="col-sm-6">
-                                                            <img class="img-fluid mb-3" src="../../dist/img/photo4.jpg" alt="Photo">
-                                                            <img class="img-fluid" src="../../dist/img/photo1.png" alt="Photo">
-                                                        </div>
-                                                        <!-- /.col -->
-                                                    </div>
-                                                    <!-- /.row -->
-                                                </div>
-                                                <!-- /.col -->
-                                            </div>
-                                            <!-- /.row -->
 
-                                            <p>
-                                                <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
-                                                <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
-                                                <span class="float-right">
-                          <a href="#" class="link-black text-sm">
-                            <i class="far fa-comments mr-1"></i> Comments (5)
-                          </a>
-                        </span>
-                                            </p>
-
-                                            <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
-                                        </div>
                                         <!-- /.post -->
                                     </div>
                                     <!-- /.tab-pane -->
                                     <div class="tab-pane" id="timeline">
                                         <!-- The timeline -->
-                                        <div class="timeline timeline-inverse">
-                                            {% if  student.studentformationplan.formationplanactivities_set %}
+                                        {% if  student.studentformationplan.formationplanactivities_set.all %}
+                                            <div class="timeline timeline-inverse">
+
 
                                                 {% for activity in student.studentformationplan.formationplanactivities_set.all %}
                                                     {% is_past activity.init_date as is_past %}
@@ -394,13 +335,18 @@
                                                     </div>
                                                     <!-- END timeline item -->
                                                 {% endfor %}
-                                            {% endif %}
 
-                                            <!-- END timeline item -->
-                                            <div>
-                                                <i class="fas fa-certificate bg-gray"></i>
+
+                                                <!-- END timeline item -->
+                                                <div>
+                                                    <i class="fas fa-certificate bg-gray"></i>
+                                                </div>
                                             </div>
-                                        </div>
+                                            {% else %}
+                                            <div class="alert alert-warning">
+                                            <h5 class="text-center"> Usted no tiene actividades en su Plan de Formación</h5>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                     <!-- /.tab-pane -->
 

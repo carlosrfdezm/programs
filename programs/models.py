@@ -516,4 +516,4 @@ class StudentFileDocument(models.Model):
     caducity_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return self.program_file_document
+        return self.program_file_document.doc_name
