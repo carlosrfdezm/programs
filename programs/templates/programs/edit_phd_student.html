@@ -363,7 +363,7 @@
                                                     <td class="text-center">
                                                         {% if doc.get_old %}
                                                             {% student_doc_caducity_date doc_student doc as caducity_date %}
-                                                            <input type="date" class="form-control col-md-6 col-sm-6 offset-4" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
+                                                            <input type="date" class="form-control col-md-6 col-sm-6 offset-4" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% else %} readonly {% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
                                                         {% else %}
                                                             --------
                                                         {% endif  %}
@@ -407,18 +407,19 @@
                                                         {{ doc }}
                                                     </td>
                                                     <td class="text-center">
-                                                        {% student_requirement_accomplished doc_student doc as doc_accomplished %}
+                                                        {% student_requirement_accomplished doc_student doc as f_doc_accomplished %}
                                                         <div class="icheck-primary d-inline">
-                                                            <input type="checkbox" id="inp_student_new_f_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_f_requirement_{{ doc.id }}" {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
+                                                            <input type="checkbox" id="inp_student_new_f_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_f_requirement_{{ doc.id }}" {% if f_doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
                                                             <label for="inp_student_new_f_requirement_{{ doc.id }}">
                                                             </label>
                                                         </div>
 
                                                     </td>
                                                     <td class="text-center">
+
                                                         {% if doc.get_old %}
                                                             {% student_doc_caducity_date doc_student doc as caducity_date %}
-                                                            <input type="date" class="form-control col-md-6 col-sm-6 offset-4" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
+                                                            <input type="date" class="form-control col-md-6 col-sm-6 offset-4" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if f_doc_accomplished %}required {% else %} readonly {% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
 
                                                         {% else %}
                                                             --------
