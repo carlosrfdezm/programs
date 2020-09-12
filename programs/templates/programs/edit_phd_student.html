@@ -3,6 +3,7 @@
 {% load extra_tags %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="{% static 'programs/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}" href="../../plugins/icheck-bootstrap/icheck-bootstrap.min.css">
 
 {% endblock %}
 
@@ -322,78 +323,118 @@
 
                                     <hr>
                                     <h5><strong>Nuevos requisitos</strong></h5>
-                                    <div class="form-row">
-                                        <div class="col-md-6">
-                                            <h5>De ingreso:</h5>
-                                            <div class="form-group">
-                                                {% for requirement in new_init_requirements %}
-                                                    {% student_requirement_accomplished doc_student requirement as new_student_init_requirement_accomplished %}
-                                                    <div class="row">
-                                                        <div class="form-check col-md-11">
-                                                            <input type="checkbox" class="form-check-input" id="inp_requirement_{{ requirement.id }}" name="student_new_requirement_{{ requirement.id }}" {% if new_student_init_requirement_accomplished %} checked {% endif %}>
+                                    <h6>De ingreso:</h6>
+                                    <div class="row">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-center">Resp.</th>
+                                                <th >Nombre del documento</th>
+                                                <th class="text-center">Listo</th>
+                                                <th class="text-center">Caduca</th>
 
-                                                            <label class="form-check-label" for="inp_requirement_{{ requirement.id }}">{{ requirement.doc_name }}</label>
-                                                        </div>
-                                                        <div class="col-md-1 text-center">
-
-                                                            {% if requirement.type == 'student' %}
-                                                                <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
-                                                            {% elif requirement.type == 'program' %}
-                                                                <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
-                                                            {% elif requirement.type == 'comission' %}
-                                                                <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
-                                                            {% endif %}
-
-
-                                                        </div>
-
-                                                    </div>
-
-
-
-
-                                                {% endfor %}
-                                                <div class="help">
-                                                    <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <h5>De egreso:</h5>
-                                            <div class="form-group">
-                                                {% for requirement in new_finish_requirements %}
-                                                    {% student_requirement_accomplished doc_student requirement as new_student_finish_requirement_accomplished %}
-                                                    <div class="row">
-                                                        <div class="form-check col-md-11">
-                                                            <input type="checkbox" class="form-check-input" id="inp_new_f_requirement_{{ requirement.id }}" name="student_new_f_requirement_{{ requirement.id }}" {% if new_student_finish_requirement_accomplished %} checked {% endif %}>
-                                                            <label class="form-check-label" for="inp_new_f_requirement_{{ requirement.id }}">{{ requirement.doc_name }}</label>
-                                                        </div>
-                                                        <div class="col-md-1 text-center">
-
-                                                            {% if requirement.type == 'student' %}
-                                                                <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
-                                                            {% elif requirement.type == 'program' %}
-                                                                <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
-                                                            {% elif requirement.type == 'comission' %}
-                                                                <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
-                                                            {% endif %}
-
-
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for doc in new_init_requirements %}
+                                                <!-- Post -->
+                                                <tr>
+                                                    <td class="text-center">
+                                                        {% if doc.type == 'student' %}
+                                                            <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                        {% elif doc.type == 'program' %}
+                                                            <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                        {% elif doc.type == 'comission' %}
+                                                            <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {{ doc }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {% student_requirement_accomplished doc_student doc as doc_accomplished %}
+                                                        <div class="icheck-primary d-inline">
+                                                            <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_requirement_{{ doc.id }}" {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
+                                                            <label for="inp_student_new_requirement_{{ doc.id }}">
+                                                            </label>
                                                         </div>
 
-                                                    </div>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {% if doc.get_old %}
+                                                            {% student_doc_caducity_date doc_student doc as caducity_date %}
+                                                            <input type="date" class="form-control col-md-6 col-sm-6 offset-4" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
+                                                        {% else %}
+                                                            --------
+                                                        {% endif  %}
+                                                    </td>
+                                                </tr>
+
+                                                <!-- /.post -->
+                                            {% endfor %}
+
+                                            </tbody>
 
 
-                                                {% endfor %}
-                                                <div class="help">
-                                                    <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
+                                        </table>
                                     </div>
+                                    <h6>De egreso:</h6>
+                                    <div class="row">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-center">Resp.</th>
+                                                <th >Nombre del documento</th>
+                                                <th class="text-center">Listo</th>
+                                                <th class="text-center">Caduca</th>
+
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for doc in new_finish_requirements %}
+                                                <!-- Post -->
+                                                <tr>
+                                                    <td class="text-center">
+                                                        {% if doc.type == 'student' %}
+                                                            <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                        {% elif doc.type == 'program' %}
+                                                            <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                        {% elif doc.type == 'comission' %}
+                                                            <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {{ doc }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {% student_requirement_accomplished doc_student doc as doc_accomplished %}
+                                                        <div class="icheck-primary d-inline">
+                                                            <input type="checkbox" id="inp_student_new_f_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_f_requirement_{{ doc.id }}" {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
+                                                            <label for="inp_student_new_f_requirement_{{ doc.id }}">
+                                                            </label>
+                                                        </div>
+
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {% if doc.get_old %}
+                                                            {% student_doc_caducity_date doc_student doc as caducity_date %}
+                                                            <input type="date" class="form-control col-md-6 col-sm-6 offset-4" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
+
+                                                        {% else %}
+                                                            --------
+                                                        {% endif  %}
+                                                    </td>
+                                                </tr>
+
+                                                <!-- /.post -->
+                                            {% endfor %}
+
+                                            </tbody>
+
+
+                                        </table>
+                                    </div>
+
 
                                     <div class="form-row align-items-center">
                                         <div class="col-md-1 text-center">
@@ -530,6 +571,22 @@
                     $('#div_prorrogue').addClass('invisible');
                     $('#inp_prorrogue').removeAttr('required');
                 }
+            });
+
+            $(document).on('click',"input[id*='inp_student_new_requirement']",function (){
+                alert($(this).val());
+                var doc_id = $(this).attr('data');
+                if($(this).val()=='False'){
+
+                    $(this).attr('value','True');
+                    $('#inp_doc_caducity_date_'+doc_id).attr('required', 'required');
+                }
+                else {
+                    $(this).attr('value', 'False');
+                    $('#inp_doc_caducity_date_'+doc_id).removeAttr('required');
+
+                }
+
             });
 
 

@@ -933,7 +933,14 @@ def edit_student(request, program_slug, student_id):
                                                                program_file_document=requirement)
                     s_i_r.accomplished = False
                     s_i_r.save()
+                if requirement.get_old and not  'doc_caducity_date_'+str(requirement.id) == None :
+                    s_i_r = StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id),
+                                                            program_file_document=requirement)
+                    s_i_r.caducity_date = request.POST['doc_caducity_date_'+str(requirement.id)]
+                    s_i_r.save()
+
             for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+
                 if 'student_new_f_requirement_' + str(requirement.id) in request.POST:
                     s_f_r=StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id), program_file_document=requirement)
                     s_f_r.accomplished=True
@@ -942,6 +949,12 @@ def edit_student(request, program_slug, student_id):
                     s_f_r = StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id),
                                                                  program_file_document=requirement)
                     s_f_r.accomplished = False
+                    s_f_r.save()
+                if requirement.get_old and not 'doc_caducity_date_'+str(requirement.id) == '' :
+                    print('FRCaducity date',request.POST['doc_caducity_date_'+str(requirement.id)])
+                    s_f_r = StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id),
+                                                            program_file_document=requirement)
+                    s_f_r.caducity_date = request.POST['doc_caducity_date_'+str(requirement.id)]
                     s_f_r.save()
 
             return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug,'all']))

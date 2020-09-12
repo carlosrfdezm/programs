@@ -230,7 +230,7 @@
                                         <!-- /.post -->
                                     </div>
                                     <div class="tab-pane" id="file_docs">
-
+                                        <h6>Requisitos de Ingreso:</h6>
                                         <table class="table table-striped">
                                             <thead>
                                             <tr>
@@ -244,38 +244,152 @@
                                             <tbody>
                                             {% for doc in program.programfiledoc_set.all %}
                                                 <!-- Post -->
+                                                {% if doc.is_init_requirenment %}
 
-                                                <tr>
-                                                    <td class="text-center">
-                                                        {% if doc.type == 'student' %}
-                                                            <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
-                                                        {% elif doc.type == 'program' %}
-                                                            <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
-                                                        {% elif doc.type == 'comission' %}
-                                                            <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {{ doc }}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        {% student_requirement_accomplished student doc as doc_accomplished %}
-                                                        {% if doc_accomplished %}
-                                                            <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
-                                                        {% else %}
-                                                            <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            {% if doc.type == 'student' %}
+                                                                <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                            {% elif doc.type == 'program' %}
+                                                                <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                            {% elif doc.type == 'comission' %}
+                                                                <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {{ doc }}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            {% student_requirement_accomplished student doc as doc_accomplished %}
+                                                            {% if doc_accomplished %}
+                                                                <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
+                                                            {% else %}
+                                                                <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
 
-                                                        {% endif %}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        {% if doc.get_old %}
-                                                            {% student_doc_caducity_date student doc as caducity_date %}
-                                                            {{ caducity_date|date:'Y-m-d' }}
-                                                        {% else %}
-                                                            --------
-                                                        {% endif  %}
-                                                    </td>
-                                                </tr>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            {% if doc.get_old %}
+                                                                {% student_doc_caducity_date student doc as caducity_date %}
+                                                                {{ caducity_date|date:'d-m-Y' }}
+                                                            {% else %}
+                                                                --------
+                                                            {% endif  %}
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                                <!-- /.post -->
+                                            {% endfor %}
+
+                                            </tbody>
+
+
+                                        </table>
+
+                                        <h6>Requisitos de Egreso:</h6>
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-center">Resp.</th>
+                                                <th >Nombre del documento</th>
+                                                <th class="text-center">Listo</th>
+                                                <th class="text-center">Caduca</th>
+
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for doc in program.programfiledoc_set.all %}
+                                                <!-- Post -->
+                                                {% if doc.is_finish_requirenment %}
+
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            {% if doc.type == 'student' %}
+                                                                <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                            {% elif doc.type == 'program' %}
+                                                                <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                            {% elif doc.type == 'comission' %}
+                                                                <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {{ doc }}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            {% student_requirement_accomplished student doc as doc_accomplished %}
+                                                            {% if doc_accomplished %}
+                                                                <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
+                                                            {% else %}
+                                                                <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
+
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            {% if doc.get_old %}
+                                                                {% student_doc_caducity_date student doc as caducity_date %}
+                                                                {{ caducity_date|date:'d-m-Y' }}
+                                                            {% else %}
+                                                                --------
+                                                            {% endif  %}
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                                <!-- /.post -->
+                                            {% endfor %}
+
+                                            </tbody>
+
+
+                                        </table>
+
+                                    <h6>Otros documentos:</h6>
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-center">Resp.</th>
+                                                <th>Nombre del documento</th>
+                                                <th class="text-center">Listo</th>
+                                                <th class="text-center">Caduca</th>
+
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for doc in program.programfiledoc_set.all %}
+                                                <!-- Post -->
+                                                {% if not doc.is_finish_requirenment and not doc.is_init_requirenment %}
+
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            {% if doc.type == 'student' %}
+                                                                <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                            {% elif doc.type == 'program' %}
+                                                                <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                            {% elif doc.type == 'comission' %}
+                                                                <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {{ doc }}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            {% student_requirement_accomplished student doc as doc_accomplished %}
+                                                            {% if doc_accomplished %}
+                                                                <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
+                                                            {% else %}
+                                                                <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
+
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            {% if doc.get_old %}
+                                                                {% student_doc_caducity_date student doc as caducity_date %}
+                                                                {{ caducity_date|date:'d-m-Y' }}
+                                                            {% else %}
+                                                                --------
+                                                            {% endif  %}
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
                                                 <!-- /.post -->
                                             {% endfor %}
 
@@ -342,9 +456,9 @@
                                                     <i class="fas fa-certificate bg-gray"></i>
                                                 </div>
                                             </div>
-                                            {% else %}
+                                        {% else %}
                                             <div class="alert alert-warning">
-                                            <h5 class="text-center"> Usted no tiene actividades en su Plan de Formación</h5>
+                                                <h5 class="text-center"> Usted no tiene actividades en su Plan de Formación</h5>
                                             </div>
                                         {% endif %}
                                     </div>
