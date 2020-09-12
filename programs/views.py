@@ -663,7 +663,7 @@ def msc_edition_students_list(request, program_slug, edition_id, scope):
 
     else:
         return error_500(request, program, 'Usted no tiene acceso a esta página')
-    
+
 @login_required
 def dip_edition_students_list(request, program_slug, edition_id, scope):
     program=Program.objects.get(slug=program_slug)
@@ -753,7 +753,7 @@ def msc_all_students_list(request, program_slug, scope):
 
     else:
         return error_500(request, program, 'Usted no tiene acceso a esta página')
-    
+
 @login_required
 def dip_all_students_list(request, program_slug, scope):
     program=Program.objects.get(slug=program_slug)
@@ -929,11 +929,7 @@ def edit_student(request, program_slug, student_id):
                     s_i_r.accomplished=True
                     if requirement.get_old:
                         try:
-                            if request.POST['student_new_requirement_' + str(requirement.id)]=='True':
-                                s_i_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
-                            else:
-                                s_i_r.caducity_date = None
-
+                            s_i_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
                         except:
                             s_i_r.caducity_date = None
 
@@ -942,7 +938,8 @@ def edit_student(request, program_slug, student_id):
 
                 else:
                     s_i_r = StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id),
-                                                               program_file_document=requirement)
+                                                            program_file_document=requirement)
+                    s_i_r.caducity_date = None
                     s_i_r.accomplished = False
                     s_i_r.save()
 
@@ -954,11 +951,7 @@ def edit_student(request, program_slug, student_id):
                     s_f_r.accomplished=True
                     if requirement.get_old:
                         try:
-                            if request.POST['student_new_f_requirement_' + str(requirement.id)]== 'True':
-                                s_f_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
-                            else:
-                                s_f_r.caducity_date = None
-
+                            s_f_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
                         except:
                             s_f_r.caducity_date = None
 
@@ -966,8 +959,9 @@ def edit_student(request, program_slug, student_id):
                     s_f_r.save()
                 else:
                     s_f_r = StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id),
-                                                                 program_file_document=requirement)
+                                                            program_file_document=requirement)
                     s_f_r.accomplished = False
+                    s_f_r.caducity_date = None
                     s_f_r.save()
 
 
