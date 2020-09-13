@@ -2475,6 +2475,14 @@ def ajx_member_personal_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
     if request.method == 'POST' and request.POST['msg_body'].__len__() <= 500:
         try:
+            new_message = Message(
+                sender=request.user,
+                program_receiver=ProgramMember.objects.get(pk=request.POST['member_id']),
+                subject=request.POST['msg_subject'],
+                body=request.POST['msg_body'],
+
+            )
+            new_message.save()
             send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
                       [ProgramMember.objects.get(pk=request.POST['member_id']).user.email],
                       fail_silently=False,html_message=request.POST['msg_body'])
