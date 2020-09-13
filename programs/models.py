@@ -519,11 +519,13 @@ class StudentFileDocument(models.Model):
         return self.program_file_document.doc_name
 
 class Message(models.Model):
-    sender = models.ForeignKey(ProgramMember, null=True, on_delete=models.SET_NULL)
-    phd_receiver = models.ForeignKey(Student, null=True, on_delete=models.SET_NULL)
-    msc_receiver = models.ForeignKey(MscStudent, null=True, on_delete=models.SET_NULL)
-    dip_receiver = models.ForeignKey(DipStudent, null=True, on_delete=models.SET_NULL)
-    date = models.DateField(default=now())
+    sender = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    program_receiver = models.ForeignKey(ProgramMember, null=True, on_delete=models.SET_NULL)
+    phd_student_receiver = models.ForeignKey(Student, null=True, on_delete=models.SET_NULL)
+    msc_student_receiver = models.ForeignKey(MscStudent, null=True, on_delete=models.SET_NULL)
+    dip_student_receiver = models.ForeignKey(DipStudent, null=True, on_delete=models.SET_NULL)
+
+    date = models.DateField(default=now)
     subject = models.CharField(max_length=250)
     body = models.TextField(max_length=1500)
     readed = models.BooleanField(default=False)
