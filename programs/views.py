@@ -2664,48 +2664,144 @@ def ajx_students_massive_msg(request, program_slug ):
                 if request.POST['msg_scope'] == 'requesters':
                     for student in Student.objects.filter(program=program ,phdstudent__status='solicitante' ):
                         email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            phd_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
                 elif request.POST['msg_scope']=='aproved':
                     for student in Student.objects.filter(program=program ,phdstudent__status='doctorando' ):
                         email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            phd_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
 
                 elif request.POST['msg_scope']=='graduated':
                     for student in Student.objects.filter(program=program, phdstudent__status='graduado'):
                         email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            phd_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
 
                 elif request.POST['msg_scope']=='all':
                     for student in Student.objects.filter(program=program):
                         email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            phd_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
 
             elif program.type == 'msc':
                 if request.POST['msg_scope'] == 'requesters':
                     for student in MscStudent.objects.filter(program=program, status='solicitante'):
                         email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            msc_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
                 elif request.POST['msg_scope'] == 'aproved':
                     for student in MscStudent.objects.filter(program=program, status='maestrante'):
                         email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            msc_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
 
                 elif request.POST['msg_scope'] == 'graduated':
                     for student in MscStudent.objects.filter(program=program, status='graduado'):
                         email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            msc_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
 
                 elif request.POST['msg_scope'] == 'all':
                     for student in MscStudent.objects.filter(program=program):
                         email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            msc_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
             elif program.type == 'dip':
                 if request.POST['msg_scope'] == 'requesters':
                     for student in DipStudent.objects.filter(program=program, status='solicitante'):
                         email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            dip_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
                 elif request.POST['msg_scope'] == 'aproved':
                     for student in DipStudent.objects.filter(program=program, status='diplomante'):
                         email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            dip_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
 
                 elif request.POST['msg_scope'] == 'graduated':
                     for student in DipStudent.objects.filter(program=program, status='graduado'):
                         email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            dip_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
 
                 elif request.POST['msg_scope'] == 'all':
                     for student in DipStudent.objects.filter(program=program):
                         email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            dip_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
 
             if email_list.__len__()<=10:
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
