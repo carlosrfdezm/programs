@@ -2849,14 +2849,39 @@ def ajx_student_personal_msg(request, program_slug ):
     if request.method == 'POST' and request.POST['msg_body'].__len__() <= 1000:
         try:
             if program.type == 'phd':
+                new_message = Message(
+                    sender=request.user,
+                    phd_student_receiver=Student.objects.get(pk=request.POST['student_id']),
+                    subject=request.POST['msg_subject'],
+                    body=request.POST['msg_body'],
+
+                )
+                new_message.save()
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
                           [Student.objects.get(pk=request.POST['student_id']).user.email,'boris_perez@unah.edu.cu'],
                           fail_silently=False,html_message=request.POST['msg_body'])
+
             elif program.type == 'msc':
+                new_message = Message(
+                    sender=request.user,
+                    msc_student_receiver=MscStudent.objects.get(pk=request.POST['student_id']),
+                    subject=request.POST['msg_subject'],
+                    body=request.POST['msg_body'],
+
+                )
+                new_message.save()
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
                           [MscStudent.objects.get(pk=request.POST['student_id']).user.email, 'boris_perez@unah.edu.cu'],
                           fail_silently=False, html_message=request.POST['msg_body'])
             elif program.type == 'dip':
+                new_message = Message(
+                    sender=request.user,
+                    dip_student_receiver=DipStudent.objects.get(pk=request.POST['student_id']),
+                    subject=request.POST['msg_subject'],
+                    body=request.POST['msg_body'],
+
+                )
+                new_message.save()
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
                           [DipStudent.objects.get(pk=request.POST['student_id']).user.email, 'boris_perez@unah.edu.cu'],
                           fail_silently=False, html_message=request.POST['msg_body'])
