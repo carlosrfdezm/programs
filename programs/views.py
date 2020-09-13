@@ -25,7 +25,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
-    FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument
+    FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message
 from programs.templatetags.extra_tags import finish_requirements_accomplished, student_init_requirement_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -2507,16 +2507,48 @@ def ajx_member_massive_msg(request, program_slug ):
             if request.POST['msg_scope'] == 'comite':
                 for member in ProgramMember.objects.filter(Q(role='Coordinador')|Q(role='Secretario')|Q(role='Miembro'), program=program  ):
                     email_list.append(member.user.email)
+                    new_message = Message(
+                        sender=request.user,
+                        program_receiver=member,
+                        subject=request.POST['msg_subject'],
+                        body=request.POST['msg_body'],
+
+                    )
+                    new_message.save()
             elif request.POST['msg_scope']=='professors':
                 for member in ProgramMember.objects.filter(program=program , role='Profesor' ):
                     email_list.append(member.user.email)
+                    new_message = Message(
+                        sender=request.user,
+                        program_receiver=member,
+                        subject=request.POST['msg_subject'],
+                        body=request.POST['msg_body'],
+
+                    )
+                    new_message.save()
             elif request.POST['msg_scope']=='tuthors':
                 for member in ProgramMember.objects.filter(program=program , role='Tutor' ):
                     email_list.append(member.user.email)
+                    new_message = Message(
+                        sender=request.user,
+                        program_receiver=member,
+                        subject=request.POST['msg_subject'],
+                        body=request.POST['msg_body'],
+
+                    )
+                    new_message.save()
 
             elif request.POST['msg_scope']=='all':
                 for member in ProgramMember.objects.filter(program=program ):
                     email_list.append(member.user.email)
+                    new_message = Message(
+                        sender=request.user,
+                        program_receiver=member,
+                        subject=request.POST['msg_subject'],
+                        body=request.POST['msg_body'],
+
+                    )
+                    new_message.save()
 
             if email_list.__len__()<=10:
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
