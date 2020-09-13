@@ -20,7 +20,7 @@ def program_brief_path(instance, filename):
         new_brief_name = 'Acta-' + slugify(instance.program.short_name) + '-'+ instance.month +'-' + instance.year + '-'+str(index+1)+ '.' + brief_ext
 
     return 'program_{0}/brieffings/{1}/{2}/{3}'.format(instance.program.slug, instance.year,
-                                                                       instance.month, new_brief_name)
+                                                       instance.month, new_brief_name)
 
 def program_document_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
@@ -160,7 +160,7 @@ class ProgramMember(models.Model):
     institution = models.CharField(max_length=100, default='UNAH')
     birth_date = models.DateField(default='1960-01-01', help_text='Fecha de nacimiento')
     degree = models.CharField(max_length=100, default='Doctor en Ciencias de...',
-                                   help_text='Grado cientifico')
+                              help_text='Grado cientifico')
     picture = models.ImageField(null=True, blank=True, upload_to=member_directory_path)
     fb_contact = models.CharField(max_length=50, null=True, blank=True,
                                   help_text='Contacto de Facebook del miembro del tribunal')
@@ -224,7 +224,7 @@ class MscStudent(models.Model):
     birth_date=models.DateField(default=now)
     dni=models.CharField(max_length=24, default='12345678901')
     status = models.CharField(max_length=15,default='solicitante', choices=[('solicitante', 'Solicitante'), ('maestrante', 'Maestrante'),
-                                                      ('graduado', 'Graduado')])
+                                                                            ('graduado', 'Graduado')])
     edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
     category = models.CharField(max_length=15, default='interno',
                                 choices=[('interno', 'Interno'), ('externo', 'Externo')])
@@ -246,7 +246,7 @@ class DipStudent(models.Model):
     birth_date=models.DateField(default=now)
     dni=models.CharField(max_length=24, default='12345678901')
     status = models.CharField(max_length=15,default='solicitante', choices=[('solicitante', 'Solicitante'), ('diplomante', 'Diplomante'),
-                                                      ('graduado', 'Graduado')])
+                                                                            ('graduado', 'Graduado')])
     edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
     faculty = models.CharField(max_length=100, help_text='Nombre de la Facultad a la que pertenece')
     category = models.CharField(max_length=15, default='interno',
@@ -517,3 +517,16 @@ class StudentFileDocument(models.Model):
 
     def __str__(self):
         return self.program_file_document.doc_name
+
+class Message(models.Model):
+    sender = models.ForeignKey(ProgramMember, null=True, on_delete=models.SET_NULL)
+    phd_receiver = models.ForeignKey(Student, null=True, on_delete=models.SET_NULL)
+    msc_receiver = models.ForeignKey(MscStudent, null=True, on_delete=models.SET_NULL)
+    dip_receiver = models.ForeignKey(DipStudent, null=True, on_delete=models.SET_NULL)
+    date = models.DateField(default=now())
+    subject = models.CharField(max_length=250)
+    body = models.TextField(max_length=1500)
+    readed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.subject
