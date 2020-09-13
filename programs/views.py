@@ -210,6 +210,12 @@ def create_student(request, program_slug):
                                 program_file_document=requirement,
                                 accomplished=True,
                             )
+                            if requirement.get_old:
+                                try:
+                                    new_student_requirement.caducity_date = request.POST['doc_caducity_date_'+str(requirement.id)]
+                                except:
+                                    pass
+
                             new_student_requirement.save()
 
                         else:
@@ -291,6 +297,12 @@ def create_student(request, program_slug):
                         program_file_document=requirement,
                         accomplished=True,
                     )
+                    if requirement.get_old:
+                        try:
+                            new_student_requirement.caducity_date = request.POST[
+                                'doc_caducity_date_' + str(requirement.id)]
+                        except:
+                            pass
                     new_student_requirement.save()
 
                 else:
