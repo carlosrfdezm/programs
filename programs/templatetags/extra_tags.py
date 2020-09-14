@@ -180,6 +180,15 @@ def sender_program_member(sender, program):
     return  ProgramMember.objects.get(user=sender, program=program)
 
 @register.simple_tag
+def sender_program_student(sender, program):
+    if program.type == 'phd':
+        return  Student.objects.get(user=sender, program=program)
+    elif program.type == 'msc':
+        return  MscStudent.objects.get(user=sender, program=program)
+    elif program.type == 'dip':
+        return  DipStudent.objects.get(user=sender, program=program)
+
+@register.simple_tag
 def user_is_program_member(user, program):
     try:
         member=ProgramMember.objects.get(user=user, program=program)
