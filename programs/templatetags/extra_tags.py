@@ -116,6 +116,8 @@ def student_doc_caducity_date(student, program_document):
         return None
 
 
+
+
 @register.simple_tag
 def student_requirement_accomplished(student, program_requirement):
     if program_requirement.program.type == 'phd':
@@ -174,6 +176,10 @@ def user_is_program_cs(user, program):
         return False
 
 @register.simple_tag
+def sender_program_member(sender, program):
+    return  ProgramMember.objects.get(user=sender, program=program)
+
+@register.simple_tag
 def user_is_program_member(user, program):
     try:
         member=ProgramMember.objects.get(user=user, program=program)
@@ -183,11 +189,25 @@ def user_is_program_member(user, program):
 
 @register.simple_tag
 def user_is_program_student(user, program):
-    try:
-        student=Student.objects.get(user=user, program=program)
-        return True
-    except:
-        return False
+    if program.type == 'phd':
+        try:
+            student=Student.objects.get(user=user, program=program)
+            return True
+        except:
+            return False
+    elif program.type == 'msc':
+        try:
+            student=MscStudent.objects.get(user=user, program=program)
+            return True
+        except:
+            return False
+    elif program.type == 'dip':
+        try:
+            student=DipStudent.objects.get(user=user, program=program)
+            return True
+        except:
+            return False
+
 
 @register.simple_tag
 def user_is_cgc_ps(user):

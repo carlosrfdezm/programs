@@ -117,38 +117,47 @@
                             <div class="card-body">
                                 <div class="tab-content">
                                     <div class="tab-pane" id="messages">
-                                        <!-- Post -->
-                                        <div class="post">
-                                            <div class="user-block">
-                                                <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
-                                                <span class="username">
-                          <a href="#">Jonathan Burke Jr.</a>
+                                        {% for message in messages %}
+                                            {% user_is_program_member message.sender program as user_is_program_member%}
+                                            {% user_is_program_student message.sender program as user_is_program_student%}
+                                            <!-- Post -->
+                                            <div class="post">
+                                                <div class="user-block">
+                                                    {% if user_is_program_member %}
+                                                        {% sender_program_member message.sender program as program_member %}
+                                                        <img class="img-circle img-bordered-sm" {% if program_member.picture %}src="{% url 'programs:program_member_picture' program.slug program_member.id %}"{% else %}src="{% static 'programs/dist/img/user1-128x128.jpg' %}"{% endif %} alt="user image">
+                                                    {% elif user_is_program_student %}
+                                                        <img class="img-circle img-bordered-sm" src="../../dist/img/user2-128x128.jpg" alt="user image">
+                                                    {% endif %}
+                                                    <span class="username">
+                          <a href="#">{{ message.sender.get_full_name }}</a>
                           <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
                         </span>
-                                                <span class="description">Shared publicly - 7:30 PM today</span>
-                                            </div>
-                                            <!-- /.user-block -->
-                                            <p>
-                                                Lorem ipsum represents a long-held tradition for designers,
-                                                typographers and the like. Some people hate it and argue for
-                                                its demise, but others ignore the hate as they create awesome
-                                                tools to help create filler text for everyone from bacon lovers
-                                                to Charlie Sheen fans.
-                                            </p>
+                                                    <span class="description">Shared publicly - 7:30 PM today</span>
+                                                </div>
+                                                <!-- /.user-block -->
+                                                <p>
+                                                    Lorem ipsum represents a long-held tradition for designers,
+                                                    typographers and the like. Some people hate it and argue for
+                                                    its demise, but others ignore the hate as they create awesome
+                                                    tools to help create filler text for everyone from bacon lovers
+                                                    to Charlie Sheen fans.
+                                                </p>
 
-                                            <p>
-                                                <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
-                                                <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
-                                                <span class="float-right">
+                                                <p>
+                                                    <a href="#" class="link-black text-sm mr-2"><i class="fas fa-share mr-1"></i> Share</a>
+                                                    <a href="#" class="link-black text-sm"><i class="far fa-thumbs-up mr-1"></i> Like</a>
+                                                    <span class="float-right">
                           <a href="#" class="link-black text-sm">
                             <i class="far fa-comments mr-1"></i> Comments (5)
                           </a>
                         </span>
-                                            </p>
+                                                </p>
 
-                                            <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
-                                        </div>
-                                        <!-- /.post -->
+                                                <input class="form-control form-control-sm" type="text" placeholder="Type a comment">
+                                            </div>
+                                            <!-- /.post -->
+                                        {% endfor %}
 
                                         <!-- Post -->
                                         <div class="post clearfix">
@@ -342,7 +351,7 @@
 
                                         </table>
 
-                                    <h6>Otros documentos:</h6>
+                                        <h6>Otros documentos:</h6>
                                         <table class="table table-striped">
                                             <thead>
                                             <tr>

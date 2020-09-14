@@ -1016,6 +1016,7 @@ def view_student_profile(request, program_slug, student_id):
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
                 'projects': InvestigationProject.objects.filter(program=program),
                 'inner_areas': InnerAreas.objects.all(),
+                'messages': Message.objects.filter(Q(phd_student_receiver=Student.objects.get(pk=student_id))|Q(sender=request.user))
             }
             return render(request, 'programs/phd_student_profile.html', context)
         elif program.type == 'msc':
