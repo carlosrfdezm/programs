@@ -152,7 +152,7 @@
 
                                                 <p>
                                                     {% if message.readed %}
-                                                        <a href="#" id="a_delete_message_{{ message.id }}" data="{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>
+                                                        <a href="#" id="a_remove_message_{{ message.id }}" data="{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>
                                                     {% else %}
                                                         <a href="#" id="a_read_message_{{ message.id }}" data="{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eye mr-1"></i> Leer</a>
                                                     {% endif %}
@@ -176,11 +176,42 @@
 
                                                         <div class="modal-body alert alert-success">
 
-                                                           <p>{{  message.body }}</p>
+                                                            <p>{{  message.body }}</p>
 
 
 
                                                         </div>
+                                                        <div class="modal-footer justify-content-between">
+                                                        </div>
+
+                                                    </div>
+                                                    <!-- /.modal-content -->
+                                                </div>
+                                                <!-- /.modal-dialog -->
+                                            </div>
+                                            <div class="modal fade" id="modal_rm_message_{{ message.id }}">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Eliminar mensaje</h4>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+
+                                                        <form id="frm_remove_message_{{ message.id }}" method="post">
+                                                            <div class="modal-body alert alert-danger">
+                                                                <h4>Seguro desea eliminar el mensaje:<br>{{ message }}</h4>
+
+
+                                                                <input type="hidden" value="{{ message.id }}">
+
+                                                            </div>
+                                                            <div class="modal-footer justify-content-between">
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                                <button type="submit" class="btn btn-danger" id="btn_rm_message_{{ message.id }}">Eliminar</button>
+                                                            </div>
+                                                        </form>
                                                         <div class="modal-footer justify-content-between">
                                                         </div>
 
@@ -708,6 +739,13 @@
                 var current_index = $(this).attr('data');
                 $('#modal_read_message_'+current_index).modal('show');
                 $('#a_read_message_'+current_index).replaceWith('<a href="#" id="a_delete_message_'+current_index+'" data="'+current_index+'" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>\n')
+
+
+            });
+            $(document).on('click',"a[id*='a_remove_message_']",function (e) {
+                e.preventDefault();
+                var current_index = $(this).attr('data');
+                $('#modal_rm_message_'+current_index).modal('show');
 
 
             });
