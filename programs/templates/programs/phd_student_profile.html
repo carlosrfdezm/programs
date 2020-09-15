@@ -141,11 +141,11 @@
                                                     </span>
                                                 </div>
                                                 <!-- /.user-block -->
-                                                <p>
+                                                <p id="p_message_body_{{ message.id }}" class="text-bold">
                                                     {% if message.readed %}
                                                         {{ message.subject }}
                                                     {% else %}
-                                                        <strong>{{ message.subject }}</strong>
+                                                        {{ message.subject }}
 
                                                     {% endif %}
                                                 </p>
@@ -744,8 +744,8 @@
                 e.preventDefault();
                 var current_index = $(this).attr('data');
                 $('#modal_read_message_'+current_index).modal('show');
-                $('#a_read_message_'+current_index).replaceWith('<a href="#" id="a_delete_message_'+current_index+'" data="'+current_index+'" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>\n')
-
+                $('#a_read_message_'+current_index).replaceWith('<a href="#" id="a_remove_message_'+current_index+'" data="'+current_index+'" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>\n')
+                $('#p_message_body_'+current_index).removeClass('text-bold')
 
             });
             $(document).on('click',"a[id*='a_remove_message_']",function (e) {
