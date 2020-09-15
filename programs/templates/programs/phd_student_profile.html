@@ -117,6 +117,7 @@
                             <div class="card-body">
                                 <div class="tab-content">
                                     <div class="tab-pane" id="messages">
+                                    {% if messages %}
                                         {% for message in messages %}
                                             {% user_is_program_member message.sender program as user_is_program_member%}
                                             {% user_is_program_student message.sender program as user_is_program_student%}
@@ -222,6 +223,11 @@
                                             </div>
 
                                         {% endfor %}
+                                        {% else %}
+                                        <div class="alert alert-warning">
+                                        <h5 class="text-center">Usted no ha recibido mensaje alguno en este programa.</h5>
+                                        </div>
+                                        {% endif %}
 
 
                                     </div>
