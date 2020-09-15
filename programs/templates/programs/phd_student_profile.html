@@ -122,7 +122,7 @@
                                                 {% user_is_program_member message.sender program as user_is_program_member%}
                                                 {% user_is_program_student message.sender program as user_is_program_student%}
                                                 <!-- Post -->
-                                                <div class="post">
+                                                <div id="div_msg_{{ message.id }}" class="post">
                                                     <div class="user-block">
                                                         {% if user_is_program_member %}
                                                             {% sender_program_member message.sender program as program_member %}
@@ -136,7 +136,7 @@
                                                           <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
                                                     </span>
                                                         <span class="description">
-                                                        {% if message.readed %}<i class="fa fa-envelope-open"></i>{% else %}<i class="fa fa-envelope"></i>{% endif %}
+                                                        {% if message.readed %}<i id="i_msg_{{ message.id }}" class="fa fa-envelope-open"></i>{% else %}<i id="i_msg_{{ message.id }}" class="fa fa-envelope"></i>{% endif %}
                                                             {{ message.date|date:'d-m-Y'}}
                                                     </span>
                                                     </div>
@@ -200,12 +200,11 @@
                                                                 </button>
                                                             </div>
 
-                                                            <form id="frm_remove_message_{{ message.id }}" method="post">
+                                                            <form id="frm_remove_message_{{ message.id }}" data="{{ message.id }}" method="post">
                                                                 <div class="modal-body alert alert-danger">
                                                                     <h4>Seguro desea eliminar el mensaje:<br>{{ message }}</h4>
 
-
-                                                                    <input type="hidden" value="{{ message.id }}">
+                                                                    <input type="hidden" name="message_{{ message.id }}" value="{{ message.id }}">
 
                                                                 </div>
                                                                 <div class="modal-footer justify-content-between">
@@ -745,7 +744,6 @@
                 e.preventDefault();
 
                 var current_index = $(this).attr('data');
-                alert(current_index);
                 var url = "{% url 'programs:ajx_mark_message_readed' program.slug %}";
 
 
@@ -764,6 +762,8 @@
                             $('#modal_read_message_'+current_index).modal('show');
                             $('#a_read_message_'+current_index).replaceWith('<a href="#" id="a_remove_message_'+current_index+'" data="'+current_index+'" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>\n')
                             $('#p_message_body_'+current_index).removeClass('text-bold')
+                            $('#i_msg_'+current_index).removeClass('fa-envelope')
+                            $('#i_msg_'+current_index).addClass('fa-envelope-open')
 
 
 
@@ -806,204 +806,278 @@
                         })
                     }
                 });
+
+            });
+
+
+            $(document).on('click',"a[id*='a_remove_message_']",function (e) {
+                e.preventDefault();
+                var current_index = $(this).attr('data');
+                $('#modal_rm_message_'+current_index).modal('show');
+
+
+            });
+
+            $(document).on('submit',"form[id*='frm_remove_message_']", function (e) {
+                e.preventDefault();
+
+                var current_index = $(this).attr('data');
+                var url = "{% url 'programs:ajx_delete_message' program.slug %}";
+
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'message_id':current_index,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+                            if(json[0].messages_count > 0){
+                                $('#div_msg_'+current_index).remove();
+                            }
+                            else{
+                                $('#div_msg_'+current_index).replaceWith('<div class="alert alert-warning text-center"><h4>Usted no tiene mensaje alguno</h4></div>');
+
+
+                            }
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Mensaje eliminado exitosamente.'
+                            })
+
+
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el mensaje.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el mensaje: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el mensaje: Usted no es el receptor del mismo.'
+                            })
+
+                        }
+                        $('#modal_rm_message_'+current_index).modal('hide');
+
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+
+            })
+
+            $(document).on('click',"button[id*='btn_rm_tuthor']",function () {
+                var tuthor_id = $(this).attr('data');
+                var div_selector = '#div_tuthor_'+ tuthor_id;
+                var url = "{% url 'programs:ajx_delete_tuthor' program.slug %}";
+
+                $('#modal_rm_tuthor_{{ tuthor.id }}').modal('hide');
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'tuthor_id':tuthor_id,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+                            tutores = tutores-1
+
+                            $(div_selector).remove();
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Tutor eliminado exitósamente'
+                            });
+                            if (tutores == 0){
+                                $('#div_new_tuthors').append('<div class="alert alert-warning col-md-10 offset-1" id="div_no_tuthors">\n' +
+                                    '                                        <h4 class="text-center"><i class="text-white fa fa-exclamation-triangle"></i> Este estudiante no tiene tutores asignados</h4>\n' +
+                                    '                                        </div>')
+                            }
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar al tutor seleccionado.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede eliminar al tutor seleccionado.'
+                            })
+
+                        }
+                        cons
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        $('#div_by_workshop').removeClass('hidden')
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
                 $(div_selector).remove();
 
             });
+            $('#frm_add_tuthor').on('submit', function (e) {
+                e.preventDefault();
+                var url = "{% url 'programs:ajx_create_tuthor' program.slug student.id%}";
 
 
-        $(document).on('click',"a[id*='a_remove_message_']",function (e) {
-            e.preventDefault();
-            var current_index = $(this).attr('data');
-            $('#modal_rm_message_'+current_index).modal('show');
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'tuthor_name':$('#inp_tuthor_name').val(),
+                        'tuthor_email':$('#inp_tuthor_email').val(),
+                        'tuthor_lastname':$('#inp_tuthor_lastname').val(),
+                        'tuthor_institution':$('#inp_tuthor_institution').val(),
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
 
 
-        });
 
-        $(document).on('click',"button[id*='btn_rm_tuthor']",function () {
-            var tuthor_id = $(this).attr('data');
-            var div_selector = '#div_tuthor_'+ tuthor_id;
-            var url = "{% url 'programs:ajx_delete_tuthor' program.slug %}";
+                        $('#frm_add_tuthor')[0].reset();
 
-            $('#modal_rm_tuthor_{{ tuthor.id }}').modal('hide');
+                        if (json[0].created == 1) {
+                            tutores = tutores +1;
 
-            $.ajax({
-                url : url,
-                type : "POST", // http method
-                data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                    'tuthor_id':tuthor_id,
-                }, // data sent with the post request
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Tutor agregado exitosamente'
+                            })
 
-                // handle a successful response
-                success : function(json) {
+                            var new_tuthor_div = '<div class="form-row align-items-center pb-2" id="div_tuthor_'+json[0].id+'">\n' +
+                                '                                    <div class="col-md-2">\n' +
+                                '                                        <input type="email" class="form-control" readonly id="inp_tuthor_email_'+json[0].id+'" data="'+json[0].id+'" name="tuthor_email_'+json[0].id+'" placeholder="Email del tutor" value="'+json[0].email +'"  required="">\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="col-md-2">\n' +
+                                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_name_'+json[0].id+'" name="tuthor_name_'+json[0].id+'" placeholder="Nombre(s) del tutor" value="'+json[0].name +'" required="">\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="col-md-3">\n' +
+                                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_lastname_'+json[0].id+'" name="tuthor_lastname_'+json[0].id+'" placeholder="Apellidos del tutor" value="'+json[0].lastname +'" required="">\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="col-md-4">\n' +
+                                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_institution_'+json[0].id+'" name="tuthor_institution_'+json[0].id+'" placeholder="Institución del tutor" value="'+json[0].institution +'" required="">\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="col-md-1 pl-4 " id="div_rm_tuthor_'+json[0].id+'">\n' +
+                                '                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+json[0].id+'" data="'+json[0].id+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' +
+                                '                                    </div>\n' +
+                                '\n' +
+                                '\n' +
+                                '                                </div>';
+                            $('#div_no_tuthors').remove();
+                            $('#div_new_tuthors').append(new_tuthor_div);
 
-                    if (json[0].deleted == 1) {
-                        tutores = tutores-1
 
-                        $(div_selector).remove();
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar al tutor indicado.'
+                            })
 
-                        Toast.fire({
-                            type: 'success',
-                            title: 'Tutor eliminado exitósamente'
-                        });
-                        if (tutores == 0){
-                            $('#div_new_tuthors').append('<div class="alert alert-warning col-md-10 offset-1" id="div_no_tuthors">\n' +
-                                '                                        <h4 class="text-center"><i class="text-white fa fa-exclamation-triangle"></i> Este estudiante no tiene tutores asignados</h4>\n' +
-                                '                                        </div>')
                         }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede agregar tutores.'
+                            })
 
-                    } else if(json[0].deleted == 0){
+                        }
+                        cons
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        $('#div_by_workshop').removeClass('hidden')
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
                         Toast.fire({
                             type: 'error',
-                            title: 'No se ha podido eliminar al tutor seleccionado.'
-                        })
-
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        });
+                        $('#frm_add_tuthor')[0].reset();
                     }
-                    else if(json[0].deleted == 2){
-                        Toast.fire({
-                            type: 'error',
-                            title: 'Usted no puede eliminar al tutor seleccionado.'
-                        })
+                });
 
-                    }
-                    cons
-                    console.log(json); // log the returned json to the console
-                    console.log("success"); // another sanity check
+                $('#modal_add_tuthor').modal('hide');
 
 
-
-
-                    $('#div_by_workshop').removeClass('hidden')
-
-                },
-
-                // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                    Toast.fire({
-                        type: 'error',
-                        title: 'Uff, ha ocurrido algo desconocido.'
-                    })
-                }
             });
-            $(div_selector).remove();
+            $(document).on('change','#slc_category',function () {
+                if($(this).val()=='interno'){
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                        '                                <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>\n' +
+                        '                                <select class="form-control" id="slc_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
+                        '<option value="" selected>Seleccione una opción</option>'+
+                        {% for inner_area in inner_areas %}
+                            '<option value="{{ inner_area }}">{{ inner_area }}</option>'+
+                        {% endfor %}
+                        ''+
 
-        });
-        $('#frm_add_tuthor').on('submit', function (e) {
-            e.preventDefault();
-            var url = "{% url 'programs:ajx_create_tuthor' program.slug student.id%}";
-
-
-
-            $.ajax({
-                url : url,
-                type : "POST", // http method
-                data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                    'tuthor_name':$('#inp_tuthor_name').val(),
-                    'tuthor_email':$('#inp_tuthor_email').val(),
-                    'tuthor_lastname':$('#inp_tuthor_lastname').val(),
-                    'tuthor_institution':$('#inp_tuthor_institution').val(),
-                }, // data sent with the post request
-
-                // handle a successful response
-                success : function(json) {
-
-
-
-                    $('#frm_add_tuthor')[0].reset();
-
-                    if (json[0].created == 1) {
-                        tutores = tutores +1;
-
-                        Toast.fire({
-                            type: 'success',
-                            title: 'Tutor agregado exitosamente'
-                        })
-
-                        var new_tuthor_div = '<div class="form-row align-items-center pb-2" id="div_tuthor_'+json[0].id+'">\n' +
-                            '                                    <div class="col-md-2">\n' +
-                            '                                        <input type="email" class="form-control" readonly id="inp_tuthor_email_'+json[0].id+'" data="'+json[0].id+'" name="tuthor_email_'+json[0].id+'" placeholder="Email del tutor" value="'+json[0].email +'"  required="">\n' +
-                            '                                    </div>\n' +
-                            '                                    <div class="col-md-2">\n' +
-                            '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_name_'+json[0].id+'" name="tuthor_name_'+json[0].id+'" placeholder="Nombre(s) del tutor" value="'+json[0].name +'" required="">\n' +
-                            '                                    </div>\n' +
-                            '                                    <div class="col-md-3">\n' +
-                            '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_lastname_'+json[0].id+'" name="tuthor_lastname_'+json[0].id+'" placeholder="Apellidos del tutor" value="'+json[0].lastname +'" required="">\n' +
-                            '                                    </div>\n' +
-                            '                                    <div class="col-md-4">\n' +
-                            '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_institution_'+json[0].id+'" name="tuthor_institution_'+json[0].id+'" placeholder="Institución del tutor" value="'+json[0].institution +'" required="">\n' +
-                            '                                    </div>\n' +
-                            '                                    <div class="col-md-1 pl-4 " id="div_rm_tuthor_'+json[0].id+'">\n' +
-                            '                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+json[0].id+'" data="'+json[0].id+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' +
-                            '                                    </div>\n' +
-                            '\n' +
-                            '\n' +
-                            '                                </div>';
-                        $('#div_no_tuthors').remove();
-                        $('#div_new_tuthors').append(new_tuthor_div);
-
-
-                    } else if(json[0].deleted == 0){
-                        Toast.fire({
-                            type: 'error',
-                            title: 'No se ha podido agregar al tutor indicado.'
-                        })
-
-                    }
-                    else if(json[0].deleted == 2){
-                        Toast.fire({
-                            type: 'error',
-                            title: 'Usted no puede agregar tutores.'
-                        })
-
-                    }
-                    cons
-                    console.log(json); // log the returned json to the console
-                    console.log("success"); // another sanity check
-
-
-
-
-                    $('#div_by_workshop').removeClass('hidden')
-
-                },
-
-                // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                    Toast.fire({
-                        type: 'error',
-                        title: 'Uff, ha ocurrido algo desconocido.'
-                    });
-                    $('#frm_add_tuthor')[0].reset();
+                        '</select>'+
+                        '                            </div>')
                 }
+                else if($(this).val()=='externo'){
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                        '                                <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>\n' +
+                        '                                <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
+                        '\n' +
+                        '                            </div>');
+
+                }
+
             });
-
-            $('#modal_add_tuthor').modal('hide');
-
-
-        });
-        $(document).on('change','#slc_category',function () {
-            if($(this).val()=='interno'){
-                $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
-                    '                                <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>\n' +
-                    '                                <select class="form-control" id="slc_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
-                    '<option value="" selected>Seleccione una opción</option>'+
-                    {% for inner_area in inner_areas %}
-                        '<option value="{{ inner_area }}">{{ inner_area }}</option>'+
-                    {% endfor %}
-                    ''+
-
-                    '</select>'+
-                    '                            </div>')
-            }
-            else if($(this).val()=='externo'){
-                $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
-                    '                                <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>\n' +
-                    '                                <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
-                    '\n' +
-                    '                            </div>');
-
-            }
-
-        });
 
 
 

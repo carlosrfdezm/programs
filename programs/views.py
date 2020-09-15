@@ -2100,12 +2100,25 @@ def ajx_delete_message(request, program_slug):
     program=Program.objects.get(slug=program_slug)
     message = Message.objects.get(pk=request.POST['message_id'])
 
-    if request.user == message.sender:
+    if program.type == 'phd':
+        receiver_user = message.phd_student_receiver.user
+    elif program.type == 'msc':
+        receiver_user = message.msc_student_receiver.user
+    elif program.type == 'dip':
+        receiver_user = message.dip_student_receiver.user
+
+    if request.user == receiver_user:
         if request.method=='POST':
             try:
                 message.delete()
+                if program.type == 'phd':
+                    messages_count = Message.objects.filter(phd_student_receiver__user=receiver_user).__len__()
+                elif program.type == 'msc':
+                    messages_count = Message.objects.filter(msc_student_receiver__user=receiver_user).__len__()
+                elif program.type == 'dip':
+                    messages_count = Message.objects.filter(dip_student_receiver__user=receiver_user).__len__()
                 return HttpResponse(
-                    json.dumps([{'deleted': 1}]),
+                    json.dumps([{'deleted': 1,'messages_count': messages_count}]),
                     content_type="application/json"
                 )
             except:
@@ -2115,12 +2128,12 @@ def ajx_delete_message(request, program_slug):
                 )
         else:
             return HttpResponse(
-                json.dumps([{'deleted': 0}]),
+                json.dumps([{'deleted': 2}]),
                 content_type="application/json"
             )
     else:
         return HttpResponse(
-            json.dumps([{'deleted': 0}]),
+            json.dumps([{'deleted': 3}]),
             content_type="application/json"
         )
 
