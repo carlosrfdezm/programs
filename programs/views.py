@@ -2058,6 +2058,72 @@ def ajx_delete_line(request, program_slug):
             content_type="application/json"
         )
 
+
+@login_required
+def ajx_mark_message_readed(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    message = Message.objects.get(pk=request.POST['message_id'])
+    if program.type == 'phd':
+        receiver_user = message.phd_student_receiver.user
+    elif program.type == 'msc':
+        receiver_user = message.msc_student_receiver.user
+    elif program.type == 'dip':
+        receiver_user = message.dip_student_receiver.user
+
+    if request.user == receiver_user:
+        if request.method=='POST':
+            try:
+                message.readed = True
+                message.save()
+                return HttpResponse(
+                    json.dumps([{'readed': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                return HttpResponse(
+                    json.dumps([{'readed': 0}]),
+                    content_type="application/json"
+                )
+        else:
+            return HttpResponse(
+                json.dumps([{'readed': 2}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'readed': 3}]),
+            content_type="application/json"
+        )
+
+@login_required
+def ajx_delete_message(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    message = Message.objects.get(pk=request.POST['message_id'])
+
+    if request.user == message.sender:
+        if request.method=='POST':
+            try:
+                message.delete()
+                return HttpResponse(
+                    json.dumps([{'deleted': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                return HttpResponse(
+                    json.dumps([{'deleted': 0}]),
+                    content_type="application/json"
+                )
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'deleted': 0}]),
+            content_type="application/json"
+        )
+
 @login_required
 def ajx_delete_course(request, program_slug):
     program=Program.objects.get(slug=program_slug)
