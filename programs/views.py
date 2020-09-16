@@ -909,7 +909,7 @@ def edit_student(request, program_slug, student_id):
 
 
 
-            PhdStudent.objects.filter(student=Student.objects.get(pk=student_id)).update(
+            PhdStudent.objects.filter(student=student).update(
                 status=request.POST['student_status'],
                 category=request.POST['student_category'],
                 center=request.POST['student_center'],
@@ -955,8 +955,11 @@ def edit_student(request, program_slug, student_id):
                     s_i_r.accomplished = False
                     s_i_r.save()
 
+            print(student.phdstudent.status)
+
             if student.phdstudent.status == 'doctorando' or student.phdstudent.status == 'graduado':
                 for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+                    print(requirement)
                     if 'student_new_f_requirement_' + str(requirement.id) in request.POST:
                         s_f_r=StudentFileDocument.objects.get(student=student, program_file_document=requirement)
                         s_f_r.accomplished=True

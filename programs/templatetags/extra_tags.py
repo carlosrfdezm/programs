@@ -81,17 +81,25 @@ def is_past(date):
 
 @register.simple_tag
 def finish_requirements_accomplished(student, program):
-    accomplished=True
+    accomplished = True
     if program.type == 'phd':
-        for requirement in ProgramFinishRequirements.objects.filter(program=program):
-            for student_requirement in StudentFinishRequirement.objects.filter(requirement__program=program, student=student):
-                if not student_requirement.accomplished:
-                    accomplished=False
+        for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+            student_requirement, created = StudentFileDocument.objects.get_or_create(student=student,
+                                                                                     program_file_document=requirement)
+            if not student_requirement.accomplished:
+                accomplished = False
     elif program.type == 'msc':
-        for requirement in ProgramFinishRequirements.objects.filter(program=program):
-            for student_requirement in StudentFinishRequirement.objects.filter(requirement__program=program, msc_student=student):
-                if not student_requirement.accomplished:
-                    accomplished=False
+        for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+            student_requirement, created = StudentFileDocument.objects.get_or_create(msc_student=student,
+                                                                                     program_file_document=requirement)
+            if not student_requirement.accomplished:
+                accomplished = False
+    elif program.type == 'dip':
+        for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+            student_requirement, created = StudentFileDocument.objects.get_or_create(msc_student=student,
+                                                                                     program_file_document=requirement)
+            if not student_requirement.accomplished:
+                accomplished = False
 
 
     return accomplished

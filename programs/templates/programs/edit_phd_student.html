@@ -360,7 +360,7 @@
                                                 <div class="col-md-1 col-sm-1 text-center">
                                                     {% student_requirement_accomplished doc_student doc as doc_accomplished %}
                                                     <div class="icheck-primary d-inline">
-                                                        <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_requirement_{{ doc.id }}" {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
+                                                        <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_f_requirement_{{ doc.id }}" {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
                                                         <label for="inp_student_new_requirement_{{ doc.id }}">
                                                         </label>
                                                     </div>
