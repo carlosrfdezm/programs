@@ -295,7 +295,7 @@
                                         </div>
                                     </div>
                                     {% for doc in new_init_requirements %}
-                                        <div class="row">
+                                        <div class="row pt-1 pb-1 align-items-center">
                                             <div class="col-md-1 col-sm-1 text-center">
                                                 {% if doc.type == 'student' %}
                                                     <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
@@ -306,7 +306,7 @@
                                                 {% endif %}
                                             </div>
                                             <div class="col-md-8 col-sm-6">
-                                                <p>{{ doc.doc_name|truncatewords:6 }}</p>
+                                                <h6>{{ doc.doc_name|truncatewords:6 }}</h6>
                                             </div>
                                             <div class="col-md-1 col-sm-1 text-center">
                                                 {% student_requirement_accomplished doc_student doc as doc_accomplished %}
@@ -344,7 +344,7 @@
                                             </div>
                                         </div>
                                         {% for doc in new_finish_requirements %}
-                                            <div class="row">
+                                            <div class="row pt-1 pb-1 align-items-center">
                                                 <div class="col-md-1 col-sm-1 text-center">
                                                     {% if doc.type == 'student' %}
                                                         <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
