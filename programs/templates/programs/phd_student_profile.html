@@ -37,7 +37,7 @@
                                 <div class="text-center">
                                     {% if student.picture %}
                                         <img class="profile-user-img img-fluid img-circle"
-                                             src="../../dist/img/user4-128x128.jpg"
+                                             src="{% url 'programs:program_student_picture' program.slug student.id %}"
                                              alt="User profile picture">
                                     {% elif student.gender == 'm' %}
                                         <img class="profile-user-img img-fluid img-circle" src="{% static 'programs/dist/img/avatar5.png' %}" alt="">
