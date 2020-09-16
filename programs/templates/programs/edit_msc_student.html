@@ -68,6 +68,7 @@
                                             <option value="solicitante" {% if msc_student.status == 'solicitante' %}selected{% endif %}>Solicitante</option>
                                             <option value="maestrante" {% if msc_student.status == 'maestrante' %}selected{% endif %}>Maestrante</option>
                                             <option value="graduado" {% if msc_student.status == 'graduado' %}selected{% endif %}>Graduado</option>
+                                            <option value="denegado" {% if phd_student.status == 'denegado' %}selected{% endif %}>Denegado</option>
 
                                         </select>
                                     </div>
@@ -371,10 +372,10 @@
                 today = yyyy+'-'+mm+'-'+dd;
 
                 if($(this).val()=='maestrante'){
-                $('#inp_init_date').val(today);
+                    $('#inp_init_date').val(today);
                 }
                 if($(this).val()=='graduado'){
-                $('#inp_graduate_date').val(today);
+                    $('#inp_graduate_date').val(today);
                 }
 
             })

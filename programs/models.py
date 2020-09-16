@@ -224,7 +224,7 @@ class MscStudent(models.Model):
     birth_date=models.DateField(default=now)
     dni=models.CharField(max_length=24, default='12345678901')
     status = models.CharField(max_length=15,default='solicitante', choices=[('solicitante', 'Solicitante'), ('maestrante', 'Maestrante'),
-                                                                            ('graduado', 'Graduado')])
+                                                                            ('graduado', 'Graduado'), ('denegado', 'Denegado')])
     edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
     category = models.CharField(max_length=15, default='interno',
                                 choices=[('interno', 'Interno'), ('externo', 'Externo')])
@@ -246,7 +246,7 @@ class DipStudent(models.Model):
     birth_date=models.DateField(default=now)
     dni=models.CharField(max_length=24, default='12345678901')
     status = models.CharField(max_length=15,default='solicitante', choices=[('solicitante', 'Solicitante'), ('diplomante', 'Diplomante'),
-                                                                            ('graduado', 'Graduado')])
+                                                                            ('graduado', 'Graduado'), ('denegado', 'Denegado')])
     edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
     faculty = models.CharField(max_length=100, help_text='Nombre de la Facultad a la que pertenece')
     category = models.CharField(max_length=15, default='interno',
@@ -258,7 +258,7 @@ class DipStudent(models.Model):
 
 class PhdStudent(models.Model):
     student = models.OneToOneField(Student,on_delete=models.CASCADE)
-    status= models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'),('doctorando','Doctorando'), ('graduado', 'Graduado')])
+    status= models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'),('doctorando','Doctorando'), ('graduado', 'Graduado'), ('denegado', 'Denegado')])
     category= models.CharField(max_length=15,default='interno', choices=[('interno', 'Interno'),('externo','Externo')])
     center = models.CharField(max_length=150, default='Universidad Agraria de La Habana')
 

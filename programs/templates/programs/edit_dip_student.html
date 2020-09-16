@@ -68,6 +68,7 @@
                                             <option value="solicitante" {% if student.status == 'solicitante' %}selected{% endif %}>Solicitante</option>
                                             <option value="diplomante" {% if student.status == 'diplomante' %}selected{% endif %}>Diplomante</option>
                                             <option value="graduado" {% if student.status == 'graduado' %}selected{% endif %}>Graduado</option>
+                                            <option value="denegado" {% if phd_student.status == 'denegado' %}selected{% endif %}>Denegado</option>
 
                                         </select>
                                     </div>
@@ -314,10 +315,10 @@
                 today = yyyy+'-'+mm+'-'+dd;
 
                 if($(this).val()=='diplomante'){
-                $('#inp_init_date').val(today);
+                    $('#inp_init_date').val(today);
                 }
                 if($(this).val()=='graduado'){
-                $('#inp_graduate_date').val(today);
+                    $('#inp_graduate_date').val(today);
                 }
 
             })
