@@ -10,7 +10,7 @@ from django.utils.timezone import now
 
 from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember, StudentFinishRequirement, \
     ProgramFinishRequirements, CGC_Member, PhdStudent, PhdStudentTheme, InvestigationProject, Student, \
-    StudentFormationPlan, MscStudent, DipStudent, StudentFileDocument
+    StudentFormationPlan, MscStudent, DipStudent, StudentFileDocument, ProgramFileDoc
 
 register = template.Library()
 
@@ -54,16 +54,21 @@ def country_list():
 def init_requirements_accomplished(student, program):
     accomplished=True
     if program.type == 'phd':
-        for requirement in ProgramInitRequirements.objects.filter(program=program):
-            for student_requirement in StudentInitRequirement.objects.filter(requirement__program=program, student=student):
-                if not student_requirement.accomplished:
-                    accomplished=False
+        for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+            student_requirement, created = StudentFileDocument.objects.get_or_create(student=student, program_file_document=requirement)
+            if not student_requirement.accomplished:
+                accomplished=False
     elif program.type == 'msc':
-        for requirement in ProgramInitRequirements.objects.filter(program=program):
-            for student_requirement in StudentInitRequirement.objects.filter(requirement__program=program, msc_student=student):
-                if not student_requirement.accomplished:
-                    accomplished=False
-
+        for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+            student_requirement, created = StudentFileDocument.objects.get_or_create(msc_student=student, program_file_document=requirement)
+            if not student_requirement.accomplished:
+                accomplished = False
+    elif program.type == 'dip':
+        for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+            student_requirement, created = StudentFileDocument.objects.get_or_create(msc_student=student,
+                                                                                        program_file_document=requirement)
+            if not student_requirement.accomplished:
+                accomplished = False
 
     return accomplished
 

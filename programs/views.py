@@ -844,9 +844,10 @@ def members_list(request, program_slug, scope):
 @login_required
 def edit_student(request, program_slug, student_id):
     program= Program.objects.get(slug=program_slug)
+    student = Student.objects.get(pk=student_id)
     if user_is_program_cs(request.user, program):
         if request.method == 'POST':
-            user=Student.objects.get(pk=student_id).user
+            user=student.user
             user.first_name=request.POST['student_name']
             user.last_name=request.POST['student_surename']
             user.email=request.POST['student_email']
@@ -929,7 +930,6 @@ def edit_student(request, program_slug, student_id):
 
             try:
                 if request.FILES['student_picture']:
-                    student=Student.objects.get(pk=student_id)
                     student.picture=request.FILES['student_picture']
                     student.save()
             except:
@@ -937,7 +937,7 @@ def edit_student(request, program_slug, student_id):
 
             for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
                 if 'student_new_requirement_' + str(requirement.id) in request.POST:
-                    s_i_r=StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id), program_file_document=requirement)
+                    s_i_r=StudentFileDocument.objects.get(student=student, program_file_document=requirement)
                     s_i_r.accomplished=True
                     if requirement.get_old:
                         try:
@@ -949,33 +949,29 @@ def edit_student(request, program_slug, student_id):
 
 
                 else:
-                    s_i_r = StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id),
+                    s_i_r = StudentFileDocument.objects.get(student=student,
                                                             program_file_document=requirement)
                     s_i_r.caducity_date = None
                     s_i_r.accomplished = False
                     s_i_r.save()
 
-
-            for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
-
-                if 'student_new_f_requirement_' + str(requirement.id) in request.POST:
-                    s_f_r=StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id), program_file_document=requirement)
-                    s_f_r.accomplished=True
-                    if requirement.get_old:
-                        try:
-                            s_f_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
-                        except:
-                            s_f_r.caducity_date = None
-
-
-                    s_f_r.save()
-                else:
-                    s_f_r = StudentFileDocument.objects.get(student=Student.objects.get(pk=student_id),
-                                                            program_file_document=requirement)
-                    s_f_r.accomplished = False
-                    s_f_r.caducity_date = None
-                    s_f_r.save()
-
+            if student.phdstudent.status == 'doctorando' or student.phdstudent.status == 'graduado':
+                for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+                    if 'student_new_f_requirement_' + str(requirement.id) in request.POST:
+                        s_f_r=StudentFileDocument.objects.get(student=student, program_file_document=requirement)
+                        s_f_r.accomplished=True
+                        if requirement.get_old:
+                            try:
+                                s_f_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
+                            except:
+                                s_f_r.caducity_date = None
+                        s_f_r.save()
+                    else:
+                        s_f_r = StudentFileDocument.objects.get(student=student,
+                                                                program_file_document=requirement)
+                        s_f_r.accomplished = False
+                        s_f_r.caducity_date = None
+                        s_f_r.save()
 
             return HttpResponseRedirect(reverse('programs:students_list', args=[program_slug,'all']))
         else:
