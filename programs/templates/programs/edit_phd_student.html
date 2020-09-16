@@ -281,118 +281,101 @@
 
                                     <h6>De ingreso:</h6>
                                     <div class="row">
-                                        <table class="table table-striped">
-                                            <thead>
-                                            <tr>
-                                                <th class="text-center">Resp.</th>
-                                                <th >Nombre del documento</th>
-                                                <th class="text-center">Listo</th>
-                                                <th class="text-center">Caduca</th>
-
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for doc in new_init_requirements %}
-                                                <!-- Post -->
-                                                <tr>
-                                                    <td class="text-center">
-                                                        {% if doc.type == 'student' %}
-                                                            <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
-                                                        {% elif doc.type == 'program' %}
-                                                            <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
-                                                        {% elif doc.type == 'comission' %}
-                                                            <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {{ doc }}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        {% student_requirement_accomplished doc_student doc as doc_accomplished %}
-                                                        <div class="icheck-primary d-inline">
-                                                            <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_requirement_{{ doc.id }}" {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
-                                                            <label for="inp_student_new_requirement_{{ doc.id }}">
-                                                            </label>
-                                                        </div>
-
-                                                    </td>
-                                                    <td class="text-center">
-                                                        {% if doc.get_old %}
-                                                            {% student_doc_caducity_date doc_student doc as caducity_date %}
-                                                            <input type="date" class="form-control col-md-6 col-sm-3 offset-4" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% else %} readonly {% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
-                                                        {% else %}
-                                                            --------
-                                                        {% endif  %}
-                                                    </td>
-                                                </tr>
-
-                                                <!-- /.post -->
-                                            {% endfor %}
-
-                                            </tbody>
-
-
-                                        </table>
+                                        <div class="col-md-1 col-sm-1">
+                                            <h6 class="text-center"><strong>Resp.</strong></h6>
+                                        </div>
+                                        <div class="col-md-8 col-sm-6">
+                                            <h6><strong>Nombre del documento</strong></h6>
+                                        </div>
+                                        <div class="col-md-1 col-sm-1 text-center">
+                                            <h6><strong>Listo.</strong></h6>
+                                        </div>
+                                        <div class="col-md-2 col-sm-4 text-center">
+                                            <h6><strong> Fecha de Caducidad</strong></h6>
+                                        </div>
                                     </div>
-                                {% if doc_student.phdstudent.status == 'doctorando' or doc_student.phdstudent.status == 'graduado' %}
-                                    <h6>De egreso:</h6>
-                                    <div class="row">
-                                        <table class="table table-striped">
-                                            <thead>
-                                            <tr>
-                                                <th class="text-center">Resp.</th>
-                                                <th >Nombre del documento</th>
-                                                <th class="text-center">Listo</th>
-                                                <th class="text-center">Caduca</th>
+                                    {% for doc in new_init_requirements %}
+                                        <div class="row">
+                                            <div class="col-md-1 col-sm-1 text-center">
+                                                {% if doc.type == 'student' %}
+                                                    <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                {% elif doc.type == 'program' %}
+                                                    <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                {% elif doc.type == 'comission' %}
+                                                    <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-8 col-sm-6">
+                                                <p>{{ doc.doc_name|truncatewords:6 }}</p>
+                                            </div>
+                                            <div class="col-md-1 col-sm-1 text-center">
+                                                {% student_requirement_accomplished doc_student doc as doc_accomplished %}
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_requirement_{{ doc.id }}" {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
+                                                    <label for="inp_student_new_requirement_{{ doc.id }}">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 col-sm-4 text-center">
+                                                {% if doc.get_old %}
+                                                    {% student_doc_caducity_date doc_student doc as caducity_date %}
+                                                    <input type="date" class="form-control" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% else %} readonly {% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
+                                                {% else %}
+                                                    --------
+                                                {% endif  %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
 
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for doc in new_finish_requirements %}
-                                                <!-- Post -->
-                                                <tr>
-                                                    <td class="text-center">
-                                                        {% if doc.type == 'student' %}
-                                                            <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
-                                                        {% elif doc.type == 'program' %}
-                                                            <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
-                                                        {% elif doc.type == 'comission' %}
-                                                            <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {{ doc }}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        {% student_requirement_accomplished doc_student doc as f_doc_accomplished %}
-                                                        <div class="icheck-primary d-inline">
-                                                            <input type="checkbox" id="inp_student_new_f_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_f_requirement_{{ doc.id }}" {% if f_doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
-                                                            <label for="inp_student_new_f_requirement_{{ doc.id }}">
-                                                            </label>
-                                                        </div>
-
-                                                    </td>
-                                                    <td class="text-center">
-
-                                                        {% if doc.get_old %}
-                                                            {% student_doc_caducity_date doc_student doc as caducity_date %}
-                                                            <input type="date" class="form-control col-md-7 col-sm-6 offset-5" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if f_doc_accomplished %}required {% else %} readonly {% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
-
-                                                        {% else %}
-                                                            --------
-                                                        {% endif  %}
-                                                    </td>
-                                                </tr>
-
-                                                <!-- /.post -->
-                                            {% endfor %}
-
-                                            </tbody>
-
-
-                                        </table>
-                                    </div>
-                                {% endif %}
+                                    {% if doc_student.phdstudent.status == 'doctorando' or doc_student.phdstudent.status == 'graduado' %}
+                                        <h6>De egreso:</h6>
+                                        <div class="row">
+                                            <div class="col-md-1 col-sm-1">
+                                                <h6 class="text-center"><strong>Resp.</strong></h6>
+                                            </div>
+                                            <div class="col-md-8 col-sm-6">
+                                                <h6><strong>Nombre del documento</strong></h6>
+                                            </div>
+                                            <div class="col-md-1 col-sm-1 text-center">
+                                                <h6><strong>Listo.</strong></h6>
+                                            </div>
+                                            <div class="col-md-2 col-sm-4 text-center">
+                                                <h6><strong> Fecha de Caducidad</strong></h6>
+                                            </div>
+                                        </div>
+                                        {% for doc in new_finish_requirements %}
+                                            <div class="row">
+                                                <div class="col-md-1 col-sm-1 text-center">
+                                                    {% if doc.type == 'student' %}
+                                                        <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                    {% elif doc.type == 'program' %}
+                                                        <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                    {% elif doc.type == 'comission' %}
+                                                        <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md-8 col-sm-6">
+                                                    <p>{{ doc.doc_name|truncatewords:6 }}</p>
+                                                </div>
+                                                <div class="col-md-1 col-sm-1 text-center">
+                                                    {% student_requirement_accomplished doc_student doc as doc_accomplished %}
+                                                    <div class="icheck-primary d-inline">
+                                                        <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_requirement_{{ doc.id }}" {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
+                                                        <label for="inp_student_new_requirement_{{ doc.id }}">
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 col-sm-4 text-center">
+                                                    {% if doc.get_old %}
+                                                        {% student_doc_caducity_date doc_student doc as caducity_date %}
+                                                        <input type="date" class="form-control" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% else %} readonly {% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
+                                                    {% else %}
+                                                        --------
+                                                    {% endif  %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
 
 
                                     <div class="form-row align-items-center">
