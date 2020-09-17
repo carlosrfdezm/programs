@@ -4,6 +4,8 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'programs/plugins/toastr/toastr.min.css' %}">
+    <link rel="stylesheet" href="{% static 'programs/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+
 {% endblock %}
 
 {% block content %}
@@ -112,22 +114,58 @@
 
                                 <hr>
                                 <h4><strong>Requisitos de ingreso:</strong></h4>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        {% for requirement in init_requirements %}
+                                <div class="row">
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th class="text-center">Resp.</th>
+                                            <th >Nombre del documento</th>
+                                            <th class="text-center">Listo</th>
+                                            <th class="text-center">Caduca</th>
 
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="inp_requirement_{{ requirement.id }}" name="student_requirement_{{ requirement.id }}">
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for doc in init_requirements %}
+                                            <!-- Post -->
+                                            <tr>
+                                                <td class="text-center">
+                                                    {% if doc.type == 'student' %}
+                                                        <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                    {% elif doc.type == 'program' %}
+                                                        <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                    {% elif doc.type == 'comission' %}
+                                                        <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {{ doc }}
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="icheck-primary d-inline">
+                                                        <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_requirement_{{ doc.id }}"  value="False" >
+                                                        <label for="inp_student_new_requirement_{{ doc.id }}">
+                                                        </label>
+                                                    </div>
 
-                                                <label class="form-check-label" for="inp_requirement_{{ requirement.id }}">{{ requirement.name }}</label>
-                                            </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    {% if doc.get_old %}
 
+                                                        <input type="date" class="form-control col-md-6 col-sm-6 offset-4" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}"  readonly >
+                                                    {% else %}
+                                                        --------
+                                                    {% endif  %}
+                                                </td>
+                                            </tr>
 
+                                            <!-- /.post -->
                                         {% endfor %}
-                                        <div class="help">
-                                            <p class="text-gray text-sm">Marcar sólo si el requerimiento está cumplido</p>
-                                        </div>
-                                    </div>
+
+                                        </tbody>
+
+
+                                    </table>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group">
@@ -202,46 +240,46 @@
                 if(emailReg.test( email ) && email != ''){
                     var url = "{% url 'programs:ajx_student_exists' program.slug %}"
                     $.ajax({
-                    url : url,
-                    type : "POST", // http method
-                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                        'email':$('#inp_email').val(),
-                    }, // data sent with the post request
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'email':$('#inp_email').val(),
+                        }, // data sent with the post request
 
-                    // handle a successful response
-                    success : function(json) {
+                        // handle a successful response
+                        success : function(json) {
 
-                        if (json[0].exists == 1) {
+                            if (json[0].exists == 1) {
 
-                            Toast.fire({
-                                type: 'error',
-                                title: 'Ya hay un estudiante de este programa con ese correo.'
-                            })
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Ya hay un estudiante de este programa con ese correo.'
+                                })
 
-                        } else if(json[0].exists == 0){
-                            Toast.fire({
-                                type: 'error',
-                                title: 'Uff, ha ocurrido un error desconocido'
-                            })
+                            } else if(json[0].exists == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Uff, ha ocurrido un error desconocido'
+                                })
 
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                         }
-                        console.log(json); // log the returned json to the console
-                        console.log("success"); // another sanity check
-
-
-
-
-                        {#$('#div_by_workshop').removeClass('hidden')#}
-
-                    },
-
-                    // handle a non-successful response
-                    error : function(xhr,errmsg,err) {
-                        $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                            " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                    }
-                });
+                    });
                 };
 
 
@@ -280,17 +318,17 @@
                             };
                         }
                     } else {
-                       Toast.fire({
-                                        type: 'error',
-                                        title: 'Este navegador no soporta HTML5, debe actualizarlo.'
-                                    });
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Este navegador no soporta HTML5, debe actualizarlo.'
+                        });
                         return false;
                     }
                 } else {
                     Toast.fire({
-                                        type: 'error',
-                                        title: 'Por favor seleccione una imagen.'
-                                    });
+                        type: 'error',
+                        title: 'Por favor seleccione una imagen.'
+                    });
                     return false;
                 }
             });

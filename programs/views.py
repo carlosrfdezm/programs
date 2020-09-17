@@ -381,21 +381,27 @@ def create_msc_student(request, program_slug, edition_id):
                     else:
                         return HttpResponse('Tipo de programa aun por crear')
 
-                    for requirement in ProgramInitRequirements.objects.filter(program=program):
+                    for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
 
                         if 'student_requirement_' + str(requirement.id) in request.POST:
-                            new_student_requirement = StudentInitRequirement(
+                            new_student_requirement = StudentFileDocument(
                                 msc_student=student,
-                                requirement=requirement,
+                                program_file_document=requirement,
                                 accomplished=True,
                             )
+                            if requirement.get_old:
+                                new_student_requirement.caducity_date = request.POST['caducity_date']
+
                             new_student_requirement.save()
 
                         else:
-                            new_student_requirement = StudentInitRequirement(
+                            new_student_requirement = StudentFileDocument(
                                 msc_student=student,
-                                requirement=requirement,
+                                program_file_document=requirement,
+                                accomplished=False,
                             )
+                            if requirement.get_old:
+                                new_student_requirement.caducity_date = None
                             new_student_requirement.save()
 
                     return HttpResponseRedirect(reverse('programs:create_msc_student', args=[program_slug, edition_id]))
@@ -450,21 +456,27 @@ def create_msc_student(request, program_slug, edition_id):
             else:
                 return HttpResponse('Tipo de programa aun por crear')
 
-            for requirement in ProgramInitRequirements.objects.filter(program=program):
+            for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
 
                 if 'student_requirement_' + str(requirement.id) in request.POST:
-                    new_student_requirement = StudentInitRequirement(
+                    new_student_requirement = StudentFileDocument(
                         msc_student=student,
-                        requirement=requirement,
+                        program_file_document=requirement,
                         accomplished=True,
                     )
+                    if requirement.get_old:
+                        new_student_requirement.caducity_date = request.POST['caducity_date']
+
                     new_student_requirement.save()
 
                 else:
-                    new_student_requirement = StudentInitRequirement(
+                    new_student_requirement = StudentFileDocument(
                         msc_student=student,
-                        requirement=requirement,
+                        program_file_document=requirement,
+                        accomplished=False,
                     )
+                    if requirement.get_old:
+                        new_student_requirement.caducity_date = None
                     new_student_requirement.save()
 
             return HttpResponseRedirect(reverse('programs:create_msc_student', args=[program_slug, edition_id]))
@@ -472,7 +484,7 @@ def create_msc_student(request, program_slug, edition_id):
             context = {
                 'program': program,
                 'edition': edition,
-                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
+                'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
                 'projects': InvestigationProject.objects.filter(program=program),
             }
             if Program.objects.get(slug=program_slug).type == 'msc':
@@ -959,7 +971,6 @@ def edit_student(request, program_slug, student_id):
 
             if student.phdstudent.status == 'doctorando' or student.phdstudent.status == 'graduado':
                 for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
-                    print(requirement)
                     if 'student_new_f_requirement_' + str(requirement.id) in request.POST:
                         s_f_r=StudentFileDocument.objects.get(student=student, program_file_document=requirement)
                         s_f_r.accomplished=True
@@ -1074,6 +1085,7 @@ def view_student_profile(request, program_slug, student_id):
 @login_required
 def edit_msc_student(request, program_slug, edition_id, student_id):
     program= Program.objects.get(slug=program_slug)
+    student = MscStudent.objects.get(pk=student_id)
     if user_is_program_cs(request.user, program):
         if request.method == 'POST':
             user=MscStudent.objects.get(pk=student_id).user
@@ -1146,24 +1158,25 @@ def edit_msc_student(request, program_slug, edition_id, student_id):
                     s_i_r.accomplished = False
                     s_i_r.caducity_date = None
                     s_i_r.save()
-            for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
-                if 'student_new_f_requirement_' + str(requirement.id) in request.POST:
-                    s_f_r = StudentFileDocument.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
-                                                            program_file_document=requirement)
-                    if requirement.get_old:
-                        try:
-                            s_f_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
-                        except:
-                            s_f_r.caducity_date = None
+            if student.status == 'maestrante' or student.status == 'graduado':
+                for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+                    if 'student_new_f_requirement_' + str(requirement.id) in request.POST:
+                        s_f_r = StudentFileDocument.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
+                                                                program_file_document=requirement)
+                        if requirement.get_old:
+                            try:
+                                s_f_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
+                            except:
+                                s_f_r.caducity_date = None
 
-                    s_f_r.accomplished=True
-                    s_f_r.save()
-                else:
-                    s_f_r = StudentFileDocument.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
-                                                            program_file_document=requirement)
-                    s_f_r.caducity_date = None
-                    s_f_r.accomplished = False
-                    s_f_r.save()
+                        s_f_r.accomplished=True
+                        s_f_r.save()
+                    else:
+                        s_f_r = StudentFileDocument.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
+                                                                program_file_document=requirement)
+                        s_f_r.caducity_date = None
+                        s_f_r.accomplished = False
+                        s_f_r.save()
 
             return HttpResponseRedirect(reverse('programs:msc_all_students_list', args=[program_slug,'all']))
         else:
