@@ -44,13 +44,13 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         {% if program.type == 'phd' %}
-                            <table id="example1" class="table table-bordered table-striped">
+                            <table id="example1" class="table table-bordered table-striped table-responsive-sm table-responsive-md">
                                 <thead>
                                 {% user_is_program_cs user program as user_is_program_cs %}
 
                                 <tr>
                                     <th>Nombre y apellidos</th>
-                                    <th>Fecha<br>(solicitud)</th>
+                                    <th >Fecha<br>(solicitud)</th>
                                     <th>Estado</th>
                                     <th>Número de <br>identidad</th>
                                     <th class="text-center">Requisitos<br> (ingreso)</th>
