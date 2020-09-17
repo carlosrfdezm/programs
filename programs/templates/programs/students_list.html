@@ -100,6 +100,7 @@
                                             <td class="text-center">
                                                 <div class="btn-group" role="group">
                                                     <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
+                                                    <a class="btn btn-primary btn-sm text-white" href="{% url 'programs:view_student_profile' program.slug student.id %}" title="Ver perfil" > <i class="fa fa-user"></i></a>
                                                     {% if scope == 'Doctorandos' %}
                                                         <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.phdstudent.id %}" title="Ver evaluaciones">  <i class="fa fa-user-graduate"></i></a>
                                                         <a class="btn btn-success btn-sm text-white" href="{% url 'programs:view_formation_plan' program.slug student.id %}" title="Ver plan de formación">  <i class="fa fa-calendar-check"></i></a>

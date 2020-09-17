@@ -325,7 +325,7 @@
                                                     {% student_doc_caducity_date doc_student doc as caducity_date %}
                                                     <input type="date" class="form-control" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% else %} readonly {% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
                                                 {% else %}
-                                                    --------
+                                                  ---------------------------
                                                 {% endif  %}
                                             </div>
                                         </div>
@@ -374,7 +374,7 @@
                                                         {% student_doc_caducity_date doc_student doc as caducity_date %}
                                                         <input type="date" class="form-control" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% else %} readonly {% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
                                                     {% else %}
-                                                        --------
+                                                        ---------------------------
                                                     {% endif  %}
                                                 </div>
                                             </div>

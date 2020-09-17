@@ -84,7 +84,7 @@
                     </li>
                 {% endif %}
                 <!-- Notifications Dropdown Menu -->
-            {% if student %}
+            {% if student and not member %}
                 <li class="nav-item">
                     <a class="nav-link text-primary" href="{% url 'programs:view_student_profile' program.slug student.id %}" title="Ver perfil">
                         <i class="fa fa-user"></i>

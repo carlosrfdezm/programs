@@ -998,12 +998,24 @@ def edit_student(request, program_slug, student_id):
 def view_student_profile(request, program_slug, student_id):
     program = Program.objects.get(slug=program_slug)
     user_is_student = False
-    if program.type == 'phd' and Student.objects.get(user=request.user)==Student.objects.get(pk=student_id):
-        user_is_student = True
-    elif program.type == 'msc' and MscStudent.objects.get(user=request.user, program=program)==MscStudent.objects.get(pk=student_id, program=program):
-        user_is_student = True
+    if program.type == 'phd':
+        try:
+            if Student.objects.get(user=request.user, program=program)==Student.objects.get(pk=student_id, program=program):
+                user_is_student = True
+        except Student.DoesNotExist:
+            pass
+    elif program.type == 'msc':
+        try:
+            if MscStudent.objects.get(user=request.user, program=program) == MscStudent.objects.get(pk=student_id, program=program):
+                user_is_student = True
+        except Student.DoesNotExist:
+            pass
     elif program.type == 'dip' and DipStudent.objects.get(user=request.user, program=program)==DipStudent.objects.get(pk=student_id, program=program):
-        user_is_student = True
+        try:
+            if DipStudent.objects.get(user=request.user, program=program) == DipStudent.objects.get(pk=student_id, program=program):
+                user_is_student = True
+        except Student.DoesNotExist:
+            pass
     if user_is_program_member(request.user, program) or user_is_student:
         if program.type == 'phd':
             context = {
@@ -1017,6 +1029,10 @@ def view_student_profile(request, program_slug, student_id):
                 'inner_areas': InnerAreas.objects.all(),
                 'messages': Message.objects.filter(Q(phd_student_receiver=Student.objects.get(pk=student_id))|Q(sender=request.user))
             }
+            try:
+                context['member']=ProgramMember.objects.get(user=request.user, program=program)
+            except ProgramMember.DoesNotExist:
+                pass
             return render(request, 'programs/phd_student_profile.html', context)
         elif program.type == 'msc':
             context = {
@@ -1028,6 +1044,10 @@ def view_student_profile(request, program_slug, student_id):
                 'edition':MscStudent.objects.get(pk=student_id).edition,
                 'inner_areas': InnerAreas.objects.all(),
             }
+            try:
+                context['member']=ProgramMember.objects.get(user=request.user, program=program)
+            except ProgramMember.DoesNotExist:
+                pass
             return render(request, 'programs/view_msc_student_profile.html', context)
         elif program.type == 'dip':
             context = {
@@ -1039,6 +1059,10 @@ def view_student_profile(request, program_slug, student_id):
                 'edition': DipStudent.objects.get(pk=student_id).edition,
                 'inner_areas': InnerAreas.objects.all(),
             }
+            try:
+                context['member']=ProgramMember.objects.get(user=request.user, program=program)
+            except ProgramMember.DoesNotExist:
+                pass
             return render(request, 'programs/view_dip_student_profile.html', context)
         else:
             return error_500(request, program, 'Tipo de programa no implementado.')
