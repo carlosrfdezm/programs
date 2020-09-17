@@ -1129,24 +1129,39 @@ def edit_msc_student(request, program_slug, edition_id, student_id):
             except:
                 pass
 
-            for requirement in ProgramInitRequirements.objects.filter(program=program):
-                if 'student_requirement_' + str(requirement.id) in request.POST:
-                    s_i_r=StudentInitRequirement.objects.get(msc_student=MscStudent.objects.get(pk=student_id), requirement=requirement)
+            for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+                if 'student_new_requirement_' + str(requirement.id) in request.POST:
+                    s_i_r=StudentFileDocument.objects.get(msc_student=MscStudent.objects.get(pk=student_id), program_file_document=requirement)
                     s_i_r.accomplished=True
+                    if requirement.get_old:
+                        try:
+                            s_i_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
+                        except:
+                            s_i_r.caducity_date = None
                     s_i_r.save()
                 else:
-                    s_i_r = StudentInitRequirement.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
-                                                               requirement=requirement)
+                    s_i_r = StudentFileDocument.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
+                                                            program_file_document=requirement)
+
                     s_i_r.accomplished = False
+                    s_i_r.caducity_date = None
                     s_i_r.save()
-            for requirement in ProgramFinishRequirements.objects.filter(program=program):
-                if 'student_f_requirement_' + str(requirement.id) in request.POST:
-                    s_f_r=StudentFinishRequirement.objects.get(msc_student=MscStudent.objects.get(pk=student_id), requirement=requirement)
+            for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+                if 'student_new_f_requirement_' + str(requirement.id) in request.POST:
+                    s_f_r = StudentFileDocument.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
+                                                            program_file_document=requirement)
+                    if requirement.get_old:
+                        try:
+                            s_f_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
+                        except:
+                            s_f_r.caducity_date = None
+
                     s_f_r.accomplished=True
                     s_f_r.save()
                 else:
-                    s_f_r = StudentFinishRequirement.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
-                                                                 requirement=requirement)
+                    s_f_r = StudentFileDocument.objects.get(msc_student=MscStudent.objects.get(pk=student_id),
+                                                            program_file_document=requirement)
+                    s_f_r.caducity_date = None
                     s_f_r.accomplished = False
                     s_f_r.save()
 
@@ -1157,8 +1172,8 @@ def edit_msc_student(request, program_slug, edition_id, student_id):
                 'member': ProgramMember.objects.get(user=request.user, program=program),
                 'edition': ProgramEdition.objects.get(pk=edition_id),
                 'msc_student': MscStudent.objects.get(pk=student_id),
-                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
-                'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
+                'new_init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'new_finish_requirements': ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True),
                 'projects': InvestigationProject.objects.filter(program=program),
 
             }
