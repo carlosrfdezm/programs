@@ -10,13 +10,6 @@ class ProgramFileDocInline(admin.TabularInline):
     model = ProgramFileDoc
     extra = 3
 
-class ProgramInitRequirementsInline(admin.TabularInline):
-    model = ProgramInitRequirements
-    extra = 1
-
-class ProgramFinishRequirementsInline(admin.TabularInline):
-    model = ProgramFinishRequirements
-    extra = 1
 
 class ProgramBackgroundsInline(admin.StackedInline):
     model = ProgramBackgrounds
@@ -25,7 +18,7 @@ class ProgramBackgroundsInline(admin.StackedInline):
 class ProgramAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("short_name",)}
     list_display = ('full_name','short_name','type')
-    inlines = [ProgramFileDocInline, ProgramInitRequirementsInline, ProgramFinishRequirementsInline, ProgramBackgroundsInline ]
+    inlines = [ProgramFileDocInline, ProgramBackgroundsInline ]
 
 admin.site.register(Program, ProgramAdmin)
 

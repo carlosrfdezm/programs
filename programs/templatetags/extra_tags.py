@@ -163,11 +163,11 @@ def student_finish_requirement_accomplished(student, program_requirement):
 def student_has_init_requirement_pending(student, program):
     has_pending = False
     if program.type == 'phd':
-        for requirement in StudentInitRequirement.objects.filter(student=student):
+        for requirement in StudentFileDocument.objects.filter(student=student, program_file_document__is_init_requirenment=True):
             if not requirement.accomplished:
                 has_pending=True
     elif program.type == 'msc':
-        for requirement in StudentInitRequirement.objects.filter(msc_student=student):
+        for requirement in StudentFileDocument.objects.filter(msc_student=student, program_file_document__is_init_requirenment=True):
             if not requirement.accomplished:
                 has_pending=True
 
