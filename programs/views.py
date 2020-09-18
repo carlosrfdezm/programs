@@ -1011,7 +1011,7 @@ def view_student_profile(request, program_slug, student_id):
     user_is_student = False
     if program.type == 'phd':
         try:
-            if Student.objects.get(user=request.user, program=program)==Student.objects.get(pk=student_id, program=program):
+            if Student.objects.get(user=request.user, program=program) == Student.objects.get(pk=student_id, program=program):
                 user_is_student = True
         except Student.DoesNotExist:
             pass
@@ -1034,8 +1034,8 @@ def view_student_profile(request, program_slug, student_id):
                 'student': Student.objects.get(pk=student_id),
                 'phd_student': PhdStudent.objects.get(student=Student.objects.get(pk=student_id),
                                                       student__program=program),
-                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
-                'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
+                'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'finish_requirements': ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True),
                 'projects': InvestigationProject.objects.filter(program=program),
                 'inner_areas': InnerAreas.objects.all(),
                 'messages': Message.objects.filter(Q(phd_student_receiver=Student.objects.get(pk=student_id))|Q(sender=request.user))
@@ -1049,8 +1049,8 @@ def view_student_profile(request, program_slug, student_id):
             context = {
                 'program': program,
                 'student': MscStudent.objects.get(pk=student_id),
-                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
-                'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
+                'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'finish_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
                 'projects': InvestigationProject.objects.filter(program=program),
                 'edition':MscStudent.objects.get(pk=student_id).edition,
                 'inner_areas': InnerAreas.objects.all(),
@@ -1059,13 +1059,13 @@ def view_student_profile(request, program_slug, student_id):
                 context['member']=ProgramMember.objects.get(user=request.user, program=program)
             except ProgramMember.DoesNotExist:
                 pass
-            return render(request, 'programs/view_msc_student_profile.html', context)
+            return render(request, 'programs/msc_student_profile.html', context)
         elif program.type == 'dip':
             context = {
                 'program': program,
                 'student': DipStudent.objects.get(pk=student_id),
-                'init_requirements': ProgramInitRequirements.objects.filter(program=program),
-                'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
+                'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'finish_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
                 'projects': InvestigationProject.objects.filter(program=program),
                 'edition': DipStudent.objects.get(pk=student_id).edition,
                 'inner_areas': InnerAreas.objects.all(),

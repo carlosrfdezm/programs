@@ -160,6 +160,29 @@ def student_finish_requirement_accomplished(student, program_requirement):
         return False
 
 @register.simple_tag
+def program_has_init_requirenments(program):
+    if ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+        return True
+    else:
+        return False
+
+@register.simple_tag
+def program_has_finish_requirenments(program):
+    if ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+        return True
+    else:
+        return False
+
+@register.simple_tag
+def program_has_other_requirenments(program):
+    if ProgramFileDoc.objects.filter(program=program, is_init_requirenment=False, is_finish_requirenment=False):
+        return True
+    else:
+        return False
+
+
+
+@register.simple_tag
 def student_has_init_requirement_pending(student, program):
     has_pending = False
     if program.type == 'phd':

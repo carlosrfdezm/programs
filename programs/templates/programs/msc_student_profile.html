@@ -1,0 +1,1059 @@
+{% extends 'programs/base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block content %}
+    {% if student %}
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Perfil</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Perfil de usuario</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+
+                        <!-- Profile Image -->
+                        <div class="card card-primary card-outline">
+                            <div class="card-body box-profile">
+                                <div class="text-center">
+                                    {% if student.picture %}
+                                        <img class="profile-user-img img-fluid img-circle"
+                                             src="{% url 'programs:program_student_picture' program.slug student.id %}"
+                                             alt="User profile picture">
+                                    {% elif student.gender == 'm' %}
+                                        <img class="profile-user-img img-fluid img-circle" src="{% static 'programs/dist/img/avatar5.png' %}" alt="">
+                                    {% elif student.gender == 'f' %}
+                                        <img class="profile-user-img img-fluid img-circle" src="{% static 'programs/dist/img/avatar3.png' %}" alt="">
+                                    {% endif %}
+                                </div>
+
+                                <h3 class="profile-username text-center">{{ student }}</h3>
+
+                                <p class="text-muted text-center">{{ student.status|capfirst }}</p>
+
+                                <ul class="list-group list-group-unbordered mb-3">
+                                    <li class="list-group-item">
+                                        <b>Solicitud</b> <a class="float-right">{{ student.request_date|date:'M/Y'}}</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <b>Ingreso</b> <a class="float-right">{% if student.init_date %}{{ student.init_date|date:'M/Y' }}{% else %}----{% endif %}</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <b>Egreso</b> <a class="float-right">{% if student.finish_date != None %}{{ student.finish_date|date:'M/Y' }}{% else %}----{% endif %}</a>
+                                    </li>
+                                </ul>
+
+
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+
+                        <!-- About Me Box -->
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">De mi investigación</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <strong><i class="fas fa-book mr-1"></i> Tema</strong>
+
+                                <p class="text-muted">
+                                    {% if student.mscstudenttheme %}
+                                        {{ student.mscstudenttheme }}
+                                    {% else %}
+                                        No tiene tema definido
+                                    {% endif %}
+                                </p>
+
+                                <hr>
+
+                                <strong><i class="fas fa-user-friends mr-1"></i> Tutores</strong>
+
+                                <p class="text-muted">
+                                <ul>
+                                    {% if student.tuthor_set.all %}
+                                        {% for tuthor in student.tuthor_set.all %}
+                                            <li>{{ tuthor }}</li>
+                                        {% endfor %}
+                                    {% else %}
+                                        <li>No tiene tutores</li>
+                                    {% endif %}
+                                </ul>
+                                </p>
+
+
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-header p-2">
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item"><a class="nav-link active" href="#personal" data-toggle="tab">Datos personales</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#file_docs" data-toggle="tab">Expediente</a></li>
+                                    {% if user == student.user %}
+                                        <li class="nav-item"><a class="nav-link" href="#messages" data-toggle="tab">Mensajes</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div><!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="tab-content">
+                                    {% if user == student.user %}
+                                        <div class="tab-pane" id="messages">
+                                            {% if messages %}
+                                                {% for message in messages %}
+                                                    {% user_is_program_member message.sender program as user_is_program_member%}
+                                                    {% user_is_program_student message.sender program as user_is_program_student%}
+                                                    <!-- Post -->
+                                                    <div id="div_msg_{{ message.id }}" class="post">
+                                                        <div class="user-block">
+                                                            {% if user_is_program_member %}
+                                                                {% sender_program_member message.sender program as program_member %}
+                                                                <img class="img-circle img-bordered-sm" {% if program_member.picture %}src="{% url 'programs:program_member_picture' program.slug program_member.id %}"{% else %}src="{% static 'programs/dist/img/user1-128x128.jpg' %}"{% endif %} alt="user image">
+                                                            {% elif user_is_program_student %}
+                                                                {% sender_program_student message.sender program as program_student %}
+                                                                <img class="img-circle img-bordered-sm" {% if program_member.picture %}src="{% url 'programs:program_member_picture' program.slug program_member.id %}"{% else %}src="{% static 'programs/dist/img/user2-128x128.jpg' %}"{% endif %} alt="user image">
+                                                            {% endif %}
+                                                            <span class="username">
+                                                          <a href="#">{{ message.sender.get_full_name }}</a>
+                                                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                                                    </span>
+                                                            <span class="description">
+                                                        {% if message.readed %}<i id="i_msg_{{ message.id }}" class="fa fa-envelope-open"></i>{% else %}<i id="i_msg_{{ message.id }}" class="fa fa-envelope"></i>{% endif %}
+                                                                {{ message.date|date:'d-m-Y'}}
+                                                    </span>
+                                                        </div>
+                                                        <!-- /.user-block -->
+                                                        <p id="p_message_body_{{ message.id }}" class="text-bold">
+                                                            {% if message.readed %}
+                                                                {{ message.subject }}
+                                                            {% else %}
+                                                                {{ message.subject }}
+
+                                                            {% endif %}
+                                                        </p>
+
+
+                                                        <p>
+                                                            {% if message.readed %}
+                                                                <a href="#" id="a_remove_message_{{ message.id }}" data="{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>
+                                                            {% else %}
+                                                                <a href="#" id="a_read_message_{{ message.id }}" data="{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eye mr-1"></i> Leer</a>
+                                                            {% endif %}
+                                                            <span class="float-right">
+
+                                                    </span>
+                                                        </p>
+
+
+                                                    </div>
+                                                    <!-- /.post -->
+                                                    <div class="modal fade" id="modal_read_message_{{ message.id }}">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title">{{ message.subject }}</h4>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+
+                                                                <div class="modal-body alert alert-success">
+
+                                                                    <p>{{  message.body }}</p>
+
+
+
+                                                                </div>
+                                                                <div class="modal-footer justify-content-between">
+                                                                </div>
+
+                                                            </div>
+                                                            <!-- /.modal-content -->
+                                                        </div>
+                                                        <!-- /.modal-dialog -->
+                                                    </div>
+                                                    <div class="modal fade" id="modal_rm_message_{{ message.id }}">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title">Eliminar mensaje</h4>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+
+                                                                <form id="frm_remove_message_{{ message.id }}" data="{{ message.id }}" method="post">
+                                                                    <div class="modal-body alert alert-danger">
+                                                                        <h4>Seguro desea eliminar el mensaje:<br>{{ message }}</h4>
+
+                                                                        <input type="hidden" name="message_{{ message.id }}" value="{{ message.id }}">
+
+                                                                    </div>
+                                                                    <div class="modal-footer justify-content-between">
+                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                                        <button type="submit" class="btn btn-danger" id="btn_rm_message_{{ message.id }}">Eliminar</button>
+                                                                    </div>
+                                                                </form>
+                                                                <div class="modal-footer justify-content-between">
+                                                                </div>
+
+                                                            </div>
+                                                            <!-- /.modal-content -->
+                                                        </div>
+                                                        <!-- /.modal-dialog -->
+                                                    </div>
+
+                                                {% endfor %}
+                                            {% else %}
+                                                <div class="alert alert-warning">
+                                                    <h5 class="text-center">Usted no ha recibido mensaje alguno en este programa.</h5>
+                                                </div>
+                                            {% endif %}
+
+
+                                        </div>
+                                    {% endif %}
+                                    <div class="tab-pane" id="file_docs">
+                                        <h6>Requisitos de Ingreso:</h6>
+                                        {% program_has_init_requirenments program as program_has_init_requirenment  %}
+                                        {% program_has_finish_requirenments program as program_has_finish_requirenment  %}
+                                        {% program_has_other_requirenments program as program_has_other_requirenment  %}
+                                        {% if program_has_init_requirenment %}
+                                            <table class="table table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th class="text-center">Resp.</th>
+                                                    <th >Nombre del documento</th>
+                                                    <th class="text-center">Listo</th>
+                                                    <th class="text-center">Caduca</th>
+
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for doc in program.programfiledoc_set.all %}
+                                                    <!-- Post -->
+                                                    {% if doc.is_init_requirenment %}
+
+                                                        <tr>
+                                                            <td class="text-center">
+                                                                {% if doc.type == 'student' %}
+                                                                    <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                                {% elif doc.type == 'program' %}
+                                                                    <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                                {% elif doc.type == 'comission' %}
+                                                                    <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td>
+                                                                {{ doc }}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                {% student_requirement_accomplished student doc as doc_accomplished %}
+                                                                {% if doc_accomplished %}
+                                                                    <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
+                                                                {% else %}
+                                                                    <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
+
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                {% if doc.get_old %}
+                                                                    {% student_doc_caducity_date student doc as caducity_date %}
+                                                                    {{ caducity_date|date:'d-m-Y' }}
+                                                                {% else %}
+                                                                    --------------------
+                                                                {% endif  %}
+                                                            </td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    <!-- /.post -->
+                                                {% endfor %}
+
+                                                </tbody>
+
+
+                                            </table>
+                                        {% else %}
+                                            <div class="alert alert-warning text-center">
+                                                <h6>El programa no tiene requisitos de ingreso.</h6>
+                                            </div>
+                                        {% endif %}
+
+                                        <h6>Requisitos de Egreso:</h6>
+                                        {% if program_has_finish_requirenment %}
+                                            <table class="table table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th class="text-center">Resp.</th>
+                                                    <th >Nombre del documento</th>
+                                                    <th class="text-center">Listo</th>
+                                                    <th class="text-center">Caduca</th>
+
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for doc in program.programfiledoc_set.all %}
+                                                    <!-- Post -->
+                                                    {% if doc.is_finish_requirenment %}
+
+                                                        <tr>
+                                                            <td class="text-center">
+                                                                {% if doc.type == 'student' %}
+                                                                    <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                                {% elif doc.type == 'program' %}
+                                                                    <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                                {% elif doc.type == 'comission' %}
+                                                                    <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td>
+                                                                {{ doc }}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                {% student_requirement_accomplished student doc as doc_accomplished %}
+                                                                {% if doc_accomplished %}
+                                                                    <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
+                                                                {% else %}
+                                                                    <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
+
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                {% if doc.get_old %}
+                                                                    {% student_doc_caducity_date student doc as caducity_date %}
+                                                                    {{ caducity_date|date:'d-m-Y' }}
+                                                                {% else %}
+                                                                    --------------------
+                                                                {% endif  %}
+                                                            </td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    <!-- /.post -->
+                                                {% endfor %}
+
+                                                </tbody>
+
+
+                                            </table>
+                                        {% else %}
+                                            <div class="alert alert-warning text-center">
+                                                <h6>El programa no tiene requisitos de egreso.</h6>
+                                            </div>
+                                        {% endif %}
+
+                                        <h6>Otros documentos:</h6>
+                                        {% if program_has_other_requirenment %}
+                                            <table class="table table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th class="text-center">Resp.</th>
+                                                    <th>Nombre del documento</th>
+                                                    <th class="text-center">Listo</th>
+                                                    <th class="text-center">Caduca</th>
+
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for doc in program.programfiledoc_set.all %}
+                                                    <!-- Post -->
+                                                    {% if not doc.is_finish_requirenment and not doc.is_init_requirenment %}
+
+                                                        <tr>
+                                                            <td class="text-center">
+                                                                {% if doc.type == 'student' %}
+                                                                    <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                                {% elif doc.type == 'program' %}
+                                                                    <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                                {% elif doc.type == 'comission' %}
+                                                                    <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td>
+                                                                {{ doc }}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                {% student_requirement_accomplished student doc as doc_accomplished %}
+                                                                {% if doc_accomplished %}
+                                                                    <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
+                                                                {% else %}
+                                                                    <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
+
+                                                                {% endif %}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                {% if doc.get_old %}
+                                                                    {% student_doc_caducity_date student doc as caducity_date %}
+                                                                    {{ caducity_date|date:'d-m-Y' }}
+                                                                {% else %}
+                                                                    --------------------
+                                                                {% endif  %}
+                                                            </td>
+                                                        </tr>
+
+                                                    {% endif %}
+                                                    <!-- /.post -->
+                                                {% endfor %}
+
+                                                </tbody>
+
+
+                                            </table>
+                                        {% else %}
+                                            <div class="alert alert-warning text-center">
+                                                <h6>El programa no tiene otros documentos.</h6>
+                                            </div>
+                                        {% endif %}
+
+
+
+                                        <!-- Post -->
+
+                                        <!-- /.post -->
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                    <!-- /.tab-pane -->
+
+                                    <div class="active tab-pane" id="personal">
+                                        <form class="form-horizontal">
+                                            <div class="form-group row">
+                                                <label for="inputName" class="col-sm-2 col-form-label">Nombre</label>
+                                                <div class="col-sm-10">
+                                                    <input type="email" class="form-control" id="inputName" placeholder="Name" readonly value="{{ student }}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+                                                <div class="col-sm-10">
+                                                    <input type="email" class="form-control" id="inputEmail" readonly value="{{ student.user.email }}" placeholder="Email">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <label for="inputExperience" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
+                                                <div class="col-sm-4">
+                                                    <input class="form-control" type="date" readonly value="{{ student.birth_date|date:'Y-m-d' }}">
+                                                </div>
+                                                <label for="inputCategory" class="col-sm-2 col-form-label">Categoría</label>
+                                                <div class="col-sm-4">
+                                                    <input id="inputCategory" class="form-control" type="text" readonly value="{{ student.phdstudent.category|capfirst }}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="inputName2" class="col-sm-2 col-form-label">Centro</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="inputName2" readonly value="{{ student.phdstudent.center }}" placeholder="Name">
+                                                </div>
+                                            </div>
+
+                                            <div class=" row">
+                                                <label for="inputPhone" class="col-sm-2 col-form-label">Teléfono</label>
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control" id="inputPhone" readonly value="{{ student.phone }}" placeholder="Teléfono">
+                                                </div>
+                                                <label for="inputGender" class="col-sm-2 col-form-label">Género</label>
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control" id="inputGender" readonly {% if student.gender == 'm' %}value="Masculino"{% else %}value="Femenino"{% endif %} placeholder="Teléfono">
+                                                </div>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                </div>
+                                <!-- /.tab-content -->
+                            </div><!-- /.card-body -->
+                        </div>
+                        <!-- /.nav-tabs-custom -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+            {% csrf_token %}
+        </section>
+
+
+    {% endif %}
+    <!-- /.content -->
+{% endblock %}
+<!-- jQuery -->
+<script src="../../plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- bs-custom-file-input -->
+<script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="../../dist/js/demo.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        bsCustomFileInput.init();
+    });
+</script>
+{% block extra_scripts %}
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var tutores = {{ student.phdstudent.tuthor_set.all.count }};
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+            {#bsCustomFileInput.init();#}
+
+
+            $(document).on('keyup','#inp_email', function () {
+                var email = $('#inp_email').val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_usr_exists' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'email':email,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].exists == 1) {
+
+                                Toast.fire({
+                                    type: 'warning',
+                                    title: 'Ya hay un usuario con ese correo, quiza ya es miembro de otro programa'
+                                })
+
+                            } else if(json[0].exists == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Este correo esta en uso por un miembro del programa'
+                                });
+                                $('#btn_save').addClass('disabled');
+                                $('#btn_save').attr('disabled', 'disabled');
+
+                            }
+                            else{
+                                $('#btn_save').removeClass('disabled');
+                                $('#btn_save').removeAttr('disabled');
+
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                };
+
+
+            });
+            $(document).on('keyup', '#inp_tuthor_email', function () {
+                var index = $(this).attr('data');
+                var email = $(this).val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'tuthor_email':email,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0] == 1) {
+
+                                $('#inp_tuthor_name').attr('readonly','readonly');
+                                $('#inp_tuthor_lastname').attr('readonly','readonly');
+                                $('#inp_tuthor_institution').attr('readonly','readonly');
+                                $('#inp_tuthor_name').val(json[1][0]);
+                                $('#inp_tuthor_lastname').val(json[1][1]);
+                                $('#inp_tuthor_institution').val(json[1][2]);
+
+                            } else if(json[0] == 0){
+
+                                $('#inp_tuthor_name').removeAttr('readonly');
+                                $('#inp_tuthor_lastname').removeAttr('readonly');
+                                $('#inp_tuthor_institution').removeAttr('readonly');
+
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                }
+                else{
+                    $('#inp_tuthor_name_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
+
+                }
+            });
+
+            $(document).on('change','#exampleInputFile', function () {
+                var fileUpload = this;
+                var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
+                if (regex.test(fileUpload.value.toLowerCase())) {
+                    if (typeof (fileUpload.files) != "undefined") {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(fileUpload.files[0]);
+                        reader.onload = function (e) {
+                            var image = new Image();
+                            image.src = e.target.result;
+                            image.onload = function () {
+                                var height = this.height;
+                                var width = this.width;
+                                if (height < 200 || width < 200) {
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada es muy pequeña, debe tener al menos 400px x 400 px'
+                                    });
+                                    $('#exampleInputFile').val('');
+                                    return false;
+                                }else
+                                if(height != width ){
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada debe ser cuadrada y de dimensión 200px, o superior.'
+                                    });
+                                    $('#exampleInputFile').val('');
+                                    return false;
+                                }
+                            };
+                        }
+                    } else {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Este navegador no soporta HTML5, debe actualizarlo.'
+                        });
+                        return false;
+                    }
+                } else {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Por favor seleccione una imagen.'
+                    });
+                    return false;
+                }
+            });
+            $('#slc_status').change(function () {
+
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth()+1; //January is 0!
+
+                var yyyy = today.getFullYear();
+                if(dd<10){dd='0'+dd}
+                if(mm<10){mm='0'+mm}
+                today = yyyy+'-'+mm+'-'+dd;
+
+                if($(this).val()=='doctorando'){
+                    $('#inp_init_date').val(today);
+                }
+                if($(this).val()=='graduado'){
+                    $('#inp_graduate_date').val(today);
+                }
+
+            });
+            $(document).on('click',"a[id*='a_read_message_']",function (e) {
+                e.preventDefault();
+
+                var current_index = $(this).attr('data');
+                var url = "{% url 'programs:ajx_mark_message_readed' program.slug %}";
+
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'message_id':current_index,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].readed == 1) {
+
+                            $('#modal_read_message_'+current_index).modal('show');
+                            $('#a_read_message_'+current_index).replaceWith('<a href="#" id="a_remove_message_'+current_index+'" data="'+current_index+'" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>\n')
+                            $('#p_message_body_'+current_index).removeClass('text-bold')
+                            $('#i_msg_'+current_index).removeClass('fa-envelope')
+                            $('#i_msg_'+current_index).addClass('fa-envelope-open')
+
+
+
+                        } else if(json[0].readed == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido mostrar el mensaje.'
+                            })
+
+                        }
+                        else if(json[0].readed == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido mostrar el mensaje: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].readed == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido mostrar el mensaje: El usuario no es el receptor del mensaje'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        $('#div_by_workshop').removeClass('hidden')
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
+
+
+            $(document).on('click',"a[id*='a_remove_message_']",function (e) {
+                e.preventDefault();
+                var current_index = $(this).attr('data');
+                $('#modal_rm_message_'+current_index).modal('show');
+
+
+            });
+
+            $(document).on('submit',"form[id*='frm_remove_message_']", function (e) {
+                e.preventDefault();
+
+                var current_index = $(this).attr('data');
+                var url = "{% url 'programs:ajx_delete_message' program.slug %}";
+
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'message_id':current_index,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+                            if(json[0].messages_count > 0){
+                                $('#div_msg_'+current_index).remove();
+                            }
+                            else{
+                                $('#div_msg_'+current_index).replaceWith('<div class="alert alert-warning text-center"><h4>Usted no tiene mensaje alguno</h4></div>');
+
+
+                            }
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Mensaje eliminado exitosamente.'
+                            })
+
+
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el mensaje.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el mensaje: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el mensaje: Usted no es el receptor del mismo.'
+                            })
+
+                        }
+                        $('#modal_rm_message_'+current_index).modal('hide');
+
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+
+            })
+
+            $(document).on('click',"button[id*='btn_rm_tuthor']",function () {
+                var tuthor_id = $(this).attr('data');
+                var div_selector = '#div_tuthor_'+ tuthor_id;
+                var url = "{% url 'programs:ajx_delete_tuthor' program.slug %}";
+
+                $('#modal_rm_tuthor_{{ tuthor.id }}').modal('hide');
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'tuthor_id':tuthor_id,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+                            tutores = tutores-1
+
+                            $(div_selector).remove();
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Tutor eliminado exitósamente'
+                            });
+                            if (tutores == 0){
+                                $('#div_new_tuthors').append('<div class="alert alert-warning col-md-10 offset-1" id="div_no_tuthors">\n' +
+                                    '                                        <h4 class="text-center"><i class="text-white fa fa-exclamation-triangle"></i> Este estudiante no tiene tutores asignados</h4>\n' +
+                                    '                                        </div>')
+                            }
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar al tutor seleccionado.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede eliminar al tutor seleccionado.'
+                            })
+
+                        }
+                        cons
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        $('#div_by_workshop').removeClass('hidden')
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+                $(div_selector).remove();
+
+            });
+            $('#frm_add_tuthor').on('submit', function (e) {
+                e.preventDefault();
+                var url = "{% url 'programs:ajx_create_tuthor' program.slug student.id%}";
+
+
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'tuthor_name':$('#inp_tuthor_name').val(),
+                        'tuthor_email':$('#inp_tuthor_email').val(),
+                        'tuthor_lastname':$('#inp_tuthor_lastname').val(),
+                        'tuthor_institution':$('#inp_tuthor_institution').val(),
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+
+
+                        $('#frm_add_tuthor')[0].reset();
+
+                        if (json[0].created == 1) {
+                            tutores = tutores +1;
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Tutor agregado exitosamente'
+                            })
+
+                            var new_tuthor_div = '<div class="form-row align-items-center pb-2" id="div_tuthor_'+json[0].id+'">\n' +
+                                '                                    <div class="col-md-2">\n' +
+                                '                                        <input type="email" class="form-control" readonly id="inp_tuthor_email_'+json[0].id+'" data="'+json[0].id+'" name="tuthor_email_'+json[0].id+'" placeholder="Email del tutor" value="'+json[0].email +'"  required="">\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="col-md-2">\n' +
+                                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_name_'+json[0].id+'" name="tuthor_name_'+json[0].id+'" placeholder="Nombre(s) del tutor" value="'+json[0].name +'" required="">\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="col-md-3">\n' +
+                                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_lastname_'+json[0].id+'" name="tuthor_lastname_'+json[0].id+'" placeholder="Apellidos del tutor" value="'+json[0].lastname +'" required="">\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="col-md-4">\n' +
+                                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_institution_'+json[0].id+'" name="tuthor_institution_'+json[0].id+'" placeholder="Institución del tutor" value="'+json[0].institution +'" required="">\n' +
+                                '                                    </div>\n' +
+                                '                                    <div class="col-md-1 pl-4 " id="div_rm_tuthor_'+json[0].id+'">\n' +
+                                '                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+json[0].id+'" data="'+json[0].id+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' +
+                                '                                    </div>\n' +
+                                '\n' +
+                                '\n' +
+                                '                                </div>';
+                            $('#div_no_tuthors').remove();
+                            $('#div_new_tuthors').append(new_tuthor_div);
+
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar al tutor indicado.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede agregar tutores.'
+                            })
+
+                        }
+                        cons
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        $('#div_by_workshop').removeClass('hidden')
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        });
+                        $('#frm_add_tuthor')[0].reset();
+                    }
+                });
+
+                $('#modal_add_tuthor').modal('hide');
+
+
+            });
+            $(document).on('change','#slc_category',function () {
+                if($(this).val()=='interno'){
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                        '                                <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>\n' +
+                        '                                <select class="form-control" id="slc_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
+                        '<option value="" selected>Seleccione una opción</option>'+
+                        {% for inner_area in inner_areas %}
+                            '<option value="{{ inner_area }}">{{ inner_area }}</option>'+
+                        {% endfor %}
+                        ''+
+
+                        '</select>'+
+                        '                            </div>')
+                }
+                else if($(this).val()=='externo'){
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                        '                                <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>\n' +
+                        '                                <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
+                        '\n' +
+                        '                            </div>');
+
+                }
+
+            });
+
+
+
+        });
+    </script>
+{% endblock %}
+
