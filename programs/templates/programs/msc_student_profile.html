@@ -147,13 +147,8 @@
                                                     </span>
                                                         </div>
                                                         <!-- /.user-block -->
-                                                        <p id="p_message_body_{{ message.id }}" class="text-bold">
-                                                            {% if message.readed %}
-                                                                {{ message.subject }}
-                                                            {% else %}
-                                                                {{ message.subject }}
-
-                                                            {% endif %}
+                                                         <p id="p_message_body_{{ message.id }}" {% if not message.readed %} class="text-bold" {% endif %}>
+                                                            {{ message.subject }}
                                                         </p>
 
 

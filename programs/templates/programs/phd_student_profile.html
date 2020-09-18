@@ -143,7 +143,7 @@
                                                     </span>
                                                         </div>
                                                         <!-- /.user-block -->
-                                                        <p id="p_message_body_{{ message.id }}" class="{% if not message.readed %} text-bold {% endif %}">
+                                                        <p id="p_message_body_{{ message.id }}" {% if not message.readed %} class="text-bold" {% endif %}>
                                                             {{ message.subject }}
                                                         </p>
 
@@ -399,10 +399,7 @@
 
                                             </tbody>
 
-
                                         </table>
-
-
 
                                         <!-- Post -->
 
