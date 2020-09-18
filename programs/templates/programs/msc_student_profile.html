@@ -451,7 +451,7 @@
                                                     <input type="email" class="form-control" id="inputEmail" readonly value="{{ student.user.email }}" placeholder="Email">
                                                 </div>
                                             </div>
-                                            <div class="row">
+                                            <div class="form-group row">
                                                 <label for="inputExperience" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
                                                 <div class="col-sm-4">
                                                     <input class="form-control" type="date" readonly value="{{ student.birth_date|date:'Y-m-d' }}">
@@ -468,7 +468,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class=" row">
+                                            <div class="form-group row">
                                                 <label for="inputPhone" class="col-sm-2 col-form-label">Teléfono</label>
                                                 <div class="col-sm-4">
                                                     <input type="text" class="form-control" id="inputPhone" readonly value="{{ student.phone }}" placeholder="Teléfono">
