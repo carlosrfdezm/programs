@@ -143,13 +143,8 @@
                                                     </span>
                                                         </div>
                                                         <!-- /.user-block -->
-                                                        <p id="p_message_body_{{ message.id }}" class="text-bold">
-                                                            {% if message.readed %}
-                                                                {{ message.subject }}
-                                                            {% else %}
-                                                                {{ message.subject }}
-
-                                                            {% endif %}
+                                                        <p id="p_message_body_{{ message.id }}" class="{% if not message.readed %} text-bold {% endif %}">
+                                                            {{ message.subject }}
                                                         </p>
 
 
@@ -178,8 +173,13 @@
                                                                 </div>
 
                                                                 <div class="modal-body alert alert-success">
+                                                                    <p>
+                                                                        {% autoescape off %}
 
-                                                                    <p>{{  message.body }}</p>
+                                                                            {{  message.body }}
+
+                                                                        {% endautoescape %}
+                                                                    </p>
 
 
 
