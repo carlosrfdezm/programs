@@ -529,10 +529,7 @@
                 showConfirmButton: false,
                 timer: 7000
             });
-           
 
-
-           
             $(document).on('click',"a[id*='a_read_message_']",function (e) {
                 e.preventDefault();
 
@@ -601,8 +598,6 @@
                 });
 
             });
-
-
             $(document).on('click',"a[id*='a_remove_message_']",function (e) {
                 e.preventDefault();
                 var current_index = $(this).attr('data');
@@ -610,7 +605,6 @@
 
 
             });
-
             $(document).on('submit',"form[id*='frm_remove_message_']", function (e) {
                 e.preventDefault();
 
@@ -684,8 +678,33 @@
                 });
 
 
-        
+<<<<<<< HEAD
+            })--
+            $(document).on('change','#slc_category',function () {
+                if($(this).val()=='interno'){
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                        '                                <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>\n' +
+                        '                                <select class="form-control" id="slc_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
+                        '<option value="" selected>Seleccione una opción</option>'+
+                        {% for inner_area in inner_areas %}
+                            '<option value="{{ inner_area }}">{{ inner_area }}</option>'+
+                        {% endfor %}
+                        ''+
 
+                        '</select>'+
+                        '                            </div>')
+                }
+                else if($(this).val()=='externo'){
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                        '                                <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>\n' +
+                        '                                <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
+                        '\n' +
+                        '                            </div>');
+
+                }
+
+=======
+>>>>>>> e7de99bd1c98e314dd6f79b12c0fd495d256ad2f
             });
 
 
