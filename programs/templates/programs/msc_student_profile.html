@@ -1026,6 +1026,156 @@
 
 
             });
+
+            $(document).on('click',"a[id*='a_read_message_']",function (e) {
+                e.preventDefault();
+
+                var current_index = $(this).attr('data');
+                var url = "{% url 'programs:ajx_mark_message_readed' program.slug %}";
+
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'message_id':current_index,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].readed == 1) {
+
+                            $('#modal_read_message_'+current_index).modal('show');
+                            $('#a_read_message_'+current_index).replaceWith('<a href="#" id="a_remove_message_'+current_index+'" data="'+current_index+'" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>\n')
+                            $('#p_message_body_'+current_index).removeClass('text-bold')
+                            $('#i_msg_'+current_index).removeClass('fa-envelope')
+                            $('#i_msg_'+current_index).addClass('fa-envelope-open')
+
+
+
+                        } else if(json[0].readed == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido mostrar el mensaje.'
+                            })
+
+                        }
+                        else if(json[0].readed == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido mostrar el mensaje: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].readed == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido mostrar el mensaje: El usuario no es el receptor del mensaje'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        $('#div_by_workshop').removeClass('hidden')
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
+            $(document).on('click',"a[id*='a_remove_message_']",function (e) {
+                e.preventDefault();
+                var current_index = $(this).attr('data');
+                $('#modal_rm_message_'+current_index).modal('show');
+
+
+            });
+            $(document).on('submit',"form[id*='frm_remove_message_']", function (e) {
+                e.preventDefault();
+
+                var current_index = $(this).attr('data');
+                var url = "{% url 'programs:ajx_delete_message' program.slug %}";
+
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'message_id':current_index,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+                            if(json[0].messages_count > 0){
+                                $('#div_msg_'+current_index).remove();
+                            }
+                            else{
+                                $('#div_msg_'+current_index).replaceWith('<div class="alert alert-warning text-center"><h4>Usted no tiene mensaje alguno</h4></div>');
+
+
+                            }
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Mensaje eliminado exitosamente.'
+                            })
+
+
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el mensaje.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el mensaje: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el mensaje: Usted no es el receptor del mismo.'
+                            })
+
+                        }
+                        $('#modal_rm_message_'+current_index).modal('hide');
+
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+
+            })
             $(document).on('change','#slc_category',function () {
                 if($(this).val()=='interno'){
                     $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +

@@ -1054,6 +1054,9 @@ def view_student_profile(request, program_slug, student_id):
                 'projects': InvestigationProject.objects.filter(program=program),
                 'edition':MscStudent.objects.get(pk=student_id).edition,
                 'inner_areas': InnerAreas.objects.all(),
+                'messages': Message.objects.filter(
+                    Q(msc_student_receiver=MscStudent.objects.get(pk=student_id)) | Q(sender=request.user))
+
             }
             try:
                 context['member']=ProgramMember.objects.get(user=request.user, program=program)
@@ -1069,6 +1072,9 @@ def view_student_profile(request, program_slug, student_id):
                 'projects': InvestigationProject.objects.filter(program=program),
                 'edition': DipStudent.objects.get(pk=student_id).edition,
                 'inner_areas': InnerAreas.objects.all(),
+                'messages': Message.objects.filter(
+                    Q(dip_student_receiver=DipStudent.objects.get(pk=student_id)) | Q(sender=request.user))
+
             }
             try:
                 context['member']=ProgramMember.objects.get(user=request.user, program=program)
