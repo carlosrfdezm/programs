@@ -1019,13 +1019,13 @@ def view_student_profile(request, program_slug, student_id):
         try:
             if MscStudent.objects.get(user=request.user, program=program) == MscStudent.objects.get(pk=student_id, program=program):
                 user_is_student = True
-        except Student.DoesNotExist:
+        except MscStudent.DoesNotExist:
             pass
     elif program.type == 'dip' and DipStudent.objects.get(user=request.user, program=program)==DipStudent.objects.get(pk=student_id, program=program):
         try:
             if DipStudent.objects.get(user=request.user, program=program) == DipStudent.objects.get(pk=student_id, program=program):
                 user_is_student = True
-        except Student.DoesNotExist:
+        except DipStudent.DoesNotExist:
             pass
     if user_is_program_member(request.user, program) or user_is_student:
         if program.type == 'phd':
@@ -1398,10 +1398,11 @@ def create_professor(request, program_slug):
         else:
             context={
                 'program':program,
-
+                'member': ProgramMember.objects.get(user= request.user, program = program)
             }
             return render(request, 'programs/create_professor.html', context)
-
+    else:
+        return error_500(request,program, 'Usted no tiene privilegios para agregar profesores en este programa')
 @login_required
 def edit_member(request, program_slug, member_id):
     program = Program.objects.get(slug=program_slug)
@@ -1572,6 +1573,7 @@ def create_line(request, program_slug):
         else:
             context={
                 'program':program,
+                'member': ProgramMember.objects.get(user=request.user, program = program)
             }
             return render(request, 'programs/create_line.html', context)
     else:
