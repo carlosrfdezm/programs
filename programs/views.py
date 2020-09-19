@@ -1,32 +1,29 @@
 import json
 import os
 import random
-import calendar, locale
 import zipfile
 
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
-from django.core.mail import send_mail, send_mass_mail
+from django.core.mail import send_mail
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 
 # Create your views here.
-from django.test.utils import override_script_prefix
 from django.urls import reverse
-from django.utils import dateparse
-from django.utils.text import slugify, phone2numeric
+from django.utils.text import slugify
 from django.utils.timezone import now
 
 from programas.settings import MEDIA_ROOT
-from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
-    ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
+from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, \
+    ProgramMember, ProgramFinishRequirements, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
     FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message
-from programs.templatetags.extra_tags import finish_requirements_accomplished, student_init_requirement_accomplished, \
+from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
 from docx import Document
@@ -486,13 +483,14 @@ def create_msc_student(request, program_slug, edition_id):
                 'edition': edition,
                 'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
                 'projects': InvestigationProject.objects.filter(program=program),
+                'member': ProgramMember.objects.get(user=request.user, program = program)
             }
             if Program.objects.get(slug=program_slug).type == 'msc':
                 return render(request, 'programs/create_msc_student.html', context)
             else:
                 return HttpResponse('El programa no es una maestria')
     else:
-        return HttpResponse('Error, acceso solo a coordinadores y secretarios')
+        return error_500(request,program, 'Usted no tiene privilegios para agregar estudiantes en este programa')
 
 @login_required
 def create_dip_student(request, program_slug, edition_id):
@@ -3266,6 +3264,11 @@ def editions_list(request, program_slug):
         'program': program,
         'editions': ProgramEdition.objects.filter(program=program)
     }
+    try:
+        context['member']= ProgramMember.objects.get(user=request.user, program = program)
+    except ProgramMember.DoesNotExist:
+        pass
+
     if program.type == 'msc':
         try:
             context['student']=MscStudent.objects.get(user=request.user)
