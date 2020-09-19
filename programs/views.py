@@ -679,6 +679,11 @@ def msc_edition_students_list(request, program_slug, edition_id, scope):
                     'scope': 'Graduados',
                 }
 
+            try:
+                context['member']= ProgramMember.objects.get(user= request.user, program = program)
+            except ProgramMember.DoesNotExist:
+                pass
+
             return render(request, 'programs/msc_students_list.html', context)
         else:
             return error_500(request, program, 'El programa debe ser una maestria')
@@ -1655,6 +1660,7 @@ def create_project(request, program_slug):
             context={
                 'program':program,
                 'lines':InvestigationLine.objects.filter(program=program),
+                'member': ProgramMember.objects.get(user=request.user, program = program )
             }
             return render(request, 'programs/create_project.html', context)
     else:
@@ -3348,6 +3354,7 @@ def create_program_doc(request, program_slug):
                 'current_month': meses[now().month],
                 'years':range(now().year-10,now().year+1),
                 'current_year':now().year,
+                'member': ProgramMember.objects.get(user=request.user, program = program)
             }
             return render(request, 'programs/create_program_doc.html',context)
     else:
