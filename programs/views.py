@@ -350,6 +350,13 @@ def create_msc_student(request, program_slug, edition_id):
                     )
                     student.save()
 
+                    for i in range(1, int(request.POST['total_tuthors']) + 1):
+                        create_new_tuthor(request, program,
+                                          request.POST['tuthor_name_' + str(i)],
+                                          request.POST['tuthor_lastname_' + str(i)],
+                                          request.POST['tuthor_institution_' + str(i)],
+                                          request.POST['tuthor_email_' + str(i)], student)
+
                     utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
 
                     try:
@@ -426,6 +433,13 @@ def create_msc_student(request, program_slug, edition_id):
                 country=request.POST['student_country']
             )
             student.save()
+
+            for i in range(1, int(request.POST['total_tuthors']) + 1):
+                create_new_tuthor(request, program,
+                                  request.POST['tuthor_name_' + str(i)],
+                                  request.POST['tuthor_lastname_' + str(i)],
+                                  request.POST['tuthor_institution_' + str(i)],
+                                  request.POST['tuthor_email_' + str(i)], student)
 
             utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
 

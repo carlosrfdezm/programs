@@ -111,7 +111,27 @@
                                     </div>
                                 </div>
 
+                                <hr>
+                                <h4><strong>Tutores:</strong></h4>
+                                <div class="form-row align-items-center pb-2" id="div_tuthor_1">
+                                    <div class="col-md-2">
+                                        <input type="email" class="form-control" id="inp_tuthor_email_1" data="1" name="tuthor_email_1" placeholder="Email del tutor" required></input>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" class="form-control" readonly id="inp_tuthor_name_1" name="tuthor_name_1" placeholder="Nombre(s) del tutor" required></input>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly id="inp_tuthor_lastname_1" name="tuthor_lastname_1" placeholder="Apellidos del tutor" required></input>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly id="inp_tuthor_institution_1" name="tuthor_institution_1" placeholder="Institución del tutor" required></input>
+                                    </div>
+                                    <div class="col-md-2 pl-4 ">
+                                        <button type="button" class="text-white btn btn-sm btn-warning" id="btn_add_tuthor" title="Agregar tutor"><i class="fa fa-plus"></i> </button>
+                                    </div>
 
+
+                                </div>
                                 <hr>
                                 <h4><strong>Requisitos de ingreso:</strong></h4>
                                 <div class="row">
@@ -180,6 +200,7 @@
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                             </div>
+                            <input type="hidden" id="inp_total_tuthors" name="total_tuthors" value="1">
                         </form>
                     </div>
                     <!-- /.card -->
@@ -224,6 +245,7 @@
     <script src="{% static 'programs/plugins/toastr/toastr.min.js' %}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            var total_tuthors=1;
 
             const Toast = Swal.mixin({
                 toast: true,
@@ -285,6 +307,108 @@
 
 
             });
+            $(document).on('keyup', "input[name*='tuthor_email']", function () {
+                var index = $(this).attr('data');
+                var email = $(this).val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'tuthor_email':email,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0] == 1) {
+
+                                $('#inp_tuthor_name_'+index).attr('readonly','readonly');
+                                $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
+                                $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
+                                $('#inp_tuthor_name_'+index).val(json[1][0]);
+                                $('#inp_tuthor_lastname_'+index).val(json[1][1]);
+                                $('#inp_tuthor_institution_'+index).val(json[1][2]);
+
+                            } else if(json[0] == 0){
+
+                                $('#inp_tuthor_name_'+index).removeAttr('readonly');
+                                $('#inp_tuthor_lastname_'+index).removeAttr('readonly');
+                                $('#inp_tuthor_institution_'+index).removeAttr('readonly');
+
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                }
+                else{
+                    $('#inp_tuthor_name_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
+
+                }
+            });
+            $(document).on('click','#btn_add_tuthor', function () {
+                var old_tuthors = total_tuthors;
+                total_tuthors = total_tuthors+ 1;
+
+
+                $('#inp_total_tuthors').val(total_tuthors);
+                var new_tuthor_div = '<div class="form-row align-items-center pb-2" id="div_tuthor_'+total_tuthors+'">\n' +
+                    '                                    <div class="col-md-2">\n' +
+                    '                                        <input type="email" class="form-control" id="inp_tuthor_email_'+total_tuthors+'" data="'+total_tuthors+'" name="tuthor_email_'+total_tuthors+'" placeholder="Email del tutor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-2">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_name_'+total_tuthors+'" name="tuthor_name_'+total_tuthors+'" placeholder="Nombre(s) del tutor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-3">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_lastname_'+total_tuthors+'" name="tuthor_lastname_'+total_tuthors+'" placeholder="Apellidos del tutor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-3">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_institution_'+total_tuthors+'" name="tuthor_institution_'+total_tuthors+'" placeholder="Institución del tutor" required="">\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-2 pl-4 " id="div_rm_tuthor_'+total_tuthors+'">\n' +
+                    '                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+total_tuthors+'" data="'+total_tuthors+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' +
+                    '                                    </div>\n' +
+                    '\n' +
+                    '\n' +
+                    '                                </div>'
+
+                $('#btn_rm_tuthor_'+old_tuthors).remove();
+                $(new_tuthor_div).insertAfter($('#div_tuthor_'+old_tuthors))
+            });
+            $(document).on('click',"button[id*='btn_rm_tuthor']",function () {
+                var current_index = $(this).attr('data');
+
+                var div_selector = '#div_tuthor_'+ current_index;
+                $(div_selector).remove();
+
+                total_tuthors = total_tuthors -1;
+
+                $('#inp_total_tuthors').val(total_tuthors);
+                $('#div_rm_tuthor_'+total_tuthors).append(
+                    '<button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+total_tuthors+'" ' +
+                    'data="'+total_tuthors+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' )
+
+            });
+
 
             $(document).on('change','#exampleInputFile', function () {
                 var fileUpload = this;
