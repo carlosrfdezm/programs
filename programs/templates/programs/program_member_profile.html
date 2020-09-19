@@ -104,7 +104,7 @@
                             <div class="card-header p-2">
                                 <ul class="nav nav-pills">
                                     <li class="nav-item"><a class="nav-link active" href="#personal" data-toggle="tab">Datos personales</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#file_docs" data-toggle="tab">Aspirantes</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#students" data-toggle="tab">Aspirantes</a></li>
                                     {% if user == professor.user %}
                                         <li class="nav-item"><a class="nav-link" href="#messages" data-toggle="tab">Mensajes</a></li>
                                     {% endif %}
@@ -250,30 +250,77 @@
                                                 <div class="col-sm-4">
                                                     <input class="form-control" type="date" readonly value="{{ professor.birth_date|date:'Y-m-d' }}">
                                                 </div>
-                                                <label for="inputCategory" class="col-sm-2 col-form-label">Categoría</label>
+                                                <label for="inputCategory" class="col-sm-2 col-form-label">Grado</label>
                                                 <div class="col-sm-4">
-                                                    <input id="inputCategory" class="form-control" type="text" readonly value="{{ student.phdstudent.category|capfirst }}">
+                                                    <input id="inputCategory" class="form-control" type="text" readonly value="{{ professor.degree|capfirst }}">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label for="inputName2" class="col-sm-2 col-form-label">Centro</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="inputName2" readonly value="{{ student.phdstudent.center }}" placeholder="Name">
+                                                    <input type="text" class="form-control" id="inputName2" readonly value="{{ professor.institution }}" placeholder="Name">
                                                 </div>
                                             </div>
 
                                             <div class=" row">
                                                 <label for="inputPhone" class="col-sm-2 col-form-label">Teléfono</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="inputPhone" readonly value="{{ student.phone }}" placeholder="Teléfono">
+                                                    <input type="text" class="form-control" id="inputPhone" readonly value="{{ professor.phone }}" placeholder="Teléfono">
                                                 </div>
                                                 <label for="inputGender" class="col-sm-2 col-form-label">Género</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="inputGender" readonly {% if student.gender == 'm' %}value="Masculino"{% else %}value="Femenino"{% endif %} placeholder="Teléfono">
+                                                    <input type="text" class="form-control" id="inputGender" readonly {% if professor.sex == 'm' %}value="Masculino"{% else %}value="Femenino"{% endif %} placeholder="Teléfono">
                                                 </div>
                                             </div>
 
                                         </form>
+                                    </div>
+                                    <div class="tab-pane" id="students">
+                                        {% if professor.tuthor_set %}
+                                            <table class="table table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th >Nombre y apellidos.</th>
+                                                    <th>Tema</th>
+                                                    <th>Estado</th>
+                                                    <th class="text-center">Defensa</th>
+
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for tuthor in professor.tuthor_set.all %}
+                                                    <!-- Post -->
+
+                                                        <tr>
+                                                            <td>
+                                                                {{ tuthor.phd_student.student }}
+                                                            </td>
+                                                            <td>
+                                                                {{ tuthor.phd_student.phdstudenttheme|truncatewords:7 }}
+                                                            </td>
+                                                            <td>{{ tuthor.phd_student.status|capfirst }}</td>
+                                                            <td class="text-center">
+                                                                 {% if tuthor.phd_student.student.studentformationplan.planned_end_year %}
+                                                                {{ tuthor.phd_student.student.studentformationplan.planned_end_year }}
+                                                                     {% else %}
+                                                                     --------
+                                                                {% endif %}
+                                                            </td>
+
+                                                        </tr>
+
+                                                    <!-- /.post -->
+                                                {% endfor %}
+
+                                                </tbody>
+
+
+                                            </table>
+                                        {% else %}
+                                            <div class="alert alert-warning text-center">
+                                                <h6>El profesor no tiene aspirantes en este momento.</h6>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                     <!-- /.tab-pane -->
                                 </div>
