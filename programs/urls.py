@@ -39,6 +39,7 @@ urlpatterns = [
     path('professors/<int:member_id>/edit', views.edit_member, name='edit_member'),
     path('professors/<int:member_id>/picture', views.program_member_picture, name='program_member_picture'),
     path('professors/<str:scope>/list', views.members_list, name='members_list'),
+    path('professors/<int:member_id>/view/profile', views.view_program_member_profile, name='view_program_member_profile'),
 
     path('lines/create', views.create_line, name='create_line'),
     path('lines/list', views.program_lines, name='program_lines'),

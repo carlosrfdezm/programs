@@ -91,6 +91,13 @@
                     </a>
                 </li>
             {% endif %}
+            {% if member %}
+                <li class="nav-item">
+                    <a class="nav-link text-primary" href="{% url 'programs:view_program_member_profile' program.slug member.id %}" title="Ver perfil">
+                        <i class="fa fa-user"></i>
+                    </a>
+                </li>
+            {% endif %}
 
                 <li class="nav-item">
                     <a class="nav-link text-danger" href="{% url 'log:my_logout' program.slug %}" title="Salir">

@@ -1106,6 +1106,23 @@ def view_student_profile(request, program_slug, student_id):
 
 
 @login_required
+def view_program_member_profile(request, program_slug, member_id):
+    program = Program.objects.get(slug=program_slug)
+    member = ProgramMember.objects.get(pk=member_id)
+    if user_is_program_cs(request.user, program) or request.user == member.user:
+        context={
+            'program':program,
+            'professor': member,
+            'member': ProgramMember.objects.get(user=request.user, program =program)
+        }
+        if request.user == member.user:
+            context['messages']=Message.objects.filter(program_receiver=member)
+
+        return render(request, 'programs/program_member_profile.html', context)
+    else:
+        return error_500(request, program, "Usted no puede ver el perfil de este miembro del claustro")
+
+@login_required
 def edit_msc_student(request, program_slug, edition_id, student_id):
     program= Program.objects.get(slug=program_slug)
     student = MscStudent.objects.get(pk=student_id)
