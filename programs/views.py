@@ -3758,7 +3758,7 @@ def ajx_delete_program_document(request, program_slug):
             content_type="application/json"
         )
 
-
+# TODO MODIFICAR ESTO A LA LOGICA DE DOCUMENTOS
 @login_required()
 def program_brief_zip_download(request,program_slug):
     program = Program.objects.get(slug=program_slug)
@@ -3815,7 +3815,7 @@ def program_brief_zip_download(request,program_slug):
 
     else:
         return error_500(request, program, 'No hay actas para descargar')
-
+# TODO MODIFICAR ESTO A LA LOGICA DE DOCUMENTOS
 @login_required()
 def program_by_year_brief_zip_download(request,program_slug, year):
     program = Program.objects.get(slug=program_slug)
@@ -3919,20 +3919,22 @@ def docx_program_report(request, program_slug):
 
             document.add_heading('Doctorandos', level=3)
             if PhdStudent.objects.filter(student__program=program, status='Doctorando'):
-                table = document.add_table(rows=1, cols=3)
+                table = document.add_table(rows=1, cols=4)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
                 hdr_cells[1].text = 'Fecha de ingreso'
-                hdr_cells[2].text = 'Requisitos de egreso'
+                hdr_cells[2].text = 'Fecha de defensa'
+                hdr_cells[3].text = 'Requisitos de egreso'
 
                 for student in PhdStudent.objects.filter(student__program=program, status='Doctorando'):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(student.student.user.get_full_name())
                     row_cells[1].text = str(student.student.init_date)
+                    row_cells[2].text = str(student.student.studentformationplan.planned_end_year)
                     if finish_requirements_accomplished(student.student, program):
-                        row_cells[2].text = 'Cumplidos'
+                        row_cells[3].text = 'Cumplidos'
                     else:
-                        row_cells[2].text = 'Incumplidos'
+                        row_cells[3].text = 'Incumplidos'
             else:
                 document.add_heading('No hay doctorandos registrados en el programa', level=5)
 
