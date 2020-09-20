@@ -1092,7 +1092,7 @@ def docx_postg_report(request, scope):
                 hdr_cells[3].text = 'Categoría'
 
 
-                for student in Student.objects.filter(program=program, phdstudent__status='doctorando'):
+                for student in Student.objects.filter(program=program, phdstudent__status='doctorando', init_date__year=now().year):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(student.user.get_full_name())
                     try:
@@ -1110,7 +1110,20 @@ def docx_postg_report(request, scope):
                 hdr_cells[1].text = 'Fecha de solicitud'
                 hdr_cells[2].text = 'Categoría'
 
-                for student in Student.objects.filter(program=program, phdstudent__status='solicitante'):
+                for student in Student.objects.filter(program=program, phdstudent__status='solicitante', request_date__year=now().year):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.request_date)
+                    row_cells[2].text = str(student.phdstudent.category).capitalize()
+
+                document.add_heading('Graduados de ' + str(program.full_name), level=3)
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Fecha de solicitud'
+                hdr_cells[2].text = 'Categoría'
+
+                for student in Student.objects.filter(program=program, phdstudent__status='graduado', graduate_date__year=now().year):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(student.user.get_full_name())
                     row_cells[1].text = str(student.request_date)
