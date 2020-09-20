@@ -69,7 +69,7 @@
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
                                                 <a class="btn btn-primary btn-sm text-white" href="{% url 'programs:view_program_member_profile' program.slug member.id %}" title="Ver perfil"> <i class="fa fa-user"></i></a>
-                                                <button class="btn btn-success btn-sm text-white {% if member.user == user %} disabled {% endif %}"
+                                                <button class="btn btn-success btn-sm text-white {% if member.user == user %} disabled {% endif %}" {% if member.user == user %} readonly="True" {%endif  %}
                                                         title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_member_{{ member.id }}"> <i class="fa fa-envelope"></i></button>
                                                 <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_member' program.slug member.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
                                                 <a class="btn btn-danger btn-sm text-white {% if member.user == user %}disabled{% endif %}"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_member_{{ member.id }}"><i class="fa fa-eraser"></i></a>
