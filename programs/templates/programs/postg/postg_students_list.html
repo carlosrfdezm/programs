@@ -80,6 +80,9 @@
                                 <th>Nombre y apellidos</th>
                                 <th>Fecha<br>(solicitud)</th>
                                 <th>Estado</th>
+                                {% if program.type == 'phd' %}
+                                    <th>Defensa <br>planificada</th>
+                                {% endif %}
                                 <th>Fecha de <br>nacimiento</th>
                                 <th>Número de <br>identidad</th>
 
@@ -94,6 +97,9 @@
                                         <td>{{ student.student.user.last_name|upper }}, {{ student.student.user.first_name }}</td>
                                         <td>{{ student.student.request_date|date:'Y-m-d' }}</td>
                                         <td>{{ student.status|capfirst }}</td>
+                                        {% if program.type == 'phd' %}
+                                            <td>{{ student.student.studentformationplan.planned_end_year }}</td>
+                                        {% endif %}
                                         <td>{{ student.student.birth_date|date:'Y-m-d'}}</td>
                                         <td>{{ student.student.dni }}</td>
                                     </tr>
