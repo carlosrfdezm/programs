@@ -2212,11 +2212,21 @@ def ajx_delete_message(request, program_slug):
     message = Message.objects.get(pk=request.POST['message_id'])
 
     if program.type == 'phd':
-        receiver_user = message.phd_student_receiver.user
+        try:
+            receiver_user = message.phd_student_receiver.user
+        except:
+            receiver_user = message.program_receiver.user
+
     elif program.type == 'msc':
-        receiver_user = message.msc_student_receiver.user
+        try:
+            receiver_user = message.msc_student_receiver.user
+        except:
+            receiver_user = message.program_receiver.user
     elif program.type == 'dip':
-        receiver_user = message.dip_student_receiver.user
+        try:
+            receiver_user = message.dip_student_receiver.user
+        except:
+            receiver_user = message.program_receiver.user
 
     if request.user == receiver_user:
         if request.method=='POST':
