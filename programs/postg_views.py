@@ -3,6 +3,7 @@ import os
 import random
 import calendar, locale
 import zipfile
+from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -1152,6 +1153,124 @@ def docx_postg_report(request, scope):
             document.add_heading('Resumen de los programas de posgrado en la UNAH y el Complejo', level=1)
             document.add_heading('Año '+ str(now().year-1), level=2)
             document.add_heading('Programas doctorales', level=2)
+
+            if Program.objects.filter(type='phd'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre'
+                hdr_cells[1].text = 'Coordinador'
+                hdr_cells[2].text = 'Email'
+
+                for program in Program.objects.filter(type='phd'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = program.full_name
+                    row_cells[1].text = str(ProgramMember.objects.get(program=program, role='Coordinador'))
+                    row_cells[2].text = program.email
+            else:
+                document.add_heading('Aun no se registran programas doctorales en este sitio', level=3)
+
+            document.add_heading('Programas de maestría', level=2)
+
+            if Program.objects.filter(type='msc'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre'
+                hdr_cells[1].text = 'Coordinador'
+                hdr_cells[2].text = 'Email'
+
+                for program in Program.objects.filter(type='msc'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = program.full_name
+                    row_cells[1].text = str(ProgramMember.objects.get(program=program, role='Coordinador'))
+                    row_cells[2].text = program.email
+            else:
+                document.add_heading('Aun no se registran programas de maestría en este sitio', level=3)
+
+            document.add_heading('Diplomados', level=2)
+            if Program.objects.filter(type='dip'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre'
+                hdr_cells[1].text = 'Coordinador'
+                hdr_cells[2].text = 'Email'
+
+                for program in Program.objects.filter(type='dip'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = program.full_name
+                    row_cells[1].text = str(ProgramMember.objects.get(program=program, role='Coordinador'))
+                    row_cells[2].text = program.email
+            else:
+                document.add_heading('Aun no se registran diplomados en este sitio', level=3)
+
+            document.add_heading('Detalles por programas', level=2)
+            document.add_heading('Doctorados', level=3)
+
+            for program in Program.objects.filter(type='phd'):
+                document.add_heading('Doctorandos de '+str(program.full_name), level=3)
+                if Student.objects.filter(program=program, phdstudent__status='doctorando', init_date__year=now().year-1):
+                    table = document.add_table(rows=1, cols=4)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Defensa planificada'
+                    hdr_cells[2].text = 'Fecha de ingreso'
+                    hdr_cells[3].text = 'Categoría'
+
+
+                    for student in Student.objects.filter(program=program, phdstudent__status='doctorando', init_date__year=now().year-1):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        try:
+                            row_cells[1].text = str(student.studentformationplan.planned_end_year)
+                        except StudentFormationPlan.DoesNotExist:
+                            row_cells[1].text = 'No declarada'
+
+                        row_cells[2].text = str(student.init_date)
+                        row_cells[3].text = str(student.phdstudent.category).capitalize()
+                else:
+                    document.add_heading('No se registran nuevos ingresos al programa este año', level=3)
+
+
+                document.add_heading('Solicitantes de ' + str(program.full_name), level=3)
+                if Student.objects.filter(program=program, phdstudent__status='solicitante', request_date__year=now().year-1):
+                    table = document.add_table(rows=1, cols=3)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Fecha de solicitud'
+                    hdr_cells[2].text = 'Categoría'
+
+                    for student in Student.objects.filter(program=program, phdstudent__status='solicitante', request_date__year=now().year-1):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        row_cells[1].text = str(student.request_date)
+                        row_cells[2].text = str(student.phdstudent.category).capitalize()
+
+
+                else:
+                    document.add_heading('No se registran solicitudes de ingreso al programa este año', level=3)
+
+                document.add_heading('Graduados de ' + str(program.full_name), level=3)
+                if Student.objects.filter(program=program, phdstudent__status='graduado',
+                                          graduate_date__year=now().year-1):
+                    table = document.add_table(rows=1, cols=3)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Fecha de ingreso'
+                    hdr_cells[2].text = 'Categoría'
+
+                    for student in Student.objects.filter(program=program, phdstudent__status='graduado',
+                                                          graduate_date__year=now().year-1):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        row_cells[1].text = str(student.request_date)
+                        row_cells[2].text = str(student.phdstudent.category).capitalize()
+
+
+                else:
+                    document.add_heading('No se registran graduados del programa este año', level=3)
+
+
+
+
             docname = 'Reporte_Posgrado_Año_' + str(now().year-1) +  '.docx'
         elif scope == 'five_years':
             document.add_heading('Resumen de los programas de posgrado en la UNAH y el Complejo', level=1)

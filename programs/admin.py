@@ -44,4 +44,8 @@ admin.site.register(DipStudent)
 admin.site.register(Tuthor)
 admin.site.register(StudentFormationPlan)
 admin.site.register(InnerAreas)
-admin.site.register(PostgMember)
+
+class PostgMemberAdmin(admin.ModelAdmin):
+    list_display = ['user', 'charge']
+
+admin.site.register(PostgMember, PostgMemberAdmin)
