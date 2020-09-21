@@ -1084,24 +1084,28 @@ def docx_postg_report(request, scope):
 
             for program in Program.objects.filter(type='phd'):
                 document.add_heading('Doctorandos de '+str(program.full_name), level=3)
-                table = document.add_table(rows=1, cols=4)
-                hdr_cells = table.rows[0].cells
-                hdr_cells[0].text = 'Nombre y apellidos'
-                hdr_cells[1].text = 'Defensa planificada'
-                hdr_cells[2].text = 'Fecha de ingreso'
-                hdr_cells[3].text = 'Categoría'
+                if Student.objects.filter(program=program, phdstudent__status='doctorando', init_date__year=now().year):
+                    table = document.add_table(rows=1, cols=4)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Defensa planificada'
+                    hdr_cells[2].text = 'Fecha de ingreso'
+                    hdr_cells[3].text = 'Categoría'
 
 
-                for student in Student.objects.filter(program=program, phdstudent__status='doctorando', init_date__year=now().year):
-                    row_cells = table.add_row().cells
-                    row_cells[0].text = str(student.user.get_full_name())
-                    try:
-                        row_cells[1].text = str(student.studentformationplan.planned_end_year)
-                    except StudentFormationPlan.DoesNotExist:
-                        row_cells[1].text = 'No declarada'
+                    for student in Student.objects.filter(program=program, phdstudent__status='doctorando', init_date__year=now().year):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        try:
+                            row_cells[1].text = str(student.studentformationplan.planned_end_year)
+                        except StudentFormationPlan.DoesNotExist:
+                            row_cells[1].text = 'No declarada'
 
-                    row_cells[2].text = str(student.init_date)
-                    row_cells[3].text = str(student.phdstudent.category).capitalize()
+                        row_cells[2].text = str(student.init_date)
+                        row_cells[3].text = str(student.phdstudent.category).capitalize()
+                else:
+                    document.add_heading('No se registran nuevos ingresos al programa este año', level=3)
+
 
                 document.add_heading('Solicitantes de ' + str(program.full_name), level=3)
                 table = document.add_table(rows=1, cols=3)
