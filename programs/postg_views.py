@@ -1497,7 +1497,7 @@ def docx_postg_report(request, scope):
                     table = document.add_table(rows=1, cols=3)
                     hdr_cells = table.rows[0].cells
                     hdr_cells[0].text = 'Nombre y apellidos'
-                    hdr_cells[1].text = 'Fecha de egreso'
+                    hdr_cells[1].text = 'Año de egreso'
                     hdr_cells[2].text = 'Categoría'
 
                     for student in Student.objects.filter(program=program, phdstudent__status='graduado',
@@ -1505,7 +1505,7 @@ def docx_postg_report(request, scope):
                                                           graduate_date__lt=date(now().year - 1, 12, 31)):
                         row_cells = table.add_row().cells
                         row_cells[0].text = str(student.user.get_full_name())
-                        row_cells[1].text = str(student.graduate_date)
+                        row_cells[1].text = str(student.graduate_date.year)
                         row_cells[2].text = str(student.phdstudent.category).capitalize()
 
 
