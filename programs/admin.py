@@ -42,7 +42,6 @@ admin.site.register(InvestigationLine)
 admin.site.register(MscStudent)
 admin.site.register(DipStudent)
 admin.site.register(Tuthor)
-admin.site.register(StudentFormationPlan)
 admin.site.register(InnerAreas)
 
 class PostgMemberAdmin(admin.ModelAdmin):
