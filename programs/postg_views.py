@@ -1369,14 +1369,14 @@ def docx_postg_report(request, scope):
                     document.add_heading('No se registran solicitudes de ingreso al programa este año', level=3)
 
                 document.add_heading('Graduados de ' + str(program.full_name), level=3)
-                if MscStudent.objects.filter(program=program, status='solicitante', request_date__year=now().year-1):
+                if MscStudent.objects.filter(program=program, status='solicitante', graduate_date__year=now().year-1):
                     table = document.add_table(rows=1, cols=3)
                     hdr_cells = table.rows[0].cells
                     hdr_cells[0].text = 'Nombre y apellidos'
                     hdr_cells[1].text = 'Fecha de ingreso'
                     hdr_cells[2].text = 'Categoría'
 
-                    for student in MscStudent.objects.filter(program=program, status='solicitante', request_date__year=now().year-1):
+                    for student in MscStudent.objects.filter(program=program, status='solicitante', graduate_date__year=now().year-1):
                         row_cells = table.add_row().cells
                         row_cells[0].text = str(student.user.get_full_name())
                         row_cells[1].text = str(student.request_date)
@@ -1511,6 +1511,70 @@ def docx_postg_report(request, scope):
 
                 else:
                     document.add_heading('No se registran graduados del programa en el periodo', level=3)
+
+            document.add_heading('Maestrías', level=3)
+
+            for program in Program.objects.filter(type='msc'):
+                document.add_heading('Maestrantes de ' + str(program.full_name), level=3)
+                if MscStudent.objects.filter(program=program, status='maestrante', init_date__gt=date(now().year - 6,1,1), init_date__lt=date(now().year - 1,12,31)):
+                    table = document.add_table(rows=1, cols=4)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Defensa planificada'
+                    hdr_cells[2].text = 'Fecha de ingreso'
+                    hdr_cells[3].text = 'Categoría'
+
+                    for student in MscStudent.objects.filter(program=program, status='maestrante',
+                                                             init_date__gt=date(now().year - 6,1,1), init_date__lt=date(now().year - 1,12,31)):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        try:
+                            row_cells[1].text = str(student.studentformationplan.planned_end_year)
+                        except StudentFormationPlan.DoesNotExist:
+                            row_cells[1].text = 'No declarada'
+
+                        row_cells[2].text = str(student.init_date)
+                        row_cells[3].text = str(student.phdstudent.category).capitalize()
+                else:
+                    document.add_heading('No se registran nuevos ingresos al programa este año', level=3)
+
+                document.add_heading('Solicitantes de ' + str(program.full_name), level=3)
+                if MscStudent.objects.filter(program=program, status='solicitante', request_date__gt=date(now().year - 6,1,1), request_date__lt=date(now().year - 1,12,31)):
+                    table = document.add_table(rows=1, cols=3)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Fecha de solicitud'
+                    hdr_cells[2].text = 'Categoría'
+
+                    for student in Student.objects.filter(program=program, status='solicitante',
+                                                          request_date__gt=date(now().year - 6,1,1), request_date__lt=date(now().year - 1,12,31)):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        row_cells[1].text = str(student.request_date)
+                        row_cells[2].text = str(student.phdstudent.category).capitalize()
+
+
+                else:
+                    document.add_heading('No se registran solicitudes de ingreso al programa este año', level=3)
+
+                document.add_heading('Graduados de ' + str(program.full_name), level=3)
+                if MscStudent.objects.filter(program=program, status='solicitante', graduate_date__gt=date(now().year - 6,1,1), graduate_date__lt=date(now().year - 1,12,31)):
+                    table = document.add_table(rows=1, cols=3)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Fecha de ingreso'
+                    hdr_cells[2].text = 'Categoría'
+
+                    for student in MscStudent.objects.filter(program=program, status='solicitante',
+                                                             graduate_date__gt=date(now().year - 6,1,1), graduate_date__lt=date(now().year - 1,12,31)):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        row_cells[1].text = str(student.request_date)
+                        row_cells[2].text = str(student.phdstudent.category).capitalize()
+
+
+                else:
+                    document.add_heading('No se registran graduados del programa este año', level=3)
 
 
         # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
