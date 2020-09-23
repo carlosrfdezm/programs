@@ -1132,14 +1132,14 @@ def docx_postg_report(request, scope):
                     table = document.add_table(rows=1, cols=3)
                     hdr_cells = table.rows[0].cells
                     hdr_cells[0].text = 'Nombre y apellidos'
-                    hdr_cells[1].text = 'Fecha de ingreso'
+                    hdr_cells[1].text = 'Fecha de egreso'
                     hdr_cells[2].text = 'Categoría'
 
                     for student in Student.objects.filter(program=program, phdstudent__status='graduado',
                                                           graduate_date__year=now().year):
                         row_cells = table.add_row().cells
                         row_cells[0].text = str(student.user.get_full_name())
-                        row_cells[1].text = str(student.request_date)
+                        row_cells[1].text = str(student.graduate_date)
                         row_cells[2].text = str(student.phdstudent.category).capitalize()
 
 
@@ -1190,13 +1190,13 @@ def docx_postg_report(request, scope):
                     table = document.add_table(rows=1, cols=3)
                     hdr_cells = table.rows[0].cells
                     hdr_cells[0].text = 'Nombre y apellidos'
-                    hdr_cells[1].text = 'Fecha de ingreso'
+                    hdr_cells[1].text = 'Fecha de egreso'
                     hdr_cells[2].text = 'Categoría'
 
                     for student in MscStudent.objects.filter(program=program, status='graduado', request_date__year=now().year):
                         row_cells = table.add_row().cells
                         row_cells[0].text = str(student.user.get_full_name())
-                        row_cells[1].text = str(student.request_date)
+                        row_cells[1].text = str(student.graduate_date)
                         row_cells[2].text = str(student.category).capitalize()
 
 
@@ -1309,14 +1309,14 @@ def docx_postg_report(request, scope):
                     table = document.add_table(rows=1, cols=3)
                     hdr_cells = table.rows[0].cells
                     hdr_cells[0].text = 'Nombre y apellidos'
-                    hdr_cells[1].text = 'Fecha de ingreso'
+                    hdr_cells[1].text = 'Fecha de egreso'
                     hdr_cells[2].text = 'Categoría'
 
                     for student in Student.objects.filter(program=program, phdstudent__status='graduado',
                                                           graduate_date__year=now().year-1):
                         row_cells = table.add_row().cells
                         row_cells[0].text = str(student.user.get_full_name())
-                        row_cells[1].text = str(student.request_date)
+                        row_cells[1].text = str(student.graduate_date)
                         row_cells[2].text = str(student.phdstudent.category).capitalize()
 
 
@@ -1373,13 +1373,13 @@ def docx_postg_report(request, scope):
                     table = document.add_table(rows=1, cols=3)
                     hdr_cells = table.rows[0].cells
                     hdr_cells[0].text = 'Nombre y apellidos'
-                    hdr_cells[1].text = 'Fecha de ingreso'
+                    hdr_cells[1].text = 'Fecha de egreso'
                     hdr_cells[2].text = 'Categoría'
 
                     for student in MscStudent.objects.filter(program=program, status='solicitante', graduate_date__year=now().year-1):
                         row_cells = table.add_row().cells
                         row_cells[0].text = str(student.user.get_full_name())
-                        row_cells[1].text = str(student.request_date)
+                        row_cells[1].text = str(student.graduate_date)
                         row_cells[2].text = str(student.phdstudent.category).capitalize()
 
 
@@ -1497,7 +1497,7 @@ def docx_postg_report(request, scope):
                     table = document.add_table(rows=1, cols=3)
                     hdr_cells = table.rows[0].cells
                     hdr_cells[0].text = 'Nombre y apellidos'
-                    hdr_cells[1].text = 'Fecha de ingreso'
+                    hdr_cells[1].text = 'Fecha de egreso'
                     hdr_cells[2].text = 'Categoría'
 
                     for student in Student.objects.filter(program=program, phdstudent__status='graduado',
@@ -1505,7 +1505,7 @@ def docx_postg_report(request, scope):
                                                           graduate_date__lt=date(now().year - 1, 12, 31)):
                         row_cells = table.add_row().cells
                         row_cells[0].text = str(student.user.get_full_name())
-                        row_cells[1].text = str(student.request_date)
+                        row_cells[1].text = str(student.graduate_date)
                         row_cells[2].text = str(student.phdstudent.category).capitalize()
 
 
@@ -1558,18 +1558,18 @@ def docx_postg_report(request, scope):
                     document.add_heading('No se registran solicitudes de ingreso al programa este año', level=3)
 
                 document.add_heading('Graduados de ' + str(program.full_name), level=3)
-                if MscStudent.objects.filter(program=program, status='solicitante', graduate_date__gt=date(now().year - 6,1,1), graduate_date__lt=date(now().year - 1,12,31)):
+                if MscStudent.objects.filter(program=program, status='graduado', graduate_date__gt=date(now().year - 6,1,1), graduate_date__lt=date(now().year - 1,12,31)):
                     table = document.add_table(rows=1, cols=3)
                     hdr_cells = table.rows[0].cells
                     hdr_cells[0].text = 'Nombre y apellidos'
-                    hdr_cells[1].text = 'Fecha de ingreso'
+                    hdr_cells[1].text = 'Año de egreso'
                     hdr_cells[2].text = 'Categoría'
 
-                    for student in MscStudent.objects.filter(program=program, status='solicitante',
+                    for student in MscStudent.objects.filter(program=program, status='graduado',
                                                              graduate_date__gt=date(now().year - 6,1,1), graduate_date__lt=date(now().year - 1,12,31)):
                         row_cells = table.add_row().cells
                         row_cells[0].text = str(student.user.get_full_name())
-                        row_cells[1].text = str(student.request_date)
+                        row_cells[1].text = str(student.graduate_date.year)
                         row_cells[2].text = str(student.phdstudent.category).capitalize()
 
 
