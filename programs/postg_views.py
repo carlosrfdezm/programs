@@ -1028,7 +1028,7 @@ def docx_postg_report(request, scope):
         document = Document()
         docname = ''
         if scope == 'current_year':
-            docname = 'Reporte_Posgrado_Año_' + str(now().year) + '.docx'
+            docname = 'Reporte_Posgrado_' + str(now().year) + '.docx'
 
             document.add_heading('Resumen de los programas de posgrado en la UNAH y el Complejo', level=1)
             document.add_heading('Año '+ str(now().year), level=2)
@@ -1204,7 +1204,7 @@ def docx_postg_report(request, scope):
                     document.add_heading('No se registran graduados del programa este año', level=3)
 
         elif scope == 'last_year':
-            docname = 'Reporte_Posgrado_Año_' + str(now().year - 1) + '.docx'
+            docname = 'Reporte_Posgrado_' + str(now().year - 1) + '.docx'
             document.add_heading('Resumen de los programas de posgrado en la UNAH y el Complejo', level=1)
             document.add_heading('Año '+ str(now().year-1), level=2)
             document.add_heading('Programas doctorales', level=2)
@@ -1391,7 +1391,7 @@ def docx_postg_report(request, scope):
             document.add_heading('Resumen de los programas de posgrado en la UNAH y el Complejo', level=1)
             document.add_heading('Período '+ str(now().year-6) + '-' + str(now().year-1), level=2)
             document.add_heading('Programas doctorales', level=2)
-            docname = 'Reporte_Posgrado_Período_' + str(now().year-6) + '-' + str(now().year-1) +  '.docx'
+            docname = 'Reporte_Posgrado_' + str(now().year-6) + '-' + str(now().year-1) +  '.docx'
 
             document.add_heading('Programas doctorales', level=2)
 
