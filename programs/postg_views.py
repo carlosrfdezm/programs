@@ -1444,6 +1444,64 @@ def docx_postg_report(request, scope):
                 else:
                     document.add_heading('No se registran graduados del programa este año', level=3)
 
+            document.add_heading('Diplomados', level=3)
+
+            for program in Program.objects.filter(type='dip'):
+                document.add_heading('Diplomantes de ' + str(program.full_name), level=3)
+                if DipStudent.objects.filter(program=program, status='diplomante', init_date__year=now().year-1):
+                    table = document.add_table(rows=1, cols=3)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Fecha de ingreso'
+                    hdr_cells[2].text = 'Edición'
+
+                    for student in DipStudent.objects.filter(program=program, status='diplomante',
+                                                             init_date__year=now().year-1):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        row_cells[1].text = str(student.init_date)
+                        row_cells[2].text = str(student.edition)
+                else:
+                    document.add_heading('No se registran nuevos ingresos al programa este año', level=3)
+
+                document.add_heading('Solicitantes de ' + str(program.full_name), level=3)
+                if DipStudent.objects.filter(program=program, status='solicitante', request_date__year=now().year-1):
+                    table = document.add_table(rows=1, cols=3)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Fecha de solicitud'
+                    hdr_cells[2].text = 'Categoría'
+
+                    for student in DipStudent.objects.filter(program=program, status='solicitante',
+                                                             request_date__year=now().year-1):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        row_cells[1].text = str(student.request_date)
+                        row_cells[2].text = str(student.category).capitalize()
+
+
+                else:
+                    document.add_heading('No se registran solicitudes de ingreso al programa este año', level=3)
+
+                document.add_heading('Graduados de ' + str(program.full_name), level=3)
+                if DipStudent.objects.filter(program=program, status='graduado', request_date__year=now().year-1):
+                    table = document.add_table(rows=1, cols=3)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Fecha de egreso'
+                    hdr_cells[2].text = 'Categoría'
+
+                    for student in DipStudent.objects.filter(program=program, status='graduado',
+                                                             request_date__year=now().year-1):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        row_cells[1].text = str(student.graduate_date)
+                        row_cells[2].text = str(student.category).capitalize()
+
+
+                else:
+                    document.add_heading('No se registran graduados del programa este año', level=3)
+
 
         elif scope == 'five_years':
             document.add_heading('Resumen de los programas de posgrado en la UNAH y el Complejo', level=1)
@@ -1633,6 +1691,64 @@ def docx_postg_report(request, scope):
 
                 else:
                     document.add_heading('No se registran graduados del programa este año', level=3)
+
+            document.add_heading('Diplomados', level=3)
+
+            for program in Program.objects.filter(type='dip'):
+                document.add_heading('Diplomantes de ' + str(program.full_name), level=3)
+                if DipStudent.objects.filter(program=program, status='diplomante', init_date__gt=date(now().year - 6,1,1), init_date__lt=date(now().year - 1,12,31)):
+                    table = document.add_table(rows=1, cols=3)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Fecha de ingreso'
+                    hdr_cells[2].text = 'Edición'
+
+                    for student in DipStudent.objects.filter(program=program, status='diplomante',
+                                                             init_date__gt=date(now().year - 6,1,1), init_date__lt=date(now().year - 1,12,31)):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        row_cells[1].text = str(student.init_date)
+                        row_cells[2].text = str(student.edition)
+                else:
+                    document.add_heading('No se registran nuevos ingresos al programa en el período', level=3)
+
+                document.add_heading('Solicitantes de ' + str(program.full_name), level=3)
+                if DipStudent.objects.filter(program=program, status='solicitante', request_date__gt=date(now().year - 6,1,1), request_date__lt=date(now().year - 1,12,31)):
+                    table = document.add_table(rows=1, cols=3)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Fecha de solicitud'
+                    hdr_cells[2].text = 'Categoría'
+
+                    for student in DipStudent.objects.filter(program=program, status='solicitante',
+                                                             request_date__gt=date(now().year - 6,1,1), request_date__lt=date(now().year - 1,12,31)):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        row_cells[1].text = str(student.request_date)
+                        row_cells[2].text = str(student.category).capitalize()
+
+
+                else:
+                    document.add_heading('No se registran solicitudes de ingreso al programa en el período', level=3)
+
+                document.add_heading('Graduados de ' + str(program.full_name), level=3)
+                if DipStudent.objects.filter(program=program, status='graduado', graduate_date__gt=date(now().year - 6,1,1), graduate_date__lt=date(now().year - 1,12,31)):
+                    table = document.add_table(rows=1, cols=3)
+                    hdr_cells = table.rows[0].cells
+                    hdr_cells[0].text = 'Nombre y apellidos'
+                    hdr_cells[1].text = 'Fecha de egreso'
+                    hdr_cells[2].text = 'Categoría'
+
+                    for student in DipStudent.objects.filter(program=program, status='graduado',
+                                                             graduate_date__gt=date(now().year - 6,1,1), graduate_date__lt=date(now().year - 1,12,31)):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.get_full_name())
+                        row_cells[1].text = str(student.graduate_date)
+                        row_cells[2].text = str(student.category).capitalize()
+
+
+                else:
+                    document.add_heading('No se registran graduados del programa en el período', level=3)
 
 
         # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
