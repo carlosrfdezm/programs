@@ -60,6 +60,11 @@ def cgc_photo_directory_path(instance, filename):
 def cgc_brief_path(instance, filename):
     return 'cgc/brieffings/{0}/{1}/{2}'.format(instance.year,instance.month,filename)
 
+def cgc_doc_path(instance, filename):
+    file_ext = filename.split('.')[filename.split('.').__len__() - 1]
+    file_name = '{0}_{1}_{2}.{3}'.format(instance.type.capitalize(), instance.year, instance.month, file_ext)
+    return 'cgc/docs/{0}/{1}/{2}'.format(instance.year,instance.month,file_name)
+
 def cngc_brief_path(instance, filename):
     return 'cngc/brieffings/{0}/{1}/{2}'.format(instance.year,instance.month,filename)
 
@@ -465,6 +470,18 @@ class PostgMember(models.Model):
         return self.user.get_full_name()
 
 class Document(models.Model):
+    name = models.CharField(max_length=100, null=False)
+    year = models.IntegerField(null=False)
+    month = models.CharField(max_length=12)
+    description = models.TextField(max_length=300, null=True)
+    type = models.CharField(max_length=20, null=False, default='acta',choices=[('acta', 'Acta'),('resolucion', 'Resolución'),('informe', 'Informe'),('otro', 'Otro')])
+    doc = models.FileField(upload_to=postg_document_path)
+    is_public = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+class CGCDocument(models.Model):
     name = models.CharField(max_length=100, null=False)
     year = models.IntegerField(null=False)
     month = models.CharField(max_length=12)
