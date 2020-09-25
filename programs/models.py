@@ -62,7 +62,7 @@ def cgc_brief_path(instance, filename):
 
 def cgc_doc_path(instance, filename):
     file_ext = filename.split('.')[filename.split('.').__len__() - 1]
-    file_name = '{0}_{1}_{2}.{3}'.format(instance.type.capitalize(), instance.year, instance.month, file_ext)
+    file_name = 'CGC_{0}_{1}_{2}.{3}'.format(instance.type.capitalize(), instance.year, instance.month, file_ext)
     return 'cgc/docs/{0}/{1}/{2}'.format(instance.year,instance.month,file_name)
 
 def cngc_brief_path(instance, filename):
