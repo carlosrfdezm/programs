@@ -57,6 +57,10 @@ urlpatterns = [
     path('brieffings/<int:brief_id>/view', views.cgc_brief_view, name='cgc_brief_view'),
     path('brieffings/<int:brief_id>/edit', views.edit_cgc_brief, name='edit_cgc_brief'),
 
+    path('documents/create', views.cgc_new_document, name='cgc_new_document'),
+    path('documents/list/<str:scope>', views.cgc_documents, name='documents'),
+
+
     path('students/<str:scope>', views.students_list, name='students_list'),
     path('lines/list', views.programs_lines, name='programs_lines'),
     path('lines/<int:line_id>/students/list', views.cgc_line_students_list, name='cgc_line_students_list'),

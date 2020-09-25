@@ -121,14 +121,40 @@ def cgc_new_document(request):
             for year in range(now().year - 4, now().year + 1):
                 years.append(year)
             context = {
-                'member': postg_member,
+                'member': cgc_member,
                 'years': years,
                 'current_year': now().year,
             }
 
-            return render(request, 'programs/postg/postg_create_document.html', context)
+            return render(request, 'programs/cgc/cgc_create_document.html', context)
     else:
         return error_500(request,'Usted no tiene privilegios para agregar actas.')
+    
+@login_required
+def cgc_documents(request, scope):
+    print(scope)
+    try:
+        cgc_member = CGC_Member.objects.get(user=request.user)
+        context={
+            'member':cgc_member,
+
+        }
+        if scope == 'all':
+            context['documents']= CGCDocument.objects.all()
+        elif scope == 'brief':
+            context['documents']=  CGCDocument.objects.filter(type='acta')
+        elif scope == 'reports':
+            context['documents']=  CGCDocument.objects.filter(type='informe')
+        elif scope == 'resolutions':
+            context['documents']=  CGCDocument.objects.filter(type='resolucion')
+        else:
+            return error_500(request,'El contexto es incorrecto. Intente acceder desde uno de los enlaces publicados en el sitio.')
+
+
+
+        return render(request, 'programs/cgc/cgc_documents_list.html', context)
+    except CGC_Member.DoesNotExist:
+        return error_500(request, 'Usted no tiene privilegios para acceder a esta página')
 
 
 

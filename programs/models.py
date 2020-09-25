@@ -487,7 +487,7 @@ class CGCDocument(models.Model):
     month = models.CharField(max_length=12)
     description = models.TextField(max_length=300, null=True)
     type = models.CharField(max_length=20, null=False, default='acta',choices=[('acta', 'Acta'),('resolucion', 'Resolución'),('informe', 'Informe'),('otro', 'Otro')])
-    doc = models.FileField(upload_to=postg_document_path)
+    doc = models.FileField(upload_to=cgc_doc_path)
     is_public = models.BooleanField(default=False)
 
     def __str__(self):

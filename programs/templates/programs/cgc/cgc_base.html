@@ -233,29 +233,29 @@
                             <a href="#" class="nav-link" title="Actas de la CGC y CNGC">
                                 <i class="nav-icon fas fa-archive"></i>
                                 <p>
-                                    Actas
+                                    Documentos
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
 
                                 <li class="nav-item">
-                                    <a href="{% url 'cgc:create_cgc_brief' %}" class="nav-link" title="Nueva acta de la CGC UNAH-Complejo">
+                                    <a href="{% url 'cgc:cgc_new_document' %}" class="nav-link" title="Nueva acta de la CGC UNAH-Complejo">
                                         <i class="fa fa-folder-plus"></i>
-                                        <p>Nueva acta CGC</p>
+                                        <p>Nuevo documento CGC</p>
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a href="{% url 'cgc:create_cngc_brief' %}" class="nav-link" title="Nueva acta de la Comisión Nacional de Grados">
                                         <i class="fa fa-file"></i>
-                                        <p>Nueva acta CNGC</p>
+                                        <p>Nuevo documento</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{% url 'cgc:cgc_brieffings' %}" class="nav-link" title="Ver actas de la CGC UNAH-Complejo">
+                                    <a href="{% url 'cgc:documents' 'all' %}" class="nav-link" title="Ver documentos de la CGC">
                                         <i class="fa fa-list-ol"></i>
-                                        <p>Actas CGC</p>
+                                        <p>Ver documentos CGC</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
