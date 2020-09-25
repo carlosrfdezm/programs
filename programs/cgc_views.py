@@ -129,6 +129,104 @@ def cgc_new_document(request):
             return render(request, 'programs/cgc/cgc_create_document.html', context)
     else:
         return error_500(request,'Usted no tiene privilegios para agregar documentos.')
+
+
+@login_required
+def cgc_edit_document(request, document_id):
+    try:
+        cgc_member = CGC_Member.objects.get(user=request.user)
+        if request.method == 'POST':
+            doc = CGCDocument.objects.get(pk=document_id)
+            old_year = doc.year
+            old_month = doc.month
+            old_type = doc.type
+
+            doc.year = request.POST['year']
+            doc.month = request.POST['month']
+            doc.type = request.POST['type']
+            doc.description = request.POST['description']
+            doc.save()
+
+            try:
+                if request.POST['is_public']== 'on':
+                    doc.is_public = True
+                    doc.save()
+            except:
+                doc.is_public = False
+                doc.save()
+
+            try:
+                doc_file = request.FILES['doc']
+                doc_ext = doc_file.name.split('.')[doc_file.name.split('.').__len__() - 1]
+                doc_name = 'cgc/docs/{0}/{3}/{1}_{2}_{3}.{4}'.format(doc.year, doc.type.capitalize(), doc.year,doc.month, doc_ext)
+
+
+
+                fs = FileSystemStorage()
+
+                filename = fs.save(doc_name, doc_file)
+                old_doc = doc.doc.url
+
+                # doc.doc.delete()
+                doc.doc = filename
+                doc.save()
+                try:
+                    fd = FileSystemStorage()
+                    fd.delete(old_doc)
+                    print('Archivo eliminado exitosamente')
+                except:
+                    print('No se pudo eliminar el archivo:', old_doc)
+
+
+            except:
+                print('No viene archivo, pero hay que mover el que esta')
+                if str(old_year) != doc.year or old_month != doc.month or old_type != doc.type:
+                    initial_path = doc.doc.url
+
+                    print('Initial path:', initial_path)
+                    doc_ext = initial_path.split('.')[initial_path.split('.').__len__() - 1]
+                    old_name = doc.doc.name
+
+                    doc.doc.name = '/cgc/docs/{1}/{2}/{0}_{1}_{2}.{3}'.format(doc.type.capitalize(), doc.year, doc.month,
+                                                                            doc_ext)
+                    doc.save()
+                    new_path = MEDIA_ROOT + doc.doc.name
+                    print('New path:', new_path)
+                    try:
+                        if not os.path.exists(MEDIA_ROOT + '/cgc/docs/{0}/{1}'.format(doc.year, doc.month)):
+                            os.makedirs(MEDIA_ROOT + '/cgc/docs/{0}/{1}'.format(doc.year, doc.month))
+                        fn = FileSystemStorage(MEDIA_ROOT)
+                        if fn.exists(doc.doc.name[1:]):
+                            new_name = '/'+ fn.get_available_name(doc.doc.name[1:])
+                            doc.doc.name = new_name
+                            doc.save()
+                            new_path = MEDIA_ROOT+doc.doc.name
+                            os.rename(initial_path, new_path)
+
+                        else:
+                            os.rename(initial_path, new_path)
+                    except:
+                        print('Exception:', 'No se pudo mover el archivo')
+                        # doc.doc.name = old_name
+                        # doc.save
+                else:
+                    pass
+
+            return HttpResponseRedirect(reverse('cgc:documents', args=['all']))
+
+        else:
+            years=[]
+            for year in range(now().year-4, now().year+1):
+                years.append(year)
+            context={
+                'member':cgc_member,
+                'years':years,
+                'document':CGCDocument.objects.get(pk=document_id),
+            }
+
+            return render(request, 'programs/cgc/cgc_edit_document.html', context)
+    except CGC_Member.DoesNotExist:
+        return error_500(request, 'Usted no tiene privilegios para acceder a esta página')
     
 @login_required
 def cgc_documents(request, scope):

@@ -88,7 +88,7 @@
                                     <td class="text-center">
                                         <div class="btn-group">
                                             <a class="btn btn-sm btn-primary" href="{% url 'cgc:view_document' document.id %}" title="Ver o descargar documento"><i class="fa fa-download"></i> </a>
-                                            <a class="btn btn-sm btn-warning" href="" title="Editar documento"><i class="fa fa-edit"></i> </a>
+                                            <a class="btn btn-sm btn-warning" href="{% url 'cgc:edit_document' document.id %}" title="Editar documento"><i class="fa fa-edit"></i> </a>
                                             <button class="btn btn-sm btn-danger" type="button" data-toggle="modal" data-target="#modal_rm_document_{{ document.id }}" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
 
                                         </div>
