@@ -170,68 +170,7 @@
             });
             $('[data-toggle="popover"]').popover();
 
-            $(document).on('click',"button[id*='btn_rm_brief']",function () {
-                var brief_id = $(this).attr('data');
-                var tr_selector = '#tr_brief_'+ brief_id;
 
-                var url = "{% url 'programs:ajx_delete_program_brieffing' program.slug %}";
-
-                $('#modal_rm_brieffing_'+brief_id).modal('hide');
-
-                $.ajax({
-                    url : url,
-                    type : "POST", // http method
-                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                        'brief_id':brief_id,
-                    }, // data sent with the post request
-
-                    // handle a successful response
-                    success : function(json) {
-
-                        if (json[0].deleted == 1) {
-                            var row = myTable.row( $(tr_selector) );
-                            row.remove().draw();
-                            {#$(tr_selector).remove();#}
-
-                            Toast.fire({
-                                type: 'success',
-                                title: 'Acta eliminada exitósamente'
-                            });
-
-                        }
-                        else if(json[0].deleted == 0){
-                            Toast.fire({
-                                type: 'error',
-                                title: 'No se ha podido eliminar el acta seleccionada.'
-                            })
-
-                        }
-                        else if(json[0].deleted == 2){
-                            Toast.fire({
-                                type: 'error',
-                                title: 'Usted no puede eliminar actas de la CGC.'
-                            })
-
-                        }
-                        cons
-                        console.log(json); // log the returned json to the console
-                        console.log("success"); // another sanity check
-
-
-
-                    },
-
-                    // handle a non-successful response
-                    error : function(xhr,errmsg,err) {
-                        Toast.fire({
-                            type: 'error',
-                            title: 'Uff, ha ocurrido algo desconocido.'
-                        })
-                    }
-                });
-
-
-            });
 
 
 
