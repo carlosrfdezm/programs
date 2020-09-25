@@ -59,6 +59,7 @@ urlpatterns = [
 
     path('documents/create', views.cgc_new_document, name='cgc_new_document'),
     path('documents/list/<str:scope>', views.cgc_documents, name='documents'),
+    path('documents/<int:document_id>/view', views.cgc_document_view, name='view_document'),
 
 
     path('students/<str:scope>', views.students_list, name='students_list'),

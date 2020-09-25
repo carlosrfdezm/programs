@@ -128,7 +128,7 @@ def cgc_new_document(request):
 
             return render(request, 'programs/cgc/cgc_create_document.html', context)
     else:
-        return error_500(request,'Usted no tiene privilegios para agregar actas.')
+        return error_500(request,'Usted no tiene privilegios para agregar documentos.')
     
 @login_required
 def cgc_documents(request, scope):
@@ -156,6 +156,39 @@ def cgc_documents(request, scope):
     except CGC_Member.DoesNotExist:
         return error_500(request, 'Usted no tiene privilegios para acceder a esta página')
 
+
+@login_required
+def cgc_document_view(request, document_id):
+
+    doc = CGCDocument.objects.get(pk=document_id)
+
+    fs = FileSystemStorage()
+
+    filename =doc.doc.url
+
+    if fs.exists(filename):
+        file_name= filename.split('/')[filename.split('/').__len__()-1]
+        doc_ext =filename.split('.')[filename.split('.').__len__()-1]
+
+        if doc_ext =='doc' or doc_ext=='docx' or doc_ext == 'odt':
+
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/doc')
+                response['Content-Disposition'] =  "inline; filename=" +'"'+  file_name+'"'
+
+                return response
+
+        elif doc_ext == 'pdf' :
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/pdf')
+                response['Content-Disposition'] = "inline; filename=" +'"'+ file_name + '"'
+
+                return response
+
+    else:
+
+
+        return error_500(request, 'No existe el archivo solicitado')
 
 
 @login_required
