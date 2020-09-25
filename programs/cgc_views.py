@@ -1233,6 +1233,42 @@ def ajx_cgc_member_massive_msg(request ):
 
 
 @login_required
+def ajx_delete_document(request):
+    try:
+        cgc_member = CGC_Member.objects.get(user=request.user)
+        if cgc_member.charge == 'Presidente' or cgc_member.charge == 'Secretario':
+            if request.method == 'POST':
+                document = CGCDocument.objects.get(pk=request.POST['document_id'])
+                try:
+                    document.doc.delete()
+                except:
+                    pass
+
+                document.delete()
+                return HttpResponse(
+                    json.dumps([{'deleted': 1}]),
+                    content_type="application/json"
+                )
+            else:
+                return HttpResponse(
+                    json.dumps([{'deleted': 2}]),
+                    content_type="application/json"
+                )
+
+
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': 0}]),
+                content_type="application/json"
+            )
+    except CGC_Member.DoesNotExist:
+        return HttpResponse(
+            json.dumps([{'deleted': 0}]),
+            content_type="application/json"
+        )
+
+
+@login_required
 def ajx_cgc_everybody_massive_msg(request ):
     if user_is_cgc_ps(request.user):
 

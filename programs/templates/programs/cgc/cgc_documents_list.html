@@ -187,7 +187,7 @@
                 $('#btn_rm_document_{{ document.id }}').click(function () {
 
                     var document_id={{ document.id }};
-                    var url = "{% url 'postg:ajx_delete_document' %}";
+                    var url = "{% url 'cgc:ajx_delete_document' %}";
 
                     $('#modal_rm_document_{{ document.id }}').modal('hide');
 
@@ -220,7 +220,7 @@
                             else if(json[0].deleted == 2){
                                 Toast.fire({
                                     type: 'error',
-                                    title: 'Usted no tiene privilegios para eliminar documentos de la Dir. de Posgrado.'
+                                    title: 'Usted no tiene privilegios para eliminar documentos de la CGC.'
                                 })
 
                             }
