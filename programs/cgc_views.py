@@ -22,7 +22,7 @@ from programas.settings import MEDIA_URL, MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, CGC_Member, \
-    CGCBrief, CNGCBrief
+    CGCBrief, CNGCBrief, CGCDocument
 from programs.templatetags.extra_tags import init_requirements_accomplished, finish_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
     user_is_cgc_member, user_is_cgc_ps
@@ -93,6 +93,43 @@ def create_cgc_brief(request):
             return render(request, 'programs/cgc/cgc_create_brief.html',context)
     else:
         return error_500(request,'Usted no tiene privilegios para agregar actas.')
+
+
+@login_required
+def cgc_new_document(request):
+    if user_is_cgc_ps(request.user):
+        cgc_member = CGC_Member.objects.get(user=request.user)
+        if request.method == 'POST':
+            new_doc = CGCDocument(
+                year=request.POST['year'],
+                month=request.POST['month'],
+                description=request.POST['description'],
+                type=request.POST['type'],
+                doc=request.FILES['doc'],
+            )
+            try:
+                if request.POST['is_public'] == 'on':
+                    new_doc.is_public = True
+
+            except:
+                pass
+            new_doc.save()
+
+            return HttpResponseRedirect(reverse('cgc:documents', args=['all']))
+        else:
+            years = []
+            for year in range(now().year - 4, now().year + 1):
+                years.append(year)
+            context = {
+                'member': postg_member,
+                'years': years,
+                'current_year': now().year,
+            }
+
+            return render(request, 'programs/postg/postg_create_document.html', context)
+    else:
+        return error_500(request,'Usted no tiene privilegios para agregar actas.')
+
 
 
 @login_required
