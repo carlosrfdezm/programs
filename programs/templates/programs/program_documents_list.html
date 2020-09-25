@@ -84,6 +84,7 @@
                                     <th>Tipo </th>
 
                                     <th>Descripción</th>
+                                    <th>Público</th>
                                     <th></th>
 
                                 </tr>
@@ -93,6 +94,8 @@
                                     <th>Mes</th>
                                     <th>Tipo </th>
                                     <th>Descripción</th>
+                                    <th class="text-center">Público</th>
+
                                     <th> </th>
 
                                 </tr>
@@ -108,6 +111,8 @@
                                     <td>{{ doc.month }}</td>
                                     <td>{{ doc.type|capfirst }}</td>
                                     <td>{{ doc.description|truncatewords:7 }}</td>
+                                    <td class="text-center"><i class="fa {% if doc.is_public %} text-success fa-toggle-on {% else %} text-danger fa-toggle-off {% endif %}"></i></td>
+
                                     <td class="text-right">
                                         <div class="btn-group">
                                             <button class="btn btn-sm btn-success" type="button" title="Ver acta" onclick="window.open('{% url 'programs:program_doc_view' program.slug doc.id %}');"><i class="fa fa-book-reader"></i> </button>
