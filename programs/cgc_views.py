@@ -31,7 +31,17 @@ from docx import Document
 from docx.shared import Inches
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
-
+def cgc_index(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('cgc:cgc_home'))
+    else:
+        context={
+            'director': CGC_Member.objects.get(charge='Presidente'),
+            'members': CGC_Member.objects.all(),
+            'documents': CGCDocument.objects.filter(is_public=True),
+            'programs': Program.objects.filter(type='phd'),
+        }
+        return render(request, 'programs/cgc/cgc_index.html', context)
 
 @login_required
 def cgc_home(request):

@@ -10,6 +10,7 @@ urlpatterns = [
 
 
     #URLS DE CGC
+    path('', views.cgc_index, name='cgc_index'),
     path('home', views.cgc_home, name='cgc_home'),
     path('members/create', views.cgc_create_cgc_member, name='cgc_create_cgc_member'),
     path('members/list', views.cgc_members_list, name='cgc_members_list'),

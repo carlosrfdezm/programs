@@ -183,7 +183,7 @@
             <div class="section-header">
                 <h3>Comisión de Grados</h3>
                 <p>Miembros de la Comisión de Grados Científicos del Complejo Científico Docente.<br>
-                    <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_cgc_login" title="Inicio de sesión de la CGC">Iniciar sesión</button> </p>
+                    <a class="btn btn-sm btn-primary" href="{% url 'cgc:cgc_index' %}" title="Ir a CGC">Ir a CGC</a> </p>
 
             </div>
             <div class="modal fade" id="modal_cgc_login">
@@ -295,7 +295,7 @@
                         <li><a href="#intro">Inicio</a></li>
                         <li><a href="#about">Acerca de</a></li>
                         <li><a href="#services">Programas</a></li>
-                        <li><a href="#team">Comisión de Grados</a></li>
+                        <li><a href="{% url 'cgc:cgc_index' %}">Comisión de Grados</a></li>
                     </ul>
                 </div>
 
