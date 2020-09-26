@@ -45,8 +45,21 @@
                             {#                                    <i class="fas fa-minus"></i>#}
                             {#                                </button>#}
                             <div class="btn-group">
-                                <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fas fa-wrench"></i>
+                                <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown" title="Por nivel">
+                                    <i class="fas fa-list-ol"></i>
+                                </button>
+
+                                <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                    <a href="{% url 'cgc:documents' 'cgc' %}" class="dropdown-item">CGC</a>
+                                    <a href="{% url 'cgc:documents' 'cngc' %}" class="dropdown-item">CNGC</a>
+
+                                </div>
+
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown" title="Por tipo">
+                                    <i class="fas fa-list"></i>
                                 </button>
 
                                 <div class="dropdown-menu dropdown-menu-right" role="menu">

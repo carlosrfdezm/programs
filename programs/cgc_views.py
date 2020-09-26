@@ -247,6 +247,10 @@ def cgc_documents(request, scope):
             context['documents']=  CGCDocument.objects.filter(type='informe')
         elif scope == 'resolutions':
             context['documents']=  CGCDocument.objects.filter(type='resolucion')
+        elif scope == 'cgc':
+            context['documents']=  CGCDocument.objects.filter(level='cgc')
+        elif scope == 'cngc':
+            context['documents']=  CGCDocument.objects.filter(level='cngc')
         else:
             return error_500(request,'El contexto es incorrecto. Intente acceder desde uno de los enlaces publicados en el sitio.')
 
