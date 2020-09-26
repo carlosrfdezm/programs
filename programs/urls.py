@@ -110,17 +110,13 @@ urlpatterns = [
     path('documents/<int:doc_id>/view', views.program_doc_view, name='program_doc_view'),
     path('documents/<int:doc_id>/public/view', views.public_program_doc_view, name='public_program_doc_view'),
     path('documents/list', views.program_documents, name='program_brieffings'),
+    path('documents/cgc', views.program_cgc_documents, name='program_cgc_documents'),
+    path('documents/cgc/<int:document_id>/view', views.program_cgc_document_view, name='program_cgc_document_view'),
     path('documents/download', views.program_brief_zip_download, name='program_brief_zip_download'),
     path('documents/year/<int:year>/list', views.program_docs_by_year, name='program_docs_by_year'),
     path('documents/year/<int:year>/download', views.program_by_year_brief_zip_download, name='program_by_year_brief_zip_download'),
-    path('cgc/brieffings', views.program_cgc_brieffings, name='program_cgc_brieffings'),
 
 
-    path('cgc/brieffings/<int:year>', views.program_cgc_brieffings_by_year, name='program_cgc_brieffings_by_year'),
-    path('cgc/brieffings/<int:brief_id>/view', views.program_cgc_brief_view, name='program_cgc_brief_view'),
-    path('cngc/brieffings', views.program_cngc_brieffings, name='program_cngc_brieffings'),
-    path('cngc/brieffings/<int:year>', views.program_cngc_brieffings_by_year, name='program_cngc_brieffings_by_year'),
-    path('cngc/brieffings/<int:brief_id>/view', views.program_cngc_brief_view, name='program_cngc_brief_view'),
 
 
 

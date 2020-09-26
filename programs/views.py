@@ -22,7 +22,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     ProgramMember, ProgramFinishRequirements, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
-    FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message
+    FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message, CGCDocument
 from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -3454,6 +3454,26 @@ def program_cgc_brieffings(request, program_slug):
     else:
         return error_500(request,program, 'Usted no puede ver las actas de la CGC')
 
+
+@login_required
+def program_cgc_documents(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_member(request.user, program):
+        years=[]
+        for document in CGCDocument.objects.filter(is_public=True):
+            if not document.year in years:
+                years.append(document.year)
+
+        context={
+            'program':program,
+            'years': sorted(years),
+            'documents': CGCDocument.objects.filter(is_public=True),
+        }
+        return render(request, 'programs/program_cgc_documents_list.html',context)
+    else:
+        return error_500(request,program, 'Usted no puede ver documentos de la CGC')
+
+
 @login_required
 def program_cgc_brieffings_by_year(request, program_slug, year):
     program = Program.objects.get(slug=program_slug)
@@ -3696,6 +3716,38 @@ def public_program_doc_view(request, program_slug, doc_id):
         return error_500(request, program, 'No existe el archivo solicitado')
 
 
+def program_cgc_document_view(request,program_slug, document_id):
+    program = Program.objects.get(slug=program_slug)
+
+    brieffing = CGCDocument.objects.get(pk=document_id)
+
+    fs = FileSystemStorage()
+
+    filename =brieffing.doc.url
+
+    if fs.exists(filename):
+        brief_ext =filename.split('.')[filename.split('.').__len__()-1]
+
+
+        if brief_ext =='doc' or brief_ext=='docx' or brief_ext == 'odt':
+
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/doc')
+                response['Content-Disposition'] =  "inline; filename=" + '"'+filename.split('/')[filename.split('/').__len__()-1]+'"'
+
+                return response
+
+        elif brief_ext == 'pdf' :
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/pdf')
+                response['Content-Disposition'] = "inline; filename=" + '"'+filename.split('/')[filename.split('/').__len__()-1] + '"'
+
+                return response
+
+    else:
+
+
+        return error_500(request,program, 'No existe el archivo solicitado')
 
 def program_cgc_brief_view(request,program_slug, brief_id):
     program = Program.objects.get(slug=program_slug)

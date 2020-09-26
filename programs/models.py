@@ -12,7 +12,7 @@ def program_directory_path(instance, filename):
 
 def program_brief_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
-    brief_ext = filename.split('.')[filename.split('.').__len__() - 1]
+    brief_ext = filename.split('.')[filename.split('.').__len__() - 1].lower
     index = ProgramBrief.objects.filter(program=instance.program, year=instance.year, month=instance.month).__len__()
     if index == 0:
         new_brief_name = 'Acta-' + slugify(instance.program.short_name) + '-'+ instance.month +'-'+ instance.year + '-1.' + brief_ext
@@ -24,14 +24,14 @@ def program_brief_path(instance, filename):
 
 def program_document_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
-    doc_ext = filename.split('.')[filename.split('.').__len__() - 1]
+    doc_ext = filename.split('.')[filename.split('.').__len__() - 1].lower
     index = ProgramBrief.objects.filter(program=instance.program, year=instance.year, month=instance.month).__len__()
     new_doc_name = '{0}-{1}-{2}-{3}-{4}.{5}'.format(instance.type.capitalize(),instance.program.slug, instance.month , instance.year ,str(index+1), doc_ext)
 
     return 'program_{0}/documents/{1}/{2}/{3}'.format(instance.program.slug, instance.year,instance.month, new_doc_name)
 
 def postg_document_path(instance, filename):
-    file_ext = filename.split('.')[filename.split('.').__len__() - 1]
+    file_ext = filename.split('.')[filename.split('.').__len__() - 1].lower
     file_name = '{0}_{1}_{2}.{3}'.format(instance.type.capitalize() , instance.year,instance.month, file_ext)
 
     return 'postg/docs/{0}/{1}'.format(instance.year, file_name)
@@ -61,7 +61,7 @@ def cgc_brief_path(instance, filename):
     return 'cgc/brieffings/{0}/{1}/{2}'.format(instance.year,instance.month,filename)
 
 def cgc_doc_path(instance, filename):
-    file_ext = filename.split('.')[filename.split('.').__len__() - 1]
+    file_ext = filename.split('.')[filename.split('.').__len__() - 1].lower
     file_name = 'CGC_{0}_{1}_{2}.{3}'.format(instance.type.capitalize(), instance.year, instance.month, file_ext)
     return 'cgc/docs/{0}/{1}/{2}'.format(instance.year,instance.month,file_name)
 
