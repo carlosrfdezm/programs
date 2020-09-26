@@ -54,18 +54,18 @@
                                     {% for year in years %}
                                         <div class="row align-items-center">
                                             <div class="col-sm-8">
-                                                <a href="{% url 'programs:program_docs_by_year' program.slug year %}" class="dropdown-item text-left" title="Ver actas del {{ year }}">Año {{ year }} </a>
+                                                <a href="{% url 'programs:program_docs_by_year' program.slug year %}" class="dropdown-item text-left" title="Ver documentos del {{ year }}">Año {{ year }} </a>
 
                                             </div>
                                             <div class="col-sm-4">
-                                                <a href="{% url 'programs:program_by_year_brief_zip_download' program.slug year %}" class="text-center text-sm" title="Descargar actas del {{ year }}"><i class="fa fa-download"></i> </a>
+                                                <a href="{% url 'programs:program_by_year_brief_zip_download' program.slug year %}" class="text-center text-sm" title="Descargar documentos del {{ year }}"><i class="fa fa-download"></i> </a>
 
                                             </div>
 
                                         </div>
                                     {% endfor %}
-                                    <a href="{% url 'programs:program_brieffings' program.slug %}" class="dropdown-item text-left" title="Ver todas las actas">Ver todas</a>
-                                    <a href="{% url 'programs:program_brief_zip_download' program.slug %}" class="dropdown-item text-left" title="Descargar todas las actas">Descargar todas</a>
+                                    <a href="{% url 'programs:program_brieffings' program.slug %}" class="dropdown-item text-left" title="Ver todas las actas">Ver todos</a>
+                                    <a href="{% url 'programs:program_brief_zip_download' program.slug %}" class="dropdown-item text-left" title="Descargar todas las actas">Descargar todos</a>
 
                                 </div>
 

@@ -3854,8 +3854,8 @@ def ajx_delete_program_document(request, program_slug):
 def program_brief_zip_download(request,program_slug):
     program = Program.objects.get(slug=program_slug)
 
-    brief_list = ProgramBrief.objects.filter(program=program)
-    zipname = "Actas-de-"+slugify(program.short_name)
+    brief_list = ProgramDocument.objects.filter(program=program)
+    zipname = "Documentos-"+slugify(program.short_name)
 
     if brief_list.count() > 0:
         # Files (local path) to put in the .zip
@@ -3876,10 +3876,10 @@ def program_brief_zip_download(request,program_slug):
 
 
             try:
-                fpath = MEDIA_ROOT +'/'+ brief.brief.name
+                fpath = MEDIA_ROOT +'/'+ brief.doc.name
                 fdir, fname = os.path.split(fpath)
                 zip_subdir = str(brief.year)
-                zip_path = os.path.join(zip_subdir, brief.brief.name.split('/')[brief.brief.name.split('/').__len__()-1])
+                zip_path = os.path.join(zip_subdir, brief.doc.name.split('/')[brief.doc.name.split('/').__len__()-1])
 
 
                 # zip_path = os.path.join(zip_subdir, fname)
@@ -3906,6 +3906,8 @@ def program_brief_zip_download(request,program_slug):
 
     else:
         return error_500(request, program, 'No hay actas para descargar')
+
+
 # TODO MODIFICAR ESTO A LA LOGICA DE DOCUMENTOS
 @login_required()
 def program_by_year_brief_zip_download(request,program_slug, year):
