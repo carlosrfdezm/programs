@@ -105,6 +105,7 @@ def cgc_new_document(request):
                 month=request.POST['month'],
                 description=request.POST['description'],
                 type=request.POST['type'],
+                level=request.POST['level'],
                 doc=request.FILES['doc'],
             )
             try:

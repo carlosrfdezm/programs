@@ -70,6 +70,7 @@
 
                             <tr>
                                 <th>Tipo</th>
+                                <th>Nivel</th>
                                 <th>Año </th>
                                 <th>Mes </th>
                                 <th>Descripción </th>
@@ -82,6 +83,7 @@
 
                                 <tr id="tr_document_{{ document.id }}">
                                     <td>{{document.type|capfirst }}</td>
+                                    <td>{{ document.level|upper }}</td>
                                     <td>{{document.year }}</td>
                                     <td>{{document.month }}</td>
                                     <td>{{document.description|truncatewords:5 }}</td>
