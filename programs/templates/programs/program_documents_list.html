@@ -47,7 +47,7 @@
                             {#                                </button>#}
                             <div class="btn-group">
                                 <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fas fa-wrench"></i>
+                                    <i class="fas fa-list"></i>
                                 </button>
 
                                 <div class="dropdown-menu dropdown-menu-right" role="menu">
@@ -58,14 +58,14 @@
 
                                             </div>
                                             <div class="col-sm-4">
-                                                <a href="{% url 'programs:program_by_year_brief_zip_download' program.slug year %}" class="text-center text-sm" title="Descargar documentos del {{ year }}"><i class="fa fa-download"></i> </a>
+                                                <a href="{% url 'programs:program_by_year_doc_download' program.slug year %}" class="text-center text-sm" title="Descargar documentos del {{ year }}"><i class="fa fa-download"></i> </a>
 
                                             </div>
 
                                         </div>
                                     {% endfor %}
-                                    <a href="{% url 'programs:program_brieffings' program.slug %}" class="dropdown-item text-left" title="Ver todas las actas">Ver todos</a>
-                                    <a href="{% url 'programs:program_brief_zip_download' program.slug %}" class="dropdown-item text-left" title="Descargar todas las actas">Descargar todos</a>
+                                    <a href="{% url 'programs:program_documents' program.slug %}" class="dropdown-item text-left" title="Ver todas las actas">Ver todos</a>
+                                    <a href="{% url 'programs:program_download_docs' program.slug %}" class="dropdown-item text-left" title="Descargar todos los documentos">Descargar todos</a>
 
                                 </div>
 

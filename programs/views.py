@@ -3436,23 +3436,6 @@ def program_documents(request, program_slug):
     else:
         return error_500(request,'Usted no puede ver las actas de este programa')
 
-@login_required
-def program_cgc_brieffings(request, program_slug):
-    program = Program.objects.get(slug=program_slug)
-    if user_is_program_member(request.user, program):
-        years=[]
-        for brieffing in CGCBrief.objects.all():
-            if not brieffing.year in years:
-                years.append(brieffing.year)
-
-        context={
-            'program':program,
-            'years': sorted(years),
-            'brieffings': CGCBrief.objects.all(),
-        }
-        return render(request, 'programs/program_cgc_brieffings_list.html',context)
-    else:
-        return error_500(request,program, 'Usted no puede ver las actas de la CGC')
 
 
 @login_required
@@ -3468,67 +3451,12 @@ def program_cgc_documents(request, program_slug):
             'program':program,
             'years': sorted(years),
             'documents': CGCDocument.objects.filter(is_public=True),
+            'member': ProgramMember.objects.get(user=request.user),
         }
         return render(request, 'programs/program_cgc_documents_list.html',context)
     else:
         return error_500(request,program, 'Usted no puede ver documentos de la CGC')
 
-
-@login_required
-def program_cgc_brieffings_by_year(request, program_slug, year):
-    program = Program.objects.get(slug=program_slug)
-    if user_is_program_member(request.user, program):
-        years=[]
-        for brieffing in CGCBrief.objects.all():
-            if not brieffing.year in years:
-                years.append(brieffing.year)
-
-        context={
-            'program':program,
-            'year':year,
-            'years': sorted(years),
-            'brieffings': CGCBrief.objects.filter(year=year),
-        }
-        return render(request, 'programs/program_cgc_brieffings_list.html',context)
-    else:
-        return error_500(request,program, 'Usted no puede ver las actas de la CGC')
-
-@login_required
-def program_cngc_brieffings(request, program_slug):
-    program = Program.objects.get(slug=program_slug)
-    if user_is_program_member(request.user, program):
-        years=[]
-        for brieffing in CNGCBrief.objects.all():
-            if not brieffing.year in years:
-                years.append(brieffing.year)
-
-        context={
-            'program':program,
-            'years': sorted(years),
-            'brieffings': CNGCBrief.objects.all(),
-        }
-        return render(request, 'programs/program_cngc_brieffings_list.html',context)
-    else:
-        return error_500(request,program, 'Usted no puede ver las actas de la CNGC')
-
-@login_required
-def program_cngc_brieffings_by_year(request, program_slug, year):
-    program = Program.objects.get(slug=program_slug)
-    if user_is_program_member(request.user, program):
-        years=[]
-        for brieffing in CNGCBrief.objects.all():
-            if not brieffing.year in years:
-                years.append(brieffing.year)
-
-        context={
-            'program':program,
-            'year':year,
-            'years': sorted(years),
-            'brieffings': CNGCBrief.objects.filter(year=year),
-        }
-        return render(request, 'programs/program_cngc_brieffings_list.html',context)
-    else:
-        return error_500(request,program, 'Usted no puede ver las actas de la CNGC')
 
 @login_required
 def program_docs_by_year(request, program_slug, year):
@@ -3850,7 +3778,7 @@ def ajx_delete_program_document(request, program_slug):
         )
 
 @login_required()
-def program_brief_zip_download(request,program_slug):
+def program_download_docs(request,program_slug):
     program = Program.objects.get(slug=program_slug)
 
     brief_list = ProgramDocument.objects.filter(program=program)
@@ -3907,9 +3835,8 @@ def program_brief_zip_download(request,program_slug):
         return error_500(request, program, 'No hay actas para descargar')
 
 
-# TODO MODIFICAR ESTO A LA LOGICA DE DOCUMENTOS
 @login_required()
-def program_by_year_brief_zip_download(request,program_slug, year):
+def program_by_year_doc_download(request,program_slug, year):
     program = Program.objects.get(slug=program_slug)
 
     brief_list = ProgramDocument.objects.filter(program=program, year=year)

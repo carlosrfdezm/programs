@@ -109,12 +109,12 @@ urlpatterns = [
     path('documents/<int:doc_id>/edit', views.edit_program_doc, name='edit_program_doc'),
     path('documents/<int:doc_id>/view', views.program_doc_view, name='program_doc_view'),
     path('documents/<int:doc_id>/public/view', views.public_program_doc_view, name='public_program_doc_view'),
-    path('documents/list', views.program_documents, name='program_brieffings'),
+    path('documents/list', views.program_documents, name='program_documents'),
     path('documents/cgc', views.program_cgc_documents, name='program_cgc_documents'),
     path('documents/cgc/<int:document_id>/view', views.program_cgc_document_view, name='program_cgc_document_view'),
-    path('documents/download', views.program_brief_zip_download, name='program_brief_zip_download'),
+    path('documents/download', views.program_download_docs, name='program_download_docs'),
     path('documents/year/<int:year>/list', views.program_docs_by_year, name='program_docs_by_year'),
-    path('documents/year/<int:year>/download', views.program_by_year_brief_zip_download, name='program_by_year_brief_zip_download'),
+    path('documents/year/<int:year>/download', views.program_by_year_doc_download, name='program_by_year_doc_download'),
 
 
 
