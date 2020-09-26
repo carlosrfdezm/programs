@@ -37,7 +37,7 @@
                             {% csrf_token %}
                             <div class="card-body">
                                 <div class="form-row align-items-center">
-                                    <div class="form-group col-md-3">
+                                    <div class="form-group col-md-2 col-sm-2">
                                         <label for="slc_years">Año:</label>
                                         <select class="form-control" id="slc_years" name="year" required>
                                             <option value="" selected>Seleccione una opción</option>
@@ -47,7 +47,7 @@
                                             {% endfor %}
                                         </select>
                                     </div>
-                                    <div class="form-group col-md-3">
+                                    <div class="form-group col-md-2 col-sm-2">
 
                                         <label for="slc_months">Mes:</label>
                                         <select class="form-control" id="slc_months" name="month" required>
@@ -55,7 +55,7 @@
 
                                         </select>
                                     </div>
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-md-3 col-sm-3">
 
                                         <label for="slc_type">Tipo de documento:</label>
                                         <select class="form-control" id="slc_type" name="type" required>
@@ -63,6 +63,16 @@
                                             <option value="acta" {% if document.type == 'acta' %}selected{% endif %} >Acta</option>
                                             <option value="informe" {% if document.type == 'informe' %}selected{% endif %} >Informe</option>
                                             <option value="resolucion" {% if document.type == 'resolucion' %}selected{% endif %} >Resolución</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-3 col-sm-3">
+
+                                        <label for="slc_level">Nivel del documento:</label>
+                                        <select class="form-control" id="slc_level" name="level" required>
+                                            <option value="" selected>Seleccione una opción</option>
+                                            <option {% if document.level == 'cgc' %} selected {% endif %} value="cgc" >Comisión de Grados Insitucional</option>
+                                            <option {% if document.level == 'cngc' %} selected {% endif %} value="cngc" >Comisión Nacional de Grados Ctfcos</option>
 
                                         </select>
                                     </div>

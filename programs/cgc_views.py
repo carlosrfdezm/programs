@@ -146,6 +146,7 @@ def cgc_edit_document(request, document_id):
             doc.month = request.POST['month']
             doc.type = request.POST['type']
             doc.description = request.POST['description']
+            doc.level = request.POST['level']
             doc.save()
 
             try:
