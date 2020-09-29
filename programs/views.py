@@ -4131,15 +4131,40 @@ def docx_program_report(request, program_slug):
 
         document.add_heading('Claustro', level=3)
         if ProgramMember.objects.filter(program=program):
-            table = document.add_table(rows=1, cols=2)
-            hdr_cells = table.rows[0].cells
-            hdr_cells[0].text = 'Nombre y apellidos'
-            hdr_cells[1].text = 'Rol'
+            if program.type == 'phd':
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Rol'
+                hdr_cells[2].text = 'Aspirantes activos'
 
-            for member in ProgramMember.objects.filter(program=program):
-                row_cells = table.add_row().cells
-                row_cells[0].text = str(member.user.get_full_name())
-                row_cells[1].text = str(member.role)
+                for member in ProgramMember.objects.filter(program=program):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(member.user.get_full_name())
+                    row_cells[1].text = str(member.role)
+                    if member.tuthor_set.all:
+                        aspirants = ""
+                        for tuthor in member.tuthor_set.all:
+                            aspirants = aspirants+', '+tuthor.phd_student.student.user.get_full_name
+
+                        row_cells[2].text = str(aspirants)
+                    else:
+                        row_cells[2].text = "-----------------------"
+
+
+
+
+            else:
+                table = document.add_table(rows=1, cols=2)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Rol'
+
+                for member in ProgramMember.objects.filter(program=program):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(member.user.get_full_name())
+                    row_cells[1].text = str(member.role)
+
 
         else:
             document.add_heading('No hay profesores registrados en el claustro del programa', level=5)
