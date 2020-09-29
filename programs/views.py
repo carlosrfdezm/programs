@@ -4499,23 +4499,31 @@ def print_student_plan(request, program_slug, student_id):
                         row_cells[3].text = str(activity.end_date)
                         index += 1
 
-                    if student.phdstudent.tuthor_set.all().count()>0:
-                        tuthors_counter = student.phdstudent.tuthor_set.all().count()
 
-                        table = document.add_table(rows=1, cols=tuthors_counter)
-                        hdr_cells = table.rows[0].cells
-                        for i in range(tuthors_counter):
-                            hdr_cells[i].text = 'Datos del tutor'
-
-                        row_cells = table.add_row().cells
-                        for tuthor in student.phdstudent.tuthor_set.all():
-                            row_cells[i].text = 'Dr.C. '+str(tuthor.professor.user.get_full_name())
-
-                    else:
-                        document.add_heading('No tiene tutores designados', level=5)
 
                 else:
                     document.add_heading('No tiene tareas', level=5)
+
+                document.add_heading('' , level=3)
+
+                if student.phdstudent.tuthor_set.all().count() > 0:
+                    for tuthor in student.phdstudent.tuthor_set.all():
+
+                        table = document.add_table(rows=1, cols=2)
+                        hdr_cells = table.rows[0].cells
+                        hdr_cells[0].text = 'Nombre y apellidos del tutor'
+                        hdr_cells[1].text = 'Firma del tutor'
+
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = 'Dr.C. ' + str(tuthor.professor.user.get_full_name())
+                        row_cells[1].text = '                          '
+
+                        document.add_heading('', level=3)
+
+
+
+                else:
+                    document.add_heading('No tiene tutores designados', level=5)
 
 
 
