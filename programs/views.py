@@ -3953,7 +3953,8 @@ def docx_program_report(request, program_slug):
                     try:
                         row_cells[2].text = str(student.student.studentformationplan.planned_end_year)
                     except:
-                        pass
+                        row_cells[2].text = "No declarada"
+
                     if finish_requirements_accomplished(student.student, program):
                         row_cells[3].text = 'Cumplidos'
                     else:
