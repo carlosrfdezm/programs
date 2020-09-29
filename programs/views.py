@@ -4498,8 +4498,26 @@ def print_student_plan(request, program_slug, student_id):
                         row_cells[2].text = str(activity.init_date)
                         row_cells[3].text = str(activity.end_date)
                         index += 1
+
+                    if student.phdstudent.tuthor_set.all().count()>0:
+                        tuthors_counter = student.phdstudent.tuthor_set.all().count()
+
+                        table = document.add_table(rows=1, cols=tuthors_counter)
+                        hdr_cells = table.rows[0].cells
+                        for i in range(tuthors_counter):
+                            hdr_cells[i].text = 'Datos del tutor'
+
+                        row_cells = table.add_row().cells
+                        for tuthor in student.phdstudent.tuthor_set.all():
+                            row_cells[i].text = 'Dr.C. '+str(tuthor.professor.user.get_full_name())
+
+                    else:
+                        document.add_heading('No tiene tutores designados', level=5)
+
                 else:
                     document.add_heading('No tiene tareas', level=5)
+
+
 
 
             except StudentFormationPlan.DoesNotExist:
