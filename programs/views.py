@@ -4132,11 +4132,12 @@ def docx_program_report(request, program_slug):
         document.add_heading('Claustro', level=3)
         if ProgramMember.objects.filter(program=program):
             if program.type == 'phd':
-                table = document.add_table(rows=1, cols=3)
+                table = document.add_table(rows=1, cols=4)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
                 hdr_cells[1].text = 'Rol'
                 hdr_cells[2].text = 'Aspirantes activos'
+                hdr_cells[3].text = 'Aspirantes egresados'
 
                 for member in ProgramMember.objects.filter(program=program):
                     row_cells = table.add_row().cells
@@ -4145,11 +4146,25 @@ def docx_program_report(request, program_slug):
                     if member.tuthor_set.all().count()>0:
                         aspirants = ""
                         for tuthor in member.tuthor_set.all():
-                            aspirants = aspirants+tuthor.phd_student.student.user.get_full_name()+', '
+                            student = tuthor.phd_student
+                            if student.status == 'doctorando' or student.status == 'solicitante':
+                                aspirants = aspirants+tuthor.phd_student.student.user.get_full_name()+', '
 
                         row_cells[2].text = str(aspirants)
                     else:
                         row_cells[2].text = "-----------------------"
+
+                    if member.tuthor_set.all().count()>0:
+                        aspirants = ""
+                        for tuthor in member.tuthor_set.all():
+                            student = tuthor.phd_student
+                            if student.status == 'graduado':
+                                aspirants = aspirants+tuthor.phd_student.student.user.get_full_name()+', '
+
+                        row_cells[3].text = str(aspirants)
+                    else:
+                        row_cells[3].text = ""
+
 
 
 
