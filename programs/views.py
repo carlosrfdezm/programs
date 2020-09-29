@@ -4142,10 +4142,10 @@ def docx_program_report(request, program_slug):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(member.user.get_full_name())
                     row_cells[1].text = str(member.role)
-                    if member.tuthor_set.all:
+                    if member.tuthor_set.all().count()>0:
                         aspirants = ""
-                        for tuthor in member.tuthor_set.all:
-                            aspirants = aspirants+', '+tuthor.phd_student.student.user.get_full_name
+                        for tuthor in member.tuthor_set.all():
+                            aspirants = aspirants+tuthor.phd_student.student.user.get_full_name()+', '
 
                         row_cells[2].text = str(aspirants)
                     else:
