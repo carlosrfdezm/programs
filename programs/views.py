@@ -3950,7 +3950,10 @@ def docx_program_report(request, program_slug):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(student.student.user.get_full_name())
                     row_cells[1].text = str(student.student.init_date)
-                    row_cells[2].text = str(student.student.studentformationplan.planned_end_year)
+                    try:
+                        row_cells[2].text = str(student.student.studentformationplan.planned_end_year)
+                    except:
+                        pass
                     if finish_requirements_accomplished(student.student, program):
                         row_cells[3].text = 'Cumplidos'
                     else:
