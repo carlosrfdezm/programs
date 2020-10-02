@@ -374,7 +374,7 @@
             });
             {#bsCustomFileInput.init();#}
 
-            $(document).on('click',$('#btn_edit_profile'), function () {
+            $(document).on('click',"button[id='btn_edit_profile']", function () {
                 $("input[id^='inp_']").removeAttr('readonly');
                 {#$('#btn_edit_profile').replaceWith('<button type="button" class="btn btn-sm btn-default text-center" title="Ver perfil" id="btn_view_profile"><i class="fa fa-eye"></i> </button>\n')#}
                 $('#btn_edit_profile').removeClass('btn-warning');
@@ -382,10 +382,7 @@
                 $('#btn_edit_profile').attr('id','btn_view_profile');
             });
 
-            {#$(document).on('click',$('#btn_view_profile'), function () {#}
-            {#    $("input[id^='inp_']").attr('readonly','readonly');#}
-            {#    $('#btn_edit_profile').replaceWith('<button type="button" class="btn btn-sm btn-warning text-center" title="Ver perfil" id="btn_edit_profile"><i class="fa fa-edit"></i> </button>\n')#}
-            {#});#}
+
 
             $(document).on('click',"a[id*='a_read_message_']",function (e) {
                 e.preventDefault();
