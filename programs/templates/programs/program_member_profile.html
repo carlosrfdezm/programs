@@ -49,21 +49,22 @@
                                 <h3 class="profile-username text-center">{{ professor }}</h3>
 
                                 <p class="text-muted text-center">{{ professor.role|capfirst }}</p>
-
-{#                                <ul class="list-group list-group-unbordered mb-3">#}
-{#                                    <li class="list-group-item">#}
-{#                                        <b>Especialidad</b> <a class="float-right">{{ student.request_date|date:'M/Y'}}</a>#}
-{#                                    </li>#}
-{#                                    <li class="list-group-item">#}
-{#                                        <b>Ingreso</b> <a class="float-right">{% if student.init_date %}{{ student.init_date|date:'M/Y' }}{% else %}----{% endif %}</a>#}
-{#                                    </li>#}
-{#                                    <li class="list-group-item">#}
-{#                                        <b>Egreso</b> <a class="float-right">{% if student.finish_date != None %}{{ student.finish_date|date:'M/Y' }}{% else %}----{% endif %}</a>#}
-{#                                    </li>#}
-{#                                    <li class="list-group-item">#}
-{#                                        <b>Defensa prevista</b> <a class="float-right">{% if student.studentformationplan.planned_end_year != None %}{{ student.studentformationplan.planned_end_year }}{% else %}----{% endif %}</a>#}
-{#                                    </li>#}
-{#                                </ul>#}
+                                {% if user == professor.user %}
+                                    <ul class="list-group list-group-unbordered mb-3">
+                                        <li class="list-group-item text-center">
+                                            <button type="button" class="btn btn-sm btn-warning text-center" title="Editar perfil" id="btn_edit_profile"><i class="fa fa-edit"></i> </button>
+                                        </li>
+                                        {#                                    <li class="list-group-item">#}
+                                        {#                                        <b>Ingreso</b> <a class="float-right">{% if student.init_date %}{{ student.init_date|date:'M/Y' }}{% else %}----{% endif %}</a>#}
+                                        {#                                    </li>#}
+                                        {#                                    <li class="list-group-item">#}
+                                        {#                                        <b>Egreso</b> <a class="float-right">{% if student.finish_date != None %}{{ student.finish_date|date:'M/Y' }}{% else %}----{% endif %}</a>#}
+                                        {#                                    </li>#}
+                                        {#                                    <li class="list-group-item">#}
+                                        {#                                        <b>Defensa prevista</b> <a class="float-right">{% if student.studentformationplan.planned_end_year != None %}{{ student.studentformationplan.planned_end_year }}{% else %}----{% endif %}</a>#}
+                                        {#                                    </li>#}
+                                    </ul>
+                                {% endif %}
 
 
                             </div>
@@ -89,7 +90,7 @@
                                 <strong><i class="fas fa-user-friends mr-1"></i> Centro</strong>
 
                                 <p class="text-muted">
-                                {{ professor.institution }}
+                                    {{ professor.institution }}
                                 </p>
 
 
@@ -234,42 +235,46 @@
                                     <div class="active tab-pane" id="personal">
                                         <form class="form-horizontal">
                                             <div class="form-group row">
-                                                <label for="inputName" class="col-sm-2 col-form-label">Nombre</label>
-                                                <div class="col-sm-10">
-                                                    <input type="email" class="form-control" id="inputName" placeholder="Name" readonly value="{{ professor }}">
+                                                <label for="inp_name" class="col-sm-2 col-form-label">Nombre</label>
+                                                <div class="col-sm-3">
+                                                    <input type="text" class="form-control" id="inp_name" placeholder="Name" readonly value="{{ professor.user.first_name }}">
+                                                </div>
+                                                <label for="inp_lastname" class="col-sm-2 col-form-label">Apellidos</label>
+                                                <div class="col-sm-5">
+                                                    <input type="text" class="form-control" id="inp_lastname" placeholder="Name" readonly value="{{ professor.user.last_name }}">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+                                                <label for="inp_email" class="col-sm-2 col-form-label">Email</label>
                                                 <div class="col-sm-10">
-                                                    <input type="email" class="form-control" id="inputEmail" readonly value="{{ professor.user.email }}" placeholder="Email">
+                                                    <input type="email" class="form-control" id="inp_email" readonly value="{{ professor.user.email }}" placeholder="Email">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="inputExperience" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
-                                                <div class="col-sm-4">
-                                                    <input class="form-control" type="date" readonly value="{{ professor.birth_date|date:'Y-m-d' }}">
+                                                <label for="inp_birthdate" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
+                                                <div class="col-sm-3">
+                                                    <input class="form-control" type="date" id="inp_birthdate" readonly value="{{ professor.birth_date|date:'Y-m-d' }}">
                                                 </div>
-                                                <label for="inputCategory" class="col-sm-2 col-form-label">Grado</label>
-                                                <div class="col-sm-4">
-                                                    <input id="inputCategory" class="form-control" type="text" readonly value="{{ professor.degree|capfirst }}">
+                                                <label for="inp_degree" class="col-sm-2 col-form-label">Grado</label>
+                                                <div class="col-sm-5">
+                                                    <input id="inp_degree" class="form-control" type="text" readonly value="{{ professor.degree|capfirst }}">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="inputName2" class="col-sm-2 col-form-label">Centro</label>
+                                                <label for="inp_center" class="col-sm-2 col-form-label">Centro</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="inputName2" readonly value="{{ professor.institution }}" placeholder="Name">
+                                                    <input type="text" class="form-control" id="inp_center" readonly value="{{ professor.institution }}" placeholder="Name">
                                                 </div>
                                             </div>
 
                                             <div class=" row">
-                                                <label for="inputPhone" class="col-sm-2 col-form-label">Teléfono</label>
+                                                <label for="inp_phone" class="col-sm-2 col-form-label">Teléfono</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="inputPhone" readonly value="{{ professor.phone }}" placeholder="Teléfono">
+                                                    <input type="text" class="form-control" id="inp_phone" readonly value="{{ professor.phone }}" placeholder="Teléfono">
                                                 </div>
-                                                <label for="inputGender" class="col-sm-2 col-form-label">Género</label>
+                                                <label for="inp_gender" class="col-sm-2 col-form-label">Género</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="inputGender" readonly {% if professor.sex == 'm' %}value="Masculino"{% else %}value="Femenino"{% endif %} placeholder="Teléfono">
+                                                    <input type="text" class="form-control" id="inp_gender" readonly {% if professor.sex == 'm' %}value="Masculino"{% else %}value="Femenino"{% endif %} placeholder="Teléfono">
                                                 </div>
                                             </div>
 
@@ -291,23 +296,23 @@
                                                 {% for tuthor in professor.tuthor_set.all %}
                                                     <!-- Post -->
 
-                                                        <tr>
-                                                            <td>
-                                                                {{ tuthor.phd_student.student }}
-                                                            </td>
-                                                            <td>
-                                                                {{ tuthor.phd_student.phdstudenttheme|truncatewords:7 }}
-                                                            </td>
-                                                            <td>{{ tuthor.phd_student.status|capfirst }}</td>
-                                                            <td class="text-center">
-                                                                 {% if tuthor.phd_student.student.studentformationplan.planned_end_year %}
+                                                    <tr>
+                                                        <td>
+                                                            {{ tuthor.phd_student.student }}
+                                                        </td>
+                                                        <td>
+                                                            {{ tuthor.phd_student.phdstudenttheme|truncatewords:7 }}
+                                                        </td>
+                                                        <td>{{ tuthor.phd_student.status|capfirst }}</td>
+                                                        <td class="text-center">
+                                                            {% if tuthor.phd_student.student.studentformationplan.planned_end_year %}
                                                                 {{ tuthor.phd_student.student.studentformationplan.planned_end_year }}
-                                                                     {% else %}
-                                                                     --------
-                                                                {% endif %}
-                                                            </td>
+                                                            {% else %}
+                                                                --------
+                                                            {% endif %}
+                                                        </td>
 
-                                                        </tr>
+                                                    </tr>
 
                                                     <!-- /.post -->
                                                 {% endfor %}
@@ -369,7 +374,18 @@
             });
             {#bsCustomFileInput.init();#}
 
+            $(document).on('click',$('#btn_edit_profile'), function () {
+                $("input[id^='inp_']").removeAttr('readonly');
+                {#$('#btn_edit_profile').replaceWith('<button type="button" class="btn btn-sm btn-default text-center" title="Ver perfil" id="btn_view_profile"><i class="fa fa-eye"></i> </button>\n')#}
+                $('#btn_edit_profile').removeClass('btn-warning');
+                $('#btn_edit_profile').addClass('btn-default');
+                $('#btn_edit_profile').attr('id','btn_view_profile');
+            });
 
+            {#$(document).on('click',$('#btn_view_profile'), function () {#}
+            {#    $("input[id^='inp_']").attr('readonly','readonly');#}
+            {#    $('#btn_edit_profile').replaceWith('<button type="button" class="btn btn-sm btn-warning text-center" title="Ver perfil" id="btn_edit_profile"><i class="fa fa-edit"></i> </button>\n')#}
+            {#});#}
 
             $(document).on('click',"a[id*='a_read_message_']",function (e) {
                 e.preventDefault();
