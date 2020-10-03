@@ -3475,6 +3475,7 @@ def autoedit_member_profile(request, program_slug, member_id):
                     request.user.first_name = request.POST['prof_name']
                     request.user.last_name = request.POST['prof_lastname']
                     request.user.email = request.POST['prof_email']
+                    request.user.username = request.POST['prof_email']
                     member.birth_date = request.POST['prof_bdate']
                     member.degree = request.POST['prof_degree']
                     member.institution = request.POST['prof_inst']
