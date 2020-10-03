@@ -52,7 +52,7 @@
                                 {% if user == professor.user %}
                                     <ul class="list-group list-group-unbordered mb-3">
                                         <li class="list-group-item text-center">
-                                            <button type="button" class="btn btn-sm btn-warning text-center" title="Editar perfil" id="btn_edit_profile"><i class="fa fa-edit"></i> </button>
+                                            <button type="button" class="btn btn-sm btn-warning text-center" title="Editar perfil" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>
                                         </li>
                                         {#                                    <li class="list-group-item">#}
                                         {#                                        <b>Ingreso</b> <a class="float-right">{% if student.init_date %}{{ student.init_date|date:'M/Y' }}{% else %}----{% endif %}</a>#}
@@ -364,7 +364,14 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-
+            var prof_name = '';
+            var prof_surename = '';
+            var prof_mail ='';
+            var prof_bdate = '';
+            var prof_degree = '';
+            var prof_inst = '';
+            var prof_phone = '';
+            var prof_gender = '';
 
             const Toast = Swal.mixin({
                 toast: true,
@@ -375,11 +382,42 @@
             {#bsCustomFileInput.init();#}
 
             $(document).on('click',"button[id='btn_edit_profile']", function () {
-                $("input[id^='inp_']").removeAttr('readonly');
-                {#$('#btn_edit_profile').replaceWith('<button type="button" class="btn btn-sm btn-default text-center" title="Ver perfil" id="btn_view_profile"><i class="fa fa-eye"></i> </button>\n')#}
-                $('#btn_edit_profile').removeClass('btn-warning');
-                $('#btn_edit_profile').addClass('btn-default');
-                $('#btn_edit_profile').attr('id','btn_view_profile');
+
+
+                if($(this).attr('data')=='0'){
+                    prof_name = $('#inp_name').val();
+                    prof_surename = $('#inp_lastname').val();
+                    prof_mail = $('#inp_email').val();
+                    prof_bdate = $('#inp_birthdate').val();
+                    prof_degree = $('#inp_degree').val();
+                    prof_inst = $('#inp_institution').val();
+                    prof_phone = $('#inp_phone').val();
+                    prof_gender = $('#inp_gender').val();
+                    $("input[id^='inp_']").removeAttr('readonly');
+                    {#$('#btn_edit_profile').replaceWith('<button type="button" class="btn btn-sm btn-default text-center" title="Ver perfil" id="btn_view_profile"><i class="fa fa-eye"></i> </button>\n')#}
+                    $('#btn_edit_profile').removeClass('btn-warning');
+                    $('#btn_edit_profile').addClass('btn-default');
+                    $('#btn_edit_profile').attr('data','1');
+                    $('#btn_edit_profile').attr('title','Cancelar edición');
+
+                }
+                else if($(this).attr('data')=='1'){
+                    $('#inp_name').val(prof_name);
+                    $('#inp_lastname').val( prof_surename);
+                    $('#inp_email').val(prof_mail);
+                    $('#inp_birthdate').val(prof_bdate);
+                    $('#inp_degree').val(prof_degree);
+                    $('#inp_institution').val(prof_inst);
+                    $('#inp_phone').val(prof_phone);
+                    $('#inp_gender').val(prof_gender);
+                    $("input[id^='inp_']").attr('readonly','readonly');
+                    $('#btn_edit_profile').addClass('btn-warning');
+                    $('#btn_edit_profile').removeClass('btn-default');
+                    $('#btn_edit_profile').attr('title','Editar perfil');
+                    $('#btn_edit_profile').attr('data','0');
+
+                }
+
             });
 
 
