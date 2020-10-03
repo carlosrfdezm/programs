@@ -225,48 +225,50 @@
 
 
                                     <div class="active tab-pane" id="personal">
-                                        <form class="form-horizontal">
+                                        <form class="form-horizontal" id="frm_personal_data" action="{% url 'programs:autoedit_member_profile' program.slug member.id %}" method="post">
+                                            {% csrf_token %}
                                             <div class="form-group row">
                                                 <label for="inp_name" class="col-sm-2 col-form-label">Nombre</label>
                                                 <div class="col-sm-3">
-                                                    <input type="text" class="form-control" id="inp_name" placeholder="Name" readonly value="{{ professor.user.first_name }}">
+                                                    <input type="text" class="form-control" id="inp_name" name="prof_name" placeholder="Name" readonly value="{{ professor.user.first_name }}">
                                                 </div>
                                                 <label for="inp_lastname" class="col-sm-2 col-form-label">Apellidos</label>
                                                 <div class="col-sm-5">
-                                                    <input type="text" class="form-control" id="inp_lastname" placeholder="Name" readonly value="{{ professor.user.last_name }}">
+                                                    <input type="text" class="form-control" id="inp_lastname" name="prof_lastname" placeholder="Name" readonly value="{{ professor.user.last_name }}">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label for="inp_email" class="col-sm-2 col-form-label">Email</label>
                                                 <div class="col-sm-10">
-                                                    <input type="email" class="form-control" id="inp_email" readonly value="{{ professor.user.email }}" placeholder="Email">
+                                                    <input type="email" class="form-control" id="inp_email" readonly name="prof_email" value="{{ professor.user.email }}" placeholder="Email">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label for="inp_birthdate" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
                                                 <div class="col-sm-3">
-                                                    <input class="form-control" type="date" id="inp_birthdate" readonly value="{{ professor.birth_date|date:'Y-m-d' }}">
+                                                    <input class="form-control" type="date" id="inp_birthdate" name="prof_bdate" readonly value="{{ professor.birth_date|date:'Y-m-d' }}">
                                                 </div>
                                                 <label for="inp_degree" class="col-sm-2 col-form-label">Grado</label>
                                                 <div class="col-sm-5">
-                                                    <input id="inp_degree" class="form-control" type="text" readonly value="{{ professor.degree|capfirst }}">
+                                                    <input id="inp_degree" class="form-control" type="text" name="prof_degree" readonly value="{{ professor.degree|capfirst }}">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label for="inp_center" class="col-sm-2 col-form-label">Centro</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="inp_center" readonly value="{{ professor.institution }}" placeholder="Name">
+                                                    <input type="text" class="form-control" id="inp_center" name="prof_inst" readonly value="{{ professor.institution }}" placeholder="Name">
                                                 </div>
                                             </div>
 
                                             <div class=" row">
                                                 <label for="inp_phone" class="col-sm-2 col-form-label">Teléfono</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="inp_phone" readonly value="{{ professor.phone }}" placeholder="Teléfono">
+                                                    <input type="text" class="form-control" id="inp_phone" name="prof_phone" readonly value="{{ professor.phone }}" placeholder="Teléfono">
                                                 </div>
-                                                <label for="inp_gender" class="col-sm-2 col-form-label">Género</label>
+                                                <label for="slc_gender" class="col-sm-2 col-form-label">Género</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="inp_gender" readonly {% if professor.sex == 'm' %}value="Masculino"{% else %}value="Femenino"{% endif %} placeholder="Teléfono">
+
+                                                    <input type="text" class="form-control" id="inp_gender" name="prof_gender" readonly {% if professor.sex == 'm' %}value="Masculino"{% else %}value="Femenino"{% endif %} placeholder="Género" data="{{ professor.sex }}">
                                                 </div>
                                             </div>
 
@@ -364,6 +366,19 @@
             var prof_inst = '';
             var prof_phone = '';
             var prof_gender = '';
+            var m_slc_prof_gender = '<select class="form-control disabled" id="slc_gender" name="prof_gender" >\n' +
+                '                                                    <option value="">Seleccione una opción</option>\n' +
+                '                                                    <option  value="f" >Femenino</option>\n' +
+                '                                                    <option selected value="m" >Masculino</option>\n' +
+                '                                                </select>';
+            var f_slc_prof_gender = '<select class="form-control disabled" id="slc_gender" name="prof_gender" >\n' +
+                '                                                    <option value="">Seleccione una opción</option>\n' +
+                '                                                    <option selected value="f" >Femenino</option>\n' +
+                '                                                    <option value="m" >Masculino</option>\n' +
+                '                                                </select>';
+            var inp_prof_gender = '<input type="text" class="form-control" id="inp_gender" name="prof_gender" readonly="readonly"'+
+
+                'value="" placeholder="Genero">\n'
 
             const Toast = Swal.mixin({
                 toast: true,
@@ -391,6 +406,22 @@
                     $('#btn_edit_profile').addClass('btn-default');
                     $('#btn_edit_profile').attr('data','1');
                     $('#btn_edit_profile').attr('title','Cancelar edición');
+                    if($('#inp_gender').attr('data')=='f'){
+                        $('#inp_gender').replaceWith(f_slc_prof_gender);
+                        prof_gender = 'f';
+
+                    }
+                    else if($('#inp_gender').attr('data')=='m'){
+                        $('#inp_gender').replaceWith(m_slc_prof_gender);
+                        prof_gender='m';
+
+                    }
+
+                    $('#frm_personal_data').append('<div class="form-group row pt-3" id="div_btn_save">\n' +
+                        '                        <div class="offset-sm-5 col-sm-7">\n' +
+                        '                          <button type="submit" class="btn btn-primary">Guardar</button>\n' +
+                        '                        </div>\n' +
+                        '                      </div>')
 
                 }
                 else if($(this).attr('data')=='1'){
@@ -401,12 +432,24 @@
                     $('#inp_degree').val(prof_degree);
                     $('#inp_institution').val(prof_inst);
                     $('#inp_phone').val(prof_phone);
-                    $('#inp_gender').val(prof_gender);
                     $("input[id^='inp_']").attr('readonly','readonly');
                     $('#btn_edit_profile').addClass('btn-warning');
                     $('#btn_edit_profile').removeClass('btn-default');
                     $('#btn_edit_profile').attr('title','Editar perfil');
                     $('#btn_edit_profile').attr('data','0');
+                    $('#slc_gender').replaceWith(inp_prof_gender);
+                    if(prof_gender=='f'){
+                        $('#inp_gender').val('Femenino');
+                        $('#inp_gender').attr('data','f');
+
+                    }
+                    else if(prof_gender=='m'){
+                        $('#inp_gender').val('Masculino');
+                        $('#inp_gender').attr('data','m');
+
+
+                    }
+                    $('#div_btn_save').remove();
 
                 }
 
@@ -421,7 +464,20 @@
                     $('#inp_degree').val(prof_degree);
                     $('#inp_institution').val(prof_inst);
                     $('#inp_phone').val(prof_phone);
-                    $('#inp_gender').val(prof_gender);
+                    $('#slc_gender').replaceWith(inp_prof_gender);
+                    if(prof_gender=='f'){
+                        $('#inp_gender').val('Femenino');
+                        $('#inp_gender').attr('data','f');
+
+                    }
+                    else if(prof_gender=='m'){
+                        $('#inp_gender').val('Masculino');
+                        $('#inp_gender').attr('data','m');
+
+
+                    }
+                    $('#div_btn_save').remove();
+
                     $("input[id^='inp_']").attr('readonly','readonly');
 
 
@@ -439,6 +495,20 @@
                     $('#inp_institution').val(prof_inst);
                     $('#inp_phone').val(prof_phone);
                     $('#inp_gender').val(prof_gender);
+                    $('#slc_gender').replaceWith(inp_prof_gender);
+                    if(prof_gender=='f'){
+                        $('#inp_gender').val('Femenino');
+                        $('#inp_gender').attr('data','f');
+
+                    }
+                    else if(prof_gender=='m'){
+                        $('#inp_gender').val('Masculino');
+                        $('#inp_gender').attr('data','m');
+
+
+                    }
+                    $('#div_btn_save').remove();
+
                     $("input[id^='inp_']").attr('readonly','readonly');
 
                 }

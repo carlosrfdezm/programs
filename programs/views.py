@@ -3437,6 +3437,35 @@ def program_documents(request, program_slug):
     else:
         return error_500(request,'Usted no puede ver las actas de este programa')
 
+@login_required
+def autoedit_member_profile(request, program_slug, member_id):
+    program = Program.objects.get(slug=program_slug)
+    member = ProgramMember.objects.get(pk=member_id)
+    if request.user == member.user:
+        if request.method == 'POST':
+            if member.user.email == request.POST['prof_email']:
+                request.user.first_name = request.POST['prof_name']
+                request.user.last_name = request.POST['prof_lastname']
+                member.birth_date = request.POST['prof_bdate']
+                member.degree = request.POST['prof_degree']
+                member.institution = request.POST['prof_inst']
+                member.sex = request.POST['prof_gender']
+                member.phone = request.POST['prof_phone']
+                request.user.save()
+                member.save()
+
+                return HttpResponseRedirect(reverse('programs:view_program_member_profile', args=[program_slug, member_id]))
+            else:
+                if not ProgramMember.objects.filter(user__email=request.POST['prof_email']):
+                    pass
+                else:
+                    return error_500(request, program, 'El correo introducido esta en uso por otro usuario')
+        else:
+            return error_500(request, program, 'Usted no tiene acceso a esta funcionalidad por GET')
+
+    else:
+        return error_500(request, program, 'Usted no tiene acceso a esta funcionalidad')
+
 
 
 @login_required
