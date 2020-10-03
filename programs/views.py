@@ -1323,6 +1323,17 @@ def error_500(request, program, error_message):
         'program':program,
         'error_message':error_message,
     }
+
+    if user_is_program_member(request.user, program):
+        context['member']=ProgramMember.objects.get(user=request.user, program=program)
+    elif user_is_program_student(request.user, program):
+        if program.type == 'phd':
+            context['student'] = Student.objects.get(user=request.user, program=program)
+        elif program.type == 'msc':
+            context['student'] = MscStudent.objects.get(user=request.user, program=program)
+        elif program.type == 'dip':
+            context['student'] = DipStudent.objects.get(user=request.user, program=program)
+
     return render(request,'programs/error_500.html', context)
 
 @login_required
@@ -3451,13 +3462,30 @@ def autoedit_member_profile(request, program_slug, member_id):
                 member.institution = request.POST['prof_inst']
                 member.sex = request.POST['prof_gender']
                 member.phone = request.POST['prof_phone']
+                try:
+                    member.picture = request.FILES['prof_picture']
+                except:
+                    pass
                 request.user.save()
                 member.save()
 
                 return HttpResponseRedirect(reverse('programs:view_program_member_profile', args=[program_slug, member_id]))
             else:
                 if not ProgramMember.objects.filter(user__email=request.POST['prof_email']):
-                    pass
+                    request.user.first_name = request.POST['prof_name']
+                    request.user.last_name = request.POST['prof_lastname']
+                    request.user.email = request.POST['prof_email']
+                    member.birth_date = request.POST['prof_bdate']
+                    member.degree = request.POST['prof_degree']
+                    member.institution = request.POST['prof_inst']
+                    member.sex = request.POST['prof_gender']
+                    member.phone = request.POST['prof_phone']
+                    try:
+                        member.picture = request.FILES['prof_picture']
+                    except:
+                        pass
+                    request.user.save()
+                    member.save()
                 else:
                     return error_500(request, program, 'El correo introducido esta en uso por otro usuario')
         else:

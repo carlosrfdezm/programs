@@ -225,7 +225,7 @@
 
 
                                     <div class="active tab-pane" id="personal">
-                                        <form class="form-horizontal" id="frm_personal_data" action="{% url 'programs:autoedit_member_profile' program.slug member.id %}" method="post">
+                                        <form class="form-horizontal" id="frm_personal_data" enctype="multipart/form-data" action="{% url 'programs:autoedit_member_profile' program.slug member.id %}"  method="post">
                                             {% csrf_token %}
                                             <div class="form-group row">
                                                 <label for="inp_name" class="col-sm-2 col-form-label">Nombre</label>
@@ -387,6 +387,110 @@
                 timer: 7000
             });
             {#bsCustomFileInput.init();#}
+            $(document).on('keyup','#inp_email', function () {
+                var email = $('#inp_email').val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_usr_exists' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'email':email,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].exists == 1) {
+
+                                Toast.fire({
+                                    type: 'warning',
+                                    title: 'Ya hay un usuario con ese correo, quiza ya es miembro de otro programa'
+                                })
+
+                            } else if(json[0].exists == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Este correo esta en uso por un miembro del programa'
+                                });
+                                $('#btn_save').addClass('disabled');
+                                $('#btn_save').attr('disabled', 'disabled');
+
+                            }
+                            else{
+                                $('#btn_save').removeClass('disabled');
+                                $('#btn_save').removeAttr('disabled');
+
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                };
+
+
+            });
+            $(document).on('change','#inp_picture', function () {
+                var fileUpload = this;
+                var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
+                if (regex.test(fileUpload.value.toLowerCase())) {
+                    if (typeof (fileUpload.files) != "undefined") {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(fileUpload.files[0]);
+                        reader.onload = function (e) {
+                            var image = new Image();
+                            image.src = e.target.result;
+                            image.onload = function () {
+                                var height = this.height;
+                                var width = this.width;
+                                if (height < 400 || width < 400) {
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada es muy pequeña, debe tener dimensiones superiores a 400 px.'
+                                    });
+                                    $('#inp_picture').val('');
+                                    return false;
+                                }else
+                                if(math.abs(height - width)>10 ){
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'Diferencia entre el lado y el ancho de la imagen no debe superar los 10px.'
+                                    });
+                                    $('#inp_picture').val('');
+                                    return false;
+                                }
+                            };
+                        }
+                    } else {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Este navegador no soporta HTML5, debe actualizarlo.'
+                        });
+                        return false;
+                    }
+                } else {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Por favor seleccione una imagen.'
+                    });
+                    return false;
+                }
+            });
 
             $(document).on('click',"button[id='btn_edit_profile']", function () {
 
@@ -417,7 +521,13 @@
 
                     }
 
-                    $('#frm_personal_data').append('<div class="form-group row pt-3" id="div_btn_save">\n' +
+                    $('#frm_personal_data').append('<div class="form-group row pt-3">\n' +
+                        '                                                <label for="inp_picture" class="col-sm-2 col-form-label">Foto de perfil:</label>\n' +
+                        '                                                <div class="col-sm-10">\n' +
+                        '                                                    <input type="file" class="" id="inp_picture" name="prof_picture" placeholder="Foto de perfil">\n' +
+                        '                                                </div>\n' +
+                        '                                            </div>'+
+                        '<div class="form-group row pt-3" id="div_btn_save">\n' +
                         '                        <div class="offset-sm-5 col-sm-7">\n' +
                         '                          <button type="submit" class="btn btn-primary">Guardar</button>\n' +
                         '                        </div>\n' +
