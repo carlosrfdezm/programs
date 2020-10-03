@@ -50,19 +50,11 @@
 
                                 <p class="text-muted text-center">{{ professor.role|capfirst }}</p>
                                 {% if user == professor.user %}
-                                    <ul class="list-group list-group-unbordered mb-3">
-                                        <li class="list-group-item text-center">
+                                    <ul class="list-group list-group-unbordered mb-3" id="ul_edit_profile" data="0">
+                                        <li class="list-group-item text-center" id="li_edit_profile">
                                             <button type="button" class="btn btn-sm btn-warning text-center" title="Editar perfil" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>
                                         </li>
-                                        {#                                    <li class="list-group-item">#}
-                                        {#                                        <b>Ingreso</b> <a class="float-right">{% if student.init_date %}{{ student.init_date|date:'M/Y' }}{% else %}----{% endif %}</a>#}
-                                        {#                                    </li>#}
-                                        {#                                    <li class="list-group-item">#}
-                                        {#                                        <b>Egreso</b> <a class="float-right">{% if student.finish_date != None %}{{ student.finish_date|date:'M/Y' }}{% else %}----{% endif %}</a>#}
-                                        {#                                    </li>#}
-                                        {#                                    <li class="list-group-item">#}
-                                        {#                                        <b>Defensa prevista</b> <a class="float-right">{% if student.studentformationplan.planned_end_year != None %}{{ student.studentformationplan.planned_end_year }}{% else %}----{% endif %}</a>#}
-                                        {#                                    </li>#}
+
                                     </ul>
                                 {% endif %}
 
@@ -104,10 +96,10 @@
                         <div class="card">
                             <div class="card-header p-2">
                                 <ul class="nav nav-pills">
-                                    <li class="nav-item"><a class="nav-link active" href="#personal" data-toggle="tab">Datos personales</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#students" data-toggle="tab">Aspirantes</a></li>
+                                    <li class="nav-item"><a class="nav-link active" id="a_tab_personal" href="#personal" data-toggle="tab">Datos personales</a></li>
+                                    <li class="nav-item"><a class="nav-link" id="a_tab_students"  href="#students" data-toggle="tab">Aspirantes</a></li>
                                     {% if user == professor.user %}
-                                        <li class="nav-item"><a class="nav-link" href="#messages" data-toggle="tab">Mensajes</a></li>
+                                        <li class="nav-item"><a class="nav-link" id="a_tab_messages" href="#messages" data-toggle="tab">Mensajes</a></li>
                                     {% endif %}
                                 </ul>
                             </div><!-- /.card-header -->
@@ -419,6 +411,54 @@
                 }
 
             });
+            $('#a_tab_students').click(function (){
+                $('#ul_edit_profile').attr('data', '1');
+                if($('#btn_edit_profile').attr('data')=='1'){
+                    $('#inp_name').val(prof_name);
+                    $('#inp_lastname').val( prof_surename);
+                    $('#inp_email').val(prof_mail);
+                    $('#inp_birthdate').val(prof_bdate);
+                    $('#inp_degree').val(prof_degree);
+                    $('#inp_institution').val(prof_inst);
+                    $('#inp_phone').val(prof_phone);
+                    $('#inp_gender').val(prof_gender);
+                    $("input[id^='inp_']").attr('readonly','readonly');
+
+
+                }
+                $('#li_edit_profile').remove();
+
+            });
+            $('#a_tab_messages').click(function (){
+                if($('#btn_edit_profile').attr('data')=='1'){
+                    $('#inp_name').val(prof_name);
+                    $('#inp_lastname').val( prof_surename);
+                    $('#inp_email').val(prof_mail);
+                    $('#inp_birthdate').val(prof_bdate);
+                    $('#inp_degree').val(prof_degree);
+                    $('#inp_institution').val(prof_inst);
+                    $('#inp_phone').val(prof_phone);
+                    $('#inp_gender').val(prof_gender);
+                    $("input[id^='inp_']").attr('readonly','readonly');
+
+                }
+                $('#li_edit_profile').remove();
+                $('#ul_edit_profile').attr('data', '1');
+            });
+
+            $('#a_tab_personal').click(function (){
+                if($('#ul_edit_profile').attr('data')=='0'){}
+                else if($('#ul_edit_profile').attr('data')=='1') {
+                    $('#ul_edit_profile').append('<li class="list-group-item text-center" id="li_edit_profile">\n' +
+                        '                <button type="button" class="btn btn-sm btn-warning text-center" title="Editar perfil" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>\n' +
+                        '            </li>');
+                }
+
+            });
+
+
+
+
 
 
 
