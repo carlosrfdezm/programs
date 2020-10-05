@@ -588,6 +588,7 @@
 
                     }
                     $('#div_btn_save').remove();
+                    $('#div_prof_picture').remove();
 
                     $("input[id^='inp_']").attr('readonly','readonly');
 
@@ -619,6 +620,8 @@
 
                     }
                     $('#div_btn_save').remove();
+                    $('#div_prof_picture').remove();
+
 
                     $("input[id^='inp_']").attr('readonly','readonly');
 
@@ -636,12 +639,6 @@
                 }
 
             });
-
-
-
-
-
-
 
             $(document).on('click',"a[id*='a_read_message_']",function (e) {
                 e.preventDefault();
