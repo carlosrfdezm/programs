@@ -52,7 +52,7 @@
                                 {% if user == professor.user %}
                                     <ul class="list-group list-group-unbordered mb-3" id="ul_edit_profile" data="0">
                                         <li class="list-group-item text-center" id="li_edit_profile">
-                                            <button type="button" class="btn btn-sm btn-warning text-center" title="Editar perfil" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>
+                                            <button type="button" class="btn btn-sm btn-warning text-center" title="Editar datos personales" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>
                                         </li>
 
                                     </ul>
@@ -545,7 +545,7 @@
                     $("input[id^='inp_']").attr('readonly','readonly');
                     $('#btn_edit_profile').addClass('btn-warning');
                     $('#btn_edit_profile').removeClass('btn-default');
-                    $('#btn_edit_profile').attr('title','Editar perfil');
+                    $('#btn_edit_profile').attr('title','Editar datos personales');
                     $('#btn_edit_profile').attr('data','0');
                     $('#slc_gender').replaceWith(inp_prof_gender);
                     if(prof_gender=='f'){
