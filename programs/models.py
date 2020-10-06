@@ -185,6 +185,14 @@ class ProgramMember(models.Model):
     def __str__(self):
         return self.user.get_full_name()
 
+class ProgramSpeciality(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    code = models.CharField(max_length=6, null=False)
+    name = models.CharField(max_length=100, null=False)
+
+    def __str__(self):
+        return self.name
+
 class Student(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=20,null=True, blank=True)
@@ -201,6 +209,7 @@ class Student(models.Model):
     msc_title = models.CharField(max_length=100, null=True, blank=True)
     have_prorrogue = models.BooleanField(default=False)
     prorrogue_end_date = models.DateField(null=True, blank=True)
+    speciality = models.ForeignKey(ProgramSpeciality, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.user.get_full_name()
@@ -506,6 +515,7 @@ class ProgramDocument(models.Model):
 
     def __str__(self):
         return self.description
+
 
 # Modelo para gestionar expedientes de aspirantes
 class ProgramFileDoc(models.Model):

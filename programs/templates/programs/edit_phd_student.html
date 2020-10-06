@@ -120,12 +120,22 @@
 
                                             </div>
                                         {% elif phd_student.category == 'interno' %}
-                                            <div class="form-group col-md-6" id="div_workcenter">
+                                            <div class="form-group col-md-3" id="div_workcenter">
                                                 <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>
                                                 <select class="form-control" id="slc_center" required name="student_center" >
                                                     <option value="" >Seleccione una opción</option>
                                                     {% for area in inner_areas %}
                                                         <option value="{{ area.name }}" {% if area.name == phd_student.center %}selected{% endif %}>{{ area }}</option>
+                                                    {% endfor %}
+
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-md-3" id="div_workcenter">
+                                                <label for="slc_speciality" id="lbl_slc_center">Especialidad:</label>
+                                                <select class="form-control" id="slc_center" required name="student_speciality" >
+                                                    <option value="" >Seleccione una opción</option>
+                                                    {% for speciality in specialities %}
+                                                        <option value="{{ speciality.id }}" {% if speciality == phd_student.student.speciality %}selected{% endif %}>{{ speciality }}</option>
                                                     {% endfor %}
 
                                                 </select>

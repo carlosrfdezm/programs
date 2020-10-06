@@ -22,7 +22,8 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     ProgramMember, ProgramFinishRequirements, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
-    FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message, CGCDocument
+    FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message, CGCDocument, \
+    ProgramSpeciality
 from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -887,7 +888,8 @@ def edit_student(request, program_slug, student_id):
                 country=request.POST['student_country'],
                 gender=request.POST['gender'],
                 dni=request.POST['student_dni'],
-                birth_date=request.POST['student_birth_date']
+                birth_date=request.POST['student_birth_date'],
+                speciality = request.POST['student_speciality'],
 
             )
             if 'request_date' in request.POST and not request.POST['request_date'] == '':
@@ -1017,6 +1019,7 @@ def edit_student(request, program_slug, student_id):
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
                 'projects': InvestigationProject.objects.filter(program=program),
                 'inner_areas': InnerAreas.objects.all(),
+                'specialities': ProgramSpeciality.objects.filter(program=program),
             }
             return render(request, 'programs/edit_phd_student.html', context)
     else:

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from programs.models import InvestigationLine, Student, MscStudent, Tuthor, StudentFormationPlan, InnerAreas, \
-    PhdStudent, DipStudent, PostgMember
+    PhdStudent, DipStudent, PostgMember, ProgramSpeciality
 from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember, ProgramFileDoc
 
 # Register your models here.
@@ -15,10 +15,14 @@ class ProgramBackgroundsInline(admin.StackedInline):
     model = ProgramBackgrounds
     extra = 3
 
+class ProgramSpecialityInline(admin.StackedInline):
+    model = ProgramSpeciality
+    extra = 3
+
 class ProgramAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("short_name",)}
     list_display = ('full_name','short_name','type')
-    inlines = [ProgramFileDocInline, ProgramBackgroundsInline ]
+    inlines = [ProgramFileDocInline, ProgramBackgroundsInline, ProgramSpecialityInline ]
 
 admin.site.register(Program, ProgramAdmin)
 
