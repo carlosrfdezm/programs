@@ -703,6 +703,7 @@
                 }
 
             });
+
             $('#a_tab_plan').click(function (){
                 $('#ul_edit_profile').attr('data', '1');
                 if($('#btn_edit_profile').attr('data')=='1'){
@@ -795,7 +796,7 @@
                 $('#li_edit_profile').remove();
                 $('#ul_edit_profile').attr('data', '1');
             });
-
+            {% if user == student.user %}
             $('#a_tab_personal').click(function (){
                 if($('#ul_edit_profile').attr('data')=='0'){}
                 else if($('#ul_edit_profile').attr('data')=='1') {
@@ -805,6 +806,7 @@
                 }
 
             });
+            {% endif %}
             $(document).on('change','#inp_picture', function () {
                 var fileUpload = this;
                 var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
