@@ -50,7 +50,7 @@
 
                                 <p class="text-muted text-center">{{ student.phdstudent.status|capfirst }}</p>
 
-                                <ul class="list-group list-group-unbordered mb-3">
+                                <ul class="list-group list-group-unbordered mb-3" id="ul_edit_profile"  data="0">
                                     <li class="list-group-item">
                                         <b>Solicitud</b> <a class="float-right">{{ student.request_date|date:'M/Y'}}</a>
                                     </li>
@@ -476,6 +476,7 @@
 
                                     <div class="active tab-pane" id="personal">
                                         <form class="form-horizontal" id="frm_personal_data" enctype="multipart/form-data" method="post" action="{% url 'programs:autoedit_student_profile' program.slug student.id %}">
+                                            {% csrf_token %}
                                             <div class="form-group row">
                                                 <label for="inp_name" class="col-sm-2 col-form-label">Nombre</label>
                                                 <div class="col-sm-3">
@@ -512,7 +513,8 @@
                                             <div class="form-group row">
                                                 <label for="inp_phone" class="col-sm-2 col-form-label">Teléfono</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="inp_phone" name="student_phone" readonly value="{{ student.phone }}" placeholder="Teléfono">
+                                                    <input type="text" class="form-control" id="inp_phone" name="student_phone" readonly
+                                                           value="{% if student.phone %}{{ student.phone }}{% else %}{% endif %}" placeholder="Teléfono">
                                                 </div>
                                                 <label for="inp_gender" class="col-sm-2 col-form-label">Género</label>
                                                 <div class="col-sm-4">
@@ -541,20 +543,6 @@
     <!-- /.content -->
 {% endblock %}
 <!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- bs-custom-file-input -->
-<script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
-<!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        bsCustomFileInput.init();
-    });
-</script>
 {% block extra_scripts %}
 
     <script type="text/javascript">
@@ -589,9 +577,6 @@
                 showConfirmButton: false,
                 timer: 7000
             });
-            {#bsCustomFileInput.init();#}
-
-
             $(document).on('keyup','#inp_email', function () {
                 var email = $('#inp_email').val();
                 var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
@@ -650,6 +635,8 @@
 
 
             });
+
+
             $(document).on('click',"button[id='btn_edit_profile']", function () {
 
 
@@ -716,21 +703,51 @@
                 }
 
             });
-            $('#a_tab_students').click(function (){
+            $('#a_tab_plan').click(function (){
                 $('#ul_edit_profile').attr('data', '1');
                 if($('#btn_edit_profile').attr('data')=='1'){
-                    $('#inp_name').val(prof_name);
-                    $('#inp_lastname').val( prof_surename);
-                    $('#inp_email').val(prof_mail);
-                    $('#inp_birthdate').val(prof_bdate);
-                    $('#inp_phone').val(prof_phone);
-                    $('#slc_gender').replaceWith(inp_prof_gender);
-                    if(prof_gender=='f'){
+                    $('#inp_name').val(student_name);
+                    $('#inp_lastname').val( student_surename);
+                    $('#inp_email').val(student_mail);
+                    $('#inp_birthdate').val(student_bdate);
+                    $('#inp_phone').val(student_phone);
+                    $('#slc_gender').replaceWith(inp_student_gender);
+                    if(student_gender=='f'){
                         $('#inp_gender').val('Femenino');
                         $('#inp_gender').attr('data','f');
 
                     }
-                    else if(prof_gender=='m'){
+                    else if(student_gender=='m'){
+                        $('#inp_gender').val('Masculino');
+                        $('#inp_gender').attr('data','m');
+
+
+                    }
+                    $('#div_btn_save').remove();
+                    $('#div_prof_picture').remove();
+
+                    $("input[id^='inp_']").attr('readonly','readonly');
+
+
+                }
+                $('#li_edit_profile').remove();
+
+            });
+            $('#a_tab_docs').click(function (){
+                $('#ul_edit_profile').attr('data', '1');
+                if($('#btn_edit_profile').attr('data')=='1'){
+                    $('#inp_name').val(student_name);
+                    $('#inp_lastname').val( student_surename);
+                    $('#inp_email').val(student_mail);
+                    $('#inp_birthdate').val(student_bdate);
+                    $('#inp_phone').val(student_phone);
+                    $('#slc_gender').replaceWith(inp_student_gender);
+                    if(student_gender=='f'){
+                        $('#inp_gender').val('Femenino');
+                        $('#inp_gender').attr('data','f');
+
+                    }
+                    else if(student_gender=='m'){
                         $('#inp_gender').val('Masculino');
                         $('#inp_gender').attr('data','m');
 
@@ -748,21 +765,21 @@
             });
             $('#a_tab_messages').click(function (){
                 if($('#btn_edit_profile').attr('data')=='1'){
-                    $('#inp_name').val(prof_name);
-                    $('#inp_lastname').val( prof_surename);
-                    $('#inp_email').val(prof_mail);
-                    $('#inp_birthdate').val(prof_bdate);
-                    $('#inp_degree').val(prof_degree);
-                    $('#inp_institution').val(prof_inst);
-                    $('#inp_phone').val(prof_phone);
-                    $('#inp_gender').val(prof_gender);
-                    $('#slc_gender').replaceWith(inp_prof_gender);
-                    if(prof_gender=='f'){
+                    $('#inp_name').val(student_name);
+                    $('#inp_lastname').val( student_surename);
+                    $('#inp_email').val(student_mail);
+                    $('#inp_birthdate').val(student_bdate);
+                    $('#inp_degree').val(student_degree);
+                    $('#inp_institution').val(student_inst);
+                    $('#inp_phone').val(student_phone);
+                    $('#inp_gender').val(student_gender);
+                    $('#slc_gender').replaceWith(inp_student_gender);
+                    if(student_gender=='f'){
                         $('#inp_gender').val('Femenino');
                         $('#inp_gender').attr('data','f');
 
                     }
-                    else if(prof_gender=='m'){
+                    else if(student_gender=='m'){
                         $('#inp_gender').val('Masculino');
                         $('#inp_gender').attr('data','m');
 
@@ -783,7 +800,7 @@
                 if($('#ul_edit_profile').attr('data')=='0'){}
                 else if($('#ul_edit_profile').attr('data')=='1') {
                     $('#ul_edit_profile').append('<li class="list-group-item text-center" id="li_edit_profile">\n' +
-                        '                <button type="button" class="btn btn-sm btn-warning text-center" title="Editar perfil" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>\n' +
+                        '                <button type="button" class="btn btn-sm btn-warning text-center" title="Editar datos personales" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>\n' +
                         '            </li>');
                 }
 
@@ -836,52 +853,6 @@
             });
 
 
-            $(document).on('change','#exampleInputFile', function () {
-                var fileUpload = this;
-                var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
-                if (regex.test(fileUpload.value.toLowerCase())) {
-                    if (typeof (fileUpload.files) != "undefined") {
-                        var reader = new FileReader();
-                        reader.readAsDataURL(fileUpload.files[0]);
-                        reader.onload = function (e) {
-                            var image = new Image();
-                            image.src = e.target.result;
-                            image.onload = function () {
-                                var height = this.height;
-                                var width = this.width;
-                                if (height < 200 || width < 200) {
-                                    Toast.fire({
-                                        type: 'error',
-                                        title: 'La imagen seleccionada es muy pequeña, debe tener al menos 400px x 400 px'
-                                    });
-                                    $('#exampleInputFile').val('');
-                                    return false;
-                                }else
-                                if(height != width ){
-                                    Toast.fire({
-                                        type: 'error',
-                                        title: 'La imagen seleccionada debe ser cuadrada y de dimensión 200px, o superior.'
-                                    });
-                                    $('#exampleInputFile').val('');
-                                    return false;
-                                }
-                            };
-                        }
-                    } else {
-                        Toast.fire({
-                            type: 'error',
-                            title: 'Este navegador no soporta HTML5, debe actualizarlo.'
-                        });
-                        return false;
-                    }
-                } else {
-                    Toast.fire({
-                        type: 'error',
-                        title: 'Por favor seleccione una imagen.'
-                    });
-                    return false;
-                }
-            });
             $(document).on('click',"a[id*='a_read_message_']",function (e) {
                 e.preventDefault();
 
@@ -957,12 +928,6 @@
 
 
             });
-
-
-
-
-
-
 
         });
     </script>

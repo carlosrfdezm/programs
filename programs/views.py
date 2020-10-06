@@ -3503,11 +3503,12 @@ def autoedit_member_profile(request, program_slug, member_id):
 @login_required
 def autoedit_student_profile(request, program_slug, student_id):
     program = Program.objects.get(slug=program_slug)
+    student =''
     if program.type == 'phd':
         student = Student.objects.get(pk=student_id)
     elif program.type == 'msc':
         student = MscStudent.objects.get(pk=student_id)
-    elif program.type == 'msc':
+    elif program.type == 'dip':
         student = DipStudent.objects.get(pk=student_id)
 
     if request.user == student.user:
@@ -3516,7 +3517,6 @@ def autoedit_student_profile(request, program_slug, student_id):
                 request.user.first_name = request.POST['student_name']
                 request.user.last_name = request.POST['student_lastname']
                 student.birth_date = request.POST['student_bdate']
-                student.institution = request.POST['student_inst']
                 student.gender = request.POST['student_gender']
                 student.phone = request.POST['student_phone']
                 try:
