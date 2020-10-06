@@ -480,33 +480,33 @@
                                             <div class="form-group row">
                                                 <label for="inp_name" class="col-sm-2 col-form-label">Nombre</label>
                                                 <div class="col-sm-3">
-                                                    <input type="text" class="form-control" id="inp_name" placeholder="Name" name="student_name" readonly value="{{ student.user.first_name }}">
+                                                    <input type="text" class="form-control" id="inp_name" placeholder="Name" name="student_name" readonly required value="{{ student.user.first_name }}">
                                                 </div>
                                                 <label for="inp_lastname" class="col-sm-2 col-form-label">Apellidos</label>
                                                 <div class="col-sm-5">
-                                                    <input type="text" class="form-control" id="inp_lastname" placeholder="Name" name="student_lastname" readonly value="{{ student.user.last_name }}">
+                                                    <input type="text" class="form-control" id="inp_lastname" placeholder="Name" name="student_lastname" readonly required  value="{{ student.user.last_name }}">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label for="inp_email" class="col-sm-2 col-form-label">Email</label>
                                                 <div class="col-sm-10">
-                                                    <input type="email" class="form-control" id="inp_email" name="student_email" readonly value="{{ student.user.email }}" placeholder="Email">
+                                                    <input type="email" class="form-control" id="inp_email" name="student_email" readonly required  value="{{ student.user.email }}" placeholder="Email">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label for="inp_birthdate" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
                                                 <div class="col-sm-4">
-                                                    <input class="form-control" type="date" id="inp_birthdate" name="student_bdate" readonly value="{{ student.birth_date|date:'Y-m-d' }}">
+                                                    <input class="form-control" type="date" id="inp_birthdate" name="student_bdate" readonly required  value="{{ student.birth_date|date:'Y-m-d' }}">
                                                 </div>
                                                 <label for="inputCategory" class="col-sm-2 col-form-label">Categoría</label>
                                                 <div class="col-sm-4">
-                                                    <input id="inputCategory" class="form-control" type="text" name="student_category" readonly value="{{ student.phdstudent.category|capfirst }}">
+                                                    <input id="inputCategory" class="form-control" type="text" name="student_category" readonly required  value="{{ student.phdstudent.category|capfirst }}">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label for="inputCenter" class="col-sm-2 col-form-label">Centro</label>
                                                 <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="inputCenter" name="student_institution" readonly value="{{ student.phdstudent.center }}" placeholder="Name">
+                                                    <input type="text" class="form-control" id="inputCenter" name="student_institution" readonly required  value="{{ student.phdstudent.center }}" placeholder="Name">
                                                 </div>
                                             </div>
 
@@ -555,12 +555,12 @@
             var student_inst = '';
             var student_phone = '';
             var student_gender = '';
-            var m_slc_student_gender = '<select class="form-control disabled" id="slc_gender" name="student_gender" >\n' +
+            var m_slc_student_gender = '<select class="form-control" id="slc_gender" name="student_gender" required >\n' +
                 '                                                    <option value="">Seleccione una opción</option>\n' +
                 '                                                    <option  value="f" >Femenino</option>\n' +
                 '                                                    <option selected value="m" >Masculino</option>\n' +
                 '                                                </select>';
-            var f_slc_student_gender = '<select class="form-control disabled" id="slc_gender" name="student_gender" >\n' +
+            var f_slc_student_gender = '<select class="form-control" id="slc_gender" name="student_gender" required >\n' +
                 '                                                    <option value="">Seleccione una opción</option>\n' +
                 '                                                    <option selected value="f" >Femenino</option>\n' +
                 '                                                    <option value="m" >Masculino</option>\n' +
