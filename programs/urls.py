@@ -15,6 +15,7 @@ urlpatterns = [
     path('students/list/<str:scope>', views.students_list, name='students_list'),
     path('students/<int:student_id>/edit', views.edit_student, name='edit_student'),
     path('students/<int:student_id>/profile', views.view_student_profile, name='view_student_profile'),
+    path('students/<int:student_id>/autoedit/profile', views.autoedit_student_profile, name='autoedit_student_profile'),
     path('students/<int:student_id>/picture', views.program_student_picture, name='program_student_picture'),
     path('students/<int:student_id>/evaluate', views.evaluate_student, name='evaluate_student'),
     path('students/<int:student_id>/evaluations', views.student_evals, name='student_evals'),

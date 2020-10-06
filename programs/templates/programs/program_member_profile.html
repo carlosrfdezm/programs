@@ -222,8 +222,6 @@
                                         </div>
                                     {% endif %}
                                     <!-- /.tab-pane -->
-
-
                                     <div class="active tab-pane" id="personal">
                                         <form class="form-horizontal" id="frm_personal_data" enctype="multipart/form-data" action="{% url 'programs:autoedit_member_profile' program.slug member.id %}"  method="post">
                                             {% csrf_token %}

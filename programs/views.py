@@ -3487,6 +3487,10 @@ def autoedit_member_profile(request, program_slug, member_id):
                         pass
                     request.user.save()
                     member.save()
+
+                    return HttpResponseRedirect(
+                        reverse('programs:view_program_member_profile', args=[program_slug, member_id]))
+
                 else:
                     return error_500(request, program, 'El correo introducido esta en uso por otro usuario')
         else:
@@ -3495,6 +3499,60 @@ def autoedit_member_profile(request, program_slug, member_id):
     else:
         return error_500(request, program, 'Usted no tiene acceso a esta funcionalidad')
 
+
+@login_required
+def autoedit_student_profile(request, program_slug, student_id):
+    program = Program.objects.get(slug=program_slug)
+    if program.type == 'phd':
+        student = Student.objects.get(pk=student_id)
+    elif program.type == 'msc':
+        student = MscStudent.objects.get(pk=student_id)
+    elif program.type == 'msc':
+        student = DipStudent.objects.get(pk=student_id)
+
+    if request.user == student.user:
+        if request.method == 'POST':
+            if student.user.email == request.POST['student_email']:
+                request.user.first_name = request.POST['student_name']
+                request.user.last_name = request.POST['student_lastname']
+                student.birth_date = request.POST['student_bdate']
+                student.institution = request.POST['student_inst']
+                student.gender = request.POST['student_gender']
+                student.phone = request.POST['student_phone']
+                try:
+                    student.picture = request.FILES['student_picture']
+                except:
+                    pass
+                request.user.save()
+                student.save()
+
+                return HttpResponseRedirect(reverse('programs:view_student_profile', args=[program_slug, student_id]))
+            else:
+                if not User.objects.filter(email=request.POST['student_email']):
+                    request.user.first_name = request.POST['student_name']
+                    request.user.last_name = request.POST['student_lastname']
+                    request.user.email = request.POST['student_email']
+                    request.user.username = request.POST['student_email']
+                    student.birth_date = request.POST['student_bdate']
+                    student.sex = request.POST['student_gender']
+                    student.phone = request.POST['student_phone']
+                    try:
+                        student.picture = request.FILES['student_picture']
+                    except:
+                        pass
+                    request.user.save()
+                    student.save()
+
+                    return HttpResponseRedirect(
+                        reverse('programs:view_student_profile', args=[program_slug, student_id]))
+
+                else:
+                    return error_500(request, program, 'El correo introducido esta en uso por otro usuario')
+        else:
+            return error_500(request, program, 'Usted no tiene acceso a esta funcionalidad por GET')
+
+    else:
+        return error_500(request, program, 'Usted no tiene acceso a esta funcionalidad')
 
 
 @login_required
