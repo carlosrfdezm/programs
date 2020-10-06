@@ -613,7 +613,7 @@
                 $('#li_edit_profile').remove();
                 $('#ul_edit_profile').attr('data', '1');
             });
-
+            {% if user == professor.user %}
             $('#a_tab_personal').click(function (){
                 if($('#ul_edit_profile').attr('data')=='0'){}
                 else if($('#ul_edit_profile').attr('data')=='1') {
@@ -623,6 +623,7 @@
                 }
 
             });
+            {% endif %}
 
             $(document).on('click',"a[id*='a_read_message_']",function (e) {
                 e.preventDefault();
