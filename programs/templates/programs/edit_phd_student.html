@@ -912,7 +912,7 @@
             });
             $(document).on('change','#slc_category',function () {
                 if($(this).val()=='interno'){
-                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-3" id="div_workcenter">\n' +
                         '                                <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>\n' +
                         '                                <select class="form-control" id="slc_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
                         '<option value="" selected>Seleccione una opción</option>'+
@@ -925,7 +925,7 @@
                         '                            </div>')
                 }
                 else if($(this).val()=='externo'){
-                    $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +
+                    $('#div_workcenter').replaceWith('<div class="form-group col-md-3" id="div_workcenter">\n' +
                         '                                <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>\n' +
                         '                                <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante">\n' +
                         '\n' +

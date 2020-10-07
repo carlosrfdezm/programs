@@ -153,6 +153,7 @@ def create_student(request, program_slug):
                         gender=request.POST['gender'],
                         dni=request.POST['student_dni'],
                         birth_date=request.POST['student_birth_date'],
+                        speciality=ProgramSpeciality.objects.get(pk=request.POST['student_speciality']),
 
                     )
                     try:
@@ -242,6 +243,8 @@ def create_student(request, program_slug):
                 gender=request.POST['gender'],
                 dni=request.POST['student_dni'],
                 birth_date=request.POST['student_birth_date'],
+                speciality=ProgramSpeciality.objects.get(pk=request.POST['student_speciality']),
+
             )
             student.save()
 
@@ -317,6 +320,7 @@ def create_student(request, program_slug):
                 'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
                 'projects': InvestigationProject.objects.filter(program=program),
                 'inner_areas':InnerAreas.objects.all(),
+                'specialities': ProgramSpeciality.objects.filter(program=program)
             }
             if Program.objects.get(slug=program_slug).type == 'phd':
                 return render(request, 'programs/create_phd_student.html', context)
