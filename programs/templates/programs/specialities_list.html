@@ -98,7 +98,7 @@
                                             </div>
                                             <div class="modal-footer justify-content-between">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_project_{{ project.id }}">Eliminar</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_speciality_{{ speciality.id }}">Eliminar</button>
                                             </div>
                                         </div>
                                         <!-- /.modal-content -->
@@ -158,36 +158,51 @@
 
             {% for speciality in specialities %}
                 $('#btn_rm_speciality_{{ speciality.id }}').click(function () {
-                    var project_id={{ speciality.id }};
-                    var url = "";
+                    var speciality_id={{ speciality.id }};
+                    var url = "{% url 'programs:ajx_delete_speciality' program.slug %}";
 
 
                     $.ajax({
                         url : url,
                         type : "POST", // http method
                         data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                            'project_id':project_id,
+                            'speciality_id':speciality_id,
                         }, // data sent with the post request
 
                         // handle a successful response
                         success : function(json) {
 
                             if (json[0].deleted == 1) {
-                                var row = myTable.row( $('#tr_project_{{ project.id }}') );
+                                var row = myTable.row( $('#tr_speciality_{{ speciality.id }}') );
                                 row.remove().draw();
 
                                 Toast.fire({
                                     type: 'success',
-                                    title: 'Proyecto eliminado exitosamente'
+                                    title: 'Especialidad eliminada exitosamente'
                                 });
 
                             } else if(json[0].deleted == 0){
                                 Toast.fire({
                                     type: 'error',
-                                    title: 'No se ha podido eliminar el proyecto seleccionado.'
+                                    title: 'No se ha podido eliminar la especialidad seleccionada, por una razón desconocida.'
                                 })
 
                             }
+                            else if(json[0].deleted == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar la especialidad seleccionada: el método de consulta es incorrecto.'
+                                })
+
+                            }
+                            else if(json[0].deleted == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Usted no tiene privilegios para eliminar espcialidades en este programa.'
+                                })
+
+                            }
+
                             console.log(json); // log the returned json to the console
                             console.log("success"); // another sanity check
 
