@@ -1722,6 +1722,31 @@ def create_project(request, program_slug):
 
 
 @login_required
+def create_phd_speciality(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if program.type == 'phd':
+            if request.method == 'POST':
+                new_speciality = ProgramSpeciality(
+                    program=program,
+                    name=request.POST['speciality_name'],
+                    code=request.POST['speciality_code'],
+                )
+                new_speciality.save()
+                return HttpResponseRedirect(reverse('programs:phd_specialities', args=[program_slug]))
+            else:
+                context = {
+                    'program': program,
+                    'member': ProgramMember.objects.get(user=request.user, program=program)
+                }
+                return render(request, 'programs/create_speciality.html', context)
+        else:
+            return error_500(request, program, 'Solo los doctorados tienen especialidades.')
+    else:
+        return error_500(request,program,'Usted no tiene privilegios para agregar especialidades aquí')
+
+
+@login_required
 def projects_list(request, program_slug):
     program=Program.objects.get(slug=program_slug)
     context={
@@ -1738,6 +1763,26 @@ def projects_list(request, program_slug):
         elif program.type =='dip':
             context['student'] = DipStudent.objects.get(user=request.user, program=program)
     return render(request, 'programs/projects_list.html',context)
+
+
+@login_required
+def phd_specialities(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    if program.type == 'phd':
+        context={
+            'program':program,
+            'specialities':ProgramSpeciality.objects.filter(program=program)
+        }
+        if user_is_program_member(request.user, program):
+            context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+        elif user_is_program_student(request.user, program):
+            context['student'] = Student.objects.get(user=request.user, program=program)
+        else:
+            return error_500(request, program, 'Sólo los estudiantes o profesores del programa pueden ver las especialidades')
+
+        return render(request, 'programs/specialities_list.html',context)
+    else:
+        return error_500(request, program, 'Sólo los doctorados tienen especialidades')
 
 @login_required
 def edit_project(request, program_slug, project_id):

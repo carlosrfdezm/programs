@@ -1,0 +1,99 @@
+{% extends 'programs/base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-9">
+                    <h1>Agregar especialidad</h1>
+                </div>
+                <div class="col-sm-3">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Nueva especialidad</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Crear especialidad</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_phd_speciality' program.slug %}">
+                            {% csrf_token %}
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group col-md-9">
+                                        <label for="inp_name">Nombre:</label>
+                                        <input type="text" class="form-control" id="inp_name" required maxlength="100" placeholder="Nombre de la especialidad" name="speciality_name">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="inp_code">Código:</label>
+                                        <input type="text" class="form-control" id="inp_code" required maxlength="6" placeholder="Código" name="speciality_code">
+                                    </div>
+
+                                </div>
+
+
+
+                            </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
+
+
+
+                    <!-- /.card -->
+
+                    <!-- Input addon -->
+                    <!-- /.card -->
+                    <!-- Horizontal Form -->
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+<!-- jQuery -->
+<script src="../../plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- bs-custom-file-input -->
+<script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="../../dist/js/demo.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        bsCustomFileInput.init();
+    });
+</script>
+</body>
+</html>

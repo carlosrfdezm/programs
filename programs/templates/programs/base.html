@@ -27,7 +27,7 @@
     {% block extra_css %}
     {% endblock %}
     <!-- Google Font: Source Sans Pro -->
-{#    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">#}
+    {#    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">#}
 </head>
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 {% if program %}
@@ -84,20 +84,20 @@
                     </li>
                 {% endif %}
                 <!-- Notifications Dropdown Menu -->
-            {% if student and not member %}
-                <li class="nav-item">
-                    <a class="nav-link text-primary" href="{% url 'programs:view_student_profile' program.slug student.id %}" title="Ver perfil">
-                        <i class="fa fa-user"></i>
-                    </a>
-                </li>
-            {% endif %}
-            {% if member %}
-                <li class="nav-item">
-                    <a class="nav-link text-primary" href="{% url 'programs:view_program_member_profile' program.slug member.id %}" title="Ver perfil">
-                        <i class="fa fa-user"></i>
-                    </a>
-                </li>
-            {% endif %}
+                {% if student and not member %}
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="{% url 'programs:view_student_profile' program.slug student.id %}" title="Ver perfil">
+                            <i class="fa fa-user"></i>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if member %}
+                    <li class="nav-item">
+                        <a class="nav-link text-primary" href="{% url 'programs:view_program_member_profile' program.slug member.id %}" title="Ver perfil">
+                            <i class="fa fa-user"></i>
+                        </a>
+                    </li>
+                {% endif %}
 
                 <li class="nav-item">
                     <a class="nav-link text-danger" href="{% url 'log:my_logout' program.slug %}" title="Salir">
@@ -180,11 +180,38 @@
                                                 <p>Ver</p>
                                             </a>
                                         </li>
-                                        
+
 
                                     </ul>
                                 </li>
                             {% endif %}
+                            <li class="nav-item has-treeview">
+                                <a href="#" class="nav-link" title="Especialidades del programa">
+                                    <i class="nav-icon fas fa-newspaper"></i>
+                                    <p>
+                                        Especialidades
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    {% if user_is_program_cs %}
+                                        <li class="nav-item">
+                                            <a href="{% url 'programs:create_phd_speciality' program.slug %}" class="nav-link" title="Agregar nueva especialidad">
+                                                <i class="fa fa-plus nav-icon"></i>
+                                                <p>Nueva</p>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    <li class="nav-item">
+                                        <a href="{% url 'programs:phd_specialities' program.slug  %}" class="nav-link" title="Ver especialidades del programa">
+                                            <i class="fa fa-check nav-icon"></i>
+                                            <p>Ver especialidades</p>
+                                        </a>
+                                    </li>
+
+
+                                </ul>
+                            </li>
 
                             <li class="nav-item has-treeview">
                                 <a href="#" class="nav-link" title="Estudiantes y solicitantes">

@@ -118,12 +118,11 @@ urlpatterns = [
     path('documents/year/<int:year>/list', views.program_docs_by_year, name='program_docs_by_year'),
     path('documents/year/<int:year>/download', views.program_by_year_doc_download, name='program_by_year_doc_download'),
 
-
-
-
-
-
     path('reports', views.docx_program_report, name='docx_program_report'),
+
+
+    path('speciality/create', views.create_phd_speciality, name='create_phd_speciality'),
+    path('speciality/list', views.phd_specialities, name='phd_specialities'),
 
 
 
