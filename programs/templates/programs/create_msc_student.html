@@ -65,7 +65,7 @@
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group col-md-2">
+                                    <div class="form-group col-md-3">
                                         <label for="inp_birth_date">Fecha de nacimiento:</label>
                                         <input type="date" class="form-control" id="inp_birth_date"  name="student_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" required>
                                     </div>
@@ -77,7 +77,7 @@
                                         <label for="inp_phone">Teléfono:</label>
                                         <input type="text" class="form-control" id="inp_phone"  name="student_phone" placeholder="Teléfono" >
                                     </div>
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-md-3">
                                         <label for="slc_country">País:</label>
                                         <select class="form-control" id="slc_country" name="student_country" required>
                                             {% country_list as country_list%}
