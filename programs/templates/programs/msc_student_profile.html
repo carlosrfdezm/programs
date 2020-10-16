@@ -60,6 +60,11 @@
                                     <li class="list-group-item">
                                         <b>Egreso</b> <a class="float-right">{% if student.finish_date != None %}{{ student.finish_date|date:'M/Y' }}{% else %}----{% endif %}</a>
                                     </li>
+                                    {% if user == student.user %}
+                                        <li class="list-group-item text-center" id="li_edit_profile">
+                                            <button type="button" class="btn btn-sm btn-warning text-center" title="Editar datos personales" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>
+                                        </li>
+                                    {% endif %}
                                 </ul>
 
 
@@ -147,7 +152,7 @@
                                                     </span>
                                                         </div>
                                                         <!-- /.user-block -->
-                                                         <p id="p_message_body_{{ message.id }}" {% if not message.readed %} class="text-bold" {% endif %}>
+                                                        <p id="p_message_body_{{ message.id }}" {% if not message.readed %} class="text-bold" {% endif %}>
                                                             {{ message.subject }}
                                                         </p>
 
@@ -438,25 +443,29 @@
                                     <div class="active tab-pane" id="personal">
                                         <form class="form-horizontal">
                                             <div class="form-group row">
-                                                <label for="inputName" class="col-sm-2 col-form-label">Nombre</label>
-                                                <div class="col-sm-10">
-                                                    <input type="email" class="form-control" id="inputName" placeholder="Name" readonly value="{{ student }}">
+                                                <label for="inp_name" class="col-sm-2 col-md-2 col-form-label">Nombre</label>
+                                                <div class="col-sm-3 col-md-3">
+                                                    <input type="text" class="form-control" id="inp_name" placeholder="Nombre" readonly name="student_name" value="{{ student.user.first_name }}">
+                                                </div>
+                                                <label for="inp_lastname" class="col-sm-2 col-md-2 col-form-label">Apellidos</label>
+                                                <div class="col-sm-5 col-md-5">
+                                                    <input type="text" class="form-control" id="inp_lastname" placeholder="Apellidos" readonly name="student_lastname" value="{{ student.user.last_name }}">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+                                                <label for="inp_email" class="col-sm-2 col-form-label">Email</label>
                                                 <div class="col-sm-10">
-                                                    <input type="email" class="form-control" id="inputEmail" readonly value="{{ student.user.email }}" placeholder="Email">
+                                                    <input type="email" class="form-control" id="inp_email" readonly name="student_email" value="{{ student.user.email }}" placeholder="Email">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label for="inputExperience" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
+                                                <label for="inp_birthdate" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
                                                 <div class="col-sm-4">
-                                                    <input class="form-control" type="date" readonly value="{{ student.birth_date|date:'Y-m-d' }}">
+                                                    <input class="form-control" id="inp_birthdate" type="date" readonly name="student_birthdate" value="{{ student.birth_date|date:'Y-m-d' }}">
                                                 </div>
                                                 <label for="inputCategory" class="col-sm-2 col-form-label">Categoría</label>
                                                 <div class="col-sm-4">
-                                                    <input id="inputCategory" class="form-control" type="text" readonly value="{{ student.phdstudent.category|capfirst }}">
+                                                    <input id="inputCategory" class="form-control" type="text" readonly value="{{ student.category|capfirst }}">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
@@ -467,13 +476,13 @@
                                             </div>
 
                                             <div class="form-group row">
-                                                <label for="inputPhone" class="col-sm-2 col-form-label">Teléfono</label>
+                                                <label for="inp_phone" class="col-sm-2 col-form-label">Teléfono</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="inputPhone" readonly value="{{ student.phone }}" placeholder="Teléfono">
+                                                    <input type="text" class="form-control" id="inp_phone" readonly value="{{ student.phone }}" name="student_phone" placeholder="Teléfono">
                                                 </div>
-                                                <label for="inputGender" class="col-sm-2 col-form-label">Género</label>
+                                                <label for="inp_gender" class="col-sm-2 col-form-label">Género</label>
                                                 <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="inputGender" readonly {% if student.gender == 'm' %}value="Masculino"{% else %}value="Femenino"{% endif %} placeholder="Teléfono">
+                                                    <input type="text" class="form-control" id="inp_gender" readonly {% if student.gender == 'm' %}value="Masculino"{% else %}value="Femenino"{% endif %} data="{{ student.gender }}" placeholder="Teléfono">
                                                 </div>
                                             </div>
 
@@ -517,6 +526,28 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
+            var student_name = '';
+            var student_surename = '';
+            var student_mail ='';
+            var student_bdate = '';
+            var student_degree = '';
+            var student_inst = '';
+            var student_phone = '';
+            var student_gender = '';
+            var m_slc_student_gender = '<select class="form-control" id="slc_gender" name="student_gender" required >\n' +
+                '                                                    <option value="">Seleccione una opción</option>\n' +
+                '                                                    <option  value="f" >Femenino</option>\n' +
+                '                                                    <option selected value="m" >Masculino</option>\n' +
+                '                                                </select>';
+            var f_slc_student_gender = '<select class="form-control" id="slc_gender" name="student_gender" required >\n' +
+                '                                                    <option value="">Seleccione una opción</option>\n' +
+                '                                                    <option selected value="f" >Femenino</option>\n' +
+                '                                                    <option value="m" >Masculino</option>\n' +
+                '                                                </select>';
+            var inp_student_gender = '<input type="text" class="form-control" id="inp_gender" name="student_gender" readonly="readonly"'+
+
+                'value="" placeholder="Genero">\n'
+
 
             const Toast = Swal.mixin({
                 toast: true,
@@ -524,10 +555,285 @@
                 showConfirmButton: false,
                 timer: 7000
             });
-           
+
+            $(document).on('keyup','#inp_email', function () {
+                var email = $('#inp_email').val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_usr_exists' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'email':email,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].exists == 1) {
+
+                                Toast.fire({
+                                    type: 'warning',
+                                    title: 'Ya hay un usuario con ese correo, quiza ya es miembro de otro programa'
+                                })
+
+                            } else if(json[0].exists == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Este correo esta en uso por un miembro del programa'
+                                });
+                                $('#btn_save').addClass('disabled');
+                                $('#btn_save').attr('disabled', 'disabled');
+
+                            }
+                            else{
+                                $('#btn_save').removeClass('disabled');
+                                $('#btn_save').removeAttr('disabled');
 
 
-           
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                };
+
+
+            });
+
+
+            $(document).on('click',"button[id='btn_edit_profile']", function () {
+
+
+                if($(this).attr('data')=='0'){
+                    student_name = $('#inp_name').val();
+                    student_surename = $('#inp_lastname').val();
+                    student_mail = $('#inp_email').val();
+                    student_bdate = $('#inp_birthdate').val();
+                    student_phone = $('#inp_phone').val();
+                    student_gender = $('#inp_gender').val();
+                    $("input[id^='inp_']").removeAttr('readonly');
+                    {#$('#btn_edit_profile').replaceWith('<button type="button" class="btn btn-sm btn-default text-center" title="Ver perfil" id="btn_view_profile"><i class="fa fa-eye"></i> </button>\n')#}
+                    $('#btn_edit_profile').removeClass('btn-warning');
+                    $('#btn_edit_profile').addClass('btn-default');
+                    $('#btn_edit_profile').attr('data','1');
+                    $('#btn_edit_profile').attr('title','Cancelar edición');
+                    if($('#inp_gender').attr('data')=='f'){
+                        $('#inp_gender').replaceWith(f_slc_student_gender);
+                        student_gender = 'f';
+
+                    }
+                    else if($('#inp_gender').attr('data')=='m'){
+                        $('#inp_gender').replaceWith(m_slc_student_gender);
+                        student_gender='m';
+
+                    }
+
+                    $('#frm_personal_data').append('<div class="form-group row pt-3" id="div_prof_picture">\n' +
+                        '                                                <label for="inp_picture" class="col-sm-2 col-form-label">Foto de perfil:</label>\n' +
+                        '                                                <div class="col-sm-10">\n' +
+                        '                                                    <input type="file" class="" id="inp_picture" name="student_picture" placeholder="Foto de perfil">\n' +
+                        '                                                </div>\n' +
+                        '                                            </div>'+
+                        '<div class="form-group row pt-3" id="div_btn_save">\n' +
+                        '                        <div class="offset-sm-5 col-sm-7">\n' +
+                        '                          <button type="submit" class="btn btn-primary">Guardar</button>\n' +
+                        '                        </div>\n' +
+                        '                      </div>')
+
+                }
+                else if($(this).attr('data')=='1'){
+                    $('#inp_name').val(student_name);
+                    $('#inp_lastname').val( student_surename);
+                    $('#inp_email').val(student_mail);
+                    $('#inp_birthdate').val(student_bdate);
+                    $('#inp_phone').val(student_phone);
+                    $("input[id^='inp_']").attr('readonly','readonly');
+                    $('#btn_edit_profile').addClass('btn-warning');
+                    $('#btn_edit_profile').removeClass('btn-default');
+                    $('#btn_edit_profile').attr('title','Editar datos personales');
+                    $('#btn_edit_profile').attr('data','0');
+                    $('#slc_gender').replaceWith(inp_student_gender);
+                    if(student_gender=='f'){
+                        $('#inp_gender').val('Femenino');
+                        $('#inp_gender').attr('data','f');
+                    }
+                    else if(student_gender=='m'){
+                        $('#inp_gender').val('Masculino');
+                        $('#inp_gender').attr('data','m');
+                    }
+                    $('#div_btn_save').remove();
+                    $('#div_prof_picture').remove();
+
+                }
+
+            });
+
+            $('#a_tab_plan').click(function (){
+                $('#ul_edit_profile').attr('data', '1');
+                if($('#btn_edit_profile').attr('data')=='1'){
+                    $('#inp_name').val(student_name);
+                    $('#inp_lastname').val( student_surename);
+                    $('#inp_email').val(student_mail);
+                    $('#inp_birthdate').val(student_bdate);
+                    $('#inp_phone').val(student_phone);
+                    $('#slc_gender').replaceWith(inp_student_gender);
+                    if(student_gender=='f'){
+                        $('#inp_gender').val('Femenino');
+                        $('#inp_gender').attr('data','f');
+
+                    }
+                    else if(student_gender=='m'){
+                        $('#inp_gender').val('Masculino');
+                        $('#inp_gender').attr('data','m');
+
+
+                    }
+                    $('#div_btn_save').remove();
+                    $('#div_prof_picture').remove();
+
+                    $("input[id^='inp_']").attr('readonly','readonly');
+
+
+                }
+                $('#li_edit_profile').remove();
+
+            });
+            $('#a_tab_docs').click(function (){
+                $('#ul_edit_profile').attr('data', '1');
+                if($('#btn_edit_profile').attr('data')=='1'){
+                    $('#inp_name').val(student_name);
+                    $('#inp_lastname').val( student_surename);
+                    $('#inp_email').val(student_mail);
+                    $('#inp_birthdate').val(student_bdate);
+                    $('#inp_phone').val(student_phone);
+                    $('#slc_gender').replaceWith(inp_student_gender);
+                    if(student_gender=='f'){
+                        $('#inp_gender').val('Femenino');
+                        $('#inp_gender').attr('data','f');
+
+                    }
+                    else if(student_gender=='m'){
+                        $('#inp_gender').val('Masculino');
+                        $('#inp_gender').attr('data','m');
+
+
+                    }
+                    $('#div_btn_save').remove();
+                    $('#div_prof_picture').remove();
+
+                    $("input[id^='inp_']").attr('readonly','readonly');
+
+
+                }
+                $('#li_edit_profile').remove();
+
+            });
+            $('#a_tab_messages').click(function (){
+                if($('#btn_edit_profile').attr('data')=='1'){
+                    $('#inp_name').val(student_name);
+                    $('#inp_lastname').val( student_surename);
+                    $('#inp_email').val(student_mail);
+                    $('#inp_birthdate').val(student_bdate);
+                    $('#inp_degree').val(student_degree);
+                    $('#inp_institution').val(student_inst);
+                    $('#inp_phone').val(student_phone);
+                    $('#inp_gender').val(student_gender);
+                    $('#slc_gender').replaceWith(inp_student_gender);
+                    if(student_gender=='f'){
+                        $('#inp_gender').val('Femenino');
+                        $('#inp_gender').attr('data','f');
+
+                    }
+                    else if(student_gender=='m'){
+                        $('#inp_gender').val('Masculino');
+                        $('#inp_gender').attr('data','m');
+
+
+                    }
+                    $('#div_btn_save').remove();
+                    $('#div_prof_picture').remove();
+
+
+                    $("input[id^='inp_']").attr('readonly','readonly');
+
+                }
+                $('#li_edit_profile').remove();
+                $('#ul_edit_profile').attr('data', '1');
+            });
+            {% if user == student.user %}
+                $('#a_tab_personal').click(function (){
+                    if($('#ul_edit_profile').attr('data')=='0'){}
+                    else if($('#ul_edit_profile').attr('data')=='1') {
+                        $('#ul_edit_profile').append('<li class="list-group-item text-center" id="li_edit_profile">\n' +
+                            '                <button type="button" class="btn btn-sm btn-warning text-center" title="Editar datos personales" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>\n' +
+                            '            </li>');
+                    }
+
+                });
+            {% endif %}
+            $(document).on('change','#inp_picture', function () {
+                var fileUpload = this;
+                var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
+                if (regex.test(fileUpload.value.toLowerCase())) {
+                    if (typeof (fileUpload.files) != "undefined") {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(fileUpload.files[0]);
+                        reader.onload = function (e) {
+                            var image = new Image();
+                            image.src = e.target.result;
+                            image.onload = function () {
+                                var height = this.height;
+                                var width = this.width;
+                                if (height < 400 || width < 400) {
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada es muy pequeña, debe tener dimensiones superiores a 400 px.'
+                                    });
+                                    $('#inp_picture').val('');
+                                    return false;
+                                }else
+                                if(math.abs(height - width)>10 ){
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'Diferencia entre el lado y el ancho de la imagen no debe superar los 10px.'
+                                    });
+                                    $('#inp_picture').val('');
+                                    return false;
+                                }
+                            };
+                        }
+                    } else {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Este navegador no soporta HTML5, debe actualizarlo.'
+                        });
+                        return false;
+                    }
+                } else {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Por favor seleccione una imagen.'
+                    });
+                    return false;
+                }
+            });
+
+
             $(document).on('click',"a[id*='a_read_message_']",function (e) {
                 e.preventDefault();
 
@@ -679,7 +985,7 @@
                 });
 
 
-        
+
 
             });
 
