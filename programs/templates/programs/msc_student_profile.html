@@ -50,7 +50,7 @@
 
                                 <p class="text-muted text-center">{{ student.status|capfirst }}</p>
 
-                                <ul class="list-group list-group-unbordered mb-3">
+                                <ul class="list-group list-group-unbordered mb-3" id="ul_edit_profile" data="0">
                                     <li class="list-group-item">
                                         <b>Solicitud</b> <a class="float-right">{{ student.request_date|date:'M/Y'}}</a>
                                     </li>
@@ -117,10 +117,10 @@
                         <div class="card">
                             <div class="card-header p-2">
                                 <ul class="nav nav-pills">
-                                    <li class="nav-item"><a class="nav-link active" href="#personal" data-toggle="tab">Datos personales</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#file_docs" data-toggle="tab">Expediente</a></li>
+                                    <li class="nav-item"><a class="nav-link active" id="a_tab_personal" href="#personal" data-toggle="tab">Datos personales</a></li>
+                                    <li class="nav-item"><a class="nav-link" id="a_tab_docs" href="#file_docs" data-toggle="tab">Expediente</a></li>
                                     {% if user == student.user %}
-                                        <li class="nav-item"><a class="nav-link" href="#messages" data-toggle="tab">Mensajes</a></li>
+                                        <li class="nav-item"><a class="nav-link" id="a_tab_messages" href="#messages" data-toggle="tab">Mensajes</a></li>
                                     {% endif %}
                                 </ul>
                             </div><!-- /.card-header -->
@@ -441,7 +441,7 @@
                                     <!-- /.tab-pane -->
 
                                     <div class="active tab-pane" id="personal">
-                                        <form class="form-horizontal">
+                                        <form class="form-horizontal" id="frm_personal_data">
                                             <div class="form-group row">
                                                 <label for="inp_name" class="col-sm-2 col-md-2 col-form-label">Nombre</label>
                                                 <div class="col-sm-3 col-md-3">
@@ -683,36 +683,6 @@
 
             });
 
-            $('#a_tab_plan').click(function (){
-                $('#ul_edit_profile').attr('data', '1');
-                if($('#btn_edit_profile').attr('data')=='1'){
-                    $('#inp_name').val(student_name);
-                    $('#inp_lastname').val( student_surename);
-                    $('#inp_email').val(student_mail);
-                    $('#inp_birthdate').val(student_bdate);
-                    $('#inp_phone').val(student_phone);
-                    $('#slc_gender').replaceWith(inp_student_gender);
-                    if(student_gender=='f'){
-                        $('#inp_gender').val('Femenino');
-                        $('#inp_gender').attr('data','f');
-
-                    }
-                    else if(student_gender=='m'){
-                        $('#inp_gender').val('Masculino');
-                        $('#inp_gender').attr('data','m');
-
-
-                    }
-                    $('#div_btn_save').remove();
-                    $('#div_prof_picture').remove();
-
-                    $("input[id^='inp_']").attr('readonly','readonly');
-
-
-                }
-                $('#li_edit_profile').remove();
-
-            });
             $('#a_tab_docs').click(function (){
                 $('#ul_edit_profile').attr('data', '1');
                 if($('#btn_edit_profile').attr('data')=='1'){
