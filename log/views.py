@@ -14,7 +14,7 @@ from programas.settings import INSTITUTION_FULL_NAME, INSTITUTION_SHORT_NAME, IN
     INSTITUTION_PHONE
 from programs.apps import ProgramsConfig
 from programs.models import Program, ProgramMember, CGC_Member, Student, MscStudent, PhdStudent, DipStudent, \
-    PostgMember, Institution
+    PostgMember
 
 
 def index(request):
