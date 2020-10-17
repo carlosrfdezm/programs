@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 from programas.settings import INSTITUTION_FULL_NAME, INSTITUTION_SHORT_NAME, INSTITUTION_ADDRESS, INSTITUTION_EMAIL, \
-    INSTITUTION_PHONE
+    INSTITUTION_PHONE, INSTITUTION_HAS_CGC, INSTITUTION_HAS_POSTG
 from programs.apps import ProgramsConfig
 from programs.models import Program, ProgramMember, CGC_Member, Student, MscStudent, PhdStudent, DipStudent, \
     PostgMember
@@ -26,6 +26,8 @@ def index(request):
         'institution_address': INSTITUTION_ADDRESS,
         'institution_email': INSTITUTION_EMAIL,
         'institution_phone': INSTITUTION_PHONE,
+        'institution_has_cgc': INSTITUTION_HAS_CGC,
+        'institution_has_postg': INSTITUTION_HAS_POSTG,
     }
     return render(request,'log/index.html', context)
 

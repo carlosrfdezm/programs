@@ -54,8 +54,13 @@
                 <li><a href="#about">Acerca de</a></li>
                 <li><a href="#services">Programas</a></li>
                 {#          <li><a href="#portfolio">Servicios</a></li>#}
-                <li><a href="{% url 'cgc:cgc_index' %}" title="Comisión de Grados Científicos">Comisión de Grados</a></li>
-                <li><a href="{% url 'postg:postg_index' %}" title="Acceso de la dirección de Postgrado">Dirección de Posgrado</a></li>
+                {% if  institution_has_cgc %}
+                    <li><a href="{% url 'cgc:cgc_index' %}" title="Comisión de Grados Científicos">Comisión de Grados</a></li>
+                {% endif %}
+                {% if  institution_has_postg %}
+                    <li><a href="{% url 'postg:postg_index' %}" title="Acceso de la dirección de Postgrado">Dirección de Posgrado</a></li>
+                {% endif %}
+
 
             </ul>
         </nav><!-- .main-nav -->
