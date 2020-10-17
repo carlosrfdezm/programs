@@ -126,7 +126,7 @@
                     {#                    <img src="{% url 'programs:program_member_picture' %}" class="img-circle elevation-2" alt="User Image">#}
                     {#                </div>#}
                     <div class="info">
-                        <a href="#" class="d-block" title="{{ user.get_full_name }}">{{ user.get_full_name }}</a>
+                        <a href="#" class="d-block" title="{{ user.get_full_name }}">{{ user.first_name }}</a>
                         {% if member %}
                             <h6 class="text-sm text-white-50">{{ member.role }}</h6>
                         {% elif student %}
