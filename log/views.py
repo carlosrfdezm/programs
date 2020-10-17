@@ -10,14 +10,22 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils.timezone import now
 
+from programas.settings import INSTITUTION_FULL_NAME, INSTITUTION_SHORT_NAME, INSTITUTION_ADDRESS, INSTITUTION_EMAIL, \
+    INSTITUTION_PHONE
 from programs.apps import ProgramsConfig
-from programs.models import Program, ProgramMember, CGC_Member, Student, MscStudent, PhdStudent, DipStudent, PostgMember
+from programs.models import Program, ProgramMember, CGC_Member, Student, MscStudent, PhdStudent, DipStudent, \
+    PostgMember, Institution
 
 
 def index(request):
     context={
         'programs': Program.objects.all().order_by('-type'),
         'cgc_members':CGC_Member.objects.all().order_by('priority'),
+        'institution_full_name': INSTITUTION_FULL_NAME,
+        'institution_short_name': INSTITUTION_SHORT_NAME,
+        'institution_address': INSTITUTION_ADDRESS,
+        'institution_email': INSTITUTION_EMAIL,
+        'institution_phone': INSTITUTION_PHONE,
     }
     return render(request,'log/index.html', context)
 

@@ -90,7 +90,8 @@
 
             <header class="section-header">
                 <h3>Acerca de</h3>
-                <p> El sistema de gestión de programas académicos esta diseñado para facilitar el trabajo de los comités académicos de los programas de postgrado de la UNAH y el complejo.</p>
+                <p> El sistema de gestión de programas académicos esta diseñado para facilitar el trabajo de los comités académicos de los programas de postgrado de
+                    {{ institution_full_name }}.</p>
             </header>
 
             <div class="row about-container">
@@ -137,7 +138,7 @@
 
             <header class="section-header">
                 <h3>Programas</h3>
-                <p>Programas académicos de la UNAH y el complejo científico.</p>
+                <p>Programas académicos de {{ institution_full_name }}.</p>
             </header>
 
             <div class="row">
@@ -182,7 +183,7 @@
         <div class="container">
             <div class="section-header">
                 <h3>Comisión de Grados</h3>
-                <p>Miembros de la Comisión de Grados Científicos del Complejo Científico Docente.<br>
+                <p>Miembros de la Comisión de Grados Científicos <br> "{{ institution_full_name }}"<br>
                     <a class="btn btn-sm btn-primary" href="{% url 'cgc:cgc_index' %}" title="Ir a CGC">Ir a CGC</a> </p>
 
             </div>
@@ -201,7 +202,8 @@
                             <div class="modal-body alert alert-success">
                                 <div class="alert alert-warning text-center pb-3 alert-dismissible" role="alert">
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    <p class="text-sm text-gray">Este acceso es sólo para miembros de la Comisión de Grados Científicos de la UNAH y el Complejo.</p>
+                                    <p class="text-sm text-gray">Este acceso es sólo para miembros de la Comisión de Grados Científicos de
+                                        {{ institution_short_name}}.</p>
                                 </div>
 
 
@@ -286,7 +288,7 @@
 
                 <div class="col-lg-3 col-md-4 footer-info">
                     <h3>Programas</h3>
-                    <p>Sistema para la gestión de programas académicos en la UNAH y el Complejo Científico.</p>
+                    <p>Sistema para la gestión de programas académicos en {{ institution_full_name }}.</p>
                 </div>
 
                 <div class="offset-1 col-lg-4 col-md-4 footer-links">
@@ -302,11 +304,9 @@
                 <div class="col-lg-4 col-md-4 footer-contact">
                     <h4>Contáctanos</h4>
                     <p>
-                        Autopista Nacional, Km 23 <br>
-                        San José de las Lajas, Mayabeque<br>
-                        Cuba <br>
-                        <i class="fa fa-phone"> (+53)47860105</i><br>
-                        <i class="fa fa-envelope"> lated@unah.edu.cu</i><br>
+                        {{ institution_address }}<br>
+                        <i class="fa fa-phone"> {{ institution_phone }}</i><br>
+                        <i class="fa fa-envelope"> {{ institution_email }}</i><br>
                     </p>
 
                     <div class="social-links">

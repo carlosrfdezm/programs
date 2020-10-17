@@ -560,3 +560,10 @@ class Message(models.Model):
 
     def __str__(self):
         return self.subject
+
+class Institution(models.Model):
+    full_name = models.CharField(max_length=150, default='Universidad Agraria de la Habana')
+    short_name = models.CharField(max_length=50, default='UNAH')
+
+    def __str__(self):
+        return self.full_name
