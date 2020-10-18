@@ -97,7 +97,9 @@
                             <div class="card-header p-2">
                                 <ul class="nav nav-pills">
                                     <li class="nav-item"><a class="nav-link active" id="a_tab_personal" href="#personal" data-toggle="tab">Datos personales</a></li>
-                                    <li class="nav-item"><a class="nav-link" id="a_tab_students"  href="#students" data-toggle="tab">Aspirantes</a></li>
+                                    {% if program.type != 'dip' %}
+                                        <li class="nav-item"><a class="nav-link" id="a_tab_students"  href="#students" data-toggle="tab">Aspirantes</a></li>
+                                    {% endif %}
                                     {% if user == professor.user %}
                                         <li class="nav-item"><a class="nav-link" id="a_tab_messages" href="#messages" data-toggle="tab">Mensajes</a></li>
                                     {% endif %}
@@ -272,53 +274,55 @@
 
                                         </form>
                                     </div>
-                                    <div class="tab-pane" id="students">
-                                        {% if professor.tuthor_set %}
-                                            <table class="table table-striped">
-                                                <thead>
-                                                <tr>
-                                                    <th >Nombre y apellidos.</th>
-                                                    <th>Tema</th>
-                                                    <th>Estado</th>
-                                                    <th class="text-center">Defensa</th>
-
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {% for tuthor in professor.tuthor_set.all %}
-                                                    <!-- Post -->
-
+                                    {% if program.type != 'dip' %}
+                                        <div class="tab-pane" id="students">
+                                            {% if professor.tuthor_set %}
+                                                <table class="table table-striped">
+                                                    <thead>
                                                     <tr>
-                                                        <td>
-                                                            {{ tuthor.phd_student.student }}
-                                                        </td>
-                                                        <td>
-                                                            {{ tuthor.phd_student.phdstudenttheme|truncatewords:7 }}
-                                                        </td>
-                                                        <td>{{ tuthor.phd_student.status|capfirst }}</td>
-                                                        <td class="text-center">
-                                                            {% if tuthor.phd_student.student.studentformationplan.planned_end_year %}
-                                                                {{ tuthor.phd_student.student.studentformationplan.planned_end_year }}
-                                                            {% else %}
-                                                                --------
-                                                            {% endif %}
-                                                        </td>
+                                                        <th >Nombre y apellidos.</th>
+                                                        <th>Tema</th>
+                                                        <th>Estado</th>
+                                                        <th class="text-center">Defensa</th>
 
                                                     </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for tuthor in professor.tuthor_set.all %}
+                                                        <!-- Post -->
 
-                                                    <!-- /.post -->
-                                                {% endfor %}
+                                                        <tr>
+                                                            <td>
+                                                                {{ tuthor.phd_student.student }}
+                                                            </td>
+                                                            <td>
+                                                                {{ tuthor.phd_student.phdstudenttheme|truncatewords:7 }}
+                                                            </td>
+                                                            <td>{{ tuthor.phd_student.status|capfirst }}</td>
+                                                            <td class="text-center">
+                                                                {% if tuthor.phd_student.student.studentformationplan.planned_end_year %}
+                                                                    {{ tuthor.phd_student.student.studentformationplan.planned_end_year }}
+                                                                {% else %}
+                                                                    --------
+                                                                {% endif %}
+                                                            </td>
 
-                                                </tbody>
+                                                        </tr>
+
+                                                        <!-- /.post -->
+                                                    {% endfor %}
+
+                                                    </tbody>
 
 
-                                            </table>
-                                        {% else %}
-                                            <div class="alert alert-warning text-center">
-                                                <h6>El profesor no tiene aspirantes en este momento.</h6>
-                                            </div>
-                                        {% endif %}
-                                    </div>
+                                                </table>
+                                            {% else %}
+                                                <div class="alert alert-warning text-center">
+                                                    <h6>El profesor no tiene aspirantes en este momento.</h6>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
                                     <!-- /.tab-pane -->
                                 </div>
                                 <!-- /.tab-content -->
@@ -614,15 +618,15 @@
                 $('#ul_edit_profile').attr('data', '1');
             });
             {% if user == professor.user %}
-            $('#a_tab_personal').click(function (){
-                if($('#ul_edit_profile').attr('data')=='0'){}
-                else if($('#ul_edit_profile').attr('data')=='1') {
-                    $('#ul_edit_profile').append('<li class="list-group-item text-center" id="li_edit_profile">\n' +
-                        '                <button type="button" class="btn btn-sm btn-warning text-center" title="Editar perfil" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>\n' +
-                        '            </li>');
-                }
+                $('#a_tab_personal').click(function (){
+                    if($('#ul_edit_profile').attr('data')=='0'){}
+                    else if($('#ul_edit_profile').attr('data')=='1') {
+                        $('#ul_edit_profile').append('<li class="list-group-item text-center" id="li_edit_profile">\n' +
+                            '                <button type="button" class="btn btn-sm btn-warning text-center" title="Editar perfil" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>\n' +
+                            '            </li>');
+                    }
 
-            });
+                });
             {% endif %}
 
             $(document).on('click',"a[id*='a_read_message_']",function (e) {
