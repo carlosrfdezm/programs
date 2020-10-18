@@ -871,7 +871,13 @@ def members_list(request, program_slug, scope):
     if user_is_program_member(request.user, program):
         context['member'] = ProgramMember.objects.get(user=request.user, program=program)
     elif user_is_program_student(request.user, program):
-        context['student'] = Student.objects.get(user=request.user, program=program)
+        if program.type == 'phd':
+            context['student'] = Student.objects.get(user=request.user, program=program)
+        elif program.type == 'msc':
+            context['student'] = MscStudent.objects.get(user=request.user, program=program)
+        elif program.type == 'dip':
+            context['student'] = DipStudent.objects.get(user=request.user, program=program)
+
 
     return render(request, 'programs/members_list.html', context)
 
