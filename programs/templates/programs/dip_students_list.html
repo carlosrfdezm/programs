@@ -128,6 +128,7 @@
                                                     <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.id %}" title="Ver evaluaciones" > <i class="fa fa-user-graduate"></i></a>
 
                                                 {% endif %}
+                                                <a class="btn btn-primary btn-sm text-white" href="{% url 'programs:view_student_profile' program.slug student.id %}" title="Ver perfil"> <i class="fa fa-user"></i></a>
                                                 <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_dip_student' program.slug student.edition.id student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
                                                 <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_student_{{ student.id }}"><i class="fa fa-eraser"></i></a>
 

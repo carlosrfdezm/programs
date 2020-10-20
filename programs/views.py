@@ -1051,7 +1051,7 @@ def view_student_profile(request, program_slug, student_id):
                 user_is_student = True
         except MscStudent.DoesNotExist:
             pass
-    elif program.type == 'dip' and DipStudent.objects.get(user=request.user, program=program)==DipStudent.objects.get(pk=student_id, program=program):
+    elif program.type == 'dip':
         try:
             if DipStudent.objects.get(user=request.user, program=program) == DipStudent.objects.get(pk=student_id, program=program):
                 user_is_student = True
