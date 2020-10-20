@@ -341,7 +341,6 @@
                                         </div>
                                     {% endfor %}
 
-                                    {% if doc_student.phdstudent.status == 'doctorando' or doc_student.phdstudent.status == 'graduado' %}
                                         <h6>De egreso:</h6>
                                         <div class="row">
                                             <div class="col-md-1 col-sm-1">
@@ -373,8 +372,8 @@
                                                 </div>
                                                 <div class="col-md-1 col-sm-1 text-center">
                                                     {% student_requirement_accomplished doc_student doc as doc_accomplished %}
-                                                    <div class="icheck-primary d-inline">
-                                                        <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_f_requirement_{{ doc.id }}" {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
+                                                    <div class="icheck-primary d-inline ">
+                                                        <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_f_requirement_{{ doc.id }}" {% if phd_student.status == "solicitante" %} disabled {% endif %} {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
                                                         <label for="inp_student_new_requirement_{{ doc.id }}">
                                                         </label>
                                                     </div>
@@ -389,7 +388,9 @@
                                                 </div>
                                             </div>
                                         {% endfor %}
-                                    {% endif %}
+
+
+
 
 
                                     <div class="form-row align-items-center">
@@ -743,6 +744,7 @@
 
                 if($(this).val()=='doctorando'){
                     $('#inp_init_date').val(today);
+                    $("input[id^='inp_student_new_requirement']").removeAttr('disabled');
                 }
                 if($(this).val()=='graduado'){
                     $('#inp_graduate_date').val(today);
