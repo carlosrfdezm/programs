@@ -1110,7 +1110,7 @@ def view_student_profile(request, program_slug, student_id):
                 context['member']=ProgramMember.objects.get(user=request.user, program=program)
             except ProgramMember.DoesNotExist:
                 pass
-            return render(request, 'programs/view_dip_student_profile.html', context)
+            return render(request, 'programs/dip_student_profile.html', context)
         else:
             return error_500(request, program, 'Tipo de programa no implementado.')
 
