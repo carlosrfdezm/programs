@@ -105,6 +105,7 @@ urlpatterns = [
     path('ajx/edition/<int:edition_id>/courses/import', views.ajx_import_courses, name='ajx_import_courses'),
     path('ajx/edition/courses/professor/delete', views.ajx_delete_course_professor, name='ajx_delete_course_professor'),
     path('ajx/speciality/delete', views.ajx_delete_speciality, name='ajx_delete_speciality'),
+    path('ajx/student/<int:student_id>/activity/status/change', views.ajx_change_activity_status, name='ajx_change_activity_status'),
 
 
     path('statistics', views.program_statistics, name='program_statistics'),

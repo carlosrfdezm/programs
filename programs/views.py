@@ -2064,6 +2064,33 @@ def ajx_create_activity(request, program_slug, student_id):
             json.dumps([{'created': 2}]),
             content_type="application/json"
         )
+
+def ajx_change_activity_status(request, program_slug, student_id):
+    program = Program.objects.get(slug=program_slug)
+    student = Student.objects.get(pk=student_id)
+    if request.user == student.user:
+        if request.method == 'POST':
+            activity = FormationPlanActivities.objects.get(pk=request.POST['activity_id'])
+            if activity.status == 'pending':
+                activity.status = 'ready'
+            else:
+                activity.status = 'pending'
+            activity.save()
+            return HttpResponse(
+                json.dumps([{'edited': 1, 'status':activity.status }]),
+                content_type="application/json"
+            )
+        else:
+            return HttpResponse(
+                json.dumps([{'edited': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'edited': 2}]),
+            content_type="application/json"
+        )
+
 def ajx_edit_activity(request, program_slug, student_id):
     program=Program.objects.get(slug=program_slug)
     student=Student.objects.get(pk=student_id)

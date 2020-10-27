@@ -110,9 +110,9 @@
                                                         <td id="td_description_{{ activity.id }}">{{ activity.description }}</td>
 
                                                         <td id="td_end_date_{{ activity.id }}">{{ activity.end_date|date:"Y-m-d"  }}</td>
-                                                        <td class="text-center" id="td_activity_status_{{ activity.id }}" {% if activity.status == 'ready' %} data="1" {% else %} data="0" {% endif %}><i class="fa
+                                                        <td class="text-center" id="td_activity_status_{{ activity.id }}" {% if activity.status == 'ready' %} data="1" {% else %} data="0" {% endif %}><i id="i_activity_status_{{ activity.id }}" data="{{ activity.id }}" class="fa
                                                                                          {% if activity.status == 'ready' %}fa-toggle-on text-success{% else %}fa-toggle-off text-danger{% endif %}"
-                                                                                                                                                                                                          {% if activity.status == 'ready' %}title="Cumplida" {% else %} title="Pendiente" {% endif %}
+                                                                                                                                                                                                          {% if activity.status == 'ready' %} title="Cumplida: click para cambiar" {% else %}  title="Pendiente: click para cambiar" {% endif %}
                                                         ></i> </td>
                                                         <td class="">
                                                             <div class="btn-group col-md-1">
@@ -173,9 +173,9 @@
                                                         <td id="td_description_{{ activity.id }}">{{ activity.description }}</td>
 
                                                         <td id="td_end_date_{{ activity.id }}">{{ activity.end_date|date:"Y-m-d"  }}</td>
-                                                        <td class="text-center" id="td_activity_status_{{ activity.id }}" {% if activity.status == 'ready' %}data="1"{% else %}data="0"{% endif %}><i class="fa
+                                                        <td class="text-center" id="td_activity_status_{{ activity.id }}" {% if activity.status == 'ready' %}data="1"{% else %}data="0"{% endif %}><i id="i_activity_status_{{ activity.id }}" data="{{ activity.id }}" class="fa
                                                                                          {% if activity.status == 'ready' %}fa-toggle-on text-success{% else %}fa-toggle-off text-danger{% endif %}"
-                                                                                                                                                                                                      {% if activity.status == 'ready' %}title="Cumplida" {% else %} title="Pendiente" {% endif %}
+                                                                                                                                                                                                      {% if activity.status == 'ready' %} title="Cumplida: click para cambiar" {% else %}  title="Pendiente: click para cambiar" {% endif %}
                                                         <td class="text-center">
                                                             <div class="btn-group col-md-1">
                                                                 <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_{{ activity.id }}" data="{{ activity.id }}" title="Editar"><i class="fa fa-edit"></i> </button>
@@ -455,6 +455,81 @@
                 }
 
             });
+            $(document).on('click', "i[id*='i_activity_status']", function () {
+                var activity_id = $(this).attr('data');
+                var url = "{% url 'programs:ajx_change_activity_status' program.slug student.id %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'activity_id':activity_id,
+
+
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].edited == 1) {
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Actividad editada exitosamente.'
+                            });
+                            total_activities = total_activities+1;
+
+                            if(json[0].status == 'pending'){
+                                $('#i_activity_status_'+activity_id).removeClass('fa-toggle-on')
+                                $('#i_activity_status_'+activity_id).removeClass('text-success')
+                                $('#i_activity_status_'+activity_id).addClass('text-danger')
+                                $('#i_activity_status_'+activity_id).addClass('fa-toggle-off')
+                                $('#i_activity_status_'+activity_id).attr('title', 'Pendiente:click para cambiar')
+                                $('#td_activity_status_'+activity_id).attr('data','0')
+
+                            }
+                            else if(json[0].status == 'ready'){
+
+                                $('#i_activity_status_'+activity_id).removeClass('text-danger')
+                                $('#i_activity_status_'+activity_id).removeClass('fa-toggle-off')
+                                $('#i_activity_status_'+activity_id).addClass('fa-toggle-on')
+                                $('#i_activity_status_'+activity_id).addClass('text-success')
+                                $('#i_activity_status_'+activity_id).attr('title', 'Cumplida: click para cambiar')
+                                $('#td_activity_status_'+activity_id).attr('data','1')
+
+                            }
+
+                        }
+                        else if(json[0].edited == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido editar la actividad.'
+                            })
+
+                        }
+                        else if(json[0].edited == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff usted no es el propietario de este plan.'
+                            })
+
+                        }
+
+                        console.log(json); // log the returned json to the console
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        });
+                        console.log(json);
+                    }
+                });
+
+            })
             $(document).on('click',"button[id*='btn_edit_activity']",function () {
                 var activity_id = $(this).attr('data');
                 var init_date_selector='#td_init_date_'+activity_id;
@@ -510,12 +585,17 @@
                                 title: 'Actividad agregada exitosamente.'
                             });
                             total_activities = total_activities+1;
+                            var td_status='<td class="text-center" id="td_activity_status_'+json[0].id+'" data="0">' +
+                                '<i id="i_activity_status_'+json[0].id+'" data="'+json[0].id+'" class="fa fa-toggle-off text-danger" ' +
+                                'title="Pendiente:click para cambiar"></i></td>';
+
                             var btn_group = '<tr id="tr_activity_'+json[0].id+'">\n' +
                                 '                                                <td id="td_init_date_'+json[0].id+'">'+json[0].init_date+'</td>\n' +
                                 '                                                <td id="td_description_'+json[0].id+'">'+json[0].description+'</td>\n' +
                                 '\n' +
                                 '                                                <td id="td_end_date_'+json[0].id+'">'+json[0].end_date+'</td>\n' +
-                                '                                                <td class="text-center">\n' +
+                                td_status+
+                                '                                                <td >' +
                                 '                                                    <div class="btn-group col-md-1">\n' +
                                 '                                                        <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_'+json[0].id+'" data="'+json[0].id+'" title="Editar"><i class="fa fa-edit"></i> </button>\n' +
                                 '                                                        <button class="btn btn-sm btn-danger" type="button" id="btn_rm_activity_'+json[0].id+'" data="'+json[0].id+'" title="Eliminar"><i class="fa fa-eraser"></i> </button>\n' +
@@ -646,12 +726,12 @@
                             var td_status = ''
                             if(json[0].status == 'pending'){
                                 td_status = '<td class="text-center" id="td_activity_status_'+json[0].id+
-                                        '" data="0"><i class="fa fa-toggle-off text-danger" title="Pendiente"></i></td>'
+                                    '" data="0"><i id="i_activity_status_'+json[0].id+'" data="'+json[0].id+'" class="fa fa-toggle-off text-danger" title="Pendiente:click para cambiar"></i></td>'
 
                             }
                             else if(json[0].status == 'ready'){
                                 td_status = '<td class="text-center" id="td_activity_status_'+json[0].id+
-                                        '" data="1"><i class="fa fa-toggle-on text-success" title="Cumplida"></i></td>'
+                                    '" data="1"><i id="i_activity_status_'+json[0].id+'" data="'+json[0].id+'" class="fa fa-toggle-on text-success" title="Cumplida: click para cambiar"></i></td>'
 
                             }
                             var btn_group = '<tr id="tr_activity_'+json[0].id+'">\n' +
