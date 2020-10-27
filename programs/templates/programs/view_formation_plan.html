@@ -99,6 +99,7 @@
                                         <th>Descripción</th>
 
                                         <th>Fecha de Fin</th>
+                                        <th class="text-center">Estado</th>
 
 
                                     </tr>
@@ -110,6 +111,10 @@
                                             <td id="td_description_{{ activity.id }}">{{ activity.description }}</td>
 
                                             <td id="td_end_date_{{ activity.id }}">{{ activity.end_date|date:"Y-m-d"  }}</td>
+                                         <td class="text-center" id="td_activity_status_{{ activity.id }}" {% if activity.status == 'ready' %}data="1"{% else %}data="0"{% endif %}><i class="fa
+                                                                                         {% if activity.status == 'ready' %}fa-toggle-on text-success{% else %}fa-toggle-off text-danger{% endif %}"
+                                                                                                                                                                                                      {% if activity.status == 'ready' %}title="Cumplida" {% else %} title="Pendiente" {% endif %}
+
 
                                         </tr>
 

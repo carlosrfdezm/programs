@@ -425,14 +425,14 @@
                                                     {% is_past activity.init_date as is_past %}
                                                     <!-- timeline time label -->
                                                     <div class="time-label">
-                                                        <span {% if is_past %}class="bg-success"{% else %}class="bg-danger"{% endif %}>
+                                                        <span {% if activity.status == 'ready' %}class="bg-success"{% else %}class="bg-danger"{% endif %}>
                                                           {{ activity.init_date|date:'Y-m-d'}}{{ now|date:'Y-m-d' }}
                                                         </span>
                                                     </div>
                                                     <!-- /.timeline-label -->
                                                     <!-- timeline item -->
                                                     <div>
-                                                        {% if is_past %}
+                                                        {% if activity.status == 'ready' %}
                                                             <i class="fas fa-code bg-primary"></i>
                                                         {% else %}
                                                             <i class="fas fa-calendar-alt bg-warning"></i>
@@ -440,13 +440,13 @@
                                                         {% endif %}
 
                                                         <div class="timeline-item">
-                                                            {% if is_past %}
+                                                            {% if activity.status == 'ready' %}
                                                                 <span class="time" title="Completada"><i class="fa fa-toggle-on"></i></span>
                                                             {% else %}
                                                                 <span class="time" title="Pendiente"><i class="fa fa-toggle-off"></i></span>
                                                             {% endif %}
 
-                                                            <h3 class="timeline-header"><p class="{% if is_past %}text-blue{% else %}text-warning{% endif %} text-bold">{% if is_past %}Tarea completada{% else %}Tarea pendiente{% endif %}</p></h3>
+                                                            <h3 class="timeline-header"><p class="{% if activity.status == 'ready' %}text-blue{% else %}text-warning{% endif %} text-bold">{% if activity.status == 'ready' %}Tarea completada{% else %}Tarea pendiente{% endif %}</p></h3>
 
                                                             <div class="timeline-body">
                                                                 {{activity}}
