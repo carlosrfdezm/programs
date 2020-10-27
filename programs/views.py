@@ -2075,13 +2075,14 @@ def ajx_edit_activity(request, program_slug, student_id):
                 activity.init_date=request.POST['init_date']
                 activity.end_date=request.POST['end_date']
                 activity.description=request.POST['description']
+                activity.status = request.POST['status']
                 activity.save()
                 formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
                 formation_plan.last_update_date = now().date()
                 formation_plan.save()
                 return HttpResponse(
                     json.dumps([{'edited': 1,'init_date':activity.init_date,'end_date':activity.end_date,
-                                 'description':activity.description, 'id':activity.id}]),
+                                 'description':activity.description,'status':activity.status, 'id':activity.id}]),
                     content_type="application/json"
                 )
 

@@ -462,6 +462,8 @@ class FormationPlanActivities(models.Model):
     init_date = models.DateField(default=now)
     end_date = models.DateField()
     description = models.TextField(max_length=500)
+    status = models.CharField(max_length=10, default='pending', choices=[['pending', 'Pendiente'], ['ready', 'Cumplida']])
+    observations = models.TextField(max_length=200, null=True)
 
     def __str__(self):
         return self.description

@@ -66,9 +66,6 @@ def postg_login(request):
             return HttpResponse('Pagina de error de acceso postg')
 
 
-
-
-
 def mylogin(request):
     username = request.POST['username']
     password = request.POST['password']

@@ -98,6 +98,7 @@
                                                     <th>Descripción</th>
 
                                                     <th>Fecha de Fin</th>
+                                                    <th class="text-center">Estado</th>
                                                     <th></th>
 
                                                 </tr>
@@ -109,6 +110,10 @@
                                                         <td id="td_description_{{ activity.id }}">{{ activity.description }}</td>
 
                                                         <td id="td_end_date_{{ activity.id }}">{{ activity.end_date|date:"Y-m-d"  }}</td>
+                                                        <td class="text-center" id="td_activity_status_{{ activity.id }}" {% if activity.status == 'ready' %} data="1" {% else %} data="0" {% endif %}><i class="fa
+                                                                                         {% if activity.status == 'ready' %}fa-toggle-on text-success{% else %}fa-toggle-off text-danger{% endif %}"
+                                                                                                                                                                                                          {% if activity.status == 'ready' %}title="Cumplida" {% else %} title="Pendiente" {% endif %}
+                                                        ></i> </td>
                                                         <td class="">
                                                             <div class="btn-group col-md-1">
                                                                 <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_{{ activity.id }}" data="{{ activity.id }}" title="Editar"><i class="fa fa-edit"></i> </button>
@@ -142,7 +147,7 @@
 
                                         <div class="alert alert-info text-center align-content-center" id="div_alert">
                                             <h5>Usted aún no tiene actividades de formación en su plan. Agregue una
-{#                                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button>#}
+                                                {#                                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_activity"><i class="fa fa-plus"></i> </button>#}
                                             </h5>
                                         </div>
                                         <div id="div_table"class="invisible">
@@ -155,6 +160,8 @@
                                                     <th>Descripción</th>
 
                                                     <th>Fecha de Fin</th>
+                                                    <th class="text-center">Estado</th>
+
                                                     <th></th>
 
                                                 </tr>
@@ -166,6 +173,9 @@
                                                         <td id="td_description_{{ activity.id }}">{{ activity.description }}</td>
 
                                                         <td id="td_end_date_{{ activity.id }}">{{ activity.end_date|date:"Y-m-d"  }}</td>
+                                                        <td class="text-center" id="td_activity_status_{{ activity.id }}" {% if activity.status == 'ready' %}data="1"{% else %}data="0"{% endif %}><i class="fa
+                                                                                         {% if activity.status == 'ready' %}fa-toggle-on text-success{% else %}fa-toggle-off text-danger{% endif %}"
+                                                                                                                                                                                                      {% if activity.status == 'ready' %}title="Cumplida" {% else %} title="Pendiente" {% endif %}
                                                         <td class="text-center">
                                                             <div class="btn-group col-md-1">
                                                                 <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_{{ activity.id }}" data="{{ activity.id }}" title="Editar"><i class="fa fa-edit"></i> </button>
@@ -258,10 +268,6 @@
                                 <textarea class="form-control" id="txt_activity_description" maxlength="500" placeholder="Descripción de la tarea. P.E: Redacción del primer capítulo." required></textarea>
                             </div>
 
-
-
-
-
                         </div>
                         <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
@@ -299,9 +305,17 @@
                             <div class="form-row">
                                 <textarea class="form-control" id="txt_edit_activity_description" maxlength="500" placeholder="Descripción de la tarea. P.E: Redacción del primer capítulo." required></textarea>
                             </div>
+                            <div class="form-row">
 
-
-
+                                <div class="form-group col-md-3">
+                                    <label for="slc_status">Estado:</label>
+                                    <select class="form-control" id="slc_status"  name="status" required >
+                                        <option value="" selected>Seleccione una opción</option>
+                                        <option value="ready" >Cumplida</option>
+                                        <option value="pending" >Pendiente</option>
+                                    </select>
+                                </div>
+                            </div>
 
 
                         </div>
@@ -446,10 +460,18 @@
                 var init_date_selector='#td_init_date_'+activity_id;
                 var end_date_selector='#td_end_date_'+activity_id;
                 var description_selector='#td_description_'+activity_id;
+                var status_selector='#td_activity_status_'+activity_id;
 
                 $('#inp_edit_init_date').val($(init_date_selector).text());
                 $('#inp_edit_end_date').val($(end_date_selector).text());
                 $('#txt_edit_activity_description').val($(description_selector).text());
+                if($(status_selector).attr('data')== 1 ){
+                    $('#slc_status').val('ready');
+                }
+                else{
+                    $('#slc_status').val('pending');
+
+                }
                 $('#frm_edit_activity').attr('data',activity_id);
                 $('#modal_edit_activity').modal('show');
 
@@ -607,6 +629,8 @@
                         'init_date': $('#inp_edit_init_date').val(),
                         'end_date': $('#inp_edit_end_date').val(),
                         'description':$('#txt_edit_activity_description').val(),
+                        'status':$('#slc_status').val(),
+
                     }, // data sent with the post request
 
                     // handle a successful response
@@ -619,11 +643,23 @@
                                 title: 'Actividad editada exitosamente.'
                             });
                             total_activities = total_activities+1;
+                            var td_status = ''
+                            if(json[0].status == 'pending'){
+                                td_status = '<td class="text-center" id="td_activity_status_'+json[0].id+
+                                        '" data="0"><i class="fa fa-toggle-off text-danger" title="Pendiente"></i></td>'
+
+                            }
+                            else if(json[0].status == 'ready'){
+                                td_status = '<td class="text-center" id="td_activity_status_'+json[0].id+
+                                        '" data="1"><i class="fa fa-toggle-on text-success" title="Cumplida"></i></td>'
+
+                            }
                             var btn_group = '<tr id="tr_activity_'+json[0].id+'">\n' +
                                 '                                                <td id="td_init_date_'+json[0].id+'">'+json[0].init_date+'</td>\n' +
                                 '                                                <td id="td_description_'+json[0].id+'">'+json[0].description+'</td>\n' +
                                 '\n' +
                                 '                                                <td id="td_end_date_'+json[0].id+'">'+json[0].end_date+'</td>\n' +
+                                td_status +
                                 '                                                <td class="text-center">\n' +
                                 '                                                    <div class="btn-group col-md-1">\n' +
                                 '                                                        <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_'+json[0].id+'" data="'+json[0].id+'" title="Editar"><i class="fa fa-edit"></i> </button>\n' +
