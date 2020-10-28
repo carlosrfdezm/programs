@@ -5163,6 +5163,6 @@ def view_formation_plan(request, program_slug,student_id):
 
         return render(request, 'programs/view_formation_plan.html', context)
     except StudentFormationPlan.DoesNotExist:
-        return error_500(request, program, 'El estudiante aún no crea su plan de formación')
+        return HttpResponseRedirect(reverse('programs:create_formation_plan', args=[program_slug, student_id]))
 
 
