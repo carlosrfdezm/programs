@@ -58,7 +58,7 @@
                                         <b>Ingreso</b> <a class="float-right">{% if student.init_date %}{{ student.init_date|date:'M/Y' }}{% else %}----{% endif %}</a>
                                     </li>
                                     <li class="list-group-item">
-                                        <b>Egreso</b> <a class="float-right">{% if student.finish_date != None %}{{ student.finish_date|date:'M/Y' }}{% else %}----{% endif %}</a>
+                                        <b>Egreso</b> <a class="float-right">{% if student.graduate_date != None %}{{ student.graduate_date|date:'M/Y' }}{% else %}----{% endif %}</a>
                                     </li>
                                     <li class="list-group-item">
                                         <b>Defensa prevista</b> <a class="float-right">{% if student.studentformationplan.planned_end_year != None %}{{ student.studentformationplan.planned_end_year }}{% else %}----{% endif %}</a>
