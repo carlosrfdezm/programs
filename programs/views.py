@@ -5115,27 +5115,32 @@ def create_formation_plan(request, program_slug, student_id):
 def edit_formation_plan(request, program_slug, student_id):
     program = Program.objects.get(slug=program_slug)
     student = Student.objects.get(pk=student_id)
-    formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
-    if request.user == student.user:
-        if request.method == 'POST':
-            formation_plan.elaboration_date = request.POST['elaboration_date']
-            formation_plan.last_update_date = now().date()
-            formation_plan.planned_end_year = request.POST['planned_end_year']
 
-            formation_plan.save()
+    try:
+        formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
+        if request.user == student.user:
+            if request.method == 'POST':
+                formation_plan.elaboration_date = request.POST['elaboration_date']
+                formation_plan.last_update_date = now().date()
+                formation_plan.planned_end_year = request.POST['planned_end_year']
 
-            return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
+                formation_plan.save()
+
+                return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
+            else:
+                context = {
+                    'program': program,
+                    'student': student,
+                    'years': range(now().year, now().year + 6),
+                    'formation_plan': formation_plan,
+
+                }
+                return render(request, 'programs/edit_formation_plan.html', context)
         else:
-            context = {
-                'program': program,
-                'student':student,
-                'years': range(now().year,now().year+6),
-                'formation_plan':formation_plan,
-
-            }
-            return render(request, 'programs/edit_formation_plan.html', context)
-    else:
-        return error_500(request,program, 'Usted no tiene privilegios para editar el plan de formación de este estudiante.')
+            return error_500(request, program,
+                             'Usted no tiene privilegios para editar el plan de formación de este estudiante.')
+    except StudentFormationPlan.DoesNotExist:
+        return HttpResponseRedirect(reverse('programs:create_formation_plan', args=[program_slug, student_id]))
 
 @login_required
 def view_formation_plan(request, program_slug,student_id):
