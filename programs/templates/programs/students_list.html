@@ -50,12 +50,21 @@
 
                                 <tr>
                                     <th>Nombre y apellidos</th>
-                                    <th >Fecha<br>(solicitud)</th>
-                                    <th>Estado</th>
-                                    <th>Número de <br>identidad</th>
-                                    <th class="text-center">Requisitos<br> (ingreso)</th>
+                                    {% if scope == 'Solicitantes' %}
+                                        <th >Fecha<br>(solicitud)</th>
+                                    {% endif %}
+                                    {% if scope == 'all' %}
+                                        <th>Estado</th>
+                                    {% endif %}
+                                    {% if scope != 'Graduados' %}
+                                        <th class="text-center">Requisitos<br> (ingreso)</th>
+                                    {% else %}
+                                        <th class="text-center">Año<br> defensa</th>
+
+                                    {% endif %}
                                     {% if scope == 'Doctorandos' %}
                                         <th class="text-center">Requisitos<br> (egreso)</th>
+                                        <th class="text-center">Año de <br> defensa previsto</th>
                                     {% endif %}
                                     <th>Tutores</th>
 
@@ -68,18 +77,27 @@
                                     {% init_requirements_accomplished student program as init_requirements_accomplished %}
                                     <tr id="tr_student_{{ student.id }}">
                                         <td>{{ student.user.last_name|upper }}, {{ student.user.first_name }}</td>
-                                        <td>{{ student.request_date|date:'Y-m-d' }}</td>
-                                        <td>{{ student.phdstudent.status|capfirst }}</td>
-                                        <td>{{ student.dni }}</td>
-                                        <td class="text-center">{% if init_requirements_accomplished %}
-                                            <span class="text-success">
+                                        {% if scope == 'Solicitantes' %}
+                                            <td>{{ student.request_date|date:'Y-m-d' }}</td>
+                                        {% endif %}
+                                        {% if scope == 'all' %}
+                                            <td>{{ student.phdstudent.status|capfirst }}</td>
+                                        {% endif %}
+                                        {% if scope != 'Graduados' %}
+                                            <td class="text-center">{% if init_requirements_accomplished %}
+                                                <span class="text-success">
                                              <i class="fas fa-check" title="Requisitos cumplidos"></i>
                                         </span>
-                                        {% else %}
-                                            <span class="text-warning">
+                                            {% else %}
+                                                <span class="text-warning">
                                              <i class="fa fa-exclamation-triangle" title="Faltan requisitos de ingreso"></i>
                                         </span>
-                                        {% endif %} </td>
+                                            {% endif %} </td>
+                                        {% else %}
+                                            <td class="text-center">{{ student.graduate_date.year }}</td>
+
+                                        {% endif %}
+
                                         {% if scope == 'Doctorandos' %}
                                             {% finish_requirements_accomplished student program as finish_requirements_accomplished %}
 
@@ -87,6 +105,7 @@
                                                 {% if finish_requirements_accomplished %}
                                                     <span class="text-success">
                                              <i class="fas fa-check" title="Requisitos cumplidos"></i>
+
                                         </span>
                                                 {% else %}
                                                     <span class="text-warning">
@@ -94,6 +113,14 @@
                                         </span>
                                                 {% endif %}
                                             </td>
+                                            <td class="text-center">
+                                                {% if student.studentformationplan %}
+                                                    {{ student.studentformationplan.planned_end_year }}
+                                                {% else %}
+                                                    ___________
+                                                {% endif %}
+                                            </td>
+
                                         {% endif %}
                                         <td class="pl-1">{{ student.phdstudent.tuthor_set.all|unordered_list }}</td>
                                         {% if user_is_program_cs %}
