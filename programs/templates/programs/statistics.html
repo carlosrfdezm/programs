@@ -854,6 +854,7 @@
                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                 }
             });
+
             $.ajax({
                 url : "{% url 'programs:ajx_students_by_age' program.slug %}", // the endpoint
                 type : "GET", // http method
@@ -932,7 +933,11 @@
                         " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                 }
-            });$.ajax({
+            });
+
+
+
+            $.ajax({
                 url : "{% url 'programs:ajx_students_by_country' program.slug %}", // the endpoint
                 type : "GET", // http method
                 data : {

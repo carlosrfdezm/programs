@@ -2820,6 +2820,30 @@ def ajx_students_by_age(request, program_slug):
         content_type="application/json"
     )
 
+
+@login_required
+def ajx_next_years_defenses(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    response_data=[]
+    labels = []
+    data = []
+
+    for year in range(now().year,now().year+6):
+        labels.append(year)
+        if program.type=='phd':
+            data.append(StudentFormationPlan.objects.filter(phdstudent__program=program,phdstudent__phdstudent__status='Doctorando', planned_end_year=year).__len__())
+        else:
+            data.append('Error')
+
+    response_data.append(labels)
+    response_data.append(data)
+
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
 @login_required
 def ajx_member_personal_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
@@ -3297,6 +3321,42 @@ def ajx_students_by_state(request, program_slug):
         data.append(PhdStudent.objects.filter(student__program=program, status='graduado').__len__())
         data.append(PhdStudent.objects.filter(student__program=program, status='solicitante').__len__())
         data.append(PhdStudent.objects.filter(student__program=program, status='doctorando').__len__())
+
+        response_data.append(labels)
+        response_data.append(data)
+    elif program.type == 'msc':
+        labels = ['Graduados', 'Solicitantes', 'Maestrantes']
+        data.append(MscStudent.objects.filter(program=program, status='graduado').__len__())
+        data.append(MscStudent.objects.filter(program=program, status='solicitante').__len__())
+        data.append(MscStudent.objects.filter(program=program, status='maestrante').__len__())
+
+        response_data.append(labels)
+        response_data.append(data)
+    elif program.type == 'dip':
+        labels = ['Graduados', 'Solicitantes', 'Diplomantes']
+        data.append(DipStudent.objects.filter(program=program, status='graduado').__len__())
+        data.append(DipStudent.objects.filter(program=program, status='solicitante').__len__())
+        data.append(DipStudent.objects.filter(program=program, status='diplomante').__len__())
+
+        response_data.append(labels)
+        response_data.append(data)
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type="application/json"
+    )
+
+@login_required
+def ajx_students_by_line_donut(request, program_slug):
+    response_data=[]
+    data = []
+    program=Program.objects.get(slug=program_slug)
+
+    if program.type == 'phd':
+        labels = []
+        for line in InvestigationLine.objects.filter(program=program):
+            labels.append(line.name)
+            data.append(PhdStudent.objects.filter(student__program=program, phdstudenttheme__line=line).__len__())
 
         response_data.append(labels)
         response_data.append(data)
@@ -3816,6 +3876,7 @@ def edit_program_doc(request,program_slug, doc_id):
                      8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"}
             context = {
                 'program':program,
+                'member':ProgramMember.objects.get(user=request.user, program=program),
                 'months': ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio','Agosto', 'Septiembre',
                            'Octubre', 'Noviembre', 'Diciembre'],
                 'current_month': meses[now().month],
