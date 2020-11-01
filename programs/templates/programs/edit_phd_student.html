@@ -143,8 +143,8 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-2 pt-5">
+                                    <div class="form-row align-items-end">
+                                        <div class="form-group col-md-2">
                                             <div class="icheck-primary d-inline">
                                                 <input type="checkbox" id="chk_is_msc"  name="is_master" {% if doc_student.is_master %}checked value="True"{% else %}value="False"{% endif %}>
                                                 <label for="chk_is_msc">
@@ -159,7 +159,7 @@
                                             <input class="form-control" type="text" id="inp_msc_title"  maxlength="100" name="msc_title" placeholder="Título de maestría del estudiante" {% if doc_student.is_master %}value="{{ doc_student.msc_title }}"{% endif %}>
 
                                         </div>
-                                        <div class="form-group col-md-2 pt-5">
+                                        <div class="form-group col-md-2">
                                             <div class="icheck-primary d-inline">
                                                 <input type="checkbox" id="chk_prorrogue"  name="have_prorrogue" {% if doc_student.have_prorrogue %}checked value="True" {% else %} value="False" {% endif %}>
                                                 <label for="chk_prorrogue">
