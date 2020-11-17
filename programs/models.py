@@ -10,6 +10,10 @@ def program_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     return 'program_{0}/imgs/{1}'.format(instance.slug, filename)
 
+def program_new_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
+    return 'program_{0}/news/{1}/{2}'.format(instance.slug, instance.id, filename)
+
 def program_brief_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     brief_ext = filename.split('.')[filename.split('.').__len__() - 1].lower
@@ -563,3 +567,11 @@ class Message(models.Model):
     def __str__(self):
         return self.subject
 
+class New(models.Model):
+    program= models.ForeignKey(Program, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100, null=False)
+    body = models.CharField(max_length=3000, null=False)
+    img = models.ImageField(upload_to=program_new_directory_path,null=True, blank=True)
+
+    def __str__(self):
+        return self.title
