@@ -161,7 +161,7 @@
 
 
 
-            {% for line in lines %}
+            {% for new in news %}
                 $('#btn_rm_line_{{ line.id }}').click(function () {
                     var line_id={{ line.id }};
                     var url = "{% url 'programs:ajx_delete_line' program.slug %}";
