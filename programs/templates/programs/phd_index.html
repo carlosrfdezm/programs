@@ -85,13 +85,14 @@
                 {#                        <li><a href="#">Drop Down 5</a></li>#}
                 {#                    </ul>#}
                 {#                </li>#}
-                {% if news %}
-                    <li><a href="#news">Noticias</a></li>
-                {% endif %}
+
                 {% if public_docs %}
                     <li><a href="#services">Documentos</a></li>
                 {% else %}
                     <li><a href="#services">Ayuda</a></li>
+                {% endif %}
+                {% if news %}
+                    <li><a href="#news">Noticias</a></li>
                 {% endif %}
 
                 <li><a href="#contact">Login</a></li>
@@ -334,10 +335,11 @@
             <div class="row">
                 <div class="col-lg-12 text-center text-lg-left">
                     <h3 class="cta-title">Decreto Ley No. 372</h3>
-                    <p class="cta-text"> Los grados científicos son:
-                        <br>
-                        <i class="ion-android-checkmark-circle"></i> Doctor en determinada área del conocimiento; y<br>
-                        <i class="ion-android-checkmark-circle"></i> Doctor en Ciencias.
+                    <p class="cta-text"> El grado científico de Doctor en determinada área del
+                        conocimiento se otorga a los graduados de nivel universitario que
+                        contribuyen significativamente al desarrollo del conocimiento en su tema
+                        de investigación y satisfacen a plenitud los requisitos y las evaluaciones
+                        correspondientes de sus programas de doctorados.
 
                         .</p>
                 </div>
@@ -365,13 +367,14 @@
                         </div>
 
                     </div>
-                    <div class="row pb-3">
+                    <div class="row pb-3 align-items-stretch">
                         <div class="col-md-9">
                             <p class="text-justify">{{ new.body }}</p>
+                            <span class="small">{{ new.date|date:'Y-m-d' }}</span>
                         </div>
                         <div class="col-md-3 align-items-center">
                             {% if new.img %}
-                                <img src="{{ new.img.path }}">
+                                <img class="pic" src="{% url 'programs:new_img' program.slug new.id %}" style="max-width: 250px">
                             {% else %}
                                 <img class="pic" src="{% static 'programs/dist/img/photo2.png' %}" style="max-width: 250px">
                             {% endif %}

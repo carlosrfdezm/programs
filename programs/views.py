@@ -3461,6 +3461,17 @@ def program_member_picture(request, program_slug, member_id):
     else:
         return HttpResponse('Error')
 
+def program_new_picture(request, program_slug, new_id):
+    fs = FileSystemStorage()
+    # filename = Papers.objects.get(pk=paper_id).file_url +  str(Papers.objects.get(pk=paper_id).file)
+    filename = New.objects.get(pk=new_id).img.url
+    if fs.exists(filename):
+        with fs.open(filename) as img:
+            response = HttpResponse(img, content_type='image/jpeg')
+            return response
+    else:
+        return HttpResponse('Error')
+
 def program_student_picture(request, program_slug, student_id):
     program = Program.objects.get(slug=program_slug)
     fs = FileSystemStorage()
