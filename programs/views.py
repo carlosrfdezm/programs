@@ -5253,7 +5253,7 @@ def create_new(request, program_slug):
             except:
                 pass
             new.save()
-            return HttpResponseRedirect(reverse('programs:create_new', args=[program_slug]))
+            return HttpResponseRedirect(reverse('programs:news_list', args=[program_slug]))
         else:
             context = {
                 'program':program,
@@ -5262,3 +5262,22 @@ def create_new(request, program_slug):
             return render(request,'programs/create_new.html', context)
     else:
         return error_500(request,program,'Usted no tiene provilegios para agregar noticias en este programa')
+
+
+def news_list(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    context={
+        'program':program,
+        'news': New.objects.filter(program=program),
+    }
+    if user_is_program_member(request.user, program):
+        context['member']=ProgramMember.objects.get(user=request.user, program=program)
+    elif user_is_program_student(request.user, program):
+        if program.type == 'phd':
+            context['student'] = Student.objects.get(user=request.user, program=program)
+        elif program.type == 'msc':
+            context['student'] = MscStudent.objects.get(user=request.user, program=program)
+        elif program.type == 'dip':
+            context['student'] = DipStudent.objects.get(user=request.user, program=program)
+
+    return render(request, 'programs/news_list.html', context)

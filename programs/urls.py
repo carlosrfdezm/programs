@@ -131,6 +131,7 @@ urlpatterns = [
 
     path('new/<int:new_id>', views.program_new_picture, name='new_img'),
     path('new/create', views.create_new, name='create_new'),
+    path('news/list', views.news_list, name='news_list'),
 
 
 
