@@ -129,7 +129,8 @@ urlpatterns = [
     path('speciality/list', views.phd_specialities, name='phd_specialities'),
     path('speciality/<int:speciality_id>/edit', views.edit_phd_speciality, name='edit_phd_speciality'),
 
-    path('new/<int:new_id>', views.program_new_picture, name='new_img')
+    path('new/<int:new_id>', views.program_new_picture, name='new_img'),
+    path('new/create', views.create_new, name='create_new'),
 
 
 

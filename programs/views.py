@@ -5238,4 +5238,27 @@ def view_formation_plan(request, program_slug,student_id):
     except StudentFormationPlan.DoesNotExist:
         return HttpResponseRedirect(reverse('programs:create_formation_plan', args=[program_slug, student_id]))
 
-
+@login_required
+def create_new(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            new=New(
+                program=program,
+                title=request.POST['new_title'],
+                body=request.POST['new_body'],
+            )
+            try:
+                new.img = request.FILES['img_new']
+            except:
+                pass
+            new.save()
+            return HttpResponseRedirect(reverse('programs:create_new', args=[program_slug]))
+        else:
+            context = {
+                'program':program,
+                'member': ProgramMember.objects.get(user=request.user, program=program)
+            }
+            return render(request,'programs/create_new.html', context)
+    else:
+        return error_500(request,program,'Usted no tiene provilegios para agregar noticias en este programa')

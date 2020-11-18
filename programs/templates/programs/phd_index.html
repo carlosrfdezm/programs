@@ -369,7 +369,11 @@
                     </div>
                     <div class="row pb-3 align-items-stretch">
                         <div class="col-md-9">
-                            <p class="text-justify">{{ new.body }}</p>
+                            <p class="text-justify">
+                                {% autoescape off %}
+                                {{ new.body }}
+                                {% endautoescape %}
+                            </p>
                             <span class="small">{{ new.date|date:'Y-m-d' }}</span>
                         </div>
                         <div class="col-md-3 align-items-center">

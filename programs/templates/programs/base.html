@@ -425,6 +425,34 @@
                                     </ul>
                                 </li>
                             {% endif %}
+                            <li class="nav-item has-treeview">
+                                <a href="#" class="nav-link" title="Noticias del programa">
+                                    <i class="nav-icon fas fa-newspaper"></i>
+                                    <p>
+                                        Noticias
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    {% if user_is_program_cs %}
+
+                                        <li class="nav-item">
+                                            <a href="{% url 'programs:create_new' program.slug %}" class="nav-link">
+                                                <i class="fa fa-plus nav-icon"></i>
+                                                <p>Nueva</p>
+                                            </a>
+
+                                        </li>
+                                    {% endif %}
+                                    <li class="nav-item">
+                                        <a href="" class="nav-link">
+                                            <i class="fa fa-list nav-icon"></i>
+                                            <p>Ver noticias</p>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
                             {%  if user_is_program_cs %}
 
                                 <li class="nav-item">
