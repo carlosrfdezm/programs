@@ -23,7 +23,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
     FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message, CGCDocument, \
-    ProgramSpeciality
+    ProgramSpeciality, New
 from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -37,6 +37,7 @@ def index(request, program_slug):
             'program': program,
             'lines': InvestigationLine.objects.filter(program=program),
             'public_docs':ProgramDocument.objects.filter(program=program, is_public=True),
+            'news': New.objects.filter(program=program).order_by('-date')[:5]
 
         }
         if program.type == 'phd':

@@ -86,7 +86,7 @@
                 {#                    </ul>#}
                 {#                </li>#}
                 {% if news %}
-                    Noticias
+                    <li><a href="#news">Noticias</a></li>
                 {% endif %}
                 {% if public_docs %}
                     <li><a href="#services">Documentos</a></li>
@@ -359,14 +359,23 @@
 
                 {% for new in news %}
 
-                    <div class="row">
-                        <div class="col-md-10 offset-1">
-                            <p title="{{ doc.description }}">{{ doc.description|truncatewords:15 }}</p>
-                        </div>
-                        <div class="col-md-1">
-                            <a href="{% url 'programs:public_program_doc_view' program.slug doc.id %}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
+                    <div class="row pt-2">
+                        <div class="alert alert-warning align-items-baseline col-md-12">
+                            <h4 class="text-center" title="{{ new.title }}">{{ new.title }}</h4>
                         </div>
 
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-md-9">
+                            <p class="text-justify">{{ new.body }}</p>
+                        </div>
+                        <div class="col-md-3 align-items-center">
+                            {% if new.img %}
+                                <img src="{{ new.img.path }}">
+                            {% else %}
+                                <img class="pic" src="{% static 'programs/dist/img/photo2.png' %}" style="max-width: 250px">
+                            {% endif %}
+                        </div>
                     </div>
                 {% endfor %}
 
