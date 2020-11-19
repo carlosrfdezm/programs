@@ -58,7 +58,7 @@
                             </thead>
                             <tbody>
                             {% for new in news %}
-                                <tr id="tr_line_{{ line.id }}">
+                                <tr id="tr_new_{{ new.id }}">
                                     <td>{{ new.date|date:'Y-m-d' }} </td>
                                     <td class="">
                                         <p >{{ new.title|truncatewords:10 }}</p>
@@ -162,9 +162,9 @@
 
 
             {% for new in news %}
-                $('#btn_rm_line_{{ line.id }}').click(function () {
-                    var line_id={{ line.id }};
-                    var url = "{% url 'programs:ajx_delete_line' program.slug %}";
+                $('#btn_rm_new_{{ new.id }}').click(function () {
+                    var new_id={{ new.id }};
+                    var url = "{% url 'programs:ajx_delete_new' program.slug %}";
 
                     {#$('#modal_rm_line_{{ line.id }}').modal('hide');#}
 
@@ -172,7 +172,7 @@
                         url : url,
                         type : "POST", // http method
                         data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                            'line_id':line_id,
+                            'new_id':new_id,
                         }, // data sent with the post request
 
                         // handle a successful response
@@ -180,18 +180,32 @@
 
                             if (json[0].deleted == 1) {
 
-                                var row = myTable.row( $('#tr_line_{{ line.id }}') );
+                                var row = myTable.row( $('#tr_new_{{ new.id }}') );
                                 row.remove().draw();
 
                                 Toast.fire({
                                     type: 'success',
-                                    title: 'Línea eliminada exitosamente'
+                                    title: 'Noticia eliminada exitosamente'
                                 });
 
                             } else if(json[0].deleted == 0){
                                 Toast.fire({
                                     type: 'error',
-                                    title: 'No se ha podido eliminar la línea seleccionada.'
+                                    title: 'No se ha podido eliminar la noticia seleccionada: error desconocido.'
+                                })
+
+                            }
+                            else if(json[0].deleted == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar la noticia seleccionada: metodo incorrecto.'
+                                })
+
+                            }
+                            else if(json[0].deleted == 3){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar la noticia seleccionada: usted no tiene privilegios.'
                                 })
 
                             }
