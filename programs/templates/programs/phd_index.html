@@ -260,7 +260,7 @@
 
                     <div class="row">
                         <div class="col-md-10 offset-1">
-                            <p title="{{ doc.description }}">{{ doc.description|truncatewords:15 }}</p>
+                            <p class="text-primary" title="{{ doc.description }}"><a class="text-primary" href="{% url 'programs:public_program_doc_view' program.slug doc.id %}">{{ doc.description|truncatewords:15 }}</p>
                         </div>
                         <div class="col-md-1">
                             <a href="{% url 'programs:public_program_doc_view' program.slug doc.id %}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
