@@ -5263,7 +5263,7 @@ def create_new(request, program_slug):
     else:
         return error_500(request,program,'Usted no tiene provilegios para agregar noticias en este programa')
 
-
+@login_required
 def news_list(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     context={
@@ -5281,3 +5281,23 @@ def news_list(request, program_slug):
             context['student'] = DipStudent.objects.get(user=request.user, program=program)
 
     return render(request, 'programs/news_list.html', context)
+
+@login_required
+def read_new(request, program_slug, new_id):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_member( request.user, program) or user_is_program_student(request.user, program):
+        context={
+            'program':program,
+            'new': New.objects.get(pk=new_id)
+        }
+        if user_is_program_member(request.user, program):
+            context['member']=ProgramMember.objects.get(user=request.user, program=program)
+        elif user_is_program_student(request.user, program):
+            if program.type == 'phd':
+                context['student']=Student.objects.get(user=request.user, program=program)
+            elif program.type == 'msc':
+                context['student'] = MscStudent.objects.get(user=request.user, program=program)
+            elif program.type == 'dip':
+                            context['student'] = DipStudent.objects.get(user=request.user, program=program)
+
+        return render(request, 'programs/read_new.html',context)

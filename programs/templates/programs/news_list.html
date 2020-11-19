@@ -68,7 +68,7 @@
 
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
-                                            <a class="btn btn-success btn-sm text-white" href="" title="Ver"> <i class="fa fa-book-reader"></i></a>
+                                            <a class="btn btn-success btn-sm text-white" href="{% url 'programs:read_new' program.slug new.id %}" title="Ver"> <i class="fa fa-book-reader"></i></a>
 
                                             {% if user_is_program_cs %}
                                                 <a class="btn btn-warning btn-sm text-white" href="" title="Editar"> <i class="fa fa-edit"></i></a>

@@ -369,12 +369,13 @@
                     </div>
                     <div class="row pb-3 align-items-stretch">
                         <div class="col-md-9">
+                            <span class="small pb-3">{{ new.date|date:'d-m-Y' }}</span>
+
                             <p class="text-justify">
                                 {% autoescape off %}
-                                {{ new.body }}
+                                    {{ new.body }}
                                 {% endautoescape %}
                             </p>
-                            <span class="small">{{ new.date|date:'Y-m-d' }}</span>
                         </div>
                         <div class="col-md-3 align-items-center">
                             {% if new.img %}
