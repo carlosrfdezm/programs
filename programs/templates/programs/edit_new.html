@@ -12,12 +12,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-9">
-                    <h1>Leer noticia</h1>
+                    <h1>Editar noticia</h1>
                 </div>
                 <div class="col-sm-3">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Leer noticia</li>
+                        <li class="breadcrumb-item active">Editar noticia</li>
                     </ol>
                 </div>
             </div>
@@ -37,42 +37,38 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
-
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <div class="alert alert-info">
-                                        <h4 class="text-center">{{ new.title }}</h4>
+                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_new' program.slug new.id %}">
+                            {% csrf_token %}
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="inp_name">Título:</label>
+                                        <input class="form-control" id="inp_title" name="new_title" placeholder="Título de la noticia" value="{{ new.title }}" maxlength="100" required></input>
                                     </div>
-                                </div>
 
-                            </div>
-                            <div class="row">
-                                <div class="col-md-9">
-                                    {% autoescape off %}
-                                        <span class="text-sm">{{ new.date|date:'d-m-Y' }}</span>
-                                        <p>{{ new.body }}</p>
-
-                                    {% endautoescape %}
                                 </div>
-                                <div class="col-md-3">
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <textarea class="form-control textarea col-md-12" id="txt_new_body"
+                                                  name="new_body" placeholder="Cuerpo de la noticia" rows="8" maxlength="2000" required >{{ new.body }}</textarea>
+                                    </div>
+
+                                </div>
+                                <div class="form-row">
+                                    <input type="file" class="form-control-file" id="inp_img_new" name="img_new" accept="image/*">
                                     {% if new.img %}
-                                        <img class="image img-fluid" src="{% url 'programs:new_img' program.slug new.id %}" style="max-width: 250px; max-height: 300px">
-                                    {% else %}
-                                        <img class="image img-fluid" src="{% static 'programs/dist/img/photo2.png' %}" style="max-width: 250px">
-
+                                    <span class="text-sm">{{ new.img.path }}</span>
                                     {% endif %}
                                 </div>
 
+
                             </div>
+                            <!-- /.card-body -->
 
-
-
-                        </div>
-                        <!-- /.card-body -->
-
-
-
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </form>
                     </div>
                     <!-- /.card -->
 

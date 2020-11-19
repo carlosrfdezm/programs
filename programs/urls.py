@@ -132,6 +132,7 @@ urlpatterns = [
 
     path('new/<int:new_id>/picture', views.program_new_picture, name='new_img'),
     path('new/<int:new_id>/read', views.read_new, name='read_new'),
+    path('new/<int:new_id>/edit', views.edit_new, name='edit_new'),
     path('new/create', views.create_new, name='create_new'),
     path('news/list', views.news_list, name='news_list'),
 

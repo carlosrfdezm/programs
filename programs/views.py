@@ -5330,3 +5330,28 @@ def read_new(request, program_slug, new_id):
                             context['student'] = DipStudent.objects.get(user=request.user, program=program)
 
         return render(request, 'programs/read_new.html',context)
+
+
+@login_required
+def edit_new(request, program_slug, new_id):
+    program = Program.objects.get(slug=program_slug)
+    new = New.objects.get(pk=new_id)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            new.title = request.POST['new_title']
+            new.body = request.POST['new_body']
+            try:
+                new.img = request.FILES['img_new']
+            except:
+                pass
+            new.save()
+            return HttpResponseRedirect(reverse('programs:read_new', args=[program_slug, new_id]))
+        else:
+            context={
+                'program':program,
+                'new':new,
+                'member':ProgramMember.objects.get(user=request.user, program=program)
+            }
+            return render(request, 'programs/edit_new.html', context)
+    else:
+        return error_500(request, program, 'Usted no tiene privilegios para editar noticias en este programa')

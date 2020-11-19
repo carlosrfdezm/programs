@@ -71,7 +71,7 @@
                                             <a class="btn btn-success btn-sm text-white" href="{% url 'programs:read_new' program.slug new.id %}" title="Ver"> <i class="fa fa-book-reader"></i></a>
 
                                             {% if user_is_program_cs %}
-                                                <a class="btn btn-warning btn-sm text-white" href="" title="Editar"> <i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_new' program.slug new.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
                                                 <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_new_{{ new.id }}"><i class="fa fa-eraser"></i></a>
                                             {% endif %}
                                         </div>
