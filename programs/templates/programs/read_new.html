@@ -48,21 +48,14 @@
 
                             </div>
                             <div class="row">
-                                <div class="col-md-9">
+                                <div class="col-md-10 offset-1">
                                     {% autoescape off %}
                                         <span class="text-sm">{{ new.date|date:'d-m-Y' }}</span>
                                         <p>{{ new.body }}</p>
 
                                     {% endautoescape %}
                                 </div>
-                                <div class="col-md-3">
-                                    {% if new.img %}
-                                        <img class="image img-fluid" src="{% url 'programs:new_img' program.slug new.id %}" style="max-width: 250px; max-height: 300px">
-                                    {% else %}
-                                        <img class="image img-fluid" src="{% static 'programs/dist/img/photo2.png' %}" style="max-width: 250px">
 
-                                    {% endif %}
-                                </div>
 
                             </div>
 

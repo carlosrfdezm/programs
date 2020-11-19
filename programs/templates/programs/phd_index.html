@@ -368,7 +368,7 @@
 
                     </div>
                     <div class="row pb-3 align-items-stretch">
-                        <div class="col-md-9">
+                        <div class="col-md-10 offset-1">
                             <span class="small pb-3">{{ new.date|date:'d-m-Y' }}</span>
 
                             <p class="text-justify">
@@ -377,13 +377,7 @@
                                 {% endautoescape %}
                             </p>
                         </div>
-                        <div class="col-md-3 align-items-center">
-                            {% if new.img %}
-                                <img class="pic" src="{% url 'programs:new_img' program.slug new.id %}" style="max-width: 250px">
-                            {% else %}
-                                <img class="pic" src="{% static 'programs/dist/img/photo2.png' %}" style="max-width: 250px">
-                            {% endif %}
-                        </div>
+
                     </div>
                 {% endfor %}
 

@@ -570,8 +570,7 @@ class Message(models.Model):
 class New(models.Model):
     program= models.ForeignKey(Program, on_delete=models.CASCADE)
     title = models.CharField(max_length=100, null=False)
-    body = models.TextField(max_length=3000, null=False)
-    img = models.ImageField(upload_to=program_new_directory_path,null=True, blank=True)
+    body = models.TextField(max_length=5000, null=False)
     date = models.DateField(default=now)
 
     class Meta():
