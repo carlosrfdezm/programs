@@ -2877,7 +2877,7 @@ def ajx_next_years_defenses(request, program_slug):
 @login_required
 def ajx_member_personal_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
-    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 500:
+    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 4000:
         try:
             new_message = Message(
                 sender=request.user,
@@ -2899,7 +2899,7 @@ def ajx_member_personal_msg(request, program_slug ):
                 json.dumps([{'sended': 0}]),
                 content_type="application/json"
             )
-    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 500:
+    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 4000:
         return HttpResponse(
             json.dumps([{'sended': 2}]),
             content_type="application/json"
@@ -2913,7 +2913,7 @@ def ajx_member_personal_msg(request, program_slug ):
 @login_required
 def ajx_member_massive_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
-    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 1500:
+    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 4000:
         try:
             email_list = []
             if request.POST['msg_scope'] == 'comite':
@@ -2992,7 +2992,101 @@ def ajx_member_massive_msg(request, program_slug ):
                 json.dumps([{'sended': 0}]),
                 content_type="application/json"
             )
-    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 1500:
+    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 4000:
+        return HttpResponse(
+            json.dumps([{'sended': 2}]),
+            content_type="application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps([{'sended': 0}]),
+            content_type="application/json"
+        )
+
+
+@login_required
+def ajx_all_massive_msg(request, program_slug ):
+    program=Program.objects.get(slug=program_slug)
+    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 4000:
+        try:
+            email_list = []
+            for member in ProgramMember.objects.filter(program=program):
+                email_list.append(member.user.email)
+
+                new_message = Message(
+                    sender=request.user,
+                    program_receiver=member,
+                    subject=request.POST['msg_subject'],
+                    body=request.POST['msg_body'],
+
+                )
+                new_message.save()
+
+            if program.type == 'phd':
+                for student in Student.objects.filter(program=program):
+                    email_list.append(student.user.email)
+                    new_message = Message(
+                        sender=request.user,
+                        phd_student_receiver=student,
+                        subject=request.POST['msg_subject'],
+                        body=request.POST['msg_body'],
+
+                    )
+                    new_message.save()
+            elif program.type == 'msc':
+                for student in MscStudent.objects.filter(program=program):
+                    email_list.append(student.user.email)
+                    new_message = Message(
+                        sender=request.user,
+                        msc_student_receiver=student,
+                        subject=request.POST['msg_subject'],
+                        body=request.POST['msg_body'],
+
+                    )
+                    new_message.save()
+            elif program.type == 'dip':
+                for student in DipStudent.objects.filter(program=program):
+                    email_list.append(student.user.email)
+                    new_message = Message(
+                        sender=request.user,
+                        dip_student_receiver=student,
+                        subject=request.POST['msg_subject'],
+                        body=request.POST['msg_body'],
+
+                    )
+                    new_message.save()
+
+            if email_list.__len__()<=10:
+                send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
+                          email_list, fail_silently=False, html_message=request.POST['msg_body'])
+            else:
+                count = email_list.__len__() // 10
+                rest = email_list.__len__() % 10
+
+                for i in range(count):
+                    print(i)
+                    send_mail(request.POST['msg_subject'], request.POST['msg_body'],
+                              request.user.email,
+                              email_list[10 * i:10 * (i + 1)], fail_silently=False, html_message=request.POST['msg_body'])
+
+                    if rest != 0:
+                        send_mail(request.POST['msg_subject'], request.POST['msg_body'],
+                                  request.user.email,
+                                  email_list[10 * count:10 * count + rest], fail_silently=False,
+                                  html_message=request.POST['msg_body'])
+
+
+
+            return HttpResponse(
+                json.dumps([{'sended': 1}]),
+                content_type="application/json"
+            )
+        except:
+            return HttpResponse(
+                json.dumps([{'sended': 0}]),
+                content_type="application/json"
+            )
+    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 4000:
         return HttpResponse(
             json.dumps([{'sended': 2}]),
             content_type="application/json"
@@ -3065,7 +3159,7 @@ def ajx_everybody_massive_msg(request, program_slug ):
 @login_required
 def ajx_students_massive_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
-    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 1500:
+    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 4000:
         try:
             email_list = []
             for professor in ProgramMember.objects.filter(Q(role='Coordinador')|Q(role='Secretario'), program=program):
@@ -3244,7 +3338,7 @@ def ajx_students_massive_msg(request, program_slug ):
                 json.dumps([{'sended': 0}]),
                 content_type="application/json"
             )
-    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 1500:
+    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 4000:
         return HttpResponse(
             json.dumps([{'sended': 2}]),
             content_type="application/json"
@@ -3258,7 +3352,7 @@ def ajx_students_massive_msg(request, program_slug ):
 @login_required
 def ajx_student_personal_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
-    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 1000:
+    if request.method == 'POST' and request.POST['msg_body'].__len__() <= 4000:
         try:
             if program.type == 'phd':
                 new_message = Message(
@@ -3307,7 +3401,7 @@ def ajx_student_personal_msg(request, program_slug ):
                 json.dumps([{'sended': 0}]),
                 content_type="application/json"
             )
-    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 1000:
+    elif request.method == 'POST' and request.POST['msg_body'].__len__() > 4000:
         return HttpResponse(
             json.dumps([{'sended': 2}]),
             content_type="application/json"

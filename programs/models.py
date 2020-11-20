@@ -561,7 +561,7 @@ class Message(models.Model):
 
     date = models.DateField(default=now)
     subject = models.CharField(max_length=250)
-    body = models.TextField(max_length=1500)
+    body = models.TextField(max_length=4000)
     readed = models.BooleanField(default=False)
 
     def __str__(self):
