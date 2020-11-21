@@ -249,6 +249,7 @@
                                             <tr>
                                                 <th class="text-center">Resp.</th>
                                                 <th >Nombre del documento</th>
+                                                <th >Archivo digital</th>
                                                 <th class="text-center">Listo</th>
                                                 <th class="text-center">Caduca</th>
 
@@ -271,6 +272,15 @@
                                                         </td>
                                                         <td>
                                                             {{ doc }}
+                                                        </td>
+                                                        <td class="">
+                                                            {% if doc.file %}
+                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="doc_file_{{ doc.id }}">
+                                                                <span class="text-sm">{{ doc.file.url }}</span>
+                                                            {% else %}
+                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="doc_file_{{ doc.id }}">
+
+                                                            {% endif %}
                                                         </td>
                                                         <td class="text-center">
                                                             {% student_requirement_accomplished student doc as doc_accomplished %}
@@ -305,6 +315,7 @@
                                             <tr>
                                                 <th class="text-center">Resp.</th>
                                                 <th >Nombre del documento</th>
+                                                <th >Archivo digital</th>
                                                 <th class="text-center">Listo</th>
                                                 <th class="text-center">Caduca</th>
 
@@ -327,6 +338,15 @@
                                                         </td>
                                                         <td>
                                                             {{ doc }}
+                                                        </td>
+                                                        <td class="">
+                                                            {% if doc.file %}
+                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="doc_file_{{ doc.id }}">
+                                                                <span class="text-sm">{{ doc.file.url }}</span>
+                                                            {% else %}
+                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="doc_file_{{ doc.id }}">
+
+                                                            {% endif %}
                                                         </td>
                                                         <td class="text-center">
                                                             {% student_requirement_accomplished student doc as doc_accomplished %}
@@ -361,6 +381,7 @@
                                             <tr>
                                                 <th class="text-center">Resp.</th>
                                                 <th>Nombre del documento</th>
+                                                <th>Archivo digital</th>
                                                 <th class="text-center">Listo</th>
                                                 <th class="text-center">Caduca</th>
 
@@ -384,6 +405,14 @@
                                                         <td>
                                                             {{ doc }}
                                                         </td>
+                                                        <td class="">
+                                                            {% if doc.file %}
+                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="doc_file_{{ doc.id }}">
+                                                                <span class="text-sm">{{ doc.file.url }}</span>
+                                                            {% else %}
+                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="doc_file_{{ doc.id }}">
+                                                            {% endif %}
+                                                        </td>
                                                         <td class="text-center">
                                                             {% student_requirement_accomplished student doc as doc_accomplished %}
                                                             {% if doc_accomplished %}
@@ -393,6 +422,7 @@
 
                                                             {% endif %}
                                                         </td>
+
                                                         <td class="text-center">
                                                             {% if doc.get_old %}
                                                                 {% student_doc_caducity_date student doc as caducity_date %}
@@ -635,6 +665,72 @@
 
 
             });
+            $(document).on('change',"input[id*='inp_filedoc']", function () {
+                var fd = new FormData();
+                var files = $(this)[0].files;
+                var url = {% url  %}
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'message_id':current_index,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].readed == 1) {
+
+                            $('#modal_read_message_'+current_index).modal('show');
+                            $('#a_read_message_'+current_index).replaceWith('<a href="#" id="a_remove_message_'+current_index+'" data="'+current_index+'" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>\n')
+                            $('#p_message_body_'+current_index).removeClass('text-bold')
+                            $('#i_msg_'+current_index).removeClass('fa-envelope')
+                            $('#i_msg_'+current_index).addClass('fa-envelope-open')
+
+
+
+                        } else if(json[0].readed == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido mostrar el mensaje.'
+                            })
+
+                        }
+                        else if(json[0].readed == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido mostrar el mensaje: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].readed == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido mostrar el mensaje: El usuario no es el receptor del mensaje'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        $('#div_by_workshop').removeClass('hidden')
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
 
 
             $(document).on('click',"button[id='btn_edit_profile']", function () {
@@ -797,15 +893,15 @@
                 $('#ul_edit_profile').attr('data', '1');
             });
             {% if user == student.user %}
-            $('#a_tab_personal').click(function (){
-                if($('#ul_edit_profile').attr('data')=='0'){}
-                else if($('#ul_edit_profile').attr('data')=='1') {
-                    $('#ul_edit_profile').append('<li class="list-group-item text-center" id="li_edit_profile">\n' +
-                        '                <button type="button" class="btn btn-sm btn-warning text-center" title="Editar datos personales" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>\n' +
-                        '            </li>');
-                }
+                $('#a_tab_personal').click(function (){
+                    if($('#ul_edit_profile').attr('data')=='0'){}
+                    else if($('#ul_edit_profile').attr('data')=='1') {
+                        $('#ul_edit_profile').append('<li class="list-group-item text-center" id="li_edit_profile">\n' +
+                            '                <button type="button" class="btn btn-sm btn-warning text-center" title="Editar datos personales" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>\n' +
+                            '            </li>');
+                    }
 
-            });
+                });
             {% endif %}
             $(document).on('change','#inp_picture', function () {
                 var fileUpload = this;

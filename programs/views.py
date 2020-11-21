@@ -2092,39 +2092,45 @@ def ajx_change_activity_status(request, program_slug, student_id):
             content_type="application/json"
         )
 
-def ajx_edit_activity(request, program_slug, student_id):
-    program=Program.objects.get(slug=program_slug)
-    student=Student.objects.get(pk=student_id)
-    activity = FormationPlanActivities.objects.get(pk=request.POST['activity_id'])
-
-    if program.type == 'phd':
-        if request.user == student.user:
-            if request.method == 'POST':
-                activity.init_date=request.POST['init_date']
-                activity.end_date=request.POST['end_date']
-                activity.description=request.POST['description']
-                activity.status = request.POST['status']
-                activity.save()
-                formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
-                formation_plan.last_update_date = now().date()
-                formation_plan.save()
-                return HttpResponse(
-                    json.dumps([{'edited': 1,'init_date':activity.init_date,'end_date':activity.end_date,
-                                 'description':activity.description,'status':activity.status, 'id':activity.id}]),
-                    content_type="application/json"
-                )
-
+@login_required
+def ajx_change_activity_status(request, program_slug, student_id):
+    program = Program.objects.get(slug=program_slug)
+    student = Student.objects.get(pk=student_id)
+    if request.user == student.user:
+        if request.method == 'POST':
+            activity = FormationPlanActivities.objects.get(pk=request.POST['activity_id'])
+            if activity.status == 'pending':
+                activity.status = 'ready'
             else:
-                return HttpResponse(
-                    json.dumps([{'edited': 0}]),
-                    content_type="application/json"
-                )
-
-        else:
+                activity.status = 'pending'
+            activity.save()
             return HttpResponse(
-                json.dumps([{'edited': 3}]),
+                json.dumps([{'edited': 1, 'status':activity.status }]),
                 content_type="application/json"
             )
+        else:
+            return HttpResponse(
+                json.dumps([{'edited': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'edited': 2}]),
+            content_type="application/json"
+        )
+
+def ajx_edit_activity(request, program_slug, file_id):
+    program=Program.objects.get(slug=program_slug)
+    filedoc = StudentFileDocument.objects.get(pk=file_id)
+    if program.type == 'phd':
+        student = filedoc.student
+    elif  program.type == 'msc':
+        student = filedoc.msc_student
+    elif  program.type == 'dip':
+        student = filedoc.dip_student
+
+    if student.user == request.user:
+        pass
 
     else:
         return HttpResponse(
@@ -5421,7 +5427,7 @@ def read_new(request, program_slug, new_id):
             elif program.type == 'msc':
                 context['student'] = MscStudent.objects.get(user=request.user, program=program)
             elif program.type == 'dip':
-                            context['student'] = DipStudent.objects.get(user=request.user, program=program)
+                context['student'] = DipStudent.objects.get(user=request.user, program=program)
 
         return render(request, 'programs/read_new.html',context)
 
