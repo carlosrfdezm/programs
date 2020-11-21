@@ -53,6 +53,18 @@ def student_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     return 'program_{0}/students/{1}/{2}'.format(instance.program.slug,instance.id, filename)
 
+def student_filedoc_directory_path(instance, filename):
+    program = instance.program_file_document.program
+    if program.type == 'phd':
+        student = instance.student
+    elif program.type == 'msc':
+        student = instance.msc_student
+    elif program.type == 'dip':
+        student = instance.dip_student
+
+    # file will be uploaded to MEDIA_ROOT/program_<slug>/students/<student_id>/docs/<filename>
+    return 'program_{0}/students/{1}/docs/{2}'.format(program.slug,student.id, filename)
+
 def background_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
     return 'program_{0}/imgs/backgrounds/{1}'.format(instance.program.slug, filename)
@@ -548,6 +560,7 @@ class StudentFileDocument(models.Model):
     program_file_document= models.ForeignKey(ProgramFileDoc, on_delete=models.CASCADE)
     accomplished = models.BooleanField(default=False, help_text='Verdadero si esta satisfecho, Falso si lo contrario')
     caducity_date = models.DateField(null=True, blank=True)
+    file = models.FileField(upload_to=student_filedoc_directory_path, null=True)
 
     def __str__(self):
         return self.program_file_document.doc_name
