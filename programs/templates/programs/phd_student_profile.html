@@ -249,7 +249,7 @@
                                             <tr>
                                                 <th class="text-center">Resp.</th>
                                                 <th >Nombre del documento</th>
-                                                <th >Archivo digital</th>
+                                                <th class="text-center">Archivo digital</th>
                                                 <th class="text-center">Listo</th>
                                                 <th class="text-center">Caduca</th>
 
@@ -272,24 +272,91 @@
                                                                 <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
                                                             {% endif %}
                                                         </td>
-                                                        <td>
+                                                        <td style="width: 55%">
                                                             {{ doc }}
                                                         </td>
-                                                        <td class="">
+                                                        <td class="text-center">
                                                             {% if student_doc_has_file %}
-                                                                <div class="btn-group btn-group-sm">
-                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
-                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Editar documento"><i class="fa fa-edit"></i> </button>
+                                                                {% if doc.type == 'student' %}
+                                                                    <div class="btn-group btn-group-sm">
+                                                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                                        <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_upgrade_filedoc_{{ doc.id }}" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                                                        <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
 
-                                                                </div>
+                                                                    </div>
+                                                                {% else %}
+                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+
+
+                                                                {% endif %}
                                                             {% else %}
-                                                                <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
-                                                                    {% csrf_token %}
-                                                                    <input type="hidden" name="student_id" value="{{ student.id }}">
-                                                                    <input type="hidden" name="doc_id" value="{{ doc.id }}">
-                                                                    <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file">
-                                                                </form>
+                                                                {% if doc.type == 'student' %}
+                                                                    <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data-toggle="modal" data-target="#modal_up_filedoc_{{ doc.id }}" ><i class="fa fa-upload"></i> </button>
+                                                                    <div class="modal fade" id="modal_up_filedoc_{{ doc.id }}">
+                                                                        <div class="modal-lg modal-dialog">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title">Documento digital</h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+
+                                                                                    <div class="modal-body">
+                                                                                        <p class="text-sm">Subir copia digital de {{ doc }}</p>
+                                                                                        {% csrf_token %}
+                                                                                        <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                                                        <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                                                                        <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" required>
+
+                                                                                    </div>
+                                                                                    <div class="modal-footer justify-content-between">
+                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                                                        <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                                                                                    </div>
+                                                                                </form>
+
+                                                                            </div>
+                                                                            <!-- /.modal-content -->
+                                                                        </div>
+                                                                        <!-- /.modal-dialog -->
+                                                                    </div>
+                                                                {% else %}
+                                                                    <button type="button" class="btn btn-sm btn-success" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                                {% endif %}
                                                             {% endif %}
+                                                            <div class="modal fade" id="modal_upgrade_filedoc_{{ doc.id }}">
+                                                                <div class="modal-lg modal-dialog">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h4 class="modal-title">Documento digital</h4>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+
+                                                                            <div class="modal-body">
+                                                                                <p class="text-sm">Actualizar copia digital de {{ doc }}</p>
+                                                                                {% csrf_token %}
+                                                                                <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                                                <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" required>
+
+                                                                            </div>
+                                                                            <div class="modal-footer justify-content-between">
+                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                                                <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                                                                            </div>
+                                                                        </form>
+
+                                                                    </div>
+                                                                    <!-- /.modal-content -->
+                                                                </div>
+                                                                <!-- /.modal-dialog -->
+                                                            </div>
+
                                                         </td>
                                                         <td class="text-center">
                                                             {% student_requirement_accomplished student doc as doc_accomplished %}
@@ -324,7 +391,7 @@
                                             <tr>
                                                 <th class="text-center">Resp.</th>
                                                 <th >Nombre del documento</th>
-                                                <th >Archivo digital</th>
+                                                <th class="text-center">Archivo digital</th>
                                                 <th class="text-center">Listo</th>
                                                 <th class="text-center">Caduca</th>
 
@@ -346,26 +413,93 @@
                                                                 <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
                                                             {% endif %}
                                                         </td>
-                                                        <td>
+                                                        <td style="width: 55%">
                                                             {{ doc }}
                                                         </td>
-                                                        <td class="">
+                                                        <td class="text-center">
                                                             {% if student_doc_has_file %}
-                                                                <div class="btn-group btn-group-sm">
-                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
-                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Editar documento"><i class="fa fa-edit"></i> </button>
+                                                                {% if doc.type == 'student' %}
+                                                                    <div class="btn-group btn-group-sm">
+                                                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                                        <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_upgrade_filedoc_{{ doc.id }}"  title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                                                        <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
 
-                                                                </div>
+                                                                    </div>
+                                                                {% else %}
+                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+
+
+                                                                {% endif %}
                                                             {% else %}
-                                                                <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
-                                                                    {% csrf_token %}
-                                                                    <input type="hidden" name="student_id" value="{{ student.id }}">
-                                                                    <input type="hidden" name="doc_id" value="{{ doc.id }}">
-                                                                    <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file">
-                                                                </form>
+                                                                {% if doc.type == 'student' %}
+                                                                    <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data-toggle="modal" data-target="#modal_up_filedoc_{{ doc.id }}" ><i class="fa fa-upload"></i> </button>
+                                                                    <div class="modal fade" id="modal_up_filedoc_{{ doc.id }}">
+                                                                        <div class="modal-lg modal-dialog">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title">Documento digital</h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+
+                                                                                    <div class="modal-body">
+                                                                                        <p class="text-sm">Subir copia digital de {{ doc }}</p>
+                                                                                        {% csrf_token %}
+                                                                                        <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                                                        <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                                                                        <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" required>
+
+                                                                                    </div>
+                                                                                    <div class="modal-footer justify-content-between">
+                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                                                        <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                                                                                    </div>
+                                                                                </form>
+
+                                                                            </div>
+                                                                            <!-- /.modal-content -->
+                                                                        </div>
+                                                                        <!-- /.modal-dialog -->
+                                                                    </div>
+                                                                {% else %}
+                                                                    <button type="button" class="btn btn-sm btn-success" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                                {% endif %}
                                                             {% endif %}
+                                                            <div class="modal fade" id="modal_upgrade_filedoc_{{ doc.id }}">
+                                                                <div class="modal-lg modal-dialog">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h4 class="modal-title">Documento digital</h4>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+
+                                                                            <div class="modal-body">
+                                                                                <p class="text-sm">Actualizar copia digital de {{ doc }}</p>
+                                                                                {% csrf_token %}
+                                                                                <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                                                <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" required>
+
+                                                                            </div>
+                                                                            <div class="modal-footer justify-content-between">
+                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                                                <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                                                                            </div>
+                                                                        </form>
+
+                                                                    </div>
+                                                                    <!-- /.modal-content -->
+                                                                </div>
+                                                                <!-- /.modal-dialog -->
+                                                            </div>
+
                                                         </td>
-                                                        </td>
+
                                                         <td class="text-center">
                                                             {% student_requirement_accomplished student doc as doc_accomplished %}
                                                             {% if doc_accomplished %}
@@ -399,7 +533,7 @@
                                             <tr>
                                                 <th class="text-center">Resp.</th>
                                                 <th>Nombre del documento</th>
-                                                <th>Archivo digital</th>
+                                                <th class="text-center">Archivo digital</th>
                                                 <th class="text-center">Listo</th>
                                                 <th class="text-center">Caduca</th>
 
@@ -421,24 +555,121 @@
                                                                 <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
                                                             {% endif %}
                                                         </td>
-                                                        <td>
+                                                        <td style="width: 55%">
                                                             {{ doc }}
                                                         </td>
-                                                        <td class="">
+                                                        <td class="text-center">
                                                             {% if student_doc_has_file %}
-                                                                <div class="btn-group btn-group-sm">
-                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
-                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Editar documento"><i class="fa fa-edit"></i> </button>
+                                                                {% if doc.type == 'student' %}
+                                                                    <div class="btn-group btn-group-sm">
+                                                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                                        <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_upgrade_filedoc_{{ doc.id }}"  title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                                                        <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
 
-                                                                </div>
+                                                                    </div>
+                                                                {% else %}
+                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+
+
+                                                                {% endif %}
                                                             {% else %}
-                                                                <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
-                                                                    {% csrf_token %}
-                                                                    <input type="hidden" name="student_id" value="{{ student.id }}">
-                                                                    <input type="hidden" name="doc_id" value="{{ doc.id }}">
-                                                                    <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file">
-                                                                </form>
+                                                                {% if doc.type == 'student' %}
+                                                                    <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data-toggle="modal" data-target="#modal_up_filedoc_{{ doc.id }}" ><i class="fa fa-upload"></i> </button>
+                                                                    <div class="modal fade" id="modal_up_filedoc_{{ doc.id }}">
+                                                                        <div class="modal-lg modal-dialog">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title">Documento digital</h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+
+                                                                                    <div class="modal-body">
+                                                                                        <p class="text-sm">Subir copia digital de {{ doc }}</p>
+                                                                                        {% csrf_token %}
+                                                                                        <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                                                        <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                                                                        <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" required>
+
+                                                                                    </div>
+                                                                                    <div class="modal-footer justify-content-between">
+                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                                                        <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                                                                                    </div>
+                                                                                </form>
+
+                                                                            </div>
+                                                                            <!-- /.modal-content -->
+                                                                        </div>
+                                                                        <!-- /.modal-dialog -->
+                                                                    </div>
+                                                                    <div class="modal fade" id="modal_upgrade_filedoc_{{ doc.id }}">
+                                                                        <div class="modal-lg modal-dialog">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title">Documento digital</h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+
+                                                                                    <div class="modal-body">
+                                                                                        <p class="text-sm">Actualizar copia digital de {{ doc }}</p>
+                                                                                        {% csrf_token %}
+                                                                                        <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                                                        <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                                                                        <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" required>
+
+                                                                                    </div>
+                                                                                    <div class="modal-footer justify-content-between">
+                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                                                        <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                                                                                    </div>
+                                                                                </form>
+
+                                                                            </div>
+                                                                            <!-- /.modal-content -->
+                                                                        </div>
+                                                                        <!-- /.modal-dialog -->
+                                                                    </div>
+                                                                {% else %}
+                                                                    <button type="button" class="btn btn-sm btn-success" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                                {% endif %}
                                                             {% endif %}
+                                                            <div class="modal fade" id="modal_upgrade_filedoc_{{ doc.id }}">
+                                                                <div class="modal-lg modal-dialog">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h4 class="modal-title">Documento digital</h4>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+
+                                                                            <div class="modal-body">
+                                                                                <p class="text-sm">Actualizar copia digital de {{ doc }}</p>
+                                                                                {% csrf_token %}
+                                                                                <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                                                <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" required>
+
+                                                                            </div>
+                                                                            <div class="modal-footer justify-content-between">
+                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                                                <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                                                                            </div>
+                                                                        </form>
+
+                                                                    </div>
+                                                                    <!-- /.modal-content -->
+                                                                </div>
+                                                                <!-- /.modal-dialog -->
+                                                            </div>
+
                                                         </td>
                                                         <td class="text-center">
                                                             {% student_requirement_accomplished student doc as doc_accomplished %}
@@ -693,11 +924,8 @@
 
             });
 
-            $(document).on('change',"input[id*='inp_filedoc']", function () {
-                var doc_id = $(this).attr('data');
-                $('#frm_filedoc_'+doc_id).submit()
 
-            });
+
             $(document).on('submit',"form[id*='frm_filedoc']", function (e) {
                 e.preventDefault();
                 var doc_id = $(this).attr('data');
@@ -721,10 +949,11 @@
                             var div = '<div class="btn-group btn-group-sm">\n' +
                                 '                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_'+doc_id+'" data="'+doc_id+'" title="Ver documento"><i class="fa fa-eye"></i> </button>\n' +
                                 '                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'" title="Editar documento"><i class="fa fa-edit"></i> </button>\n' +
-                                '\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>\n' +
                                 '                                                                </div>'
 
-                            $('#frm_filedoc_'+doc_id).replaceWith(div);
+                            $('#btn_up_filedoc_'+doc_id).replaceWith(div);
+                            $('.modal').modal('hide');
                             Toast.fire({
                                 type: 'success',
                                 title: 'Documento actualizado exitosamente'
