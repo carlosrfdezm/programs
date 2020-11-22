@@ -249,7 +249,7 @@
                                             <tr>
                                                 <th class="text-center">Resp.</th>
                                                 <th >Nombre del documento</th>
-                                                <th class="text-center">Archivo digital</th>
+                                                <th class="text-center">Copia digital</th>
                                                 <th class="text-center">Listo</th>
                                                 <th class="text-center">Caduca</th>
 
@@ -273,7 +273,7 @@
                                                                     {% csrf_token %}
                                                                     <input type="hidden" name="student_id" value="{{ student.id }}">
                                                                     <input type="hidden" name="doc_id" value="{{ doc.id }}">
-                                                                    <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" required>
+                                                                    <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" accept=".doc, .docx, .pdf" required>
 
                                                                 </div>
                                                                 <div class="modal-footer justify-content-between">
@@ -429,7 +429,7 @@
                                             <tr>
                                                 <th class="text-center">Resp.</th>
                                                 <th >Nombre del documento</th>
-                                                <th class="text-center">Archivo digital</th>
+                                                <th class="text-center">Copia digital</th>
                                                 <th class="text-center">Listo</th>
                                                 <th class="text-center">Caduca</th>
 
@@ -514,7 +514,7 @@
                                             <tr>
                                                 <th class="text-center">Resp.</th>
                                                 <th>Nombre del documento</th>
-                                                <th class="text-center">Archivo digital</th>
+                                                <th class="text-center">Copia digital</th>
                                                 <th class="text-center">Listo</th>
                                                 <th class="text-center">Caduca</th>
 

@@ -133,11 +133,41 @@ def student_doc_caducity_date(student, program_document):
 def student_doc_has_file(student, program_requirement):
     program = program_requirement.program
     if program.type == 'phd':
-        student_doc = StudentFileDocument.objects.get(student=student, program_file_document=program_requirement)
+        try:
+            student_doc = StudentFileDocument.objects.get(student=student, program_file_document=program_requirement)
+        except StudentFileDocument.DoesNotExist:
+            student_doc = StudentFileDocument(
+                student=student,
+                program_file_document=program_requirement,
+            )
+            student_doc.save()
+
+            return False
+
+
+
     elif program.type == 'msc':
-        student_doc = StudentFileDocument.objects.get(msc_student=student, program_file_document=program_requirement)
+        try:
+            student_doc = StudentFileDocument.objects.get(msc_student=student, program_file_document=program_requirement)
+        except StudentFileDocument.DoesNotExist:
+            student_doc = StudentFileDocument(
+                msc_student=student,
+                program_file_document=program_requirement,
+            )
+            student_doc.save()
+
+            return False
     elif program.type == 'dip':
-        student_doc = StudentFileDocument.objects.get(dip_student=student, program_file_document=program_requirement)
+        try:
+            student_doc = StudentFileDocument.objects.get(dip_student=student, program_file_document=program_requirement)
+        except StudentFileDocument.DoesNotExist:
+            student_doc = StudentFileDocument(
+                dip_student=student,
+                program_file_document=program_requirement,
+            )
+            student_doc.save()
+
+            return False
 
     if student_doc.file:
         return True

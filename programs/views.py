@@ -2112,15 +2112,14 @@ def ajx_update_filedoc(request, program_slug):
         student = DipStudent.objects.get(pk=request.POST['student_id'])
         filedoc = StudentFileDocument.objects.get(dip_student=student, program_file_document= ProgramFileDoc.objects.get(pk=request.POST['doc_id']))
 
-
-
-
     if request.method == 'POST':
         if student.user == request.user:
             try:
                 filedoc.file.delete()
             except:
+                print('Archivo no eliminado por algo')
                 pass
+
             try:
                 filedoc.file = request.FILES['file']
                 filedoc.save()
