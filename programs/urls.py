@@ -66,6 +66,7 @@ urlpatterns = [
 
 
     path('ajx/document/file/update', views.ajx_update_filedoc, name='ajx_update_filedoc'),
+    path('ajx/document/file/delete', views.ajx_delete_filedoc, name='ajx_delete_filedoc'),
     path('ajx/user/exists', views.ajx_usr_exists, name='ajx_usr_exists'),
     path('ajx/member/exists', views.ajx_program_member_tuthor, name='ajx_program_member_tuthor'),
     path('ajx/student/delete', views.ajx_delete_student, name='ajx_delete_student'),

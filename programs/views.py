@@ -2098,8 +2098,7 @@ def ajx_change_activity_status(request, program_slug, student_id):
 @login_required
 def ajx_update_filedoc(request, program_slug):
     form = FileUploadForm(data=request.POST, files=request.FILES)
-    print(request.POST)
-    print(request.FILES)
+
     program=Program.objects.get(slug=program_slug)
     if program.type == 'phd':
         student = Student.objects.get(pk=request.POST['student_id'])
@@ -2118,6 +2117,10 @@ def ajx_update_filedoc(request, program_slug):
 
     if request.method == 'POST':
         if student.user == request.user:
+            try:
+                filedoc.file.delete()
+            except:
+                pass
             try:
                 filedoc.file = request.FILES['file']
                 filedoc.save()
@@ -2143,6 +2146,53 @@ def ajx_update_filedoc(request, program_slug):
             json.dumps([{'updated': 2, 'errors':form.errors}]),
             content_type="application/json"
         )
+
+@login_required
+def ajx_delete_filedoc(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if program.type == 'phd':
+        student = Student.objects.get(pk=request.POST['student_id'])
+        filedoc = StudentFileDocument.objects.get(student=student, program_file_document=ProgramFileDoc.objects.get(
+            pk=request.POST['doc_id']))
+
+    elif program.type == 'msc':
+        student = MscStudent.objects.get(pk=request.POST['student_id'])
+        filedoc = StudentFileDocument.objects.get(msc_student=student, program_file_document=ProgramFileDoc.objects.get(
+            pk=request.POST['doc_id']))
+
+    elif program.type == 'dip':
+        student = DipStudent.objects.get(pk=request.POST['student_id'])
+        filedoc = StudentFileDocument.objects.get(dip_student=student, program_file_document=ProgramFileDoc.objects.get(
+            pk=request.POST['doc_id']))
+
+    if request.method == 'POST':
+        if student.user == request.user or user_is_program_cs(request.user, program):
+            try:
+                filedoc.file.delete()
+                filedoc.save()
+                return HttpResponse(
+                    json.dumps([{'deleted': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                print('Problemas con el archivo')
+                return HttpResponse(
+                    json.dumps([{'deleted': 0}]),
+                    content_type="application/json"
+                )
+
+        else:
+            return HttpResponse(
+                json.dumps([{'updated': 3}]),
+                content_type="application/json"
+            )
+
+    else:
+        return HttpResponse(
+            json.dumps([{'updated': 2}]),
+            content_type="application/json"
+        )
+
 
 def ajx_edit_activity(request, program_slug, student_id):
     program=Program.objects.get(slug=program_slug)
