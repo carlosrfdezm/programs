@@ -116,6 +116,7 @@ def student_init_requirement_accomplished(student, program_requirement):
         return True
     else:
         return False
+
 @register.simple_tag
 def student_doc_caducity_date(student, program_document):
     if program_document.get_old:
@@ -128,7 +129,20 @@ def student_doc_caducity_date(student, program_document):
     else:
         return None
 
+@register.simple_tag
+def student_doc_has_file(student, program_requirement):
+    program = program_requirement.program
+    if program.type == 'phd':
+        student_doc = StudentFileDocument.objects.get(student=student, program_file_document=program_requirement)
+    elif program.type == 'msc':
+        student_doc = StudentFileDocument.objects.get(msc_student=student, program_file_document=program_requirement)
+    elif program.type == 'dip':
+        student_doc = StudentFileDocument.objects.get(dip_student=student, program_file_document=program_requirement)
 
+    if student_doc.file:
+        return True
+    else:
+        return False
 
 
 @register.simple_tag

@@ -257,6 +257,8 @@
                                             </thead>
                                             <tbody>
                                             {% for doc in program.programfiledoc_set.all %}
+                                                {% student_doc_has_file student doc as student_doc_has_file %}
+
                                                 <!-- Post -->
                                                 {% if doc.is_init_requirenment %}
 
@@ -274,12 +276,19 @@
                                                             {{ doc }}
                                                         </td>
                                                         <td class="">
-                                                            {% if doc.file %}
-                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="doc_file_{{ doc.id }}">
-                                                                <span class="text-sm">{{ doc.file.url }}</span>
-                                                            {% else %}
-                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="doc_file_{{ doc.id }}">
+                                                            {% if student_doc_has_file %}
+                                                                <div class="btn-group btn-group-sm">
+                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Editar documento"><i class="fa fa-edit"></i> </button>
 
+                                                                </div>
+                                                            {% else %}
+                                                                <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+                                                                    {% csrf_token %}
+                                                                    <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                                    <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                                                    <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file">
+                                                                </form>
                                                             {% endif %}
                                                         </td>
                                                         <td class="text-center">
@@ -323,6 +332,7 @@
                                             </thead>
                                             <tbody>
                                             {% for doc in program.programfiledoc_set.all %}
+                                                {% student_doc_has_file student doc as student_doc_has_file %}
                                                 <!-- Post -->
                                                 {% if doc.is_finish_requirenment %}
 
@@ -340,13 +350,21 @@
                                                             {{ doc }}
                                                         </td>
                                                         <td class="">
-                                                            {% if doc.file %}
-                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="doc_file_{{ doc.id }}">
-                                                                <span class="text-sm">{{ doc.file.url }}</span>
-                                                            {% else %}
-                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="doc_file_{{ doc.id }}">
+                                                            {% if student_doc_has_file %}
+                                                                <div class="btn-group btn-group-sm">
+                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Editar documento"><i class="fa fa-edit"></i> </button>
 
+                                                                </div>
+                                                            {% else %}
+                                                                <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+                                                                    {% csrf_token %}
+                                                                    <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                                    <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                                                    <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file">
+                                                                </form>
                                                             {% endif %}
+                                                        </td>
                                                         </td>
                                                         <td class="text-center">
                                                             {% student_requirement_accomplished student doc as doc_accomplished %}
@@ -389,6 +407,7 @@
                                             </thead>
                                             <tbody>
                                             {% for doc in program.programfiledoc_set.all %}
+                                                {% student_doc_has_file student doc as student_doc_has_file %}
                                                 <!-- Post -->
                                                 {% if not doc.is_finish_requirenment and not doc.is_init_requirenment %}
 
@@ -406,11 +425,19 @@
                                                             {{ doc }}
                                                         </td>
                                                         <td class="">
-                                                            {% if doc.file %}
-                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="doc_file_{{ doc.id }}">
-                                                                <span class="text-sm">{{ doc.file.url }}</span>
+                                                            {% if student_doc_has_file %}
+                                                                <div class="btn-group btn-group-sm">
+                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Editar documento"><i class="fa fa-edit"></i> </button>
+
+                                                                </div>
                                                             {% else %}
-                                                                <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="doc_file_{{ doc.id }}">
+                                                                <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+                                                                    {% csrf_token %}
+                                                                    <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                                    <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                                                    <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file">
+                                                                </form>
                                                             {% endif %}
                                                         </td>
                                                         <td class="text-center">
@@ -665,59 +692,68 @@
 
 
             });
+
             $(document).on('change',"input[id*='inp_filedoc']", function () {
-                var fd = new FormData();
-                var files = $(this)[0].files;
-                var url = {% url  %}
+                var doc_id = $(this).attr('data');
+                $('#frm_filedoc_'+doc_id).submit()
+
+            });
+            $(document).on('submit',"form[id*='frm_filedoc']", function (e) {
+                e.preventDefault();
+                var doc_id = $(this).attr('data');
+                var data = new FormData($('#frm_filedoc_'+doc_id).get(0));
+
+                var url = "{% url 'programs:ajx_update_filedoc' program.slug %}";
 
                 $.ajax({
                     url : url,
                     type : "POST", // http method
-                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                        'message_id':current_index,
-                    }, // data sent with the post request
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
 
                     // handle a successful response
                     success : function(json) {
 
-                        if (json[0].readed == 1) {
+                        if (json[0].updated == 1) {
+                            var div = '<div class="btn-group btn-group-sm">\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_'+doc_id+'" data="'+doc_id+'" title="Ver documento"><i class="fa fa-eye"></i> </button>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'" title="Editar documento"><i class="fa fa-edit"></i> </button>\n' +
+                                '\n' +
+                                '                                                                </div>'
 
-                            $('#modal_read_message_'+current_index).modal('show');
-                            $('#a_read_message_'+current_index).replaceWith('<a href="#" id="a_remove_message_'+current_index+'" data="'+current_index+'" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>\n')
-                            $('#p_message_body_'+current_index).removeClass('text-bold')
-                            $('#i_msg_'+current_index).removeClass('fa-envelope')
-                            $('#i_msg_'+current_index).addClass('fa-envelope-open')
+                            $('#frm_filedoc_'+doc_id).replaceWith(div);
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Documento actualizado exitosamente'
+                            })
 
-
-
-                        } else if(json[0].readed == 0){
+                        } else if(json[0].updated == 0){
                             Toast.fire({
                                 type: 'error',
-                                title: 'No se ha podido mostrar el mensaje.'
+                                title: 'No se ha podido actualizar el documento.Errores:'+ json[0].errors
                             })
 
                         }
-                        else if(json[0].readed == 2){
+                        else if(json[0].updated == 2){
                             Toast.fire({
                                 type: 'error',
-                                title: 'No se ha podido mostrar el mensaje: el metodo no es POST.'
+                                title: 'No se ha podido actualizar el documento: el metodo no es POST.'
                             })
 
                         }
-                        else if(json[0].readed == 3){
+                        else if(json[0].updated == 3){
                             Toast.fire({
                                 type: 'error',
-                                title: 'No se ha podido mostrar el mensaje: El usuario no es el receptor del mensaje'
+                                title: 'No se ha podido actualizar el documento: El usuario no es el propietario del perfil.'
                             })
 
                         }
                         console.log(json); // log the returned json to the console
                         console.log("success"); // another sanity check
 
-
-
-
-                        $('#div_by_workshop').removeClass('hidden')
 
                     },
 
@@ -731,7 +767,6 @@
                 });
 
             });
-
 
             $(document).on('click',"button[id='btn_edit_profile']", function () {
 

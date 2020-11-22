@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail
 from django.db.models import Q
+from django.forms import forms
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 
@@ -18,6 +19,7 @@ from django.utils.text import slugify
 from django.utils.timezone import now
 
 from programas.settings import MEDIA_ROOT
+from programs.forms import FileUploadForm
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, \
     ProgramMember, ProgramFinishRequirements, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
@@ -2092,45 +2094,89 @@ def ajx_change_activity_status(request, program_slug, student_id):
             content_type="application/json"
         )
 
+
 @login_required
-def ajx_change_activity_status(request, program_slug, student_id):
-    program = Program.objects.get(slug=program_slug)
-    student = Student.objects.get(pk=student_id)
-    if request.user == student.user:
-        if request.method == 'POST':
-            activity = FormationPlanActivities.objects.get(pk=request.POST['activity_id'])
-            if activity.status == 'pending':
-                activity.status = 'ready'
-            else:
-                activity.status = 'pending'
-            activity.save()
-            return HttpResponse(
-                json.dumps([{'edited': 1, 'status':activity.status }]),
-                content_type="application/json"
-            )
+def ajx_update_filedoc(request, program_slug):
+    form = FileUploadForm(data=request.POST, files=request.FILES)
+    print(request.POST)
+    print(request.FILES)
+    program=Program.objects.get(slug=program_slug)
+    if program.type == 'phd':
+        student = Student.objects.get(pk=request.POST['student_id'])
+        filedoc = StudentFileDocument.objects.get(student=student, program_file_document= ProgramFileDoc.objects.get(pk=request.POST['doc_id']))
+
+    elif  program.type == 'msc':
+        student = MscStudent.objects.get(pk=request.POST['student_id'])
+        filedoc = StudentFileDocument.objects.get(msc_student=student, program_file_document= ProgramFileDoc.objects.get(pk=request.POST['doc_id']))
+
+    elif  program.type == 'dip':
+        student = DipStudent.objects.get(pk=request.POST['student_id'])
+        filedoc = StudentFileDocument.objects.get(dip_student=student, program_file_document= ProgramFileDoc.objects.get(pk=request.POST['doc_id']))
+
+
+
+
+    if request.method == 'POST':
+        if student.user == request.user:
+            try:
+                filedoc.file = request.FILES['file']
+                filedoc.save()
+                return HttpResponse(
+                    json.dumps([{'updated': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                print('Problemas con el archivo')
+                return HttpResponse(
+                    json.dumps([{'updated': 0, 'errors':form.errors}]),
+                    content_type="application/json"
+                )
+
         else:
             return HttpResponse(
-                json.dumps([{'edited': 0}]),
+                json.dumps([{'updated': 3, 'errors':form.errors}]),
                 content_type="application/json"
             )
+
     else:
         return HttpResponse(
-            json.dumps([{'edited': 2}]),
+            json.dumps([{'updated': 2, 'errors':form.errors}]),
             content_type="application/json"
         )
 
-def ajx_edit_activity(request, program_slug, file_id):
+def ajx_edit_activity(request, program_slug, student_id):
     program=Program.objects.get(slug=program_slug)
-    filedoc = StudentFileDocument.objects.get(pk=file_id)
-    if program.type == 'phd':
-        student = filedoc.student
-    elif  program.type == 'msc':
-        student = filedoc.msc_student
-    elif  program.type == 'dip':
-        student = filedoc.dip_student
+    student=Student.objects.get(pk=student_id)
+    activity = FormationPlanActivities.objects.get(pk=request.POST['activity_id'])
 
-    if student.user == request.user:
-        pass
+    if program.type == 'phd':
+        if request.user == student.user:
+            if request.method == 'POST':
+                activity.init_date=request.POST['init_date']
+                activity.end_date=request.POST['end_date']
+                activity.description=request.POST['description']
+                activity.status = request.POST['status']
+                activity.save()
+                formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
+                formation_plan.last_update_date = now().date()
+                formation_plan.save()
+                return HttpResponse(
+                    json.dumps([{'edited': 1,'init_date':activity.init_date,'end_date':activity.end_date,
+                                 'description':activity.description,'status':activity.status, 'id':activity.id}]),
+                    content_type="application/json"
+                )
+
+            else:
+                return HttpResponse(
+                    json.dumps([{'edited': 0}]),
+                    content_type="application/json"
+                )
+
+        else:
+            return HttpResponse(
+                json.dumps([{'edited': 3}]),
+                content_type="application/json"
+            )
 
     else:
         return HttpResponse(
