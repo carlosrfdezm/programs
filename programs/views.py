@@ -2117,7 +2117,7 @@ def ajx_update_filedoc(request, program_slug):
             try:
                 filedoc.file.delete()
             except:
-                print('Archivo no eliminado por algo')
+                print('Archivo no eliminado por algopull ')
                 pass
 
             try:
