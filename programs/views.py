@@ -4220,7 +4220,7 @@ def program_doc_view(request,program_slug, doc_id):
     except ProgramMember.DoesNotExist:
         return error_500(request,program, 'Solo los miembros del claustro pueden ver documentos del mismo')
 
-def public_program_doc_view(request, program_slug, doc_id):
+def public_program_doc_view(request, program_slug,doc_id):
     program = Program.objects.get(slug=program_slug)
 
     document = ProgramDocument.objects.get(pk=doc_id)
@@ -4252,6 +4252,56 @@ def public_program_doc_view(request, program_slug, doc_id):
     else:
 
         return error_500(request, program, 'No existe el archivo solicitado')
+
+@login_required
+def student_filedoc_view(request, program_slug,student_id, doc_id):
+    program = Program.objects.get(slug=program_slug)
+
+
+    if program.type == 'phd':
+        student = Student.objects.get(pk=student_id)
+        document = StudentFileDocument.objects.get(student=student, program_file_document=ProgramFileDoc.objects.get(pk=doc_id))
+
+    elif program.type == 'msc':
+        student = MscStudent.objects.get(pk=student_id)
+        document = StudentFileDocument.objects.get(msc_student=student,
+                                                   program_file_document=ProgramFileDoc.objects.get(pk=doc_id))
+    elif program.type == 'dip':
+        student = DipStudent.objects.get(pk=student_id)
+        document = StudentFileDocument.objects.get(dip_student=student,
+                                                   program_file_document=ProgramFileDoc.objects.get(pk=doc_id))
+
+
+    if request.user == student.user or user_is_program_cs(request.user, program):
+        fs = FileSystemStorage()
+
+        filename = document.file.url
+
+        if fs.exists(filename):
+            doc_ext = filename.split('.')[filename.split('.').__len__() - 1]
+
+            if doc_ext == 'doc' or doc_ext == 'docx' or doc_ext == 'odt':
+
+                with fs.open(filename) as doc:
+                    response = HttpResponse(doc, content_type='application/doc')
+                    response['Content-Disposition'] = "inline; filename=" + '"' + filename.split('/')[
+                        filename.split('/').__len__() - 1] + '"'
+
+                    return response
+
+            elif doc_ext == 'pdf':
+                with fs.open(filename) as doc:
+                    response = HttpResponse(doc, content_type='application/pdf')
+                    response['Content-Disposition'] = "inline; filename=" + '"' + filename.split('/')[
+                        filename.split('/').__len__() - 1] + '"'
+
+                    return response
+
+        else:
+
+            return error_500(request, program, 'No existe el archivo solicitado')
+    else:
+        return error_500(request, program, 'No tiene privilegios para ver este archivo.')
 
 
 def program_cgc_document_view(request,program_slug, document_id):

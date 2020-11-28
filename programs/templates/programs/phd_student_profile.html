@@ -837,7 +837,7 @@
 
                         if (json[0].updated == 1) {
                             var div = '<div class="btn-group btn-group-sm" id="div_btn_filedoc_'+doc_id+'">\n' +
-                                '                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_'+doc_id+'" data="'+doc_id+'" data-toggle="modal" data-target="" title="Ver documento"><i class="fa fa-eye"></i> </button>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_'+doc_id+'" data="'+doc_id+'" title="Ver documento"><i class="fa fa-eye"></i> </button>\n' +
                                 '                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'"  data-toggle="modal" data-target="#modal_upgrade_filedoc_'+doc_id+'"   title="Editar documento"><i class="fa fa-edit"></i> </button>\n' +
                                 '                                                                    <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'"  data-toggle="modal" data-target="#modal_rm_filedoc_'+doc_id+'" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>\n' +
                                 '                                                                </div>'
@@ -954,6 +954,14 @@
                         })
                     }
                 });
+
+            });
+            $(document).on('click',"button[id*='btn_see_filedoc']", function (e) {
+                var doc_id = $(this).attr('data');
+
+                var url = "/{{ program.slug }}/students/{{ student.id }}/file/"+doc_id+"/view";
+                alert(url);
+                window.open(url);
 
             });
 
