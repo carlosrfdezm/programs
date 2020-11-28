@@ -891,7 +891,7 @@
                 var doc_id = $(this).attr('data');
                 var data = new FormData($('#frm_upgrade_filedoc_'+doc_id).get(0));
 
-                var url = "{% url 'programs:ajx_update_filedoc' program.slug %}";
+                var url = "{% url 'programs:ajx_upgrade_filedoc' program.slug %}";
 
                 $.ajax({
                     url : url,
