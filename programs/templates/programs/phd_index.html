@@ -258,7 +258,7 @@
 
                 {% for doc in public_docs %}
 
-                    <div class="row pt-1 pb-1">
+                    <div class="row pt-1">
                         <div class="col-md-10 offset-1">
                             <p class="text-primary" title="{{ doc.description }}"><a class="text-primary" href="{% url 'programs:public_program_doc_view' program.slug doc.id %}">{{ doc.description|truncatewords:15 }}</p>
                         </div>
