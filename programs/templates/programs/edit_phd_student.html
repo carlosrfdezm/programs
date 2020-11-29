@@ -39,6 +39,8 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
+
+
                             <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_student' program.slug doc_student.id %}">
                                 {% csrf_token %}
                                 <div class="card-body">
@@ -294,13 +296,17 @@
                                     <hr>
                                     <h5><strong>Requisitos</strong></h5>
 
+
                                     <h6>De ingreso:</h6>
                                     <div class="row">
                                         <div class="col-md-1 col-sm-1">
                                             <h6 class="text-center"><strong>Resp.</strong></h6>
                                         </div>
-                                        <div class="col-md-8 col-sm-6">
+                                        <div class="col-md-6 col-sm-4">
                                             <h6><strong>Nombre del documento</strong></h6>
+                                        </div>
+                                        <div class="col-md-2 col-sm-2 text-center">
+                                            <h6><strong>Copia digital</strong></h6>
                                         </div>
                                         <div class="col-md-1 col-sm-1 text-center">
                                             <h6><strong>Listo.</strong></h6>
@@ -310,6 +316,8 @@
                                         </div>
                                     </div>
                                     {% for doc in new_init_requirements %}
+                                        {% student_doc_has_file doc_student doc as student_doc_has_file %}
+
                                         <div class="row pt-1 pb-1 align-items-center">
                                             <div class="col-md-1 col-sm-1 text-center">
                                                 {% if doc.type == 'student' %}
@@ -320,8 +328,35 @@
                                                     <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
                                                 {% endif %}
                                             </div>
-                                            <div class="col-md-8 col-sm-6">
+                                            <div class="col-md-6 col-sm-4">
                                                 <h6>{{ doc.doc_name|truncatewords:6 }}</h6>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2 text-center">
+                                                {% if student_doc_has_file %}
+                                                    {% if doc.type == 'student' %}
+                                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+
+
+                                                    {% else %}
+                                                        <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
+                                                            <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                            <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                                            <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}"  title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
+
+                                                        </div>
+
+
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if doc.type == 'student' %}
+                                                        <button type="button" class="btn btn-sm btn-default" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye-slash"></i> </button>
+
+                                                    {% else %}
+                                                        <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data="{{ doc.id }}"  ><i class="fa fa-upload"></i> </button>
+
+                                                    {% endif %}
+                                                {% endif %}
+
                                             </div>
                                             <div class="col-md-1 col-sm-1 text-center">
                                                 {% student_requirement_accomplished doc_student doc as doc_accomplished %}
@@ -347,8 +382,11 @@
                                         <div class="col-md-1 col-sm-1">
                                             <h6 class="text-center"><strong>Resp.</strong></h6>
                                         </div>
-                                        <div class="col-md-8 col-sm-6">
+                                        <div class="col-md-6 col-sm-4">
                                             <h6><strong>Nombre del documento</strong></h6>
+                                        </div>
+                                        <div class="col-md-2 col-sm-2 text-center">
+                                            <h6><strong>Copia digital</strong></h6>
                                         </div>
                                         <div class="col-md-1 col-sm-1 text-center">
                                             <h6><strong>Listo.</strong></h6>
@@ -358,6 +396,8 @@
                                         </div>
                                     </div>
                                     {% for doc in new_finish_requirements %}
+                                        {% student_doc_has_file doc_student doc as student_doc_has_file %}
+
                                         <div class="row pt-1 pb-1 align-items-center">
                                             <div class="col-md-1 col-sm-1 text-center">
                                                 {% if doc.type == 'student' %}
@@ -368,8 +408,35 @@
                                                     <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
                                                 {% endif %}
                                             </div>
-                                            <div class="col-md-8 col-sm-6">
+                                            <div class="col-md-6 col-sm-4">
                                                 <p>{{ doc.doc_name|truncatewords:6 }}</p>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2 text-center">
+                                                {% if student_doc_has_file %}
+                                                    {% if doc.type == 'student' %}
+                                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+
+
+                                                    {% else %}
+                                                        <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
+                                                            <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                            <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                                            <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
+
+                                                        </div>
+
+
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if doc.type == 'student' %}
+                                                        <button type="button" class="btn btn-sm btn-default" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye-slash"></i> </button>
+
+                                                    {% else %}
+                                                        <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data="{{ doc.id }}"><i class="fa fa-upload"></i> </button>
+
+                                                    {% endif %}
+                                                {% endif %}
+
                                             </div>
                                             <div class="col-md-1 col-sm-1 text-center">
                                                 {% student_requirement_accomplished doc_student doc as doc_accomplished %}
@@ -428,6 +495,7 @@
                 </div>
                 <!-- /.row -->
             </div><!-- /.container-fluid -->
+
         </section>
 
         <div class="modal fade" id="modal_add_tuthor">
@@ -473,8 +541,105 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
+
     {% endif %}
+
     <!-- /.content -->
+    {% for doc in program.programfiledoc_set.all %}
+        <div class="modal fade" id="modal_up_filedoc_{{ doc.id }}" data="{{ doc.id }}">
+            <div class="modal-lg modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Documento digital</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" action="{% url 'programs:ajx_update_filedoc' program.slug %}" data="{{ doc.id }}" method="post">
+
+                        <div class="modal-body">
+                            <p class="text-sm">Subir copia digital de {{ doc }}</p>
+                            {% csrf_token %}
+                            <input type="hidden" name="student_id" value="{{ doc_student.id }}">
+                            <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                            <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" accept=".doc, .docx, .pdf" required>
+
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                        </div>
+                    </form>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <div class="modal fade" id="modal_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}">
+            <div class="modal-lg modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Documento digital</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="frm_upgrade_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+
+                        <div class="modal-body">
+                            <p class="text-sm">Actualizar copia digital de {{ doc }}</p>
+                            {% csrf_token %}
+                            <input type="hidden" name="student_id" value="{{ doc_student.id }}">
+                            <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                            <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" accept=".doc, .docx, .pdf" required>
+
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                        </div>
+                    </form>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <div class="modal fade" id="modal_rm_filedoc_{{ doc.id }}">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Documento digital</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                            </div>
+                            <div class="col-md-10">
+                                <p class="text-center">¿Seguro que desea eliminar la copia digital de:<br><strong>{{ doc|truncatewords:5 }}</strong>?
+                                    <br>Siempre podrá agregarlo nuevamente&hellip;</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" data="{{ doc.id }}" id="btn_rm_docfile_{{ doc.id }}">Eliminar</button>
+                    </div>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    {% endfor %}
+
 {% endblock %}
 <!-- jQuery -->
 <script src="../../plugins/jquery/jquery.min.js"></script>
@@ -566,6 +731,12 @@
 
                 }
 
+            });
+            $(document).on('click', "button[id*='btn_up_filedoc']", function (e){
+                e.preventDefault();
+                var doc_id = $(this).attr('data');
+
+                $('#modal_up_filedoc_'+doc_id).modal('show');
             });
 
 
@@ -820,7 +991,7 @@
                 $(div_selector).remove();
 
             });
-            $('#frm_add_tuthor').on('submit', function (e) {
+            $(document).on('submit','#frm_add_tuthor', function (e) {
                 e.preventDefault();
                 var url = "{% url 'programs:ajx_create_tuthor' program.slug doc_student.id%}";
 
@@ -935,6 +1106,236 @@
                         '                            </div>');
 
                 }
+
+            });
+            $(document).on('submit',"form[id*='frm_filedoc']", function (e) {
+                e.preventDefault();
+                var doc_id = $(this).attr('data');
+                var data = new FormData($('#frm_filedoc_'+doc_id).get(0));
+
+                var url = "{% url 'programs:ajx_update_filedoc' program.slug %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].updated == 1) {
+                            var div = '<div class="btn-group btn-group-sm" id="div_btn_filedoc_'+doc_id+'">\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_'+doc_id+'" data="'+doc_id+'" title="Ver documento"><i class="fa fa-eye"></i> </button>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'"  data-toggle="modal" data-target="#modal_upgrade_filedoc_'+doc_id+'"   title="Editar documento"><i class="fa fa-edit"></i> </button>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'"  data-toggle="modal" data-target="#modal_rm_filedoc_'+doc_id+'" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>\n' +
+                                '                                                                </div>'
+
+                            $('#btn_up_filedoc_'+doc_id).replaceWith(div);
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Documento actualizado exitosamente'
+                            })
+
+                        } else if(json[0].updated == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido actualizar el documento.Errores:'+ json[0].errors
+                            })
+
+                        }
+                        else if(json[0].updated == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido actualizar el documento: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].updated == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido actualizar el documento: El usuario no es el propietario del perfil.'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
+            $(document).on('submit',"form[id*='frm_upgrade_filedoc']", function (e) {
+                e.preventDefault();
+                var doc_id = $(this).attr('data');
+                var data = new FormData($('#frm_upgrade_filedoc_'+doc_id).get(0));
+
+                var url = "{% url 'programs:ajx_upgrade_filedoc' program.slug %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].updated == 1) {
+                            var div = '<div class="btn-group btn-group-sm" id="div_btn_filedoc_'+doc_id+'">\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_'+doc_id+'" data="'+doc_id+'" data-toggle="modal" data-target="" title="Ver documento"><i class="fa fa-eye"></i> </button>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'"  data-toggle="modal" data-target="#modal_upgrade_filedoc_'+doc_id+'"   title="Editar documento"><i class="fa fa-edit"></i> </button>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'"  data-toggle="modal" data-target="#modal_rm_filedoc_'+doc_id+'" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>\n' +
+                                '                                                                </div>'
+
+                            $('#btn_up_filedoc_'+doc_id).replaceWith(div);
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Documento actualizado exitosamente'
+                            })
+
+                        } else if(json[0].updated == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido actualizar el documento.Errores:'+ json[0].errors
+                            })
+
+                        }
+                        else if(json[0].updated == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido actualizar el documento: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].updated == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido actualizar el documento: El usuario no es el propietario del perfil.'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
+            $(document).on('click',"button[id*='btn_see_filedoc']", function (e) {
+                e.preventDefault();
+
+                var doc_id = $(this).attr('data');
+
+                var url = "/{{ program.slug }}/students/{{ doc_student.id }}/file/"+doc_id+"/view";
+                window.open(url);
+
+            });
+
+            $(document).on('hidden.bs.modal',"div[id*='modal_up_filedoc']", function () {
+                var doc_id = $(this).attr('data');
+                $('#frm_filedoc_'+doc_id)[0].reset();
+                {#$('#txt_msg_body_members').summernote('code', '');#}
+            });
+
+            $(document).on('hidden.bs.modal',"div[id*='modal_upgrade_filedoc']", function () {
+                var doc_id = $(this).attr('data');
+                $('#frm_upgrade_filedoc_'+doc_id)[0].reset();
+                {#$('#txt_msg_body_members').summernote('code', '');#}
+            });
+
+            $(document).on('click',"button[id*='btn_rm_docfile_']",function (e) {
+                e.preventDefault();
+                var doc_id = $(this).attr('data');
+                $('.modal').modal('hide');
+
+                var url = "{% url 'programs:ajx_delete_filedoc' program.slug %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'doc_id':doc_id,
+                        'student_id':{{ doc_student.id }},
+                    }, // data sent with the post request
+
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+                            $('#div_btn_filedoc_'+doc_id).replaceWith('<button class="btn btn-sm btn-primary" id="btn_up_filedoc_'+doc_id+'" data-toggle="modal" data-target="#modal_up_filedoc_'+doc_id+'" ><i class="fa fa-upload"></i> </button>\n')
+
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Documento eliminado exitosamente'
+                            })
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el documento.Error desconocido.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el documento: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el documento: El usuario no es el propietario del perfil.'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+
 
             });
 
