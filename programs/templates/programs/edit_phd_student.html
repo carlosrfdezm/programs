@@ -732,12 +732,7 @@
                 }
 
             });
-            $(document).on('click', "button[id*='btn_up_filedoc']", function (e){
-                e.preventDefault();
-                var doc_id = $(this).attr('data');
 
-                $('#modal_up_filedoc_'+doc_id).modal('show');
-            });
 
 
             $(document).on('keyup','#inp_email', function () {
@@ -1108,6 +1103,18 @@
                 }
 
             });
+            $(document).on('click', "button[id*='btn_up_filedoc']", function (e){
+                e.preventDefault();
+                var doc_id = $(this).attr('data');
+
+                $('#modal_up_filedoc_'+doc_id).modal('show');
+            });
+            $(document).on('click', "button[id*='btn_upgrade_filedoc']", function (e){
+                e.preventDefault();
+                var doc_id = $(this).attr('data');
+
+                $('#modal_upgrade_filedoc_'+doc_id).modal('show');
+            });
             $(document).on('submit',"form[id*='frm_filedoc']", function (e) {
                 e.preventDefault();
                 var doc_id = $(this).attr('data');
@@ -1130,8 +1137,8 @@
                         if (json[0].updated == 1) {
                             var div = '<div class="btn-group btn-group-sm" id="div_btn_filedoc_'+doc_id+'">\n' +
                                 '                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_'+doc_id+'" data="'+doc_id+'" title="Ver documento"><i class="fa fa-eye"></i> </button>\n' +
-                                '                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'"  data-toggle="modal" data-target="#modal_upgrade_filedoc_'+doc_id+'"   title="Editar documento"><i class="fa fa-edit"></i> </button>\n' +
-                                '                                                                    <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'"  data-toggle="modal" data-target="#modal_rm_filedoc_'+doc_id+'" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_'+doc_id+'" data="'+doc_id+'" title="Editar documento"><i class="fa fa-edit"></i> </button>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>\n' +
                                 '                                                                </div>'
 
                             $('#btn_up_filedoc_'+doc_id).replaceWith(div);
@@ -1338,6 +1345,13 @@
 
 
             });
+
+            $(document).on('click', "button[id*='btn_rm_filedoc']", function (e){
+                e.preventDefault();
+                var doc_id = $(this).attr('data');
+                $('#modal_rm_filedoc_'+doc_id).modal('show');
+
+            })
 
 
 

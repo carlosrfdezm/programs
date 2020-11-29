@@ -2164,7 +2164,7 @@ def ajx_upgrade_filedoc(request, program_slug):
         filedoc = StudentFileDocument.objects.get(dip_student=student, program_file_document= ProgramFileDoc.objects.get(pk=request.POST['doc_id']))
 
     if request.method == 'POST':
-        if student.user == request.user:
+        if student.user == request.user or user_is_program_cs(request.user, program):
 
 
             try:
