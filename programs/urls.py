@@ -8,6 +8,7 @@ app_name = 'programs'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('edit', views.edit_program, name='edit_program'),
     path('home/', views.home, name='home'),
     path('background/<int:background_id>', views.program_background, name='program_background'),
     #Path de estudiantes de doctorados, excepto la lista

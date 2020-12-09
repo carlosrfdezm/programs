@@ -63,7 +63,7 @@
                 {% if user_is_program_cs %}
                     <li class="nav-item dropdown">
                         <a class="nav-link" data-toggle="dropdown" href="#" title="Mensajes masivos">
-                            <i class="text-primary far fa-envelope"></i>
+                            <i class="text-success far fa-envelope"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <span class="dropdown-item dropdown-header">Enviar mensajes masivos</span>
@@ -95,6 +95,13 @@
                     <li class="nav-item">
                         <a class="nav-link text-primary" href="{% url 'programs:view_program_member_profile' program.slug member.id %}" title="Ver perfil">
                             <i class="fa fa-user"></i>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if user_is_program_cs %}
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" href="{% url 'programs:edit_program' program.slug %}" title="Ajustes del programa">
+                            <i class="fa fa-cog"></i>
                         </a>
                     </li>
                 {% endif %}

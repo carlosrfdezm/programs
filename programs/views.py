@@ -5658,3 +5658,18 @@ def edit_new(request, program_slug, new_id):
             return render(request, 'programs/edit_new.html', context)
     else:
         return error_500(request, program, 'Usted no tiene privilegios para editar noticias en este programa')
+
+@login_required
+def edit_program(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            pass
+        else:
+            context = {
+                'program': program,
+                'member': ProgramMember.objects.get(user=request.user, program=program)
+            }
+            return render(request,'programs/edit_program.html', context)
+    else:
+        return  error_500(request, program, 'Usted no tiene privilegios para editar los ajustes de este programa')
