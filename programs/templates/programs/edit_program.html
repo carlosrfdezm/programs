@@ -34,15 +34,107 @@
                         <!-- /.card-header -->
                         <!-- form start -->
                         <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_program' program.slug %}">
-                        {% csrf_token %}
+                            {% csrf_token %}
                             <div class="card-body">
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
-                                        <label for="inp_name">Nombre:</label>
-                                        <textarea class="form-control" id="inp_name" name="line_name" placeholder="Nombre de la línea de investigación" maxlength="500" rows="5" required>{{ program.full_name }}</textarea>
+                                        <label for="inp_fullname">Nombre completo:</label>
+                                        <input type="text" class="form-control" id="inp_fullname" name="program_fullname" placeholder="Nombre completo del programa" maxlength="150" value="{{ program.full_name }}" required>
                                     </div>
 
                                 </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="inp_shortname">Nombre corto:</label>
+                                        <input type="text" class="form-control" id="inp_shortname" name="program_shortname" placeholder="Nombre corto del programa" maxlength="40" value="{{ program.short_name }}" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="inp_email">Correo del programa:</label>
+                                        <input type="email" class="form-control" id="inp_email" name="program_email" placeholder="Correo electrónico del programa" maxlength="" value="{{ program.email }}" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="inp_phone">Teléfono:</label>
+                                        <input type="tel" class="form-control" id="inp_phone" name="program_phone" placeholder="Teléfono del programa" maxlength="20" value="{{ program.phone }}" required>
+                                    </div>
+
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="inp_address">Dirección postal del programa:</label>
+                                        <input type="text" class="form-control" id="inp_address" name="program_address" placeholder="Dirección postal del programa" maxlength="150" value="{{ program.address }}" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="inp_center">Centro coordinador:</label>
+                                        <input type="text" class="form-control" id="inp_center" name="program_center" placeholder="Centro coordinador del programa" maxlength="120" value="{{ program.center }}" required>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-11">
+                                        <h5>Backgrounds de la portada</h5>
+
+                                    </div>
+                                    <div class="col-md-1 text-right">
+                                        <button type="button" class="btn btn-sm btn-warning" title="Agregar background"><i class="fa fa-plus"></i> </button>
+                                    </div>
+                                </div>
+                                {% if program.programbackgrounds_set.all %}
+                                    {% for background in program.programbackgrounds_set.all %}
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <a class="" href="">{{ background.background.name }}</a>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-sm btn-warning" title="Cambiar background"><i class="fa fa-edit"></i> </button>
+                                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar background"><i class="fa fa-eraser"></i> </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="row">
+                                        <div class="alert alert-warning col-md-10 offset-1 text-center">
+                                            <h5 class="">No se han agregado backgrounds a la portada del programa</h5>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-11">
+                                        <h5>Requisitos de ingreso al programa</h5>
+
+                                    </div>
+                                    <div class="col-md-1 text-right">
+                                        <button type="button" class="btn btn-sm btn-warning" title="Agregar requisito de ingreso"><i class="fa fa-plus"></i> </button>
+                                    </div>
+                                </div>
+                                {% if program.programfiledoc_set.all %}
+                                    {% for filedoc in program.programfiledoc_set.all %}
+                                        {% if filedoc.is_init_requirenment %}
+                                        <div class="row pt-1">
+                                            <div class="col-md-10">
+                                                <a class="" href="">{{ filedoc }}</a>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-sm btn-warning" title="Cambiar background"><i class="fa fa-edit"></i> </button>
+                                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar background"><i class="fa fa-eraser"></i> </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="row">
+                                        <div class="alert alert-warning col-md-10 offset-1 text-center">
+                                            <h5 class="">No se han agregado backgrounds a la portada del programa</h5>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
 
                             </div>
                             <!-- /.card-body -->
