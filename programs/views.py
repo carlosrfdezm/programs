@@ -5664,7 +5664,16 @@ def edit_program(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     if user_is_program_cs(request.user, program):
         if request.method == 'POST':
-            pass
+            program.full_name = request.POST['program_fullname']
+            program.short_name = request.POST['program_shortname']
+            program.email = request.POST['program_email']
+            program.phone = request.POST['program_phone']
+            program.address = request.POST['program_address']
+            program.center = request.POST['program_center']
+
+            program.save()
+
+            return HttpResponseRedirect(reverse('programs:edit_program', args=[program_slug]))
         else:
             context = {
                 'program': program,
