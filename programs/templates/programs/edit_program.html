@@ -77,7 +77,7 @@
 
                                     </div>
                                     <div class="col-md-1 text-right">
-                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="modal_add_program_background" title="Agregar background"><i class="fa fa-plus"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_add_program_background" title="Agregar background"><i class="fa fa-plus"></i> </button>
                                     </div>
                                 </div>
                                 {% if program.programbackgrounds_set.all %}
@@ -162,7 +162,7 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                            <hr>
+                                <hr>
                                 <div class="row">
                                     <div class="col-md-11">
                                         <h5>Requisitos de egreso del programa</h5>
@@ -232,49 +232,39 @@
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                             </div>
                         </form>
-                    <div class="modal fade" id="modal_add_tuthor">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Agregar nuevo tutor a {{ student }}</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form id="frm_add_tuthor" method="post">
-                        <div class="modal-body alert alert-success">
+                        <div class="modal fade" id="modal_add_program_background">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Agregar nueva imagen de fondo</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form id="frm_add_background" method="post">
+                                        <div class="modal-body alert alert-success">
 
-                            <div class="form-row align-items-center pb-2" id="div_tuthor_1">
-                                <div class="col-md-2">
-                                    <input type="email" class="form-control" id="inp_tuthor_email" data="1" name="tuthor_email" placeholder="Email del tutor" required></input>
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" readonly  id="inp_tuthor_name" name="tuthor_name" placeholder="Nombre(s) del tutor" required></input>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" readonly  id="inp_tuthor_lastname" name="tuthor_lastname" placeholder="Apellidos del tutor" required></input>
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" readonly  id="inp_tuthor_institution" name="tuthor_institution" placeholder="Institución del tutor" required></input>
-                                </div>
+                                            <div class="form-row align-items-center pb-2" id="div_tuthor_1">
+                                                    <input type="file" class="form-control-file" id="inp_add_background" name="program_backgorund" placeholder="background" required accept=".jpeg, .jpg, .png">
 
 
 
+
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- /.modal-content -->
                             </div>
-
-
-
+                            <!-- /.modal-dialog -->
                         </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
-                        </div>
-                    </form>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
                     </div>
                     <!-- /.card -->
 
