@@ -77,7 +77,7 @@
 
                                     </div>
                                     <div class="col-md-1 text-right">
-                                        <button type="button" class="btn btn-sm btn-warning" title="Agregar background"><i class="fa fa-plus"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-primary" title="Agregar background"><i class="fa fa-plus"></i> </button>
                                     </div>
                                 </div>
                                 {% if program.programbackgrounds_set.all %}
@@ -96,7 +96,7 @@
                                     {% endfor %}
                                 {% else %}
                                     <div class="row">
-                                        <div class="alert alert-warning col-md-10 offset-1 text-center">
+                                        <div class="alert alert-info col-md-10 offset-1 text-center">
                                             <h5 class="">No se han agregado backgrounds a la portada del programa</h5>
                                         </div>
                                     </div>
@@ -108,29 +108,118 @@
 
                                     </div>
                                     <div class="col-md-1 text-right">
-                                        <button type="button" class="btn btn-sm btn-warning" title="Agregar requisito de ingreso"><i class="fa fa-plus"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-primary" title="Agregar requisito de ingreso"><i class="fa fa-plus"></i> </button>
                                     </div>
                                 </div>
                                 {% if program.programfiledoc_set.all %}
+                                    <div class="row">
+                                        <div class="col-md-7"><strong>Nombre del requisito</strong></div>
+                                        <div class="col-md-2 text-center"><strong>Responsable</strong></div>
+                                        <div class="col-md-1 text-center"><strong>Caduca</strong></div>
+                                        <div class="col-md-2"></div>
+                                    </div>
                                     {% for filedoc in program.programfiledoc_set.all %}
                                         {% if filedoc.is_init_requirenment %}
-                                        <div class="row pt-1">
-                                            <div class="col-md-10">
-                                                <a class="" href="">{{ filedoc }}</a>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="btn-group btn-group-sm">
-                                                    <button type="button" class="btn btn-sm btn-warning" title="Cambiar background"><i class="fa fa-edit"></i> </button>
-                                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar background"><i class="fa fa-eraser"></i> </button>
+                                            <div class="row pt-1 pb-1 align-items-baseline">
+                                                <div class="col-md-7 col-sm-4">
+                                                    <h6>{{ filedoc.doc_name|truncatewords:6 }}</h6>
+                                                </div>
+                                                <div class="col-md-2 col-sm-1 text-center">
+                                                    {% if filedoc.type == 'student' %}
+                                                        <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                    {% elif filedoc.type == 'program' %}
+                                                        <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                    {% elif filedoc.type == 'comission' %}
+                                                        <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                    {% endif %}
+                                                </div>
+
+                                                <div class="col-md-1 col-sm-1 text-center">
+                                                    {% if filedoc.get_old %}
+                                                        <i class="fa fa-toggle-on text-success" title="Si"></i>
+                                                    {% else %}
+                                                        <i class="fa fa-toggle-off text-danger" title="No"></i>
+
+                                                    {% endif %}
+
+                                                </div>
+                                                <div class="col-md-2 col-sm-4 text-center">
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button type="button" class="btn btn-sm btn-warning" title="Cambiar requisito"><i class="fa fa-edit"></i> </button>
+                                                        <button type="button" class="btn btn-sm btn-danger" title="Eliminar requisito"><i class="fa fa-eraser"></i> </button>
+                                                    </div>
+
+
                                                 </div>
                                             </div>
-                                        </div>
+
                                         {% endif %}
                                     {% endfor %}
                                 {% else %}
                                     <div class="row">
-                                        <div class="alert alert-warning col-md-10 offset-1 text-center">
-                                            <h5 class="">No se han agregado backgrounds a la portada del programa</h5>
+                                        <div class="alert alert-info col-md-10 offset-1 text-center">
+                                            <h5 class="">No se han agregado requisitos de ingreso al programa</h5>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            <hr>
+                                <div class="row">
+                                    <div class="col-md-11">
+                                        <h5>Requisitos de egreso del programa</h5>
+
+                                    </div>
+                                    <div class="col-md-1 text-right">
+                                        <button type="button" class="btn btn-sm btn-primary" title="Agregar requisito de egreso"><i class="fa fa-plus"></i> </button>
+                                    </div>
+                                </div>
+                                {% if program.programfiledoc_set.all %}
+                                    <div class="row">
+                                        <div class="col-md-7"><strong>Nombre del requisito</strong></div>
+                                        <div class="col-md-2 text-center"><strong>Responsable</strong></div>
+                                        <div class="col-md-1 text-center"><strong>Caduca</strong></div>
+                                        <div class="col-md-2"></div>
+                                    </div>
+                                    {% for filedoc in program.programfiledoc_set.all %}
+                                        {% if filedoc.is_finish_requirenment %}
+                                            <div class="row pt-1 pb-1 align-items-baseline">
+                                                <div class="col-md-7 col-sm-4">
+                                                    <h6>{{ filedoc.doc_name|truncatewords:6 }}</h6>
+                                                </div>
+                                                <div class="col-md-2 col-sm-1 text-center">
+                                                    {% if filedoc.type == 'student' %}
+                                                        <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                    {% elif filedoc.type == 'program' %}
+                                                        <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                    {% elif filedoc.type == 'comission' %}
+                                                        <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                    {% endif %}
+                                                </div>
+
+                                                <div class="col-md-1 col-sm-1 text-center">
+                                                    {% if filedoc.get_old %}
+                                                        <i class="fa fa-toggle-on text-success" title="Si"></i>
+                                                    {% else %}
+                                                        <i class="fa fa-toggle-off text-danger" title="No"></i>
+
+                                                    {% endif %}
+
+                                                </div>
+                                                <div class="col-md-2 col-sm-4 text-center">
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button type="button" class="btn btn-sm btn-warning" title="Cambiar requisito"><i class="fa fa-edit"></i> </button>
+                                                        <button type="button" class="btn btn-sm btn-danger" title="Eliminar requisito"><i class="fa fa-eraser"></i> </button>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="row">
+                                        <div class="alert alert-info col-md-10 offset-1 text-center">
+                                            <h5 class="">No se han agregado requisitos de egreso del programa</h5>
                                         </div>
                                     </div>
                                 {% endif %}
