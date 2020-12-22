@@ -1,7 +1,7 @@
 {% extends 'programs/base.html' %}
 {% load static %}
 {% load extra_tags %}
-
+{% user_is_program_cs user program as user_is_program_cs %}
 
 {% block extra_css %}
     <!-- Ionicons -->
@@ -40,6 +40,16 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">{% if scope == 'all' %}Estudiantes {% else %}{{ scope }} {% endif %} de {{  program }}</h3>
+                    {% if user_is_program_cs %}
+                        <div class="card-tools">
+
+
+                            <a class="btn btn-tool"  title="Exportar CSV" href="{% url 'programs:export_csv_students' program.slug en_scope %}" >
+                                <i class="fas fa-download"></i>
+                            </a>
+
+                        </div>
+                    {% endif %}
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">

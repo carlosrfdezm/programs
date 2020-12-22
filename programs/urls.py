@@ -14,6 +14,7 @@ urlpatterns = [
     #Path de estudiantes de doctorados, excepto la lista
     path('students/create', views.create_student, name='create_student'),
     path('students/list/<str:scope>', views.students_list, name='students_list'),
+    path('students/csv/export/<str:scope>', views.export_csv_students, name='export_csv_students'),
     path('students/<int:student_id>/edit', views.edit_student, name='edit_student'),
     path('students/<int:student_id>/profile', views.view_student_profile, name='view_student_profile'),
     path('students/<int:student_id>/autoedit/profile', views.autoedit_student_profile, name='autoedit_student_profile'),
