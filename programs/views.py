@@ -5710,7 +5710,7 @@ def export_csv_students(request, program_slug, scope):
                         [str(i), student.dni, student.user.first_name,
                          student.user.last_name.split(" ")[0],
                          student.user.last_name.split(" ")[1], str(student.gender).upper(),
-                         "MES", student.country,
+                         "MES", str(student.country)[:2],
                          "DrC",
                          program,
                          "CE",
@@ -5721,7 +5721,7 @@ def export_csv_students(request, program_slug, scope):
                         [str(i), student.dni, student.user.first_name,
                          student.user.last_name.split(" ")[0],
                          "-------", str(student.gender).upper(),
-                         "MES", student.country,
+                         "MES", str(student.country)[:2],
                          "DrC",
                          program,
                          "CE",
@@ -5747,23 +5747,23 @@ def export_csv_students(request, program_slug, scope):
                     writer.writerow(
                         [str(i), student.student.dni, student.student.user.first_name, student.student.user.last_name.split(" ")[0],
                          student.student.user.last_name.split(" ")[1], str(student.student.gender).upper(),
-                         "MES", student.student.country,
+                         "MES", str(student.student.country)[:2],
                          "DrC",
                          program,
                          "CE",
                          "CE", "N",
-                         "N", ""])
+                         "N", "N"])
                 except:
                     writer.writerow(
                         [str(i), student.student.dni, student.student.user.first_name,
                          student.student.user.last_name.split(" ")[0],
                          "--------", str(student.student.gender).upper(),
-                         "MES", student.student.country,
+                         "MES", str(student.student.country)[:2],
                          "DrC",
                          program,
                          "CE",
                          "CE", "N",
-                         "N", ""])
+                         "N", "N"])
                 i += 1
             return response
 
@@ -5785,23 +5785,23 @@ def export_csv_students(request, program_slug, scope):
                         [str(i), student.student.dni, student.student.user.first_name,
                          student.student.user.last_name.split(" ")[0],
                          student.student.user.last_name.split(" ")[1], str(student.student.gender).upper(),
-                         "MES", student.student.country,
+                         "MES", str(student.student.country)[:2],
                          "DrC",
                          program,
                          "CE",
                          "CE", "N",
-                         "N", ""])
+                         "N", "N"])
                 except:
                     writer.writerow(
                         [str(i), student.student.dni, student.student.user.first_name,
                          student.student.user.last_name.split(" ")[0],
                          "--------", str(student.student.gender).upper(),
-                         "MES", student.student.country,
+                         "MES", str(student.student.country)[:2],
                          "DrC",
                          program,
                          "CE",
                          "CE", "N",
-                         "N", ""])
+                         "N", "N"])
                 i += 1
             return response
 
@@ -5824,23 +5824,23 @@ def export_csv_students(request, program_slug, scope):
                         [str(i), student.student.dni, student.student.user.first_name,
                          student.student.user.last_name.split(" ")[0],
                          student.student.user.last_name.split(" ")[1], str(student.student.gender).upper(),
-                         "MES", student.student.country,
+                         "MES", str(student.student.country)[:2],
                          "DrC",
                          program,
                          "CE",
                          "CE", "N",
-                         "N", ""])
+                         "N", "S"])
                 except:
                     writer.writerow(
                         [str(i), student.student.dni, student.student.user.first_name,
                          student.student.user.last_name.split(" ")[0],
                          "--------", str(student.student.gender).upper(),
-                         "MES", student.student.country,
+                         "MES", str(student.student.country)[:2],
                          "DrC",
                          program,
                          "CE",
                          "CE", "N",
-                         "N", ""])
+                         "N", "S"])
                 i += 1
             return response
 
@@ -5863,23 +5863,23 @@ def export_csv_students(request, program_slug, scope):
                         [str(i), student.student.dni, student.student.user.first_name,
                          student.student.user.last_name.split(" ")[0],
                          student.student.user.last_name.split(" ")[1], str(student.student.gender).upper(),
-                         "MES", student.student.country,
+                         "MES", str(student.student.country)[:2],
                          "DrC",
                          program,
                          "CE",
                          "CE", "N",
-                         "N", ""])
+                         "N", "N"])
                 except:
                     writer.writerow(
                         [str(i), student.student.dni, student.student.user.first_name,
                          student.student.user.last_name.split(" ")[0],
                          "--------", str(student.student.gender).upper(),
-                         "MES", student.student.country,
+                         "MES", str(student.student.country)[:2],
                          "DrC",
                          program,
                          "CE",
                          "CE", "N",
-                         "N", ""])
+                         "N", "N"])
                 i += 1
 
             return response
