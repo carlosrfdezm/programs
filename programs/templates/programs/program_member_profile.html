@@ -274,7 +274,7 @@
 
                                         </form>
                                     </div>
-                                    {% if program.type != 'dip' %}
+                                    {% if program.type == 'phd' %}
                                         <div class="tab-pane" id="students">
                                             {% if professor.tuthor_set %}
                                                 <table class="table table-striped">
@@ -322,6 +322,52 @@
                                                 </div>
                                             {% endif %}
                                         </div>
+                                    {% elif program.type == 'msc' %}
+                                        <div class="tab-pane" id="students">
+                                            {% if professor.tuthor_set %}
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Nombre y apellidos.</th>
+                                                        <th>Estado</th>
+                                                        <th class="text-center">Defensa</th>
+
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for tuthor in professor.tuthor_set.all %}
+                                                        <!-- Post -->
+
+                                                        <tr>
+                                                            <td>
+                                                                {{ tuthor.msc_student }}
+                                                            </td>
+
+                                                            <td>{{ tuthor.msc_student.status|capfirst }}</td>
+                                                            <td class="text-center">
+                                                                {% if tuthor.phd_student.student.studentformationplan.planned_end_year %}
+                                                                    {{ tuthor.phd_student.student.studentformationplan.planned_end_year }}
+                                                                {% else %}
+                                                                    --------
+                                                                {% endif %}
+                                                            </td>
+
+                                                        </tr>
+
+                                                        <!-- /.post -->
+                                                    {% endfor %}
+
+                                                    </tbody>
+
+
+                                                </table>
+                                            {% else %}
+                                                <div class="alert alert-warning text-center">
+                                                    <h6>El profesor no tiene aspirantes en este momento.</h6>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+
                                     {% endif %}
                                     <!-- /.tab-pane -->
                                 </div>
