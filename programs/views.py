@@ -800,7 +800,7 @@ def msc_all_students_list(request, program_slug, scope):
                     context['member']=ProgramMember.objects.get(user=request.user, program=program)
                 except ProgramMember.DoesNotExist:
                     pass
-
+            context['en_scope']=scope
             return render(request, 'programs/msc_students_list.html', context)
         else:
             return error_500(request, program, 'El programa debe ser una maestria')

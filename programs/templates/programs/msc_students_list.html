@@ -2,6 +2,8 @@
 {% load static %}
 {% load extra_tags %}
 
+{% user_is_program_cs user program as user_is_program_cs %}
+
 
 {% block extra_css %}
     <!-- Ionicons -->
@@ -62,6 +64,11 @@
                                 {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
                                 {#                    <i class="fas fa-times"></i>#}
                                 {#                  </button>#}
+                                {% if user_is_program_cs %}
+                                    <a class="btn btn-tool"  title="Exportar CSV" href="" >
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                {% endif %}
                             </div>
                         {% else %}
                             <div class="card-tools">
@@ -82,6 +89,11 @@
                                 {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
                                 {#                    <i class="fas fa-times"></i>#}
                                 {#                  </button>#}
+                                {% if user_is_program_cs %}
+                                    <a class="btn btn-tool"  title="Exportar CSV" href="{% url 'programs:export_csv_students' program.slug en_scope %}" >
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                {% endif %}
                             </div>
                         {% endif %}
                     </div>
