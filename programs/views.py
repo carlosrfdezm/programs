@@ -5692,201 +5692,420 @@ def edit_program(request, program_slug):
 def export_csv_students(request, program_slug, scope):
     program = Program.objects.get(slug=program_slug)
     if user_is_program_cs(request.user, program):
-        if scope == "all":
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="Todos.csv"'
-            writer = csv.writer(response)
-            writer.writerow(["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
-                             "Sigla del Organismo", "Sigla del País: según Codificador de Países",
-                             "Forma de Posgrado: DrC, MSc, EPG, DIP",
-                             "Nombre del Programa",
-                             "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
-                             "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
-                             "Ejecutado en otro País: S o N", "Graduado: S o N"])
-            i=1
-            for student in Student.objects.filter(program=program):
-                try:
-                    writer.writerow(
-                        [str(i), student.dni, student.user.first_name,
-                         student.user.last_name.split(" ")[0],
-                         student.user.last_name.split(" ")[1], str(student.gender).upper(),
-                         "MES", str(student.country)[:2],
-                         "DrC",
-                         program,
-                         "CE",
-                         "CE", "N",
-                         "N", ""])
-                except:
-                    writer.writerow(
-                        [str(i), student.dni, student.user.first_name,
-                         student.user.last_name.split(" ")[0],
-                         "-------", str(student.gender).upper(),
-                         "MES", str(student.country)[:2],
-                         "DrC",
-                         program,
-                         "CE",
-                         "CE", "N",
-                         "N", ""])
-                i+=1
-            return response
-        elif scope == "requesters":
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="Todos.csv"'
-            writer = csv.writer(response)
-            writer.writerow(['', 'Listado de Solicitantes, Doctorandos, Graduados y Rechazados en ' + program.short_name])
-            writer.writerow(["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
-                             "Sigla del Organismo", "Sigla del País: según Codificador de Países",
-                             "Forma de Posgrado: DrC, MSc, EPG, DIP",
-                             "Nombre del Programa",
-                             "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
-                             "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
-                             "Ejecutado en otro País: S o N", "Graduado: S o N"])
-            i = 1
-            for student in PhdStudent.objects.filter(student__program=program, status="solicitante"):
-                try:
-                    writer.writerow(
-                        [str(i), student.student.dni, student.student.user.first_name, student.student.user.last_name.split(" ")[0],
-                         student.student.user.last_name.split(" ")[1], str(student.student.gender).upper(),
-                         "MES", str(student.student.country)[:2],
-                         "DrC",
-                         program,
-                         "CE",
-                         "CE", "N",
-                         "N", "N"])
-                except:
-                    writer.writerow(
-                        [str(i), student.student.dni, student.student.user.first_name,
-                         student.student.user.last_name.split(" ")[0],
-                         "--------", str(student.student.gender).upper(),
-                         "MES", str(student.student.country)[:2],
-                         "DrC",
-                         program,
-                         "CE",
-                         "CE", "N",
-                         "N", "N"])
-                i += 1
-            return response
+        if program.type == 'phd':
+            if scope == "all":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Todos.csv"'
+                writer = csv.writer(response)
+                writer.writerow(["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                                 "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                                 "Forma de Posgrado: DrC, MSc, EPG, DIP",
+                                 "Nombre del Programa",
+                                 "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                                 "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                                 "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i=1
+                for student in Student.objects.filter(program=program):
+                    try:
+                        options = [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "DrC",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N"]
+                        if student.phdstudent.status == 'graduado':
+                            options.append('S')
+                        else:
+                            options.append('N')
+                        writer.writerow(options)
+                    except:
+                        options = [str(i), student.dni, student.user.first_name,
+                                   student.user.last_name.split(" ")[0],
+                                   '--------', str(student.gender).upper(),
+                                   "MES", str(student.country)[:2],
+                                   "DrC",
+                                   program,
+                                   program.code,
+                                   program.branch, "N",
+                                   "N"]
+                        if student.phdstudent.status == 'graduado':
+                            options.append('S')
+                        else:
+                            options.append('N')
+                        writer.writerow(options)
+                    i+=1
+                return response
+            elif scope == "requesters":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Todos.csv"'
+                writer = csv.writer(response)
+                writer.writerow(['', 'Listado de Solicitantes, Doctorandos, Graduados y Rechazados en ' + program.short_name])
+                writer.writerow(["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                                 "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                                 "Forma de Posgrado: DrC, MSc, EPG, DIP",
+                                 "Nombre del Programa",
+                                 "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                                 "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                                 "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in PhdStudent.objects.filter(student__program=program, status="solicitante"):
+                    try:
+                        writer.writerow(
+                            [str(i), student.student.dni, student.student.user.first_name, student.student.user.last_name.split(" ")[0],
+                             student.student.user.last_name.split(" ")[1], str(student.student.gender).upper(),
+                             "MES", str(student.student.country)[:2],
+                             "DrC",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.student.dni, student.student.user.first_name,
+                             student.student.user.last_name.split(" ")[0],
+                             "--------", str(student.student.gender).upper(),
+                             "MES", str(student.student.country)[:2],
+                             "DrC",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    i += 1
+                return response
 
-        elif scope == "aproved":
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="Doctorandos.csv"'
-            writer = csv.writer(response)
-            writer.writerow(["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
-                             "Sigla del Organismo", "Sigla del País: según Codificador de Países",
-                             "Forma de Posgrado: DrC, MSc, EPG, DIP",
-                             "Nombre del Programa",
-                             "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
-                             "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
-                             "Ejecutado en otro País: S o N", "Graduado: S o N"])
-            i = 1
-            for student in PhdStudent.objects.filter(student__program=program, status="doctorando"):
-                try:
-                    writer.writerow(
-                        [str(i), student.student.dni, student.student.user.first_name,
-                         student.student.user.last_name.split(" ")[0],
-                         student.student.user.last_name.split(" ")[1], str(student.student.gender).upper(),
-                         "MES", str(student.student.country)[:2],
-                         "DrC",
-                         program,
-                         "CE",
-                         "CE", "N",
-                         "N", "N"])
-                except:
-                    writer.writerow(
-                        [str(i), student.student.dni, student.student.user.first_name,
-                         student.student.user.last_name.split(" ")[0],
-                         "--------", str(student.student.gender).upper(),
-                         "MES", str(student.student.country)[:2],
-                         "DrC",
-                         program,
-                         "CE",
-                         "CE", "N",
-                         "N", "N"])
-                i += 1
-            return response
+            elif scope == "aproved":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Doctorandos.csv"'
+                writer = csv.writer(response)
+                writer.writerow(["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                                 "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                                 "Forma de Posgrado: DrC, MSc, EPG, DIP",
+                                 "Nombre del Programa",
+                                 "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                                 "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                                 "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in PhdStudent.objects.filter(student__program=program, status="doctorando"):
+                    try:
+                        writer.writerow(
+                            [str(i), student.student.dni, student.student.user.first_name,
+                             student.student.user.last_name.split(" ")[0],
+                             student.student.user.last_name.split(" ")[1], str(student.student.gender).upper(),
+                             "MES", str(student.student.country)[:2],
+                             "DrC",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.student.dni, student.student.user.first_name,
+                             student.student.user.last_name.split(" ")[0],
+                             "--------", str(student.student.gender).upper(),
+                             "MES", str(student.student.country)[:2],
+                             "DrC",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    i += 1
+                return response
 
+            elif scope == "graduated":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Graduados.csv"'
+                writer = csv.writer(response)
+                writer.writerow(["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                                 "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                                 "Forma de Posgrado: DrC, MSc, EPG, DIP",
+                                 "Nombre del Programa",
+                                 "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                                 "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                                 "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in PhdStudent.objects.filter(student__program=program, status="graduado"):
+                    try:
+                        writer.writerow(
+                            [str(i), student.student.dni, student.student.user.first_name,
+                             student.student.user.last_name.split(" ")[0],
+                             student.student.user.last_name.split(" ")[1], str(student.student.gender).upper(),
+                             "MES", str(student.student.country)[:2],
+                             "DrC",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "S"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.student.dni, student.student.user.first_name,
+                             student.student.user.last_name.split(" ")[0],
+                             "--------", str(student.student.gender).upper(),
+                             "MES", str(student.student.country)[:2],
+                             "DrC",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "S"])
+                    i += 1
+                return response
 
-        elif scope == "graduated":
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="Graduados.csv"'
-            writer = csv.writer(response)
-            writer.writerow(["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
-                             "Sigla del Organismo", "Sigla del País: según Codificador de Países",
-                             "Forma de Posgrado: DrC, MSc, EPG, DIP",
-                             "Nombre del Programa",
-                             "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
-                             "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
-                             "Ejecutado en otro País: S o N", "Graduado: S o N"])
-            i = 1
-            for student in PhdStudent.objects.filter(student__program=program, status="graduado"):
-                try:
-                    writer.writerow(
-                        [str(i), student.student.dni, student.student.user.first_name,
-                         student.student.user.last_name.split(" ")[0],
-                         student.student.user.last_name.split(" ")[1], str(student.student.gender).upper(),
-                         "MES", str(student.student.country)[:2],
-                         "DrC",
-                         program,
-                         "CE",
-                         "CE", "N",
-                         "N", "S"])
-                except:
-                    writer.writerow(
-                        [str(i), student.student.dni, student.student.user.first_name,
-                         student.student.user.last_name.split(" ")[0],
-                         "--------", str(student.student.gender).upper(),
-                         "MES", str(student.student.country)[:2],
-                         "DrC",
-                         program,
-                         "CE",
-                         "CE", "N",
-                         "N", "S"])
-                i += 1
-            return response
+            elif scope == "denied":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Denegados.csv"'
+                writer = csv.writer(response)
+                writer.writerow(["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                                 "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                                 "Forma de Posgrado: DrC, MSc, EPG, DIP",
+                                 "Nombre del Programa",
+                                 "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                                 "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                                 "Ejecutado en otro País: S o N", "Graduado: S o N"])
 
-        elif scope == "denied":
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="Denegados.csv"'
-            writer = csv.writer(response)
-            writer.writerow(["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
-                             "Sigla del Organismo", "Sigla del País: según Codificador de Países",
-                             "Forma de Posgrado: DrC, MSc, EPG, DIP",
-                             "Nombre del Programa",
-                             "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
-                             "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
-                             "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in PhdStudent.objects.filter(student__program=program, status="denegado"):
+                    try:
+                        writer.writerow(
+                            [str(i), student.student.dni, student.student.user.first_name,
+                             student.student.user.last_name.split(" ")[0],
+                             student.student.user.last_name.split(" ")[1], str(student.student.gender).upper(),
+                             "MES", str(student.student.country)[:2],
+                             "DrC",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.student.dni, student.student.user.first_name,
+                             student.student.user.last_name.split(" ")[0],
+                             "--------", str(student.student.gender).upper(),
+                             "MES", str(student.student.country)[:2],
+                             "DrC",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    i += 1
 
-            i = 1
-            for student in PhdStudent.objects.filter(student__program=program, status="denegado"):
-                try:
-                    writer.writerow(
-                        [str(i), student.student.dni, student.student.user.first_name,
-                         student.student.user.last_name.split(" ")[0],
-                         student.student.user.last_name.split(" ")[1], str(student.student.gender).upper(),
-                         "MES", str(student.student.country)[:2],
-                         "DrC",
-                         program,
-                         "CE",
-                         "CE", "N",
-                         "N", "N"])
-                except:
-                    writer.writerow(
-                        [str(i), student.student.dni, student.student.user.first_name,
-                         student.student.user.last_name.split(" ")[0],
-                         "--------", str(student.student.gender).upper(),
-                         "MES", str(student.student.country)[:2],
-                         "DrC",
-                         program,
-                         "CE",
-                         "CE", "N",
-                         "N", "N"])
-                i += 1
+                return response
 
-            return response
+            else:
+                return error_500(request, program,
+                                 "No se reconoce el contexto "+scope)
+        elif program.type == 'msc':
+            if scope == "all":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Todos.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in MscStudent.objects.filter(program=program):
+                    try:
+                        options = [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "MSc",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N"]
+                        if student.status == 'graduado':
+                            options.append('S')
+                        else:
+                            options.append('N')
+                        writer.writerow(options)
+                    except:
+                        options = [str(i), student.dni, student.user.first_name,
+                                   student.user.last_name.split(" ")[0],
+                                   '------', str(student.gender).upper(),
+                                   "MES", str(student.country)[:2],
+                                   "MSc",
+                                   program,
+                                   program.code,
+                                   program.branch, "N",
+                                   "N"]
+                        if student.status == 'graduado':
+                            options.append('S')
+                        else:
+                            options.append('N')
+                        writer.writerow(options)
+                    i += 1
+                return response
+            elif scope == "requesters":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Todos.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ['', 'Listado de Solicitantes, Doctorandos, Graduados y Rechazados en ' + program.short_name])
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in MscStudent.objects.filter(program=program, status = 'solicitante'):
+                    try:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "MSc",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             "-------", str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "MSc",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    i += 1
+                return response
 
-        else:
-            return error_500(request, program,
-                             "No se reconoce el contexto "+scope)
+            elif scope == "aproved":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Doctorandos.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in MscStudent.objects.filter(program=program, status = 'maestrante'):
+                    try:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "MSc",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             "-------", str(student.gender).upper(),
+                              "MES", str(student.country)[:2],
+                             "MSc",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    i += 1
+                return response
+
+            elif scope == "graduated":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Graduados.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in MscStudent.objects.filter(program=program, status = 'graduado'):
+                    try:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "MSc",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "S"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             "-------", str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "MSc",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "S"])
+                    i += 1
+                return response
+
+            elif scope == "denied":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Denegados.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+
+                i = 1
+                for student in MscStudent.objects.filter(program=program, status = 'denegado'):
+                    try:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "MSc",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             "-------", str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "MSc",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    i += 1
+
+                return response
+
+            else:
+                return error_500(request, program,
+                                 "No se reconoce el contexto " + scope)
+
 
 
     else:

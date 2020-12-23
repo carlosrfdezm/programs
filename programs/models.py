@@ -105,6 +105,11 @@ class Program(models.Model):
     short_name=models.CharField(max_length=40, help_text='Nombre corto del programa', verbose_name='Nombre Corto')
     description=models.TextField(max_length=200, help_text='Breve descripcion del programa', verbose_name='Descripcion')
     type=models.CharField(max_length=20,choices=[('phd','Doctorado'),('msc','Maestría'),('dip','Diplomado')], verbose_name='Tipo')
+    branch=models.CharField(max_length=20,default='CP',choices=[('CT','Ciencias Técnicas'),('CE','Ciencias Económicas'),
+                                                   ('CNE','Ciencias Naturales y Exactas'),('CA','Ciencias Agrícolas'),
+                                                   ('CSH','Ciencias Sociales y Humanísticas'),('CP','Ciencias Pedagógicas'),
+                                                   ('Arte','Ciencias del Arte')], verbose_name='Rama del programa')
+    code = models.CharField(max_length=10, null=True, blank=True, verbose_name='Codigo del Programa')
     slug=models.SlugField(max_length=40,help_text='Slug para url',unique=True)
     address = models.TextField(max_length=150, help_text='Dirección de la sede del programa')
     phone = models.CharField(max_length=20, help_text='Teléfono de contacto')
