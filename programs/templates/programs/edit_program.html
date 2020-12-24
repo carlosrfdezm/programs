@@ -65,9 +65,26 @@
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group col-md-6">
                                         <label for="inp_center">Centro coordinador:</label>
                                         <input type="text" class="form-control" id="inp_center" name="program_center" placeholder="Centro coordinador del programa" maxlength="120" value="{{ program.center }}" required>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="slc_branch">Rama del Programa:</label>
+                                        <select class="form-control" id="slc_branch" name="program_branch"  required>
+                                            <option value="" selected>Seleccione una opción</option>
+                                            <option value="CT" {% if program.branch == 'CT' %}selected{% endif %}>Ciencias Técnicas</option>
+                                            <option value="CA" {% if program.branch == 'CA' %}selected{% endif %}>Ciencias Agrícolas</option>
+                                            <option value="CP" {% if program.branch == 'CP' %}selected{% endif %}>Ciencias Pedagógicas</option>
+                                            <option value="CNE" {% if program.branch == 'CNE' %}selected{% endif %}>Ciencias Naturales y Exactas</option>
+                                            <option value="CSH" {% if program.branch == 'CSH' %}selected{% endif %}>Ciencias Sociales y Humanísticas</option>
+                                            <option value="CE" {% if program.branch == 'CE' %}selected{% endif %}>Ciencias Económicas</option>
+                                            <option value="Arte" {% if program.branch == 'Arte' %}selected{% endif %}>Ciencias del Arte</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="inp_code">Código del programa:</label>
+                                        <input type="text" class="form-control" id="inp_code" name="program_code" placeholder="Código del programa según clasificador" maxlength="120" value="{{ program.code }}" required>
                                     </div>
                                 </div>
                                 <hr>

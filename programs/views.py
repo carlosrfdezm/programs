@@ -5675,6 +5675,8 @@ def edit_program(request, program_slug):
             program.phone = request.POST['program_phone']
             program.address = request.POST['program_address']
             program.center = request.POST['program_center']
+            program.branch = request.POST['program_branch']
+            program.code = request.POST['program_code']
 
             program.save()
 
