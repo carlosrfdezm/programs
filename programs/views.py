@@ -5790,7 +5790,7 @@ def export_csv_students(request, program_slug, scope):
                                  "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
                                  "Ejecutado en otro País: S o N", "Graduado: S o N"])
                 i = 1
-                for student in PhdStudent.objects.filter(student__program=program, status="solicitante"):
+                for student in PhdStudent.objects.filter(student__program=program, status="solicitante").order_by('student__request_date'):
                     try:
                         writer.writerow(
                             [str(i), student.student.dni, student.student.user.first_name, student.student.user.last_name.split(" ")[0],
@@ -5827,7 +5827,7 @@ def export_csv_students(request, program_slug, scope):
                                  "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
                                  "Ejecutado en otro País: S o N", "Graduado: S o N"])
                 i = 1
-                for student in PhdStudent.objects.filter(student__program=program, status="doctorando"):
+                for student in PhdStudent.objects.filter(student__program=program, status="doctorando").order_by('student__init_date'):
                     try:
                         writer.writerow(
                             [str(i), student.student.dni, student.student.user.first_name,
@@ -5865,7 +5865,7 @@ def export_csv_students(request, program_slug, scope):
                                  "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
                                  "Ejecutado en otro País: S o N", "Graduado: S o N"])
                 i = 1
-                for student in PhdStudent.objects.filter(student__program=program, status="graduado"):
+                for student in PhdStudent.objects.filter(student__program=program, status="graduado").order_by('student__graduate_date'):
                     try:
                         writer.writerow(
                             [str(i), student.student.dni, student.student.user.first_name,
@@ -5904,7 +5904,7 @@ def export_csv_students(request, program_slug, scope):
                                  "Ejecutado en otro País: S o N", "Graduado: S o N"])
 
                 i = 1
-                for student in PhdStudent.objects.filter(student__program=program, status="denegado"):
+                for student in PhdStudent.objects.filter(student__program=program, status="denegado").order_by('student__request_date'):
                     try:
                         writer.writerow(
                             [str(i), student.student.dni, student.student.user.first_name,
@@ -5948,7 +5948,7 @@ def export_csv_students(request, program_slug, scope):
                      "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
                      "Ejecutado en otro País: S o N", "Graduado: S o N"])
                 i = 1
-                for student in MscStudent.objects.filter(program=program):
+                for student in MscStudent.objects.filter(program=program).order_by('request_date'):
                     try:
                         options = [str(i), student.dni, student.user.first_name,
                              student.user.last_name.split(" ")[0],
@@ -5996,7 +5996,7 @@ def export_csv_students(request, program_slug, scope):
                      "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
                      "Ejecutado en otro País: S o N", "Graduado: S o N"])
                 i = 1
-                for student in MscStudent.objects.filter(program=program, status = 'solicitante'):
+                for student in MscStudent.objects.filter(program=program, status = 'solicitante').order_by('request_date'):
                     try:
                         writer.writerow(
                             [str(i), student.dni, student.user.first_name,
@@ -6035,7 +6035,7 @@ def export_csv_students(request, program_slug, scope):
                      "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
                      "Ejecutado en otro País: S o N", "Graduado: S o N"])
                 i = 1
-                for student in MscStudent.objects.filter(program=program, status = 'maestrante'):
+                for student in MscStudent.objects.filter(program=program, status = 'maestrante').order_by('init_date'):
                     try:
                         writer.writerow(
                             [str(i), student.dni, student.user.first_name,
@@ -6074,7 +6074,7 @@ def export_csv_students(request, program_slug, scope):
                      "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
                      "Ejecutado en otro País: S o N", "Graduado: S o N"])
                 i = 1
-                for student in MscStudent.objects.filter(program=program, status = 'graduado'):
+                for student in MscStudent.objects.filter(program=program, status = 'graduado').order_by('graduate_date'):
                     try:
                         writer.writerow(
                             [str(i), student.dni, student.user.first_name,
@@ -6114,7 +6114,7 @@ def export_csv_students(request, program_slug, scope):
                      "Ejecutado en otro País: S o N", "Graduado: S o N"])
 
                 i = 1
-                for student in MscStudent.objects.filter(program=program, status = 'denegado'):
+                for student in MscStudent.objects.filter(program=program, status = 'denegado').order_by('request_date'):
                     try:
                         writer.writerow(
                             [str(i), student.dni, student.user.first_name,
