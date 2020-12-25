@@ -2208,6 +2208,43 @@ def ajx_upgrade_filedoc(request, program_slug):
             content_type="application/json"
         )
 
+@login_required
+def ajx_upload_background(request, program_slug):
+    form = FileUploadForm(data=request.POST, files=request.FILES)
+
+    program=Program.objects.get(slug=program_slug)
+
+    if request.method == 'POST':
+        if user_is_program_cs(request.user, program):
+            try:
+                new_bg = ProgramBackgrounds(
+                    program = program,
+                    background= request.FILES['program_background']
+                )
+
+                new_bg.save()
+                return HttpResponse(
+                    json.dumps([{'updated': 1,'bg_id':new_bg.id, 'bg_name':new_bg.background.name}]),
+                    content_type="application/json"
+                )
+            except:
+                print('Problemas con el archivo')
+                return HttpResponse(
+                    json.dumps([{'updated': 0, 'errors':form.errors}]),
+                    content_type="application/json"
+                )
+
+        else:
+            return HttpResponse(
+                json.dumps([{'updated': 3, 'errors':form.errors}]),
+                content_type="application/json"
+            )
+
+    else:
+        return HttpResponse(
+            json.dumps([{'updated': 2, 'errors':form.errors}]),
+            content_type="application/json"
+        )
 
 @login_required
 def ajx_delete_filedoc(request, program_slug):

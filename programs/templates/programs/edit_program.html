@@ -99,7 +99,7 @@
                                 </div>
                                 {% if program.programbackgrounds_set.all %}
                                     {% for background in program.programbackgrounds_set.all %}
-                                        <div class="row">
+                                        <div class="row pb-2">
                                             <div class="col-md-10">
                                                 <a class="" href="">{{ background.background.name }}</a>
                                             </div>
@@ -112,7 +112,7 @@
                                         </div>
                                     {% endfor %}
                                 {% else %}
-                                    <div class="row">
+                                    <div class="row" id="no_bgs">
                                         <div class="alert alert-info col-md-10 offset-1 text-center">
                                             <h5 class="">No se han agregado backgrounds a la portada del programa</h5>
                                         </div>
@@ -250,7 +250,7 @@
                             </div>
                         </form>
                         <div class="modal fade" id="modal_add_program_background">
-                            <div class="modal-dialog">
+                            <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h4 class="modal-title">Agregar nueva imagen de fondo</h4>
@@ -259,10 +259,11 @@
                                         </button>
                                     </div>
                                     <form id="frm_add_background" method="post">
+                                        {% csrf_token %}
                                         <div class="modal-body alert alert-success">
 
                                             <div class="form-row align-items-center pb-2" id="div_tuthor_1">
-                                                    <input type="file" class="form-control-file" id="inp_add_background" name="program_backgorund" placeholder="background" required accept=".jpeg, .jpg, .png">
+                                                    <input type="file" class="form-control-file" id="inp_add_background" name="program_background" placeholder="background" required accept=".jpeg, .jpg, .png">
 
 
 
@@ -306,19 +307,108 @@
 {% endblock %}
 
 <!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- bs-custom-file-input -->
-<script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
-<!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
+{% block  extra_scripts %}
 <script type="text/javascript">
     $(document).ready(function () {
-        bsCustomFileInput.init();
+        const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+
+        var bg_numbers = {{ program.programbackgrounds_set.all.count }};
+
+        $(document).on('submit',$('#frm_add_background'), function (e) {
+
+                e.preventDefault();
+                var doc_id = $(this).attr('data');
+                var data = new FormData($('#frm_add_background').get(0));
+
+                var url = "{% url 'programs:ajx_upload_background' program.slug %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].updated == 1) {
+                            $('.modal').modal('hide');
+                            var new_bg = '<div class="row pb-2"> <div class="col-md-10">'+
+                                                '<a class="" href="">'+json[0].bg_name+'</a>'+
+                                            '</div>'+
+                                            '<div class="col-md-2">'+
+                                                '<div class="btn-group btn-group-sm">'+
+                                                    '<button type="button" class="btn btn-sm btn-warning" title="Cambiar background"><i class="fa fa-edit"></i> </button>'+
+                                                    '<button type="button" class="btn btn-sm btn-danger" title="Eliminar background"><i class="fa fa-eraser"></i> </button>'+
+                                                '</div>'+
+                                            '</div>'+
+                                        '</div>';
+                            bg_numbers += 1;
+                            if(bg_numbers == 1){
+                                $('#no_bgs').replaceWith(new_bg);
+                            }
+                            else{
+                                $(new_bg).insertAfter('#div_backgrounds');
+                            }
+
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Background actualizado exitosamente'
+                            })
+
+                        } else if(json[0].updated == 0){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido actualizar el background.Errores:'+ json[0].errors
+                            })
+
+                        }
+                        else if(json[0].updated == 2){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido actualizar el background: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].updated == 3){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido actualizar el background: El usuario no es el propietario del perfil.'
+                            })
+
+                        }
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
     });
 </script>
+{% endblock %}
+
 </body>
 </html>
