@@ -71,19 +71,23 @@ urlpatterns = [
     path('ajx/document/file/update', views.ajx_update_filedoc, name='ajx_update_filedoc'),
     path('ajx/document/file/upgrade', views.ajx_upgrade_filedoc, name='ajx_upgrade_filedoc'),
     path('ajx/document/file/delete', views.ajx_delete_filedoc, name='ajx_delete_filedoc'),
+
     path('ajx/user/exists', views.ajx_usr_exists, name='ajx_usr_exists'),
     path('ajx/member/exists', views.ajx_program_member_tuthor, name='ajx_program_member_tuthor'),
     path('ajx/student/delete', views.ajx_delete_student, name='ajx_delete_student'),
     path('ajx/member/delete', views.ajx_delete_member, name='ajx_delete_member'),
     path('ajx/tuthor/delete', views.ajx_delete_tuthor, name='ajx_delete_tuthor'),
+
     path('ajx/student/<int:student_id>/tuthor/create', views.ajx_create_tuthor, name='ajx_create_tuthor'),
     path('ajx/student/<int:student_id>/plan/activity/add', views.ajx_create_activity, name='ajx_create_activity'),
     path('ajx/student/<int:student_id>/plan/activity/edit', views.ajx_edit_activity, name='ajx_edit_activity'),
     path('ajx/student/<int:student_id>/plan/activity/delete', views.ajx_delete_activity, name='ajx_delete_activity'),
     path('ajx/student/exists', views.ajx_student_exists, name='ajx_student_exists'),
+
     path('ajx/line/delete', views.ajx_delete_line, name='ajx_delete_line'),
     path('ajx/edition/delete', views.ajx_delete_program_edition, name='ajx_delete_program_edition'),
     path('ajx/project/delete', views.ajx_delete_project, name='ajx_delete_project'),
+
     path('ajx/statistics/thisyear/requests', views.ajx_this_year_requests, name='ajx_this_year_requests'),
     path('ajx/statistics/byyear/requests', views.ajx_by_year_requests, name='ajx_by_year_requests'),
     path('ajx/statistics/lastyear/requests', views.ajx_last_years_requests, name='ajx_last_years_requests'),
@@ -99,6 +103,7 @@ urlpatterns = [
     path('ajx/statistics/members/degree', views.ajx_members_by_grade, name='ajx_members_by_grade'),
     path('ajx/statistics/members/age', views.ajx_members_by_age, name='ajx_members_by_age'),
     path('ajx/statistics/next/defenses', views.ajx_next_years_defenses, name='ajx_next_years_defenses'),
+
     path('ajx/messages/members/personal', views.ajx_member_personal_msg, name='ajx_member_personal_msg'),
     path('ajx/messages/members/massive', views.ajx_member_massive_msg, name='ajx_member_massive_msg'),
     path('ajx/messages/massive/all', views.ajx_all_massive_msg, name='ajx_all_massive_msg'),
@@ -107,9 +112,12 @@ urlpatterns = [
     path('ajx/messages/everybody/massive', views.ajx_everybody_massive_msg, name='ajx_everybody_massive_msg'),
     path('ajx/messages/mark/readed', views.ajx_mark_message_readed, name='ajx_mark_message_readed'),
     path('ajx/messages/delete', views.ajx_delete_message, name='ajx_delete_message'),
+
     path('ajx/program/brieffing/delete', views.ajx_delete_program_document, name='ajx_delete_program_document'),
     path('ajx/program/background/new', views.ajx_upload_background, name='ajx_upload_background'),
     path('ajx/program/background/delete', views.ajx_delete_bg, name='ajx_delete_bg'),
+    path('ajx/program/background/edit', views.ajx_edit_background, name='ajx_edit_background'),
+
     path('ajx/course/delete', views.ajx_delete_course, name='ajx_delete_course'),
     path('ajx/evaluation/edit', views.ajx_edit_eval, name='ajx_edit_eval'),
     path('ajx/evaluation/delete', views.ajx_delete_eval, name='ajx_delete_eval'),

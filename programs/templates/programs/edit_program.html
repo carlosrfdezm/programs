@@ -101,11 +101,11 @@
                                     {% for background in program.programbackgrounds_set.all %}
                                         <div class="row pb-2" id="div_bg_{{ background.id }}">
                                             <div class="col-md-10">
-                                                <a class="" href="">{{ background.background.name }}</a>
+                                                <a class="" id="a_bg_name_{{ background.id }}" href="">{{ background.background.name }}</a>
                                             </div>
                                             <div class="col-md-2 text-center">
                                                 <div class="btn-group btn-group-sm">
-                                                    <button type="button" class="btn btn-sm btn-warning" title="Cambiar background"><i class="fa fa-edit"></i> </button>
+                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_show_edit_bg_modal_{{ background.id  }}" data-toggle="modal" data-target="#modal_edit_bg" data="{{ background.id }}" title="Cambiar background"><i class="fa fa-edit"></i> </button>
                                                     <button type="button" class="btn btn-sm btn-danger" id="btn_show_rm_bg_modal_{{ background.id  }}" data-toggle="modal" data-target="#modal_rm_bg" data="{{ background.id }}" title="Eliminar background"><i class="fa fa-eraser"></i> </button>
                                                 </div>
                                             </div>
@@ -283,6 +283,38 @@
                             </div>
                             <!-- /.modal-dialog -->
                         </div>
+                        <div class="modal fade" id="modal_edit_bg">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Editar imagen de fondo</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form id="frm_edit_background" method="post">
+                                        {% csrf_token %}
+                                        <div class="modal-body alert alert-success">
+
+                                            <div class="form-row align-items-center pb-2" id="div_tuthor_1">
+                                                <input type="hidden" id="inp_bg_id" name="bg_id">
+                                                <input type="file" class="form-control-file" id="inp_edit_background" name="program_background" placeholder="background" required accept=".jpeg, .jpg, .png">
+
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
                         <div class="modal fade" id="modal_rm_bg">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -351,10 +383,10 @@
             var bg_numbers = {{ program.programbackgrounds_set.all.count }};
             var bg2delete_id = '';
 
+
             $(document).on('submit',$('#frm_add_background'), function (e) {
 
                 e.preventDefault();
-                var doc_id = $(this).attr('data');
                 var data = new FormData($('#frm_add_background').get(0));
 
                 var url = "{% url 'programs:ajx_upload_background' program.slug %}";
@@ -374,11 +406,11 @@
                         if (json[0].updated == 1) {
                             $('.modal').modal('hide');
                             var new_bg = '<div class="row pb-2" id="div_bg_'+json[0].bg_id+'"> <div class="col-md-10">'+
-                                '<a class="" href="">'+json[0].bg_name+'</a>'+
+                                '<a class="" id="a_bg_name_'+json[0].bg_id+'" href="">'+json[0].bg_name+'</a>'+
                                 '</div>'+
                                 '<div class="col-md-2 text-center">'+
                                 '<div class="btn-group btn-group-sm">'+
-                                '<button type="button" class="btn btn-sm btn-warning" title="Cambiar background"><i class="fa fa-edit"></i> </button>'+
+                                '<button type="button" class="btn btn-sm btn-warning" id="btn_show_edit_bg_modal_'+json[0].bg_id+'" data-toggle="modal" data-target="#modal_edit_bg" data="'+json[0].bg_id+'" title="Cambiar background"><i class="fa fa-edit"></i> </button>'+
                                 '<button type="button" class="btn btn-sm btn-danger" id="btn_show_rm_bg_modal_'+json[0].bg_id+'" data-toggle="modal" data-target="#modal_rm_bg" data="'+json[0].bg_id+'" title="Eliminar background"><i class="fa fa-eraser"></i> </button>'+
                                 '</div>'+
                                 '</div>'+
@@ -438,11 +470,83 @@
                 });
 
             });
+            $(document).on('submit',$('#frm_edit_background'), function (e) {
+
+                e.preventDefault();
+
+                var data = new FormData($('#frm_edit_background').get(0));
+                var url = "{% url 'programs:ajx_edit_background' program.slug %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].updated == 1) {
+                            $('.modal').modal('hide');
+                            $('#a_bg_name_'+json[0].bg_id).text(json[0].bg_name)
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Background actualizado exitosamente'
+                            })
+
+                        } else if(json[0].updated == 0){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido actualizar el background.Errores:'+ json[0].errors
+                            })
+
+                        }
+                        else if(json[0].updated == 2){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido actualizar el background: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].updated == 3){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido actualizar el background: El usuario no es el propietario del perfil.'
+                            })
+
+                        }
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
             $(document).on('hidden.bs.modal','#modal_add_program_background', function () {
                 $('#frm_add_background')[0].reset();
             });
             $(document).on('click',"button[id*='btn_show_rm_bg_modal']", function (e) {
                 bg2delete_id = $(this).attr('data');
+            });
+            $(document).on('click',"button[id*='btn_show_edit_bg_modal']", function (e) {
+                $('#inp_bg_id').val($(this).attr('data'));
             });
             $('#btn_rm_bg').click(function (){
 

@@ -2247,6 +2247,47 @@ def ajx_upload_background(request, program_slug):
         )
 
 @login_required
+def ajx_edit_background(request, program_slug):
+    form = FileUploadForm(data=request.POST, files=request.FILES)
+
+    program=Program.objects.get(slug=program_slug)
+    bg = ProgramBackgrounds.objects.get(pk=request.POST['bg_id'])
+
+    if request.method == 'POST':
+        if user_is_program_cs(request.user, program):
+            try:
+                bg.background.delete()
+            except:
+                pass
+
+            try:
+                bg.background = request.FILES['program_background']
+                bg.save()
+                return HttpResponse(
+                    json.dumps([{'updated': 1,'bg_id':bg.id, 'bg_name': bg.background.name}]),
+                    content_type="application/json"
+                )
+            except:
+                print('Problemas con el archivo')
+                return HttpResponse(
+                    json.dumps([{'updated': 0, 'errors':form.errors}]),
+                    content_type="application/json"
+                )
+
+        else:
+            return HttpResponse(
+                json.dumps([{'updated': 3, 'errors':form.errors}]),
+                content_type="application/json"
+            )
+
+    else:
+        return HttpResponse(
+            json.dumps([{'updated': 2, 'errors':form.errors}]),
+            content_type="application/json"
+        )
+
+
+@login_required
 def ajx_delete_bg(request, program_slug):
     program = Program.objects.get(slug=program_slug)
 
