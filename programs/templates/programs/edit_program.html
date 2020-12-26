@@ -99,14 +99,14 @@
                                 </div>
                                 {% if program.programbackgrounds_set.all %}
                                     {% for background in program.programbackgrounds_set.all %}
-                                        <div class="row pb-2">
+                                        <div class="row pb-2" id="div_bg_{{ background.id }}">
                                             <div class="col-md-10">
                                                 <a class="" href="">{{ background.background.name }}</a>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-2 text-center">
                                                 <div class="btn-group btn-group-sm">
                                                     <button type="button" class="btn btn-sm btn-warning" title="Cambiar background"><i class="fa fa-edit"></i> </button>
-                                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar background"><i class="fa fa-eraser"></i> </button>
+                                                    <button type="button" class="btn btn-sm btn-danger" id="btn_show_rm_bg_modal_{{ background.id  }}" data-toggle="modal" data-target="#modal_rm_bg" data="{{ background.id }}" title="Eliminar background"><i class="fa fa-eraser"></i> </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -263,7 +263,7 @@
                                         <div class="modal-body alert alert-success">
 
                                             <div class="form-row align-items-center pb-2" id="div_tuthor_1">
-                                                    <input type="file" class="form-control-file" id="inp_add_background" name="program_background" placeholder="background" required accept=".jpeg, .jpg, .png">
+                                                <input type="file" class="form-control-file" id="inp_add_background" name="program_background" placeholder="background" required accept=".jpeg, .jpg, .png">
 
 
 
@@ -283,6 +283,37 @@
                             </div>
                             <!-- /.modal-dialog -->
                         </div>
+                        <div class="modal fade" id="modal_rm_bg">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Eliminar background</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                                            </div>
+                                            <div class="col-md-10">
+                                                <p class="text-center" id="p_rm_bg">¿Seguro que desea eliminar la imagen seleccionada?<br>Esto no se puede deshacer&hellip;</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_bg">Eliminar</button>
+                                    </div>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+
                     </div>
                     <!-- /.card -->
 
@@ -308,18 +339,19 @@
 
 <!-- jQuery -->
 {% block  extra_scripts %}
-<script type="text/javascript">
-    $(document).ready(function () {
-        const Toast = Swal.mixin({
+    <script type="text/javascript">
+        $(document).ready(function () {
+            const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
                 timer: 7000
             });
 
-        var bg_numbers = {{ program.programbackgrounds_set.all.count }};
+            var bg_numbers = {{ program.programbackgrounds_set.all.count }};
+            var bg2delete_id = '';
 
-        $(document).on('submit',$('#frm_add_background'), function (e) {
+            $(document).on('submit',$('#frm_add_background'), function (e) {
 
                 e.preventDefault();
                 var doc_id = $(this).attr('data');
@@ -341,16 +373,16 @@
 
                         if (json[0].updated == 1) {
                             $('.modal').modal('hide');
-                            var new_bg = '<div class="row pb-2"> <div class="col-md-10">'+
-                                                '<a class="" href="">'+json[0].bg_name+'</a>'+
-                                            '</div>'+
-                                            '<div class="col-md-2">'+
-                                                '<div class="btn-group btn-group-sm">'+
-                                                    '<button type="button" class="btn btn-sm btn-warning" title="Cambiar background"><i class="fa fa-edit"></i> </button>'+
-                                                    '<button type="button" class="btn btn-sm btn-danger" title="Eliminar background"><i class="fa fa-eraser"></i> </button>'+
-                                                '</div>'+
-                                            '</div>'+
-                                        '</div>';
+                            var new_bg = '<div class="row pb-2" id="div_bg_'+json[0].bg_id+'"> <div class="col-md-10">'+
+                                '<a class="" href="">'+json[0].bg_name+'</a>'+
+                                '</div>'+
+                                '<div class="col-md-2 text-center">'+
+                                '<div class="btn-group btn-group-sm">'+
+                                '<button type="button" class="btn btn-sm btn-warning" title="Cambiar background"><i class="fa fa-edit"></i> </button>'+
+                                '<button type="button" class="btn btn-sm btn-danger" id="btn_show_rm_bg_modal_'+json[0].bg_id+'" data-toggle="modal" data-target="#modal_rm_bg" data="'+json[0].bg_id+'" title="Eliminar background"><i class="fa fa-eraser"></i> </button>'+
+                                '</div>'+
+                                '</div>'+
+                                '</div>';
                             bg_numbers += 1;
                             if(bg_numbers == 1){
                                 $('#no_bgs').replaceWith(new_bg);
@@ -406,8 +438,82 @@
                 });
 
             });
-    });
-</script>
+            $(document).on('hidden.bs.modal','#modal_add_program_background', function () {
+                $('#frm_add_background')[0].reset();
+            });
+            $(document).on('click',"button[id*='btn_show_rm_bg_modal']", function (e) {
+                bg2delete_id = $(this).attr('data');
+            });
+            $('#btn_rm_bg').click(function (){
+
+                var url = "{% url 'programs:ajx_delete_bg' program.slug  %}";
+
+                $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'bg_id':bg2delete_id,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].deleted == 1) {
+                                $('#div_bg_'+bg2delete_id).remove()
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Background eliminado exitosamente'
+                                })
+
+                                bg_numbers -= 1;
+
+                                if(bg_numbers == 0){
+                                    var no_bgs_div =' <div class="row" id="no_bgs">'+
+                                        '<div class="alert alert-info col-md-10 offset-1 text-center">'+
+                                            '<h5 class="">No se han agregado backgrounds a la portada del programa</h5>'+
+                                        '</div>'+
+                                    '</div>';
+
+                                    $(no_bgs_div).insertAfter($('#div_backgrounds'));
+                                }
+
+                            } else if(json[0].deleted == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Error de método, debe ser POST'
+                                });
+
+
+                            } else if(json[0].deleted == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Uff ha ocurrido un error desconocido'
+                                });
+
+
+                            }
+
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+            });
+        });
+    </script>
 {% endblock %}
 
 </body>

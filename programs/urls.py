@@ -109,6 +109,7 @@ urlpatterns = [
     path('ajx/messages/delete', views.ajx_delete_message, name='ajx_delete_message'),
     path('ajx/program/brieffing/delete', views.ajx_delete_program_document, name='ajx_delete_program_document'),
     path('ajx/program/background/new', views.ajx_upload_background, name='ajx_upload_background'),
+    path('ajx/program/background/delete', views.ajx_delete_bg, name='ajx_delete_bg'),
     path('ajx/course/delete', views.ajx_delete_course, name='ajx_delete_course'),
     path('ajx/evaluation/edit', views.ajx_edit_eval, name='ajx_edit_eval'),
     path('ajx/evaluation/delete', views.ajx_delete_eval, name='ajx_delete_eval'),
