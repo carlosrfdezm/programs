@@ -2224,25 +2224,77 @@ def ajx_upload_background(request, program_slug):
 
                 new_bg.save()
                 return HttpResponse(
-                    json.dumps([{'updated': 1,'bg_id':new_bg.id, 'bg_name':new_bg.background.name}]),
+                    json.dumps([{'updated': '1','bg_id':new_bg.id, 'bg_name':new_bg.background.name}]),
                     content_type="application/json"
                 )
             except:
-                print('Problemas con el archivo')
+                print('Problemas con el archivo del nuevo bg')
                 return HttpResponse(
-                    json.dumps([{'updated': 0, 'errors':form.errors}]),
+                    json.dumps([{'updated': '4', 'errors':form.errors}]),
                     content_type="application/json"
                 )
 
         else:
             return HttpResponse(
-                json.dumps([{'updated': 3, 'errors':form.errors}]),
+                json.dumps([{'updated': '3', 'errors':form.errors}]),
                 content_type="application/json"
             )
 
     else:
         return HttpResponse(
-            json.dumps([{'updated': 2, 'errors':form.errors}]),
+            json.dumps([{'updated': '2', 'errors':form.errors}]),
+            content_type="application/json"
+        )
+
+@login_required
+def ajx_new_init_requirenment(request, program_slug):
+    form = FileUploadForm(data=request.POST, files=request.FILES)
+
+    program=Program.objects.get(slug=program_slug)
+
+    if request.method == 'POST':
+        if user_is_program_cs(request.user, program):
+            try:
+                new_init_r = ProgramFileDoc(
+                    program = program,
+                    doc_name=request.POST['init_r_name'],
+                    is_init_requirenment=True,
+                    type=request.POST['init_r_type']
+                )
+                try:
+                    jfn = request.POST['init_r_nat']
+                    new_init_r.just_for_nationals = True
+                except:
+                    pass
+
+                try:
+                    get_old = request.POST['init_r_get_old']
+                    new_init_r.get_old = True
+                except:
+                    pass
+
+                new_init_r.save()
+                return HttpResponse(
+                    json.dumps([{'updated': '1','r_id':new_init_r.id, 'r_name':new_init_r.doc_name,
+                                 'r_get_old':new_init_r.get_old, 'r_jfn': new_init_r.just_for_nationals, 'r_type':new_init_r.type}]),
+                    content_type="application/json"
+                )
+            except:
+                print('Problemas con el archivo')
+                return HttpResponse(
+                    json.dumps([{'updated': '0', 'errors':form.errors}]),
+                    content_type="application/json"
+                )
+
+        else:
+            return HttpResponse(
+                json.dumps([{'updated':'3', 'errors':form.errors}]),
+                content_type="application/json"
+            )
+
+    else:
+        return HttpResponse(
+            json.dumps([{'updated': '2', 'errors':form.errors}]),
             content_type="application/json"
         )
 
@@ -2251,9 +2303,17 @@ def ajx_edit_background(request, program_slug):
     form = FileUploadForm(data=request.POST, files=request.FILES)
 
     program=Program.objects.get(slug=program_slug)
-    bg = ProgramBackgrounds.objects.get(pk=request.POST['bg_id'])
 
     if request.method == 'POST':
+        try:
+            bg = ProgramBackgrounds.objects.get(pk=request.POST['bg_id'])
+        except:
+            return HttpResponse(
+                json.dumps([{'updated': '4', 'errors': form.errors}]),
+                content_type="application/json"
+            )
+
+
         if user_is_program_cs(request.user, program):
             try:
                 bg.background.delete()
@@ -2264,28 +2324,27 @@ def ajx_edit_background(request, program_slug):
                 bg.background = request.FILES['program_background']
                 bg.save()
                 return HttpResponse(
-                    json.dumps([{'updated': 1,'bg_id':bg.id, 'bg_name': bg.background.name}]),
+                    json.dumps([{'updated': '1','bg_id':bg.id, 'bg_name': bg.background.name}]),
                     content_type="application/json"
                 )
             except:
                 print('Problemas con el archivo')
                 return HttpResponse(
-                    json.dumps([{'updated': 0, 'errors':form.errors}]),
+                    json.dumps([{'updated': '0', 'errors':form.errors}]),
                     content_type="application/json"
                 )
 
         else:
             return HttpResponse(
-                json.dumps([{'updated': 3, 'errors':form.errors}]),
+                json.dumps([{'updated': '3', 'errors':form.errors}]),
                 content_type="application/json"
             )
 
     else:
         return HttpResponse(
-            json.dumps([{'updated': 2, 'errors':form.errors}]),
+            json.dumps([{'updated': '2', 'errors':form.errors}]),
             content_type="application/json"
         )
-
 
 @login_required
 def ajx_delete_bg(request, program_slug):
@@ -2303,22 +2362,22 @@ def ajx_delete_bg(request, program_slug):
 
                 bg.delete()
                 return HttpResponse(
-                    json.dumps([{'deleted': 1}]),
+                    json.dumps([{'deleted': '1'}]),
                     content_type="application/json"
                 )
             except:
                 return HttpResponse(
-                    json.dumps([{'deleted': 2}]),
+                    json.dumps([{'deleted': '2'}]),
                     content_type="application/json"
                 )
         else:
             return HttpResponse(
-                json.dumps([{'deleted': 0}]),
+                json.dumps([{'deleted': '0'}]),
                 content_type="application/json"
             )
     else:
         return HttpResponse(
-            json.dumps([{'deleted': 3}]),
+            json.dumps([{'deleted': '3'}]),
             content_type="application/json"
         )
 
@@ -5797,6 +5856,8 @@ def edit_program(request, program_slug):
         else:
             context = {
                 'program': program,
+                'program_init_requirenments': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'program_finish_requirenments': ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True),
                 'member': ProgramMember.objects.get(user=request.user, program=program)
             }
             return render(request,'programs/edit_program.html', context)

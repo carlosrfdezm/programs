@@ -2,6 +2,10 @@
 {% load static %}
 {% load extra_tags %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'programs/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+{% endblock %}
+
 {% block content %}
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -119,58 +123,58 @@
                                     </div>
                                 {% endif %}
                                 <hr>
-                                <div class="row">
+                                <div class="row" id="div_finish_requirenments_pres">
                                     <div class="col-md-11">
                                         <h5>Requisitos de ingreso al programa</h5>
 
                                     </div>
                                     <div class="col-md-1 text-right">
-                                        <button type="button" class="btn btn-sm btn-primary" title="Agregar requisito de ingreso"><i class="fa fa-plus"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-primary" id="btn_add_new_init_r" data-toggle="modal" data-target="#modal_add_new_init_r" title="Agregar requisito de ingreso"><i class="fa fa-plus"></i> </button>
                                     </div>
                                 </div>
-                                {% if program.programfiledoc_set.all %}
-                                    <div class="row">
+                                {% if program_init_requirenments %}
+                                    <div class="row" id="div_init_requirenments_cols">
                                         <div class="col-md-7"><strong>Nombre del requisito</strong></div>
                                         <div class="col-md-2 text-center"><strong>Responsable</strong></div>
                                         <div class="col-md-1 text-center"><strong>Caduca</strong></div>
                                         <div class="col-md-2"></div>
                                     </div>
-                                    {% for filedoc in program.programfiledoc_set.all %}
-                                        {% if filedoc.is_init_requirenment %}
-                                            <div class="row pt-1 pb-1 align-items-baseline">
-                                                <div class="col-md-7 col-sm-4">
-                                                    <h6>{{ filedoc.doc_name|truncatewords:6 }}</h6>
-                                                </div>
-                                                <div class="col-md-2 col-sm-1 text-center">
-                                                    {% if filedoc.type == 'student' %}
-                                                        <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
-                                                    {% elif filedoc.type == 'program' %}
-                                                        <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
-                                                    {% elif filedoc.type == 'comission' %}
-                                                        <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
-                                                    {% endif %}
-                                                </div>
+                                    {% for filedoc in program_init_requirenments %}
 
-                                                <div class="col-md-1 col-sm-1 text-center">
-                                                    {% if filedoc.get_old %}
-                                                        <i class="fa fa-toggle-on text-success" title="Si"></i>
-                                                    {% else %}
-                                                        <i class="fa fa-toggle-off text-danger" title="No"></i>
-
-                                                    {% endif %}
-
-                                                </div>
-                                                <div class="col-md-2 col-sm-4 text-center">
-                                                    <div class="btn-group btn-group-sm">
-                                                        <button type="button" class="btn btn-sm btn-warning" title="Cambiar requisito"><i class="fa fa-edit"></i> </button>
-                                                        <button type="button" class="btn btn-sm btn-danger" title="Eliminar requisito"><i class="fa fa-eraser"></i> </button>
-                                                    </div>
-
-
-                                                </div>
+                                        <div class="row pt-1 pb-1 align-items-baseline">
+                                            <div class="col-md-7 col-sm-4">
+                                                <h6>{{ filedoc.doc_name|truncatewords:6 }}</h6>
+                                            </div>
+                                            <div class="col-md-2 col-sm-1 text-center">
+                                                {% if filedoc.type == 'student' %}
+                                                    <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                {% elif filedoc.type == 'program' %}
+                                                    <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                {% elif filedoc.type == 'comission' %}
+                                                    <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                {% endif %}
                                             </div>
 
-                                        {% endif %}
+                                            <div class="col-md-1 col-sm-1 text-center">
+                                                {% if filedoc.get_old %}
+                                                    <i class="fa fa-toggle-on text-success" title="Si"></i>
+                                                {% else %}
+                                                    <i class="fa fa-toggle-off text-danger" title="No"></i>
+
+                                                {% endif %}
+
+                                            </div>
+                                            <div class="col-md-2 col-sm-4 text-center">
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-sm btn-warning" title="Cambiar requisito"><i class="fa fa-edit"></i> </button>
+                                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar requisito"><i class="fa fa-eraser"></i> </button>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+
                                     {% endfor %}
                                 {% else %}
                                     <div class="row">
@@ -180,7 +184,7 @@
                                     </div>
                                 {% endif %}
                                 <hr>
-                                <div class="row">
+                                <div class="row" id="div_finish_requirenments_pres">
                                     <div class="col-md-11">
                                         <h5>Requisitos de egreso del programa</h5>
 
@@ -189,52 +193,52 @@
                                         <button type="button" class="btn btn-sm btn-primary" title="Agregar requisito de egreso"><i class="fa fa-plus"></i> </button>
                                     </div>
                                 </div>
-                                {% if program.programfiledoc_set.all %}
-                                    <div class="row">
+                                {% if program_finish_requirenments %}
+                                    <div class="row" id="div_finish_requirenments_cols">
                                         <div class="col-md-7"><strong>Nombre del requisito</strong></div>
                                         <div class="col-md-2 text-center"><strong>Responsable</strong></div>
                                         <div class="col-md-1 text-center"><strong>Caduca</strong></div>
                                         <div class="col-md-2"></div>
                                     </div>
-                                    {% for filedoc in program.programfiledoc_set.all %}
-                                        {% if filedoc.is_finish_requirenment %}
-                                            <div class="row pt-1 pb-1 align-items-baseline">
-                                                <div class="col-md-7 col-sm-4">
-                                                    <h6>{{ filedoc.doc_name|truncatewords:6 }}</h6>
-                                                </div>
-                                                <div class="col-md-2 col-sm-1 text-center">
-                                                    {% if filedoc.type == 'student' %}
-                                                        <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
-                                                    {% elif filedoc.type == 'program' %}
-                                                        <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
-                                                    {% elif filedoc.type == 'comission' %}
-                                                        <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
-                                                    {% endif %}
-                                                </div>
+                                    {% for filedoc in program_finish_requirenments %}
 
-                                                <div class="col-md-1 col-sm-1 text-center">
-                                                    {% if filedoc.get_old %}
-                                                        <i class="fa fa-toggle-on text-success" title="Si"></i>
-                                                    {% else %}
-                                                        <i class="fa fa-toggle-off text-danger" title="No"></i>
-
-                                                    {% endif %}
-
-                                                </div>
-                                                <div class="col-md-2 col-sm-4 text-center">
-                                                    <div class="btn-group btn-group-sm">
-                                                        <button type="button" class="btn btn-sm btn-warning" title="Cambiar requisito"><i class="fa fa-edit"></i> </button>
-                                                        <button type="button" class="btn btn-sm btn-danger" title="Eliminar requisito"><i class="fa fa-eraser"></i> </button>
-                                                    </div>
-
-
-                                                </div>
+                                        <div class="row pt-1 pb-1 align-items-baseline">
+                                            <div class="col-md-7 col-sm-4">
+                                                <h6>{{ filedoc.doc_name|truncatewords:6 }}</h6>
+                                            </div>
+                                            <div class="col-md-2 col-sm-1 text-center">
+                                                {% if filedoc.type == 'student' %}
+                                                    <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                {% elif filedoc.type == 'program' %}
+                                                    <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                {% elif filedoc.type == 'comission' %}
+                                                    <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                {% endif %}
                                             </div>
 
-                                        {% endif %}
+                                            <div class="col-md-1 col-sm-1 text-center">
+                                                {% if filedoc.get_old %}
+                                                    <i class="fa fa-toggle-on text-success" title="Si"></i>
+                                                {% else %}
+                                                    <i class="fa fa-toggle-off text-danger" title="No"></i>
+
+                                                {% endif %}
+
+                                            </div>
+                                            <div class="col-md-2 col-sm-4 text-center">
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-sm btn-warning" title="Cambiar requisito"><i class="fa fa-edit"></i> </button>
+                                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar requisito"><i class="fa fa-eraser"></i> </button>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+
                                     {% endfor %}
                                 {% else %}
-                                    <div class="row">
+                                    <div class="row" id="div_no_end_requirenments">
                                         <div class="alert alert-info col-md-10 offset-1 text-center">
                                             <h5 class="">No se han agregado requisitos de egreso del programa</h5>
                                         </div>
@@ -265,17 +269,12 @@
                                             <div class="form-row align-items-center pb-2" id="div_tuthor_1">
                                                 <input type="file" class="form-control-file" id="inp_add_background" name="program_background" placeholder="background" required accept=".jpeg, .jpg, .png">
 
-
-
-
                                             </div>
-
-
 
                                         </div>
                                         <div class="modal-footer justify-content-between">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                            <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
+                                            <button type="submit" class="btn btn-success" id="btn_add_bg">Enviar</button>
                                         </div>
                                     </form>
                                 </div>
@@ -283,6 +282,7 @@
                             </div>
                             <!-- /.modal-dialog -->
                         </div>
+
                         <div class="modal fade" id="modal_edit_bg">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
@@ -307,7 +307,7 @@
                                         </div>
                                         <div class="modal-footer justify-content-between">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                            <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
+                                            <button type="submit" class="btn btn-success" id="btn_edit_bg">Enviar</button>
                                         </div>
                                     </form>
                                 </div>
@@ -315,6 +315,7 @@
                             </div>
                             <!-- /.modal-dialog -->
                         </div>
+
                         <div class="modal fade" id="modal_rm_bg">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -340,6 +341,66 @@
                                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                                         <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_bg">Eliminar</button>
                                     </div>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+
+                        <div class="modal fade" id="modal_add_new_init_r">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Agregar nuevo requisito de ingreso</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form id="frm_add_init_r" method="post">
+                                        {% csrf_token %}
+                                        <div class="modal-body alert alert-success">
+
+                                            <div class="form-row align-items-center pb-2" id="div_new_r_title">
+                                                <div class="form-group col-md-12">
+                                                    <label for="inp_init_r_name">Nombre:</label>
+                                                    <input type="text" class="form-control" id="inp_init_r_name" name="init_r_name" placeholder="Nombre del requisito" maxlength="100"  required>
+                                                </div>
+
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="col-md-4">
+                                                    <div class="icheck-primary d-inline ">
+                                                        <input type="checkbox" id="inp_init_r_nat" name="init_r_nat" title="Marcar si el requisito es solo para nacionales">
+                                                        <label for="inp_init_r_nat" title="Marcar si el requisito es solo para nacionales">Solo para nacionales??
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="icheck-primary d-inline ">
+                                                        <input type="checkbox" id="inp_init_r_old" name="init_r_get_old" title="Marcar si el requisito caduca">
+                                                        <label for="inp_init_r_old" title="Marcar si el requisito caduca al paso del tiempo">Caduca??
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <select class="form-control" id="slc_init_r_type" name="init_r_type" required>
+                                                        <option value="" selected>Responsable(seleccionar uno)**</option>
+                                                        <option value="student" >Estudiante</option>
+                                                        <option value="program" >Programa</option>
+                                                        <option value="comission" >Comisión de grados</option>
+                                                    </select>
+                                                </div>
+
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success" id="btn_submit_init_r">Enviar</button>
+                                        </div>
+                                    </form>
                                 </div>
                                 <!-- /.modal-content -->
                             </div>
@@ -381,7 +442,10 @@
             });
 
             var bg_numbers = {{ program.programbackgrounds_set.all.count }};
+            var init_r_numbers = {{ program_init_requirenments.count }};
+            var finish_r_numbers = {{ program_finish_requirenments.count }};
             var bg2delete_id = '';
+            var r2delete_id = '';
 
 
             $(document).on('submit',$('#frm_add_background'), function (e) {
@@ -403,7 +467,7 @@
                     // handle a successful response
                     success : function(json) {
 
-                        if (json[0].updated == 1) {
+                        if (json[0].updated == '1') {
                             $('.modal').modal('hide');
                             var new_bg = '<div class="row pb-2" id="div_bg_'+json[0].bg_id+'"> <div class="col-md-10">'+
                                 '<a class="" id="a_bg_name_'+json[0].bg_id+'" href="">'+json[0].bg_name+'</a>'+
@@ -429,7 +493,7 @@
                                 title: 'Background actualizado exitosamente'
                             })
 
-                        } else if(json[0].updated == 0){
+                        } else if(json[0].updated == '0'){
                             $('.modal').modal('hide');
                             Toast.fire({
                                 type: 'error',
@@ -437,7 +501,7 @@
                             })
 
                         }
-                        else if(json[0].updated == 2){
+                        else if(json[0].updated == '2'){
                             $('.modal').modal('hide');
                             Toast.fire({
                                 type: 'error',
@@ -445,7 +509,7 @@
                             })
 
                         }
-                        else if(json[0].updated == 3){
+                        else if(json[0].updated == '3'){
                             $('.modal').modal('hide');
                             Toast.fire({
                                 type: 'error',
@@ -464,17 +528,19 @@
                     error : function(xhr,errmsg,err) {
                         Toast.fire({
                             type: 'error',
-                            title: 'Uff, ha ocurrido algo desconocido.'
+                            title: 'Uff, ha ocurrido algo desconocido al agregar el nuevo background.'
                         })
                     }
                 });
 
             });
+
             $(document).on('submit',$('#frm_edit_background'), function (e) {
 
                 e.preventDefault();
 
                 var data = new FormData($('#frm_edit_background').get(0));
+
                 var url = "{% url 'programs:ajx_edit_background' program.slug %}";
 
                 $.ajax({
@@ -489,7 +555,7 @@
                     // handle a successful response
                     success : function(json) {
 
-                        if (json[0].updated == 1) {
+                        if (json[0].updated == '1') {
                             $('.modal').modal('hide');
                             $('#a_bg_name_'+json[0].bg_id).text(json[0].bg_name)
 
@@ -498,7 +564,7 @@
                                 title: 'Background actualizado exitosamente'
                             })
 
-                        } else if(json[0].updated == 0){
+                        } else if(json[0].updated == '0'){
                             $('.modal').modal('hide');
                             Toast.fire({
                                 type: 'error',
@@ -506,7 +572,7 @@
                             })
 
                         }
-                        else if(json[0].updated == 2){
+                        else if(json[0].updated == '2'){
                             $('.modal').modal('hide');
                             Toast.fire({
                                 type: 'error',
@@ -514,7 +580,7 @@
                             })
 
                         }
-                        else if(json[0].updated == 3){
+                        else if(json[0].updated == '3'){
                             $('.modal').modal('hide');
                             Toast.fire({
                                 type: 'error',
@@ -533,12 +599,85 @@
                     error : function(xhr,errmsg,err) {
                         Toast.fire({
                             type: 'error',
-                            title: 'Uff, ha ocurrido algo desconocido.'
+                            title: 'Uff, ha ocurrido algo desconocido al editar el background.'
                         })
                     }
                 });
 
             });
+
+            $(document).on('submit',$('#frm_add_init_r'), function (e) {
+
+                e.preventDefault();
+                var data = new FormData($('#frm_add_init_r').get(0));
+
+                var url = "{% url 'programs:ajx_new_init_requirenment' program.slug %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].updated == '1') {
+                            $('.modal').modal('hide');
+
+                            init_r_numbers += 1;
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Requisito de ingreso agregado exitosamente'
+                            })
+
+                        }
+                        else if(json[0].updated == '0'){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar el requisito de ingreso.Errores:'+ json[0].errors
+                            })
+
+                        }
+                        else if(json[0].updated == '2'){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar el requisito de ingreso: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].updated == '3'){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar el requisito de ingreso: El usuario no tiene privilegios.'
+                            })
+
+                        }
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido al agregar el nuevo requisito.'
+                        })
+                    }
+                });
+
+            });
+
             $(document).on('hidden.bs.modal','#modal_add_program_background', function () {
                 $('#frm_add_background')[0].reset();
             });
@@ -553,68 +692,68 @@
                 var url = "{% url 'programs:ajx_delete_bg' program.slug  %}";
 
                 $.ajax({
-                        url : url,
-                        type : "POST", // http method
-                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                            'bg_id':bg2delete_id,
-                        }, // data sent with the post request
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'bg_id':bg2delete_id,
+                    }, // data sent with the post request
 
-                        // handle a successful response
-                        success : function(json) {
+                    // handle a successful response
+                    success : function(json) {
 
-                            if (json[0].deleted == 1) {
-                                $('#div_bg_'+bg2delete_id).remove()
+                        if (json[0].deleted == 1) {
+                            $('#div_bg_'+bg2delete_id).remove()
 
-                                Toast.fire({
-                                    type: 'success',
-                                    title: 'Background eliminado exitosamente'
-                                })
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Background eliminado exitosamente'
+                            })
 
-                                bg_numbers -= 1;
+                            bg_numbers -= 1;
 
-                                if(bg_numbers == 0){
-                                    var no_bgs_div =' <div class="row" id="no_bgs">'+
-                                        '<div class="alert alert-info col-md-10 offset-1 text-center">'+
-                                            '<h5 class="">No se han agregado backgrounds a la portada del programa</h5>'+
-                                        '</div>'+
+                            if(bg_numbers == 0){
+                                var no_bgs_div =' <div class="row" id="no_bgs">'+
+                                    '<div class="alert alert-info col-md-10 offset-1 text-center">'+
+                                    '<h5 class="">No se han agregado backgrounds a la portada del programa</h5>'+
+                                    '</div>'+
                                     '</div>';
 
-                                    $(no_bgs_div).insertAfter($('#div_backgrounds'));
-                                }
-
-                            } else if(json[0].deleted == 0){
-                                Toast.fire({
-                                    type: 'error',
-                                    title: 'Error de método, debe ser POST'
-                                });
-
-
-                            } else if(json[0].deleted == 2){
-                                Toast.fire({
-                                    type: 'error',
-                                    title: 'Uff ha ocurrido un error desconocido'
-                                });
-
-
+                                $(no_bgs_div).insertAfter($('#div_backgrounds'));
                             }
 
-                            console.log(json); // log the returned json to the console
-                            console.log("success"); // another sanity check
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Error de método, debe ser POST'
+                            });
 
 
+                        } else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff ha ocurrido un error desconocido'
+                            });
 
 
-                            {#$('#div_by_workshop').removeClass('hidden')#}
-
-                        },
-
-                        // handle a non-successful response
-                        error : function(xhr,errmsg,err) {
-                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                         }
-                    });
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        {#$('#div_by_workshop').removeClass('hidden')#}
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                            " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                    }
+                });
             });
         });
     </script>
