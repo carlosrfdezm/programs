@@ -2423,6 +2423,42 @@ def ajx_delete_bg(request, program_slug):
         )
 
 @login_required
+def ajx_delete_r(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+
+    if user_is_program_cs(request.user, program ):
+        if request.method=='POST':
+            r = ProgramFileDoc.objects.get(pk=request.POST['r_id'])
+
+            try:
+                r_type = ''
+                if r.is_init_requirenment:
+                    r_type='init'
+                elif r.is_finish_requirenment:
+                    r_type = 'finish'
+
+                r.delete()
+                return HttpResponse(
+                    json.dumps([{'deleted': '1', 'r_type':r_type}]),
+                    content_type="application/json"
+                )
+            except:
+                return HttpResponse(
+                    json.dumps([{'deleted': '2'}]),
+                    content_type="application/json"
+                )
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': '0'}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'deleted': '3'}]),
+            content_type="application/json"
+        )
+
+@login_required
 def ajx_delete_filedoc(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     if program.type == 'phd':
