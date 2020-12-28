@@ -188,7 +188,7 @@
 
                                     </div>
                                     <div class="col-md-1 text-right">
-                                        <button type="button" class="btn btn-sm btn-primary" title="Agregar requisito de egreso"><i class="fa fa-plus"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-primary" title="Agregar requisito de egreso" data-toggle="modal" data-target="#modal_add_new_finish_r"><i class="fa fa-plus"></i> </button>
                                     </div>
                                 </div>
                                 {% if program_finish_requirenments %}
@@ -427,6 +427,65 @@
                                         <div class="modal-footer justify-content-between">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                                             <button type="submit" class="btn btn-success" id="btn_submit_init_r">Enviar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                        <div class="modal fade" id="modal_add_new_finish_r">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Agregar nuevo requisito de egreso</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form id="frm_add_finish_r" method="post">
+                                        {% csrf_token %}
+                                        <div class="modal-body alert alert-success">
+
+                                            <div class="form-row align-items-center pb-2" id="div_new_r_title">
+                                                <div class="form-group col-md-12">
+                                                    <label for="inp_finish_r_name">Nombre:</label>
+                                                    <input type="text" class="form-control" id="inp_finish_r_name" name="finish_r_name" placeholder="Nombre del requisito" maxlength="100"  required>
+                                                </div>
+
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="col-md-4">
+                                                    <div class="icheck-primary d-inline ">
+                                                        <input type="checkbox" id="inp_finish_r_nat" name="finish_r_nat" title="Marcar si el requisito es solo para nacionales">
+                                                        <label for="inp_finish_r_nat" title="Marcar si el requisito es solo para nacionales">Solo para nacionales??
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="icheck-primary d-inline ">
+                                                        <input type="checkbox" id="inp_finish_r_old" name="finish_r_get_old" title="Marcar si el requisito caduca">
+                                                        <label for="inp_finish_r_old" title="Marcar si el requisito caduca al paso del tiempo">Caduca??
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <select class="form-control" id="slc_finish_r_type" name="finish_r_type" required>
+                                                        <option value="" selected>Responsable(seleccionar uno)**</option>
+                                                        <option value="student" >Estudiante</option>
+                                                        <option value="program" >Programa</option>
+                                                        <option value="comission" >Comisión de grados</option>
+                                                    </select>
+                                                </div>
+
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success" id="btn_submit_finish_r">Enviar</button>
                                         </div>
                                     </form>
                                 </div>
@@ -835,6 +894,146 @@
 
             });
 
+            $('#frm_add_finish_r').submit( function (e) {
+
+                e.preventDefault();
+                var data = new FormData($('#frm_add_finish_r').get(0));
+
+                var url = "{% url 'programs:ajx_new_requirenment' program.slug 'finish' %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].updated == '1') {
+
+                            var r_type = '';
+                            var r_get_old = '';
+
+                            $('.modal').modal('hide');
+                            if(json[0].r_type=="student"){
+                                var r_type = '<i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>'
+                            }
+                            else if (json[0].r_type=="program"){
+                                var r_type = '<i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>'
+
+                            }
+                            else if (json[0].r_type=="comission"){
+                                var r_type = '<i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>'
+
+                            }
+                            if(json[0].r_get_old)
+                            {
+                                r_get_old = '<i class="fa fa-toggle-on text-success" title="Si"></i>';
+                            }
+                            else {
+                                r_get_old = '<i class="fa fa-toggle-off text-danger" title="No"></i>';
+                            }
+
+
+
+                            var new_r = '<div class="row pt-1 pb-1 align-items-baseline" id="div_r_'+json[0].r_id+'">'+
+                                '<div class="col-md-7 col-sm-4">'+
+                                '<h6>'+json[0].r_name+'</h6>'+
+                                '</div>'+
+                                '<div class="col-md-2 col-sm-1 text-center">'+
+                                r_type+
+                                '</div>'+
+
+                                '<div class="col-md-1 col-sm-1 text-center">'+
+                                r_get_old+
+
+                                '</div>'+
+                                '<div class="col-md-2 col-sm-4 text-center">'+
+                                '<div class="btn-group btn-group-sm">'+
+                                '<button type="button" class="btn btn-sm btn-warning" id="btn_edit_r_'+json[0].r_id+'" data="'+json[0].r_id+'" title="Cambiar requisito"><i class="fa fa-edit"></i> </button>'+
+                                '<button type="button" class="btn btn-sm btn-danger" id="btn_show_rm_r_'+json[0].r_id+'" data="'+json[0].r_id+'" data-toggle="modal" data-target="#modal_rm_r" title="Eliminar requisito"><i class="fa fa-eraser"></i> </button>'+
+                                ' </div>'+
+
+
+                                '</div>'+
+                                '</div>';
+
+                            finish_r_numbers += 1;
+                            if (finish_r_numbers == 1){
+                                var div_finish_requirenments_cols = '<div class="row" id="div_finish_requirenments_cols">'+
+                                    '<div class="col-md-7"><strong>Nombre del requisito</strong></div>'+
+                                    '<div class="col-md-2 text-center"><strong>Responsable</strong></div>'+
+                                    '<div class="col-md-1 text-center"><strong>Caduca</strong></div>'+
+                                    ' <div class="col-md-2"></div>'+
+                                    '</div>';
+                                $('#div_no_end_requirenments').remove();
+                                $(div_finish_requirenments_cols).insertAfter($('#div_finish_requirenments_pres'));
+                                $(new_r).insertAfter($('#div_finish_requirenments_cols'));
+                            }
+                            else{
+                                $(new_r).insertAfter($('#div_finish_requirenments_cols'));
+                            }
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Requisito de egreso agregado exitosamente'
+                            })
+
+                        }
+                        else if(json[0].updated == '0'){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar el requisito de egreso.Errores:'+ json[0].errors
+                            })
+
+                        }
+                        else if(json[0].updated == '2'){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar el requisito de egreso: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].updated == '3'){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar el requisito de egreso: El usuario no tiene privilegios.'
+                            })
+
+                        }
+                        else if(json[0].updated == '4'){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar el requisito de egreso. El contexto debe ser "init" o "finish".'
+                            })
+
+                        }
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido al agregar el nuevo requisito.'
+                        })
+                    }
+                });
+
+            });
+
             $('#frm_edit_r').submit( function (e) {
 
                 e.preventDefault();
@@ -907,15 +1106,15 @@
 
                             if(json[0].r_context=='init'){
                                 Toast.fire({
-                                type: 'success',
-                                title: 'Requisito de ingreso modificado exitosamente'
-                            })
+                                    type: 'success',
+                                    title: 'Requisito de ingreso modificado exitosamente'
+                                })
                             }
                             else if(json[0].r_context=='finish'){
                                 Toast.fire({
-                                type: 'success',
-                                title: 'Requisito de egreso modificado exitosamente'
-                            })
+                                    type: 'success',
+                                    title: 'Requisito de egreso modificado exitosamente'
+                                })
                             }
 
 
@@ -976,6 +1175,9 @@
             });
             $(document).on('hidden.bs.modal','#modal_add_new_init_r', function () {
                 $('#frm_add_init_r')[0].reset();
+            });
+            $(document).on('hidden.bs.modal','#modal_add_new_finish_r', function () {
+                $('#frm_add_finish_r')[0].reset();
             });
 
             $(document).on('click',"button[id*='btn_show_rm_r']", function (e) {
@@ -1173,7 +1375,7 @@
                             if(json[0].r_get_old){
                                 $('#inp_edit_r_old').attr('checked','checked');
                             }
-                             if(json[0].r_nat){
+                            if(json[0].r_nat){
                                 $('#inp_edit_r_nat').attr('checked','checked');
                             }
 
@@ -1182,7 +1384,7 @@
                                 $('#h4_edit_r_title').text('Editar requisito de ingreso');
                             }
                             else if(json[0].r_context=='finish'){
-                               $('#h4_edit_r_title').text('Editar requisito de egreso');
+                                $('#h4_edit_r_title').text('Editar requisito de egreso');
                             }
 
                             $('#modal_edit_r').modal('show');
