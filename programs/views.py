@@ -2247,44 +2247,85 @@ def ajx_upload_background(request, program_slug):
         )
 
 @login_required
-def ajx_new_init_requirenment(request, program_slug):
+def ajx_new_requirenment(request, program_slug, scope):
     form = FileUploadForm(data=request.POST, files=request.FILES)
 
     program=Program.objects.get(slug=program_slug)
 
     if request.method == 'POST':
         if user_is_program_cs(request.user, program):
-            try:
-                new_init_r = ProgramFileDoc(
-                    program = program,
-                    doc_name=request.POST['init_r_name'],
-                    is_init_requirenment=True,
-                    type=request.POST['init_r_type']
-                )
+            if scope == 'init':
                 try:
-                    jfn = request.POST['init_r_nat']
-                    new_init_r.just_for_nationals = True
+                    new_init_r = ProgramFileDoc(
+                        program = program,
+                        doc_name=request.POST['init_r_name'],
+                        is_init_requirenment=True,
+                        type=request.POST['init_r_type']
+                    )
+                    try:
+                        jfn = request.POST['init_r_nat']
+                        new_init_r.just_for_nationals = True
+                    except:
+                        pass
+    
+                    try:
+                        get_old = request.POST['init_r_get_old']
+                        new_init_r.get_old = True
+                    except:
+                        pass
+    
+                    new_init_r.save()
+                    return HttpResponse(
+                        json.dumps([{'updated': '1','r_id':new_init_r.id, 'r_name':new_init_r.doc_name,
+                                     'r_get_old':new_init_r.get_old, 'r_jfn': new_init_r.just_for_nationals, 'r_type':new_init_r.type}]),
+                        content_type="application/json"
+                    )
                 except:
-                    pass
-
+                    print('Problemas con el requisito')
+                    return HttpResponse(
+                        json.dumps([{'updated': '0', 'errors':form.errors}]),
+                        content_type="application/json"
+                    )
+            elif scope == 'finish':
                 try:
-                    get_old = request.POST['init_r_get_old']
-                    new_init_r.get_old = True
-                except:
-                    pass
+                    new_finish_r = ProgramFileDoc(
+                        program=program,
+                        doc_name=request.POST['finish_r_name'],
+                        is_finish_requirenment=True,
+                        type=request.POST['finish_r_type']
+                    )
+                    try:
+                        jfn = request.POST['finish_r_nat']
+                        new_finish_r.just_for_nationals = True
+                    except:
+                        pass
 
-                new_init_r.save()
+                    try:
+                        get_old = request.POST['finish_r_get_old']
+                        new_finish_r.get_old = True
+                    except:
+                        pass
+
+                    new_finish_r.save()
+                    return HttpResponse(
+                        json.dumps([{'updated': '1', 'r_id': new_finish_r.id, 'r_name': new_finish_r.doc_name,
+                                     'r_get_old': new_finish_r.get_old, 'r_jfn': new_finish_r.just_for_nationals,
+                                     'r_type': new_finish_r.type}]),
+                        content_type="application/json"
+                    )
+                except:
+                    print('Problemas con el requisito')
+                    return HttpResponse(
+                        json.dumps([{'updated': '0', 'errors': form.errors}]),
+                        content_type="application/json"
+                    )
+
+            else:
                 return HttpResponse(
-                    json.dumps([{'updated': '1','r_id':new_init_r.id, 'r_name':new_init_r.doc_name,
-                                 'r_get_old':new_init_r.get_old, 'r_jfn': new_init_r.just_for_nationals, 'r_type':new_init_r.type}]),
+                    json.dumps([{'updated': '4', 'errors': form.errors}]),
                     content_type="application/json"
                 )
-            except:
-                print('Problemas con el archivo')
-                return HttpResponse(
-                    json.dumps([{'updated': '0', 'errors':form.errors}]),
-                    content_type="application/json"
-                )
+                
 
         else:
             return HttpResponse(

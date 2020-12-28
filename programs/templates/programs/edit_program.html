@@ -123,7 +123,7 @@
                                     </div>
                                 {% endif %}
                                 <hr>
-                                <div class="row" id="div_finish_requirenments_pres">
+                                <div class="row" id="div_init_requirenments_pres">
                                     <div class="col-md-11">
                                         <h5>Requisitos de ingreso al programa</h5>
 
@@ -141,7 +141,7 @@
                                     </div>
                                     {% for filedoc in program_init_requirenments %}
 
-                                        <div class="row pt-1 pb-1 align-items-baseline">
+                                        <div class="row pt-1 pb-1 align-items-baseline"id="div_r_{{ filedoc.id }}">
                                             <div class="col-md-7 col-sm-4">
                                                 <h6>{{ filedoc.doc_name|truncatewords:6 }}</h6>
                                             </div>
@@ -166,11 +166,9 @@
                                             </div>
                                             <div class="col-md-2 col-sm-4 text-center">
                                                 <div class="btn-group btn-group-sm">
-                                                    <button type="button" class="btn btn-sm btn-warning" title="Cambiar requisito"><i class="fa fa-edit"></i> </button>
-                                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar requisito"><i class="fa fa-eraser"></i> </button>
+                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_edit_r_{{ filedoc.id }}" data="{{ filedoc.id }}" title="Cambiar requisito"><i class="fa fa-edit"></i> </button>
+                                                    <button type="button" class="btn btn-sm btn-danger" id="btn_rm_r_{{ filedoc.id }}" data="{{ filedoc.id }}" title="Eliminar requisito"><i class="fa fa-eraser"></i> </button>
                                                 </div>
-
-
                                             </div>
                                         </div>
 
@@ -202,7 +200,7 @@
                                     </div>
                                     {% for filedoc in program_finish_requirenments %}
 
-                                        <div class="row pt-1 pb-1 align-items-baseline">
+                                        <div class="row pt-1 pb-1 align-items-baseline" id="div_r_{{ filedoc.id }}">
                                             <div class="col-md-7 col-sm-4">
                                                 <h6>{{ filedoc.doc_name|truncatewords:6 }}</h6>
                                             </div>
@@ -227,8 +225,8 @@
                                             </div>
                                             <div class="col-md-2 col-sm-4 text-center">
                                                 <div class="btn-group btn-group-sm">
-                                                    <button type="button" class="btn btn-sm btn-warning" title="Cambiar requisito"><i class="fa fa-edit"></i> </button>
-                                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar requisito"><i class="fa fa-eraser"></i> </button>
+                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_edit_r_{{ filedoc.id }}" data="{{ filedoc.id }}" title="Cambiar requisito"><i class="fa fa-edit"></i> </button>
+                                                    <button type="button" class="btn btn-sm btn-danger" id="btn_rm_r_{{ filedoc.id }}" data="{{ filedoc.id }}" title="Eliminar requisito"><i class="fa fa-eraser"></i> </button>
                                                 </div>
 
 
@@ -448,7 +446,7 @@
             var r2delete_id = '';
 
 
-            $(document).on('submit',$('#frm_add_background'), function (e) {
+            $("#frm_add_background").submit( function (e) {
 
                 e.preventDefault();
                 var data = new FormData($('#frm_add_background').get(0));
@@ -535,7 +533,7 @@
 
             });
 
-            $(document).on('submit',$('#frm_edit_background'), function (e) {
+            $('#frm_edit_background').submit( function (e) {
 
                 e.preventDefault();
 
@@ -606,12 +604,12 @@
 
             });
 
-            $(document).on('submit',$('#frm_add_init_r'), function (e) {
+            $('#frm_add_init_r').submit( function (e) {
 
                 e.preventDefault();
                 var data = new FormData($('#frm_add_init_r').get(0));
 
-                var url = "{% url 'programs:ajx_new_init_requirenment' program.slug %}";
+                var url = "{% url 'programs:ajx_new_requirenment' program.slug 'init' %}";
 
                 $.ajax({
                     url : url,
@@ -626,9 +624,68 @@
                     success : function(json) {
 
                         if (json[0].updated == '1') {
+
+                            var r_type = '';
+                            var r_get_old = '';
+
                             $('.modal').modal('hide');
+                            if(json[0].r_type=="student"){
+                                var r_type = '<i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>'
+                            }
+                            else if (json[0].r_type=="program"){
+                                var r_type = '<i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>'
+
+                            }
+                            else if (json[0].r_type=="comission"){
+                                var r_type = '<i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>'
+
+                            }
+                            if(json[0].r_get_old)
+                            {
+                                r_get_old = '<i class="fa fa-toggle-on text-success" title="Si"></i>';
+                            }
+                            else {
+                                r_get_old = '<i class="fa fa-toggle-off text-danger" title="No"></i>';
+                            }
+
+
+
+                            var new_r = '<div class="row pt-1 pb-1 align-items-baseline" id="div_r_'+json[0].r_id+'">'+
+                                '<div class="col-md-7 col-sm-4">'+
+                                '<h6>'+json[0].r_name+'</h6>'+
+                                '</div>'+
+                                '<div class="col-md-2 col-sm-1 text-center">'+
+                                r_type+
+                                '</div>'+
+
+                                '<div class="col-md-1 col-sm-1 text-center">'+
+                                r_get_old+
+
+                                '</div>'+
+                                '<div class="col-md-2 col-sm-4 text-center">'+
+                                '<div class="btn-group btn-group-sm">'+
+                                '<button type="button" class="btn btn-sm btn-warning" id="btn_edit_r_'+json[0].r_id+'" data="'+json[0].r_id+'" title="Cambiar requisito"><i class="fa fa-edit"></i> </button>'+
+                                '<button type="button" class="btn btn-sm btn-danger" id="btn_rm_r_'+json[0].r_id+'" data="'+json[0].r_id+'" title="Eliminar requisito"><i class="fa fa-eraser"></i> </button>'+
+                                ' </div>'+
+
+
+                                '</div>'+
+                                '</div>';
 
                             init_r_numbers += 1;
+                            if (init_r_numbers == 1){
+                                var div_init_requirenments_cols = '<div class="row" id="div_init_requirenments_cols">'+
+                                    '<div class="col-md-7"><strong>Nombre del requisito</strong></div>'+
+                                    '<div class="col-md-2 text-center"><strong>Responsable</strong></div>'+
+                                    '<div class="col-md-1 text-center"><strong>Caduca</strong></div>'+
+                                    ' <div class="col-md-2"></div>'+
+                                    '</div>';
+                                $(div_init_requirenments_cols).insertAfter($('#div_init_requirenments_pres'));
+                                $(new_r).insertAfter($('#div_init_requirenments_cols'));
+                            }
+                            else{
+                                $(new_r).insertAfter($('#div_init_requirenments_cols'));
+                            }
 
                             Toast.fire({
                                 type: 'success',
@@ -660,6 +717,14 @@
                             })
 
                         }
+                        else if(json[0].updated == '4'){
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido agregar el requisito de ingreso. El contexto debe ser "init" o "finish".'
+                            })
+
+                        }
 
                         console.log(json); // log the returned json to the console
                         console.log("success"); // another sanity check
@@ -681,8 +746,15 @@
             $(document).on('hidden.bs.modal','#modal_add_program_background', function () {
                 $('#frm_add_background')[0].reset();
             });
+            $(document).on('hidden.bs.modal','#modal_add_new_init_r', function () {
+                $('#frm_add_init_r')[0].reset();
+            });
             $(document).on('click',"button[id*='btn_show_rm_bg_modal']", function (e) {
                 bg2delete_id = $(this).attr('data');
+            });
+            $(document).on('click',"button[id*='btn_rm_r']", function (e) {
+                r2delete_id = $(this).attr('data');
+                alert(r2delete_id);
             });
             $(document).on('click',"button[id*='btn_show_edit_bg_modal']", function (e) {
                 $('#inp_bg_id').val($(this).attr('data'));
