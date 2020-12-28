@@ -129,8 +129,8 @@ urlpatterns = [
 
     path('ajx/requirenment/<str:scope>/create', views.ajx_new_requirenment, name='ajx_new_requirenment'),
     path('ajx/requirenment/delete', views.ajx_delete_r, name='ajx_delete_r'),
-
-
+    path('ajx/requirenment/data', views.ajx_r_data, name='ajx_r_data'),
+    path('ajx/requirenment/edit', views.ajx_edit_requirenment, name='ajx_edit_requirenment'),
 
 
     path('statistics', views.program_statistics, name='program_statistics'),

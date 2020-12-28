@@ -2339,6 +2339,104 @@ def ajx_new_requirenment(request, program_slug, scope):
             content_type="application/json"
         )
 
+
+@login_required
+def ajx_edit_requirenment(request, program_slug):
+    form = FileUploadForm(data=request.POST, files=request.FILES)
+
+    program = Program.objects.get(slug=program_slug)
+
+    if request.method == 'POST':
+        if user_is_program_cs(request.user, program):
+
+            try:
+                r = ProgramFileDoc.objects.get(pk=request.POST['r_id'])
+                r.doc_name = request.POST['edit_r_name']
+                r.type = request.POST['edit_r_type']
+
+                try:
+                    jfn = request.POST['edit_r_nat']
+                    r.just_for_nationals = True
+                except:
+                    r.just_for_nationals = False
+
+                try:
+
+                    get_old = request.POST['edit_r_get_old']
+                    print(get_old)
+                    r.get_old = True
+                except:
+                    r.get_old = False
+
+                r.save()
+                r_data = {'updated': '1', 'r_id': r.id, 'r_name': r.doc_name,
+                          'r_get_old': r.get_old, 'r_jfn': r.just_for_nationals,
+                          'r_type': r.type}
+                if r.is_init_requirenment:
+                    r_data['r_context'] = 'init'
+                elif r.is_finish_requirenment:
+                    r_data['r_context'] = 'finish'
+                return HttpResponse(
+                    json.dumps([r_data]),
+                    content_type="application/json"
+                )
+            except ProgramFileDoc.DoesNotExist:
+                print('Problemas con el requisito')
+                return HttpResponse(
+                    json.dumps([{'updated': '0', 'errors': form.errors}]),
+                    content_type="application/json"
+                )
+
+        else:
+            return HttpResponse(
+                json.dumps([{'updated': '3', 'errors': form.errors}]),
+                content_type="application/json"
+            )
+
+    else:
+        return HttpResponse(
+            json.dumps([{'updated': '2', 'errors': form.errors}]),
+            content_type="application/json"
+        )
+
+@login_required
+def ajx_r_data(request, program_slug):
+    
+    program = Program.objects.get(slug=program_slug)
+
+    if request.method == 'POST':
+        if user_is_program_cs(request.user, program):
+            r = ProgramFileDoc.objects.get(pk=request.POST['r_id'])
+
+            r_data = {'recovered': '1', 'r_id': r.id, 'r_name': r.doc_name,
+                      'r_get_old': r.get_old, 'r_jfn': r.just_for_nationals,
+                      'r_type': r.type}
+            if r.is_init_requirenment:
+                r_data['r_context'] = 'init'
+            elif r.is_finish_requirenment:
+                r_data['r_context'] = 'finish'
+
+            json_data = []
+            json_data.append(r_data)
+            return HttpResponse(
+
+                json.dumps(json_data),
+                content_type="application/json"
+            )
+
+
+        else:
+            return HttpResponse(
+                json.dumps([{'recovered': '3'}]),
+                content_type="application/json"
+            )
+
+    else:
+        return HttpResponse(
+            json.dumps([{'recovered': '2'}]),
+            content_type="application/json"
+        )
+
 @login_required
 def ajx_edit_background(request, program_slug):
     form = FileUploadForm(data=request.POST, files=request.FILES)
@@ -2431,15 +2529,15 @@ def ajx_delete_r(request, program_slug):
             r = ProgramFileDoc.objects.get(pk=request.POST['r_id'])
 
             try:
-                r_type = ''
+                r_context = ''
                 if r.is_init_requirenment:
-                    r_type='init'
+                    r_context = 'init'
                 elif r.is_finish_requirenment:
-                    r_type = 'finish'
+                    r_context = 'finish'
 
                 r.delete()
                 return HttpResponse(
-                    json.dumps([{'deleted': '1', 'r_type':r_type}]),
+                    json.dumps([{'deleted': '1', 'r_context':r_context}]),
                     content_type="application/json"
                 )
             except:
