@@ -3297,7 +3297,7 @@ def ajx_last_years_requests(request, program_slug):
     )
 
 @login_required
-def ajx_students_by_line(request, program_slug):
+def ajx_students_by_line(request, program_slug, scope):
     program = Program.objects.get(slug=program_slug)
     response_data=[]
     labels = []
@@ -3309,9 +3309,24 @@ def ajx_students_by_line(request, program_slug):
         i += 1
         labels.append(line.name.split()[0])
         if program.type == 'phd':
-            data.append(PhdStudentTheme.objects.filter(line=line).__len__())
+            if scope == 'all':
+                data.append(PhdStudentTheme.objects.filter(line=line).__len__())
+            elif scope == 'requesters':
+                data.append(PhdStudentTheme.objects.filter(line=line, phd_student__status='solicitante').__len__())
+            elif scope == 'aproved':
+                data.append(PhdStudentTheme.objects.filter(line=line, phd_student__status='doctorando').__len__())
+            elif scope == 'graduated':
+                data.append(PhdStudentTheme.objects.filter(line=line, phd_student__status='graduado').__len__())
         elif program.type == 'msc':
-            data.append(MscStudentTheme.objects.filter(line=line).__len__())
+            if scope == 'all':
+                data.append(MscStudentTheme.objects.filter(line=line).__len__())
+            elif scope == 'requesters':
+                data.append(MscStudentTheme.objects.filter(line=line, student__status ='solicitante').__len__())
+            elif scope == 'aproved':
+                data.append(MscStudentTheme.objects.filter(line=line, student__status ='maestrante').__len__())
+            elif scope == 'graduated':
+                data.append(MscStudentTheme.objects.filter(line=line, student__status ='graduado').__len__())
+
 
 
     response_data.append(labels)
