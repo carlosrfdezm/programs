@@ -4946,11 +4946,12 @@ def docx_program_report(request, program_slug):
 
             document.add_heading('Solicitantes de ingreso', level=3)
             if PhdStudent.objects.filter(student__program=program, status='Solicitante'):
-                table = document.add_table(rows=1, cols=3)
+                table = document.add_table(rows=1, cols=4)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
                 hdr_cells[1].text = 'Fecha de solicitud'
                 hdr_cells[2].text = 'Requisitos de ingreso'
+                hdr_cells[3].text = 'Tema'
 
                 for student in PhdStudent.objects.filter(student__program=program, status='Solicitante'):
                     row_cells = table.add_row().cells
@@ -4960,17 +4961,21 @@ def docx_program_report(request, program_slug):
                         row_cells[2].text = 'Cumplidos'
                     else:
                         row_cells[2].text = 'Incumplidos'
+                    row_cells[3].text = str(student.phdstudenttheme)
+
+
             else:
                 document.add_heading('No hay solicitantes registrados en el programa', level=5)
 
             document.add_heading('Doctorandos', level=3)
             if PhdStudent.objects.filter(student__program=program, status='Doctorando'):
-                table = document.add_table(rows=1, cols=4)
+                table = document.add_table(rows=1, cols=5)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
                 hdr_cells[1].text = 'Fecha de ingreso'
                 hdr_cells[2].text = 'Fecha de defensa'
                 hdr_cells[3].text = 'Requisitos de egreso'
+                hdr_cells[4].text = 'Tema'
 
                 for student in PhdStudent.objects.filter(student__program=program, status='Doctorando'):
                     row_cells = table.add_row().cells
@@ -4985,22 +4990,25 @@ def docx_program_report(request, program_slug):
                         row_cells[3].text = 'Cumplidos'
                     else:
                         row_cells[3].text = 'Incumplidos'
+                    row_cells[4].text = str(student.phdstudenttheme)
             else:
                 document.add_heading('No hay doctorandos registrados en el programa', level=5)
 
             document.add_heading('Graduados', level=3)
             if PhdStudent.objects.filter(student__program=program, status='Graduado'):
-                table = document.add_table(rows=1, cols=3)
+                table = document.add_table(rows=1, cols=4)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
                 hdr_cells[1].text = 'Fecha de ingreso'
                 hdr_cells[2].text = 'Fecha de egreso'
+                hdr_cells[3].text = 'Tema'
 
                 for student in PhdStudent.objects.filter(student__program=program, status='Graduado'):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(student.student.user.get_full_name())
                     row_cells[1].text = str(student.student.init_date)
                     row_cells[2].text = str(student.student.graduate_date)
+                    row_cells[3].text = str(student.phdstudenttheme)
 
             else:
                 document.add_heading('No hay graduados registrados en el programa', level=5)
