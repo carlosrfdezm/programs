@@ -4663,6 +4663,14 @@ def student_filedoc_view(request, program_slug,student_id, doc_id):
                         filename.split('/').__len__() - 1] + '"'
 
                     return response
+            else:
+                with fs.open(filename) as doc:
+                    response = HttpResponse(doc, content_type='application')
+                    response['Content-Disposition'] = "inline; filename=" + '"' + filename.split('/')[
+                        filename.split('/').__len__() - 1] + '"'
+
+                    return response
+
 
         else:
 
