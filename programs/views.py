@@ -5172,8 +5172,51 @@ def docx_program_report(request, program_slug):
                 document.add_heading('No hay diplomantes registrados en el programa', level=5)
 
         document.add_heading('Claustro', level=3)
+        document.add_heading('Generales', level=4)
         if ProgramMember.objects.filter(program=program):
             if program.type == 'phd':
+                table = document.add_table(rows=1, cols=4)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Miembros'
+                hdr_cells[1].text = 'Tutores doctorandos'
+                hdr_cells[2].text = 'Tutores solicitantes'
+                hdr_cells[3].text = 'Tutores historico'
+
+                doc_tuthor = 0
+                req_tuthor = 0
+                his_tuthor = 0
+                members = ProgramMember.objects.filter(program=program).__len__()
+                doc_tuthors = []
+                req_tuthors = []
+                his_tuthors = []
+                for member in ProgramMember.objects.filter(program=program):
+                    if member.tuthor_set.all():
+                        for tuthor in member.tuthor_set.all():
+                            student = tuthor.phd_student
+                            if student.status == 'doctorando' and not tuthor in doc_tuthors:
+                                doc_tuthors.append(tuthor)
+
+                        row_cells[2].text = str(aspirants)
+                    else:
+                        row_cells[2].text = "-----------------------"
+
+                    if member.tuthor_set.all().count()>0:
+                        aspirants = ""
+                        for tuthor in member.tuthor_set.all():
+                            student = tuthor.phd_student
+                            if student.status == 'graduado':
+                                aspirants = aspirants+tuthor.phd_student.student.user.get_full_name()+', '
+
+                        row_cells[3].text = str(aspirants)
+                    else:
+                        row_cells[3].text = ""
+
+
+
+
+
+                document.add_heading('Individuales', level=4)
+
                 table = document.add_table(rows=1, cols=4)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
