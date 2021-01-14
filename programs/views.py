@@ -4645,7 +4645,7 @@ def student_filedoc_view(request, program_slug,student_id, doc_id):
         filename = document.file.url
 
         if fs.exists(filename):
-            doc_ext = filename.split('.')[filename.split('.').__len__() - 1]
+            doc_ext = (filename.split('.')[filename.split('.').__len__() - 1]).lower()
 
             if doc_ext == 'doc' or doc_ext == 'docx' or doc_ext == 'odt':
 
