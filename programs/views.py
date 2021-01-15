@@ -5191,28 +5191,21 @@ def docx_program_report(request, program_slug):
                 his_tuthors = []
                 for member in ProgramMember.objects.filter(program=program):
                     if member.tuthor_set.all():
+                        if not member in his_tuthors:
+                            his_tuthors.append(member)
                         for tuthor in member.tuthor_set.all():
                             student = tuthor.phd_student
-                            if student.status == 'doctorando' and not tuthor in doc_tuthors:
-                                doc_tuthors.append(tuthor)
+                            if student.status == 'doctorando' and not member in doc_tuthors:
+                                doc_tuthors.append(member)
 
-                        row_cells[2].text = str(aspirants)
-                    else:
-                        row_cells[2].text = "-----------------------"
+                            elif student.status == 'solicitante' and not member in req_tuthors:
+                                req_tuthors.append(member)
 
-                    if member.tuthor_set.all().count()>0:
-                        aspirants = ""
-                        for tuthor in member.tuthor_set.all():
-                            student = tuthor.phd_student
-                            if student.status == 'graduado':
-                                aspirants = aspirants+tuthor.phd_student.student.user.get_full_name()+', '
-
-                        row_cells[3].text = str(aspirants)
-                    else:
-                        row_cells[3].text = ""
-
-
-
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(members)
+                row_cells[1].text = str(doc_tuthors.__len__())
+                row_cells[2].text = str(req_tuthors.__len__())
+                row_cells[3].text = str(his_tuthors.__len__())
 
 
                 document.add_heading('Individuales', level=4)
