@@ -5003,7 +5003,7 @@ def docx_program_report(request, program_slug):
                 document.add_heading('No hay doctorandos registrados en el programa', level=5)
 
             document.add_heading('Graduados', level=3)
-            if PhdStudent.objects.filter(student__program=program, status='Graduado'):
+            if PhdStudent.objects.filter(student__program=program, status='Graduado').order_by('student__graduate_date'):
                 table = document.add_table(rows=1, cols=4)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
