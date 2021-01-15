@@ -5178,9 +5178,9 @@ def docx_program_report(request, program_slug):
                 table = document.add_table(rows=1, cols=4)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Miembros'
-                hdr_cells[1].text = 'Tutores doctorandos'
-                hdr_cells[2].text = 'Tutores solicitantes'
-                hdr_cells[3].text = 'Tutores histórico'
+                hdr_cells[1].text = 'Tutores de doctorandos'
+                hdr_cells[2].text = 'Tutores de solicitantes'
+                hdr_cells[3].text = 'Tutores (histórico)'
 
                 doc_tuthor = 0
                 req_tuthor = 0
