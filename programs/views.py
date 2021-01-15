@@ -5003,7 +5003,7 @@ def docx_program_report(request, program_slug):
                 document.add_heading('No hay doctorandos registrados en el programa', level=5)
 
             document.add_heading('Graduados', level=3)
-            if PhdStudent.objects.filter(student__program=program, status='Graduado').order_by('student__graduate_date'):
+            if PhdStudent.objects.filter(student__program=program, status='Graduado'):
                 table = document.add_table(rows=1, cols=4)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
@@ -5011,7 +5011,7 @@ def docx_program_report(request, program_slug):
                 hdr_cells[2].text = 'Fecha de egreso'
                 hdr_cells[3].text = 'Tema'
 
-                for student in PhdStudent.objects.filter(student__program=program, status='Graduado'):
+                for student in PhdStudent.objects.filter(student__program=program, status='Graduado').order_by('student__graduate_date'):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(student.student.user.get_full_name())
                     row_cells[1].text = str(student.student.init_date)
