@@ -135,12 +135,15 @@
 
                                         {% endif %}
                                         <div class="form-group col-md-3" id="div_specialty">
-                                            <label for="slc_speciality" id="lbl_slc_specialty">Especialidad:</label>
-                                            <select class="form-control" id="slc_specialty" required name="student_speciality" >
+                                            <label for="slc_planned_end_year" id="lbl_slc_end_year">Año de defensa previsto:</label>
+                                            <select class="form-control" id="slc_planned_end_year" required name="student_planned_end_year" >
                                                 <option value="" >Seleccione una opción</option>
-                                                {% for speciality in specialities %}
-                                                    <option value="{{ speciality.id }}" {% if speciality == phd_student.student.speciality %}selected{% endif %}>{{ speciality }}</option>
-                                                {% endfor %}
+                                                {% if phd_student.student_formation_plan.planned_end_year %}
+                                                    <option value="{{ phd_student.student_formation_plan.planned_end_year }}" selected >phd_student.student_formation_plan.planned_end_year</option>
+
+
+                                                {% endif %}
+
 
                                             </select>
                                         </div>
@@ -670,6 +673,32 @@
                 timer: 7000
             });
             {#bsCustomFileInput.init();#}
+
+
+            {% if phd_student.student_formation_plan.planned_end_year %}
+                var yyyy = {{ phd_student.student_formation_plan.planned_end_year }}
+                for(var i = 1; i<= 4;i++){
+                    var value = yyyy +i;
+
+                    var option = '<option value="'+value+'" >'+value+'</option>';
+
+                    $('#slc_planned_end_year').append(option);
+                };
+            {% else %}
+                var today = new Date();
+
+                var yyyy = today.getFullYear();
+
+                for(var i = 0; i<= 5;i++){
+                    var value = yyyy +i;
+
+                    var option = '<option value="'+value+'" >'+value+'</option>';
+
+                    $('#slc_planned_end_year').append(option);
+                };
+            {% endif %}
+
+
 
             $('#chk_is_msc').change(function (){
                 if($(this).val()=='False'){

@@ -907,7 +907,7 @@ def edit_student(request, program_slug, student_id):
                 gender=request.POST['gender'],
                 dni=request.POST['student_dni'],
                 birth_date=request.POST['student_birth_date'],
-                speciality = request.POST['student_speciality'],
+                # speciality = request.POST['student_speciality'],
 
             )
             if 'request_date' in request.POST and not request.POST['request_date'] == '':
@@ -964,12 +964,22 @@ def edit_student(request, program_slug, student_id):
                 center=request.POST['student_center'],
             )
 
-            student_theme, created = PhdStudentTheme.objects.get_or_create(
+            student_theme, st_created = PhdStudentTheme.objects.get_or_create(
                 phd_student=PhdStudent.objects.get(student=Student.objects.get(pk=student_id)),
             )
             student_theme.description = request.POST['theme']
 
             student_theme.save()
+
+            formation_plan, fp_created = StudentFormationPlan.objects.get_or_create(
+                phdstudent=student.phdstudent,
+                last_update_date = now(),
+                planned_end_year = int(request.POST['student_planned_end_year']),
+            )
+            if fp_created:
+                formation_plan.elaboration_date = now()
+
+            formation_plan.save
             try:
                 student_theme.project = InvestigationProject.objects.get(pk=request.POST['investigation_project'])
                 student_theme.line = InvestigationProject.objects.get(pk=request.POST['investigation_project']).line
