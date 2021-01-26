@@ -157,7 +157,7 @@ def create_student(request, program_slug):
                         gender=request.POST['gender'],
                         dni=request.POST['student_dni'],
                         birth_date=request.POST['student_birth_date'],
-                        speciality=ProgramSpeciality.objects.get(pk=request.POST['student_speciality']),
+
 
                     )
                     try:
@@ -167,6 +167,15 @@ def create_student(request, program_slug):
                     except:
                         pass
                     student.save()
+
+                    formation_plan = StudentFormationPlan(
+                        phdstudent=student,
+                        elaboration_date=now(),
+                        last_update_date=now(),
+                        planned_end_year=int(request.POST['student_planned_end_year']),
+
+                    )
+                    formation_plan.save()
 
                     utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
 
@@ -247,10 +256,19 @@ def create_student(request, program_slug):
                 gender=request.POST['gender'],
                 dni=request.POST['student_dni'],
                 birth_date=request.POST['student_birth_date'],
-                speciality=ProgramSpeciality.objects.get(pk=request.POST['student_speciality']),
+
 
             )
             student.save()
+
+            formation_plan = StudentFormationPlan(
+                phdstudent=student,
+                elaboration_date=now(),
+                last_update_date=now(),
+                planned_end_year=int(request.POST['student_planned_end_year']),
+
+            )
+            formation_plan.save()
 
             utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
 
