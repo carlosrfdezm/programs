@@ -55,14 +55,8 @@
 
                                     <div class="form-group col-md-4">
                                         <label for="inp_planned_end_year">Año de defensa previsto:</label>
-                                        <select class="form-control" id="slc_planned_end_year" name="planned_end_year" required >
-                                            <option value="">Seleccione una opción</option>
-                                            {% for year in years %}
+                                        <input type="text" class="form-control" id="inp_planned_end_date" name="planned_end_date" value="{{ formation_plan.planned_end_year }}" readonly >
 
-                                                <option value="{{ year }}" {% if year == formation_plan.planned_end_year %}selected{% endif %}>{{ year }}</option>
-
-                                            {% endfor %}
-                                        </select>
                                         <p class="help text-sm text-gray">Fecha en que se prevee defender la tesis</p>
 
                                     </div>
@@ -112,7 +106,7 @@
                                                         <td id="td_end_date_{{ activity.id }}">{{ activity.end_date|date:"Y-m-d"  }}</td>
                                                         <td class="text-center" id="td_activity_status_{{ activity.id }}" {% if activity.status == 'ready' %} data="1" {% else %} data="0" {% endif %}><i id="i_activity_status_{{ activity.id }}" data="{{ activity.id }}" class="fa
                                                                                          {% if activity.status == 'ready' %}fa-toggle-on text-success{% else %}fa-toggle-off text-danger{% endif %}"
-                                                                                                                                                                                                          {% if activity.status == 'ready' %} title="Cumplida: click para cambiar" {% else %}  title="Pendiente: click para cambiar" {% endif %}
+                                                                {% if activity.status == 'ready' %} title="Cumplida: click para cambiar" {% else %}  title="Pendiente: click para cambiar" {% endif %}
                                                         ></i> </td>
                                                         <td class="">
                                                             <div class="btn-group col-md-1">
@@ -175,7 +169,7 @@
                                                         <td id="td_end_date_{{ activity.id }}">{{ activity.end_date|date:"Y-m-d"  }}</td>
                                                         <td class="text-center" id="td_activity_status_{{ activity.id }}" {% if activity.status == 'ready' %}data="1"{% else %}data="0"{% endif %}><i id="i_activity_status_{{ activity.id }}" data="{{ activity.id }}" class="fa
                                                                                          {% if activity.status == 'ready' %}fa-toggle-on text-success{% else %}fa-toggle-off text-danger{% endif %}"
-                                                                                                                                                                                                      {% if activity.status == 'ready' %} title="Cumplida: click para cambiar" {% else %}  title="Pendiente: click para cambiar" {% endif %}
+                                                                {% if activity.status == 'ready' %} title="Cumplida: click para cambiar" {% else %}  title="Pendiente: click para cambiar" {% endif %}
                                                         <td class="text-center">
                                                             <div class="btn-group col-md-1">
                                                                 <button class="btn btn-sm btn-warning" type="button" id="btn_edit_activity_{{ activity.id }}" data="{{ activity.id }}" title="Editar"><i class="fa fa-edit"></i> </button>
