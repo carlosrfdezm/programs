@@ -971,21 +971,31 @@ def edit_student(request, program_slug, student_id):
 
             student_theme.save()
 
-            formation_plan, fp_created = StudentFormationPlan.objects.get_or_create(
-                phdstudent=student.phdstudent,
-                last_update_date = now(),
-                planned_end_year = int(request.POST['student_planned_end_year']),
-            )
-            if fp_created:
-                formation_plan.elaboration_date = now()
 
-            formation_plan.save
             try:
                 student_theme.project = InvestigationProject.objects.get(pk=request.POST['investigation_project'])
                 student_theme.line = InvestigationProject.objects.get(pk=request.POST['investigation_project']).line
                 student_theme.save()
             except:
                 pass
+
+            try:
+                formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
+                formation_plan.planned_end_year = int(request.POST['student_planned_end_year'])
+                formation_plan.last_update_date = now()
+                formation_plan.save()
+            except StudentFormationPlan.DoesNotExist:
+                formation_plan = StudentFormationPlan(
+                    phdstudent=student,
+                    elaboration_date=now(),
+                    last_update_date=now(),
+                    planned_end_year=int(request.POST['student_planned_end_year']),
+
+                )
+                formation_plan.save()
+
+
+
 
             try:
                 if request.FILES['student_picture']:

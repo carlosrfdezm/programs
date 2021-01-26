@@ -135,15 +135,9 @@
 
                                         {% endif %}
                                         <div class="form-group col-md-3" id="div_specialty">
-                                            <label for="slc_planned_end_year" id="lbl_slc_end_year">Año de defensa previsto:</label>
+                                            <label for="slc_planned_end_year" id="lbl_slc_end_year">Año de defensa previsto: </label>
                                             <select class="form-control" id="slc_planned_end_year" required name="student_planned_end_year" >
                                                 <option value="" >Seleccione una opción</option>
-                                                {% if phd_student.student_formation_plan.planned_end_year %}
-                                                    <option value="{{ phd_student.student_formation_plan.planned_end_year }}" selected >phd_student.student_formation_plan.planned_end_year</option>
-
-
-                                                {% endif %}
-
 
                                             </select>
                                         </div>
@@ -675,12 +669,19 @@
             {#bsCustomFileInput.init();#}
 
 
-            {% if phd_student.student_formation_plan.planned_end_year %}
-                var yyyy = {{ phd_student.student_formation_plan.planned_end_year }}
-                for(var i = 1; i<= 4;i++){
-                    var value = yyyy +i;
+            {% if doc_student.studentformationplan %}
+                var yyyy = parseInt( {{ doc_student.studentformationplan.planned_end_year }});
 
-                    var option = '<option value="'+value+'" >'+value+'</option>';
+                var option = '';
+                for(var i =yyyy - 2; i <= yyyy+4;i++){
+                    if(i==yyyy){
+                        option = '<option value="'+i+'" selected>'+i+'</option>';
+                    }
+                    else{
+                        option = '<option value="'+i+'" >'+i+'</option>';
+
+                    }
+
 
                     $('#slc_planned_end_year').append(option);
                 };
