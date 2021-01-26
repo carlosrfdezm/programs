@@ -192,33 +192,34 @@
                                     </ul>
                                 </li>
                             {% endif %}
-                            <li class="nav-item has-treeview">
-                                <a href="#" class="nav-link" title="Especialidades del programa">
-                                    <i class="nav-icon fas fa-newspaper"></i>
-                                    <p>
-                                        Especialidades
-                                        <i class="fas fa-angle-left right"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    {% if user_is_program_cs %}
-                                        <li class="nav-item">
-                                            <a href="{% url 'programs:create_phd_speciality' program.slug %}" class="nav-link" title="Agregar nueva especialidad">
-                                                <i class="fa fa-plus nav-icon"></i>
-                                                <p>Nueva</p>
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                    <li class="nav-item">
-                                        <a href="{% url 'programs:phd_specialities' program.slug  %}" class="nav-link" title="Ver especialidades del programa">
-                                            <i class="fa fa-check nav-icon"></i>
-                                            <p>Ver especialidades</p>
-                                        </a>
-                                    </li>
 
-
-                                </ul>
-                            </li>
+{#                            <li class="nav-item has-treeview">#}
+{#                                <a href="#" class="nav-link" title="Especialidades del programa">#}
+{#                                    <i class="nav-icon fas fa-newspaper"></i>#}
+{#                                    <p>#}
+{#                                        Especialidades#}
+{#                                        <i class="fas fa-angle-left right"></i>#}
+{#                                    </p>#}
+{#                                </a>#}
+{#                                <ul class="nav nav-treeview">#}
+{#                                    {% if user_is_program_cs %}#}
+{#                                        <li class="nav-item">#}
+{#                                            <a href="{% url 'programs:create_phd_speciality' program.slug %}" class="nav-link" title="Agregar nueva especialidad">#}
+{#                                                <i class="fa fa-plus nav-icon"></i>#}
+{#                                                <p>Nueva</p>#}
+{#                                            </a>#}
+{#                                        </li>#}
+{#                                    {% endif %}#}
+{#                                    <li class="nav-item">#}
+{#                                        <a href="{% url 'programs:phd_specialities' program.slug  %}" class="nav-link" title="Ver especialidades del programa">#}
+{#                                            <i class="fa fa-check nav-icon"></i>#}
+{#                                            <p>Ver especialidades</p>#}
+{#                                        </a>#}
+{#                                    </li>#}
+{##}
+{##}
+{#                                </ul>#}
+{#                            </li>#}
 
                             <li class="nav-item has-treeview">
                                 <a href="#" class="nav-link" title="Estudiantes y solicitantes">
