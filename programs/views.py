@@ -5262,9 +5262,9 @@ def docx_program_report(request, program_slug):
                     if member.tuthor_set.all().count()>0:
                         aspirants = ""
                         for tuthor in member.tuthor_set.all():
-                            student = tuthor.phd_student
-                            if student.status == 'doctorando' or student.status == 'solicitante':
-                                aspirants = aspirants+tuthor.phd_student.student.user.get_full_name()+', '
+                            student = tuthor.phd_student.student
+                            if student.phdstudent.status == 'doctorando' or student.phdstudent.status == 'solicitante':
+                                aspirants = aspirants+student.user.get_full_name()+'('+str(student.studentformationplan.planned_end_year)+':'+student.country+'),'
 
                         row_cells[2].text = str(aspirants)
                     else:
