@@ -239,7 +239,6 @@ class Student(models.Model):
     have_prorrogue = models.BooleanField(default=False)
     prorrogue_end_date = models.DateField(null=True, blank=True)
     speciality = models.ForeignKey(ProgramSpeciality, null=True, on_delete=models.SET_NULL)
-    investigation_line = models.ForeignKey(InvestigationLine, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.user.get_full_name()

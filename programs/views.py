@@ -162,7 +162,6 @@ def create_student(request, program_slug):
                         gender=request.POST['gender'],
                         dni=request.POST['student_dni'],
                         birth_date=request.POST['student_birth_date'],
-                        investigation_line=InvestigationLine.objects.get(pk=request.POST['investigation_line']),
 
 
                     )
@@ -208,12 +207,12 @@ def create_student(request, program_slug):
                         new_theme = PhdStudentTheme(
                             phd_student=new_student,
                             description=request.POST['theme'],
+                            line=InvestigationLine.objects.get(pk=request.POST['investigation_line'])
                         )
 
                         try:
                             project=InvestigationProject.objects.get(pk=request.POST['investigation_project'])
                             new_theme.project = project,
-                            new_theme.line = project.line,
                         except:
                             pass
 
@@ -263,7 +262,6 @@ def create_student(request, program_slug):
                 gender=request.POST['gender'],
                 dni=request.POST['student_dni'],
                 birth_date=request.POST['student_birth_date'],
-                investigation_line=InvestigationLine.objects.get(pk=request.POST['investigation_line']),
 
 
             )
@@ -307,11 +305,12 @@ def create_student(request, program_slug):
                 new_theme = PhdStudentTheme(
                     phd_student=new_student,
                     description=request.POST['theme'],
+                    line=InvestigationLine.objects.get(pk=request.POST['investigation_line']),
+
                 )
                 try:
                     project = InvestigationProject.objects.get(pk=request.POST['investigation_project'])
                     new_theme.project = project
-                    new_theme.line=project.line,
 
                 except:
                     pass
@@ -932,7 +931,6 @@ def edit_student(request, program_slug, student_id):
                 gender=request.POST['gender'],
                 dni=request.POST['student_dni'],
                 birth_date=request.POST['student_birth_date'],
-                # speciality = request.POST['student_speciality'],
 
             )
             if 'request_date' in request.POST and not request.POST['request_date'] == '':
@@ -992,6 +990,7 @@ def edit_student(request, program_slug, student_id):
             student_theme, st_created = PhdStudentTheme.objects.get_or_create(
                 phd_student=PhdStudent.objects.get(student=Student.objects.get(pk=student_id)),
             )
+            student_theme.line = InvestigationLine.objects.get(pk=request.POST['investigation_line'])
             student_theme.description = request.POST['theme']
 
             student_theme.save()
@@ -999,7 +998,6 @@ def edit_student(request, program_slug, student_id):
 
             try:
                 student_theme.project = InvestigationProject.objects.get(pk=request.POST['investigation_project'])
-                student_theme.line = InvestigationProject.objects.get(pk=request.POST['investigation_project']).line
                 student_theme.save()
             except:
                 pass
@@ -1080,7 +1078,8 @@ def edit_student(request, program_slug, student_id):
                 'new_init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
                 'new_finish_requirements': ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True),
                 'finish_requirements': ProgramFinishRequirements.objects.filter(program=program),
-                'projects': InvestigationProject.objects.filter(program=program),
+                'lines':InvestigationLine.objects.filter(program=program),
+                'projects': InvestigationProject.objects.filter(program=program, line=PhdStudent.objects.get(student=Student.objects.get(pk=student_id)).phdstudenttheme.line),
                 'inner_areas': InnerAreas.objects.all(),
                 'specialities': ProgramSpeciality.objects.filter(program=program),
             }

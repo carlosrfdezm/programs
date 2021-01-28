@@ -207,6 +207,19 @@
                                             <textarea class="form-control" id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2">{{ doc_student.phdstudent.phdstudenttheme }}</textarea>
                                         </div>
                                     </div>
+                                 <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="slc_line">Línea de investigación:{{ doc_student.phdstudent.phdstudenttheme.line }}</label>
+                                        <select class="form-control" id="slc_line" name="investigation_line" >
+                                            <option value="" >Seleccione una opción</option>
+
+                                            {% for line in lines %}
+                                                <option value="{{ line.id }}" {% if doc_student.phdstudent.phdstudenttheme.line == line %}selected{% endif %} >{{ line|truncatewords:10 }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="slc_project">Proyecto asociado:</label>
@@ -1213,6 +1226,79 @@
                 });
 
             });
+
+            $(document).on('change', '#slc_line', function () {
+                $('#slc_project').find('option:not(:first)').remove();
+                var url = "{% url 'programs:ajx_line_projects' program.slug %}";
+                if($(this).val()!=''){
+
+
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'line_id':$(this).val(),
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].status == 1) {
+                                for (var i = 1; i < json.length; i++) {
+
+                                    $('#slc_project').append($('<option>', {
+                                        value: json[i].project_id,
+                                        text: json[i].project_name,
+                                    }));
+
+
+                                }
+
+                            } else if(json[0].status == 0){
+                                Toast.fire({
+                                    type: 'warning',
+                                    title: 'Esta línea quizá no tenga proyectos asociados'
+                                });
+
+
+                            }
+                            else{
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Uff, al parecer ha ocurrido un error'
+                                });
+
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, al parecer ha ocurrido un error'
+                            });
+
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                }
+                else{
+                    Toast.fire({
+                        type: 'warning',
+                        title: 'Debe seleccionar una línea de la lista'
+                    });
+                }
+            });
+
             $(document).on('submit',"form[id*='frm_upgrade_filedoc']", function (e) {
                 e.preventDefault();
                 var doc_id = $(this).attr('data');
@@ -1283,6 +1369,7 @@
                 });
 
             });
+
             $(document).on('click',"button[id*='btn_see_filedoc']", function (e) {
                 e.preventDefault();
 
