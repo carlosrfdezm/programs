@@ -214,6 +214,14 @@ class ProgramSpeciality(models.Model):
     def __str__(self):
         return self.name
 
+class InvestigationLine(models.Model):
+    program=models.ForeignKey(Program, on_delete=models.CASCADE)
+    name=models.TextField(max_length=500, help_text='Nombre de la linea')
+
+    def __str__(self):
+        return self.name
+
+
 class Student(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=20,null=True, blank=True)
@@ -231,6 +239,7 @@ class Student(models.Model):
     have_prorrogue = models.BooleanField(default=False)
     prorrogue_end_date = models.DateField(null=True, blank=True)
     speciality = models.ForeignKey(ProgramSpeciality, null=True, on_delete=models.SET_NULL)
+    investigation_line = models.ForeignKey(InvestigationLine, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.user.get_full_name()
@@ -357,12 +366,6 @@ class StudentFinishRequirement(models.Model):
     def __str__(self):
         return 'Requirement'
 
-class InvestigationLine(models.Model):
-    program=models.ForeignKey(Program, on_delete=models.CASCADE)
-    name=models.TextField(max_length=500, help_text='Nombre de la linea')
-
-    def __str__(self):
-        return self.name
 
 class InvestigationProject(models.Model):
     program=models.ForeignKey(Program,null=True, on_delete=models.SET_NULL)

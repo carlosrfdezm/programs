@@ -162,6 +162,7 @@ def create_student(request, program_slug):
                         gender=request.POST['gender'],
                         dni=request.POST['student_dni'],
                         birth_date=request.POST['student_birth_date'],
+                        investigation_line=InvestigationLine.objects.get(pk=request.POST['investigation_line']),
 
 
                     )
@@ -208,6 +209,7 @@ def create_student(request, program_slug):
                             phd_student=new_student,
                             description=request.POST['theme'],
                         )
+
                         try:
                             project=InvestigationProject.objects.get(pk=request.POST['investigation_project'])
                             new_theme.project = project,
@@ -261,6 +263,7 @@ def create_student(request, program_slug):
                 gender=request.POST['gender'],
                 dni=request.POST['student_dni'],
                 birth_date=request.POST['student_birth_date'],
+                investigation_line=InvestigationLine.objects.get(pk=request.POST['investigation_line']),
 
 
             )
