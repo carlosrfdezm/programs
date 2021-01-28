@@ -29,7 +29,11 @@ def index(request):
         'institution_has_cgc': INSTITUTION_HAS_CGC,
         'institution_has_postg': INSTITUTION_HAS_POSTG,
     }
-    return render(request,'log/index.html', context)
+    if request.user.is_authenticated:
+        return logout(request)
+    else:
+        return render(request, 'log/index.html', context)
+
 
 def cgc_login(request):
     username = request.POST['username']
