@@ -54,7 +54,6 @@ def index(request, program_slug):
         return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
 
 
-
 def home(request, program_slug):
     program = Program.objects.get(slug=program_slug)
     # TODO Verificar lo del user is authenticate
@@ -346,7 +345,7 @@ def create_student(request, program_slug):
             context = {
                 'program': program,
                 'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
-                'projects': InvestigationProject.objects.filter(program=program),
+                'lines': InvestigationLine.objects.filter(program=program),
                 'inner_areas':InnerAreas.objects.all(),
                 'specialities': ProgramSpeciality.objects.filter(program=program)
             }
@@ -356,7 +355,6 @@ def create_student(request, program_slug):
                 return HttpResponse('El programa no es un doctorado')
     else:
         return HttpResponse('Error, acceso solo a coordinadores y secretarios')
-
 
 @login_required
 def create_msc_student(request, program_slug, edition_id):
@@ -3339,6 +3337,35 @@ def ajx_last_years_requests(request, program_slug):
         json.dumps(response_data),
         content_type="application/json"
     )
+@login_required
+def ajx_line_projects(request, program_slug):
+    if request.method == 'POST':
+        line = InvestigationLine.objects.get(pk=request.POST['line_id'])
+
+        if InvestigationProject.objects.filter(line=line).__len__()>0:
+            json_data = [{'status': 1}]
+            for project in InvestigationProject.objects.filter(line=line):
+                project_data = {}
+                project_data['project_id']=project.id
+                project_data['project_name']=project.name
+                json_data.append(project_data)
+
+            return HttpResponse(
+                json.dumps(json_data),
+                content_type="application/json"
+            )
+        else:
+            return HttpResponse(
+                json.dumps([{'status': 0}]),
+                content_type="application/json"
+            )
+
+
+    else:
+        return HttpResponse(
+            json.dumps([{'status': 0}]),
+            content_type="application/json"
+        )
 
 @login_required
 def ajx_students_by_line(request, program_slug, scope):
