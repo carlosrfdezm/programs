@@ -26,7 +26,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
     FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message, CGCDocument, \
-    ProgramSpeciality, New
+    ProgramSpeciality, New, MessageSended
 from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -1182,6 +1182,7 @@ def view_program_member_profile(request, program_slug, member_id):
         }
         if request.user == member.user:
             context['messages']=Message.objects.filter(program_receiver=member)
+            context['messages_sended']=MessageSended.objects.filter(sender=member.user)
 
         return render(request, 'programs/program_member_profile.html', context)
     else:
@@ -2886,7 +2887,7 @@ def ajx_mark_message_readed(request, program_slug):
         except:
             receiver_user = message.program_receiver.user
 
-    if request.user == receiver_user:
+    if request.user == receiver_user or request.user == message.sender:
         if request.method=='POST':
             try:
                 message.readed = True
@@ -3486,6 +3487,14 @@ def ajx_member_personal_msg(request, program_slug ):
 
             )
             new_message.save()
+            sended_message = MessageSended(
+                sender=request.user,
+                context='personal',
+                subject=request.POST['msg_subject'],
+                body=request.POST['msg_body'],
+
+            )
+            sended_message.save()
             send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
                       [ProgramMember.objects.get(pk=request.POST['member_id']).user.email],
                       fail_silently=False,html_message=request.POST['msg_body'])
@@ -3580,7 +3589,14 @@ def ajx_member_massive_msg(request, program_slug ):
                                   email_list[10 * count:10 * count + rest], fail_silently=False,
                                   html_message=request.POST['msg_body'])
 
+            sended_message = MessageSended(
+                sender=request.user,
+                context='profesores',
+                subject=request.POST['msg_subject'],
+                body=request.POST['msg_body'],
 
+            )
+            sended_message.save()
 
             return HttpResponse(
                 json.dumps([{'sended': 1}]),
@@ -3766,6 +3782,7 @@ def ajx_students_massive_msg(request, program_slug ):
 
             if program.type == 'phd':
 
+
                 if request.POST['msg_scope'] == 'requesters':
                     for student in Student.objects.filter(program=program ,phdstudent__status='solicitante' ):
                         email_list.append(student.user.email)
@@ -3777,6 +3794,7 @@ def ajx_students_massive_msg(request, program_slug ):
 
                         )
                         new_message.save()
+
                 elif request.POST['msg_scope']=='aproved':
                     for student in Student.objects.filter(program=program ,phdstudent__status='doctorando' ):
                         email_list.append(student.user.email)
@@ -3927,6 +3945,15 @@ def ajx_students_massive_msg(request, program_slug ):
                                   email_list[10 * count:10 * count + rest], fail_silently=False,
                                   html_message=request.POST['msg_body'])
 
+            sended_message = MessageSended(
+                sender=request.user,
+                context='students',
+                subject=request.POST['msg_subject'],
+                body=request.POST['msg_body'],
+
+            )
+            sended_message.save()
+
             return HttpResponse(
                 json.dumps([{'sended': 1}]),
                 content_type="application/json"
@@ -3962,6 +3989,14 @@ def ajx_student_personal_msg(request, program_slug ):
 
                 )
                 new_message.save()
+                sended_message = MessageSended(
+                    sender= request.user,
+                    context= 'personal',
+                    subject=request.POST['msg_subject'],
+                    body=request.POST['msg_body'],
+
+                )
+                sended_message.save()
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
                           [Student.objects.get(pk=request.POST['student_id']).user.email,'boris_perez@unah.edu.cu'],
                           fail_silently=False,html_message=request.POST['msg_body'])

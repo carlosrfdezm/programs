@@ -587,6 +587,17 @@ class Message(models.Model):
     def __str__(self):
         return self.subject
 
+class MessageSended(models.Model):
+    sender = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    context = models.CharField(max_length=12, null=False, default='personal',choices=[('students', 'Estudiantes'),('profesores', 'Profesores'),('comite', 'Comité'), ('personal', 'Personal')])
+    date = models.DateField(default=now)
+    subject = models.CharField(max_length=250)
+    body = models.TextField(max_length=4000)
+    readed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.subject
+
 class New(models.Model):
     program= models.ForeignKey(Program, on_delete=models.CASCADE)
     title = models.CharField(max_length=100, null=False)

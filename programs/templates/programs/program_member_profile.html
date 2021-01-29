@@ -101,7 +101,8 @@
                                         <li class="nav-item"><a class="nav-link" id="a_tab_students"  href="#students" data-toggle="tab">Aspirantes</a></li>
                                     {% endif %}
                                     {% if user == professor.user %}
-                                        <li class="nav-item"><a class="nav-link" id="a_tab_messages" href="#messages" data-toggle="tab">Mensajes</a></li>
+                                        <li class="nav-item"><a class="nav-link" id="a_tab_messages" href="#messages" data-toggle="tab">Mensajes recibidos</a></li>
+                                        <li class="nav-item"><a class="nav-link" id="a_tab_messages" href="#messages_sended" data-toggle="tab">Mensajes enviados</a></li>
                                     {% endif %}
                                 </ul>
                             </div><!-- /.card-header -->
@@ -217,6 +218,120 @@
                                             {% else %}
                                                 <div class="alert alert-warning">
                                                     <h5 class="text-center">Usted no ha recibido mensaje alguno en este programa.</h5>
+                                                </div>
+                                            {% endif %}
+
+
+                                        </div>
+                                        <div class="tab-pane" id="messages_sended">
+                                            {% if messages_sended %}
+                                                {% for message in messages_sended %}
+                                                    {% user_is_program_member message.sender program as user_is_program_member%}
+                                                    {% user_is_program_student message.sender program as user_is_program_student%}
+                                                    <!-- Post -->
+                                                    <div id="div_msg_{{ message.id }}" class="post">
+                                                        <div class="user-block">
+                                                            {% if user_is_program_member %}
+                                                                {% sender_program_member message.sender program as program_member %}
+                                                                <img class="img-circle img-bordered-sm" {% if program_member.picture %}src="{% url 'programs:program_member_picture' program.slug program_member.id %}"{% else %}src="{% static 'programs/dist/img/user1-128x128.jpg' %}"{% endif %} alt="user image">
+                                                            {% elif user_is_program_student %}
+                                                                {% sender_program_student message.sender program as program_student %}
+                                                                <img class="img-circle img-bordered-sm" {% if program_member.picture %}src="{% url 'programs:program_member_picture' program.slug program_member.id %}"{% else %}src="{% static 'programs/dist/img/user2-128x128.jpg' %}"{% endif %} alt="user image">
+                                                            {% endif %}
+                                                            <span class="username">
+                                                          <a href="#">{{ message.sender.get_full_name }}</a>
+                                                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                                                    </span>
+                                                            <span class="description">
+                                                        {% if message.readed %}<i id="i_msg_{{ message.id }}" class="fa fa-envelope-open"></i>{% else %}<i id="i_msg_{{ message.id }}" class="fa fa-envelope"></i>{% endif %}
+                                                                {{ message.date|date:'d-m-Y'}}
+                                                    </span>
+                                                        </div>
+                                                        <!-- /.user-block -->
+                                                        <p id="p_message_body_{{ message.id }}" {% if not message.readed %} class="text-bold" {% endif %}>
+                                                            {{ message.subject }}
+                                                        </p>
+
+
+                                                        <p>
+                                                            <a href="#" id="a_read_sended_message_{{ message.id }}" data-toggle="modal" data-target="#modal_read_message_{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eye mr-1"></i> Leer</a>
+
+{#                                                            <a href="#" id="a_remove_sended_message_{{ message.id }}" data="{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>#}
+
+
+                                                            <span class="float-right">
+
+                                                    </span>
+                                                        </p>
+
+
+                                                    </div>
+                                                    <!-- /.post -->
+                                                    <div class="modal fade" id="modal_read_message_{{ message.id }}">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title">{{ message.subject }}</h4>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+
+                                                                <div class="modal-body alert alert-success">
+                                                                    <p>
+                                                                        {% autoescape off %}
+
+                                                                            {{  message.body }}
+
+                                                                        {% endautoescape %}
+                                                                    </p>
+
+
+
+                                                                </div>
+                                                                <div class="modal-footer justify-content-between">
+                                                                </div>
+
+                                                            </div>
+                                                            <!-- /.modal-content -->
+                                                        </div>
+                                                        <!-- /.modal-dialog -->
+                                                    </div>
+                                                    <div class="modal fade" id="modal_rm_message_{{ message.id }}">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title">Eliminar mensaje</h4>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+
+                                                                <form id="frm_remove_message_{{ message.id }}" data="{{ message.id }}" method="post">
+                                                                    <div class="modal-body alert alert-danger">
+                                                                        <h4>Seguro desea eliminar el mensaje:<br>{{ message }}</h4>
+
+                                                                        <input type="hidden" name="message_{{ message.id }}" value="{{ message.id }}">
+
+                                                                    </div>
+                                                                    <div class="modal-footer justify-content-between">
+                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                                        <button type="submit" class="btn btn-danger" id="btn_rm_message_{{ message.id }}">Eliminar</button>
+                                                                    </div>
+                                                                </form>
+                                                                <div class="modal-footer justify-content-between">
+                                                                </div>
+
+                                                            </div>
+                                                            <!-- /.modal-content -->
+                                                        </div>
+                                                        <!-- /.modal-dialog -->
+                                                    </div>
+
+                                                {% endfor %}
+                                            {% else %}
+                                                <div class="alert alert-warning">
+                                                    <h5 class="text-center">Usted no ha enviado mensaje alguno en este programa.</h5>
                                                 </div>
                                             {% endif %}
 
