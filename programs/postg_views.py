@@ -1271,13 +1271,18 @@ def docx_postg_report(request, scope):
                 table = document.add_table(rows=1, cols=3)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre'
-                hdr_cells[1].text = 'Coordinador'
+                hdr_cells[1].text = 'Coordinador(es)'
                 hdr_cells[2].text = 'Email'
 
+                coordinators = ''
+
                 for program in Program.objects.filter(type='phd'):
+                    for coordinator in ProgramMember.objects.filter(program=program, role='Coordinador'):
+                        coordinators = coordinators + ',' + coordinator.user.get_full_name
+
                     row_cells = table.add_row().cells
                     row_cells[0].text = program.full_name
-                    row_cells[1].text = str(ProgramMember.objects.get(program=program, role='Coordinador'))
+                    row_cells[1].text = coordinators
                     row_cells[2].text = program.email
             else:
                 document.add_heading('Aun no se registran programas doctorales en este sitio', level=3)
