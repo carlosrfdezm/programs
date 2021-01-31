@@ -5334,7 +5334,11 @@ def docx_program_report(request, program_slug):
                         for tuthor in member.tuthor_set.all():
                             student = tuthor.phd_student.student
                             if student.phdstudent.status == 'doctorando' or student.phdstudent.status == 'solicitante':
-                                aspirants = aspirants+student.user.get_full_name()+'('+str(student.studentformationplan.planned_end_year)+':'+student.country+'),'
+                                try:
+                                    aspirants = aspirants+student.user.get_full_name()+'('+str(student.studentformationplan.planned_end_year)+':'+student.country+'),'
+                                except StudentFormationPlan.DoesNotExist:
+                                    aspirants = aspirants+student.user.get_full_name()+'('+student.country+'),'
+
 
                         row_cells[2].text = str(aspirants)
                     else:
@@ -5345,7 +5349,11 @@ def docx_program_report(request, program_slug):
                         for tuthor in member.tuthor_set.all():
                             student = tuthor.phd_student
                             if student.status == 'graduado':
-                                aspirants = aspirants+student.student.user.get_full_name()+'('+str(student.student.graduate_date.year)+':'+student.student.country+'),'
+                                try:
+                                    aspirants = aspirants+student.student.user.get_full_name()+'('+str(student.student.graduate_date.year)+':'+student.student.country+'),'
+                                except StudentFormationPlan.DoesNotExist:
+                                    aspirants = aspirants+student.student.user.get_full_name()+'('+ student.student.country+'),'
+
 
                         row_cells[3].text = str(aspirants)
                     else:
