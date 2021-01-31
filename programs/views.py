@@ -5345,15 +5345,11 @@ def docx_program_report(request, program_slug):
                         for tuthor in member.tuthor_set.all():
                             student = tuthor.phd_student
                             if student.status == 'graduado':
-                                aspirants = aspirants+tuthor.phd_student.student.user.get_full_name()+', '
+                                aspirants = aspirants+student.student.user.get_full_name()+'('+str(student.student.graduate_date.year)+':'+student.student.country+'),'
 
                         row_cells[3].text = str(aspirants)
                     else:
                         row_cells[3].text = ""
-
-
-
-
 
             else:
                 table = document.add_table(rows=1, cols=2)
