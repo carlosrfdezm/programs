@@ -226,21 +226,73 @@
                                         <div class="tab-pane" id="messages_sended">
                                             {% if messages_sended %}
                                                 {% for message in messages_sended %}
-                                                    {% user_is_program_member message.sender program as user_is_program_member%}
-                                                    {% user_is_program_student message.sender program as user_is_program_student%}
+                                                    {% if message.context == 'personal' %}
+                                                        {% if message.program_receiver %}
+                                                            {% user_is_program_member message.program_receiver.user program as receiver_is_program_member%}
+                                                        {% elif program.type == 'phd' %}
+                                                            {% user_is_program_student message.phd_student_receiver.user program as receiver_is_program_student%}
+                                                        {% elif program.type == 'msc' %}
+                                                            {% user_is_program_student message.msc_student_receiver.user program as receiver_is_program_student%}
+                                                        {% elif program.type == 'dip' %}
+                                                            {% user_is_program_student message.dip_student_receiver.user program as receiver_is_program_student%}
+                                                        {% endif %}
+
+                                                    {% endif %}
                                                     <!-- Post -->
                                                     <div id="div_msg_{{ message.id }}" class="post">
                                                         <div class="user-block">
-                                                            {% if user_is_program_member %}
-                                                                {% sender_program_member message.sender program as program_member %}
-                                                                <img class="img-circle img-bordered-sm" {% if program_member.picture %}src="{% url 'programs:program_member_picture' program.slug program_member.id %}"{% else %}src="{% static 'programs/dist/img/user1-128x128.jpg' %}"{% endif %} alt="user image">
-                                                            {% elif user_is_program_student %}
-                                                                {% sender_program_student message.sender program as program_student %}
-                                                                <img class="img-circle img-bordered-sm" {% if program_member.picture %}src="{% url 'programs:program_member_picture' program.slug program_member.id %}"{% else %}src="{% static 'programs/dist/img/user2-128x128.jpg' %}"{% endif %} alt="user image">
+                                                            {% if message.context == 'personal' %}
+                                                                {% if receiver_is_program_member %}
+                                                                    <img class="img-circle img-bordered-sm" {% if message.program_receiver.picture %}src="{% url 'programs:program_member_picture' program.slug message.program_receiver.id %}"{% else %}src="{% static 'programs/dist/img/user1-128x128.jpg' %}"{% endif %} alt="user image">
+                                                                {% elif receiver_is_program_student %}
+                                                                    {% if program.type == 'phd' %}
+                                                                        <img class="img-circle img-bordered-sm" {% if message.phd_student_receiver.picture %}src="{% url 'programs:program_student_picture' program.slug message.phd_student_receiver.id %}"
+                                                                             {% elif message.phd_student_receiver.gender == 'm' %}src="{% static 'programs/dist/img/avatar5.png' %}"
+                                                                             {% else %}src="{% static 'programs/dist/img/avatar3.png' %}"{% endif %} alt="user image">
+                                                                    {% elif program.type == 'msc' %}
+                                                                        <img class="img-circle img-bordered-sm" {% if message.msc_student_receiver.picture %}src="{% url 'programs:program_student_picture' program.slug message.msc_student_receiver.id %}"
+                                                                             {% elif message.msc_student_receiver.gender == 'm' %}src="{% static 'programs/dist/img/avatar5.png' %}"
+                                                                             {% else %}src="{% static 'programs/dist/img/avatar3.png' %}"{% endif %} alt="user image">
+                                                                    {% else %}
+                                                                        <img class="img-circle img-bordered-sm" {% if message.dip_student_receiver.picture %}src="{% url 'programs:program_student_picture' program.slug message.dip_student_receiver.id %}"
+                                                                             {% elif message.dip_student_receiver.gender == 'm' %}src="{% static 'programs/dist/img/avatar5.png' %}"
+                                                                             {% else %}src="{% static 'programs/dist/img/avatar3.png' %}"{% endif %} alt="user image">
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                                {% else %}
+                                                                         <img class="img-circle img-bordered-sm" src="{% static 'programs/dist/img/students.png' %}" alt="user image">
+
+
                                                             {% endif %}
                                                             <span class="username">
-                                                          <a href="#">{{ message.sender.get_full_name }}</a>
-                                                          <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
+                                                                {% if message.context == 'personal' %}
+
+                                                                    {% if receiver_is_program_member %}
+
+                                                                        <a href="#">{{ message.program_receiver.user.get_full_name }}</a>
+                                                                    {% else %}
+
+
+                                                                        {% if program.type == 'phd' %}
+
+                                                                            <a href="#">{{ message.phd_student_receiver.user.get_full_name }}</a>
+                                                                        {% elif program.type == 'msc' %}
+
+                                                                            <a href="#">{{ message.msc_student_receiver.user.get_full_name }}</a>
+                                                                        {% else %}
+
+                                                                            <a href="#">{{ message.dip_student_receiver.user.get_full_name }}</a>
+
+                                                                        {% endif %}
+                                                                    {% endif %}
+                                                                    {% else %}
+                                                                    <a href="#">Mensaje a
+                                                                        {% if message.context == 'profesores' %}profesores
+                                                                        {% elif message.context == 'comite' %}Comité Académico
+                                                                        {% elif message.context == 'students' %}estudiantes{% endif %}
+                                                                            </a>
+                                                                {% endif %}
+                                                                <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
                                                     </span>
                                                             <span class="description">
                                                         {% if message.readed %}<i id="i_msg_{{ message.id }}" class="fa fa-envelope-open"></i>{% else %}<i id="i_msg_{{ message.id }}" class="fa fa-envelope"></i>{% endif %}
@@ -256,7 +308,7 @@
                                                         <p>
                                                             <a href="#" id="a_read_sended_message_{{ message.id }}" data-toggle="modal" data-target="#modal_read_message_{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eye mr-1"></i> Leer</a>
 
-{#                                                            <a href="#" id="a_remove_sended_message_{{ message.id }}" data="{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>#}
+                                                            {#                                                            <a href="#" id="a_remove_sended_message_{{ message.id }}" data="{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>#}
 
 
                                                             <span class="float-right">

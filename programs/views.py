@@ -3490,6 +3490,7 @@ def ajx_member_personal_msg(request, program_slug ):
             sended_message = MessageSended(
                 sender=request.user,
                 context='personal',
+                program_receiver=ProgramMember.objects.get(pk=request.POST['member_id']),
                 subject=request.POST['msg_subject'],
                 body=request.POST['msg_body'],
 
@@ -3992,6 +3993,7 @@ def ajx_student_personal_msg(request, program_slug ):
                 sended_message = MessageSended(
                     sender= request.user,
                     context= 'personal',
+                    phd_student_receiver=Student.objects.get(pk=request.POST['student_id']),
                     subject=request.POST['msg_subject'],
                     body=request.POST['msg_body'],
 
@@ -4010,6 +4012,15 @@ def ajx_student_personal_msg(request, program_slug ):
 
                 )
                 new_message.save()
+                sended_message = MessageSended(
+                    sender=request.user,
+                    context='personal',
+                    msc_student_receiver=MscStudent.objects.get(pk=request.POST['student_id']),
+                    subject=request.POST['msg_subject'],
+                    body=request.POST['msg_body'],
+
+                )
+                sended_message.save()
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
                           [MscStudent.objects.get(pk=request.POST['student_id']).user.email, 'boris_perez@unah.edu.cu'],
                           fail_silently=False, html_message=request.POST['msg_body'])
@@ -4022,6 +4033,15 @@ def ajx_student_personal_msg(request, program_slug ):
 
                 )
                 new_message.save()
+                sended_message = MessageSended(
+                    sender=request.user,
+                    context='personal',
+                    dip_student_receiver=DipStudent.objects.get(pk=request.POST['student_id']),
+                    subject=request.POST['msg_subject'],
+                    body=request.POST['msg_body'],
+
+                )
+                sended_message.save()
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
                           [DipStudent.objects.get(pk=request.POST['student_id']).user.email, 'boris_perez@unah.edu.cu'],
                           fail_silently=False, html_message=request.POST['msg_body'])

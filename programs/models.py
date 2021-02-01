@@ -589,6 +589,10 @@ class Message(models.Model):
 
 class MessageSended(models.Model):
     sender = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    program_receiver = models.ForeignKey(ProgramMember, null=True, on_delete=models.SET_NULL)
+    phd_student_receiver = models.ForeignKey(Student, null=True, on_delete=models.SET_NULL)
+    msc_student_receiver = models.ForeignKey(MscStudent, null=True, on_delete=models.SET_NULL)
+    dip_student_receiver = models.ForeignKey(DipStudent, null=True, on_delete=models.SET_NULL)
     context = models.CharField(max_length=12, null=False, default='personal',choices=[('students', 'Estudiantes'),('profesores', 'Profesores'),('comite', 'Comité'), ('personal', 'Personal')])
     date = models.DateField(default=now)
     subject = models.CharField(max_length=250)
