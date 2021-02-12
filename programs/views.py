@@ -5338,46 +5338,45 @@ def docx_program_report(request, program_slug):
 
                 document.add_heading('Individuales', level=4)
 
-                table = document.add_table(rows=1, cols=4)
+                table = document.add_table(rows=1, cols=5)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
                 hdr_cells[1].text = 'Rol'
                 hdr_cells[2].text = 'Aspirantes activos'
-                hdr_cells[3].text = 'Aspirantes egresados'
+                hdr_cells[3].text = 'Año de defensa'
+                hdr_cells[4].text = 'Pais'
 
                 for member in ProgramMember.objects.filter(program=program):
-                    row_cells = table.add_row().cells
-                    row_cells[0].text = str(member.user.get_full_name())
-                    row_cells[1].text = str(member.role)
+
                     if member.tuthor_set.all().count()>0:
-                        aspirants = ""
-                        for tuthor in member.tuthor_set.all():
+                        table = document.add_table(rows=1, cols=5)
+                        hdr_cells = table.rows[0].cells
+                        hdr_cells[0].text = member.user.get_full_name()
+                        hdr_cells[1].text = str(member.role)
+                        first_aspirant = member.tuthor_set.all()[0].phd_student.student
+                        if first_aspirant.phdstudent.status == 'doctorando' or first_aspirant.phdstudent.status == 'solicitante':
+                            hdr_cells[2].text = first_aspirant.user.get_full_name()
+                            try:
+                                hdr_cells[3].text = str(first_aspirant.studentformationplan.planned_end_year)
+                            except StudentFormationPlan.DoesNotExist:
+                                hdr_cells[3].text = '------'
+                            hdr_cells[4].text = first_aspirant.country
+
+
+                        for tuthor in member.tuthor_set.all()[1:]:
                             student = tuthor.phd_student.student
                             if student.phdstudent.status == 'doctorando' or student.phdstudent.status == 'solicitante':
+                                row_cells = table.add_row().cells
+                                row_cells[0].text = ''
+                                row_cells[1].text = ''
+                                row_cells[2].text = student.user.get_full_name()
                                 try:
-                                    aspirants = aspirants+student.user.get_full_name()+'('+str(student.studentformationplan.planned_end_year)+':'+student.country+'),'
+                                    row_cells[3].text = str(student.studentformationplan.planned_end_year)
                                 except StudentFormationPlan.DoesNotExist:
-                                    aspirants = aspirants+student.user.get_full_name()+'('+student.country+'),'
+                                    row_cells[3].text = '------'
+                                row_cells[4].text = student.country
 
 
-                        row_cells[2].text = str(aspirants)
-                    else:
-                        row_cells[2].text = "-----------------------"
-
-                    if member.tuthor_set.all().count()>0:
-                        aspirants = ""
-                        for tuthor in member.tuthor_set.all():
-                            student = tuthor.phd_student
-                            if student.status == 'graduado':
-                                try:
-                                    aspirants = aspirants+student.student.user.get_full_name()+'('+str(student.student.graduate_date.year)+':'+student.student.country+'),'
-                                except StudentFormationPlan.DoesNotExist:
-                                    aspirants = aspirants+student.student.user.get_full_name()+'('+ student.student.country+'),'
-
-
-                        row_cells[3].text = str(aspirants)
-                    else:
-                        row_cells[3].text = ""
 
             else:
                 table = document.add_table(rows=1, cols=2)
