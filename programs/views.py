@@ -5348,33 +5348,33 @@ def docx_program_report(request, program_slug):
 
                 for member in ProgramMember.objects.filter(program=program):
 
-                    if member.tuthor_set.all().count()>0:
+                    if member.tuthor_set.filter(Q(phd_student__status = 'solicitante')|Q(phd_student__status = 'doctorando')).count()>0:
                         table = document.add_table(rows=1, cols=5)
                         hdr_cells = table.rows[0].cells
                         hdr_cells[0].text = member.user.get_full_name()
                         hdr_cells[1].text = str(member.role)
-                        first_aspirant = member.tuthor_set.all()[0].phd_student.student
-                        if first_aspirant.phdstudent.status == 'doctorando' or first_aspirant.phdstudent.status == 'solicitante':
-                            hdr_cells[2].text = first_aspirant.user.get_full_name()
-                            try:
-                                hdr_cells[3].text = str(first_aspirant.studentformationplan.planned_end_year)
-                            except StudentFormationPlan.DoesNotExist:
-                                hdr_cells[3].text = '------'
-                            hdr_cells[4].text = first_aspirant.country
+                        first_aspirant = member.tuthor_set.filter(Q(phd_student__status = 'solicitante')|Q(phd_student__status = 'doctorando'))[0].phd_student.student
+
+                        hdr_cells[2].text = first_aspirant.user.get_full_name()
+                        try:
+                            hdr_cells[3].text = str(first_aspirant.studentformationplan.planned_end_year)
+                        except StudentFormationPlan.DoesNotExist:
+                            hdr_cells[3].text = '------'
+                        hdr_cells[4].text = first_aspirant.country
 
 
-                        for tuthor in member.tuthor_set.all()[1:]:
+                        for tuthor in member.tuthor_set.filter(Q(phd_student__status = 'solicitante')|Q(phd_student__status = 'doctorando'))[1:]:
                             student = tuthor.phd_student.student
-                            if student.phdstudent.status == 'doctorando' or student.phdstudent.status == 'solicitante':
-                                row_cells = table.add_row().cells
-                                row_cells[0].text = ''
-                                row_cells[1].text = ''
-                                row_cells[2].text = student.user.get_full_name()
-                                try:
-                                    row_cells[3].text = str(student.studentformationplan.planned_end_year)
-                                except StudentFormationPlan.DoesNotExist:
-                                    row_cells[3].text = '------'
-                                row_cells[4].text = student.country
+
+                            row_cells = table.add_row().cells
+                            row_cells[0].text = ''
+                            row_cells[1].text = ''
+                            row_cells[2].text = student.user.get_full_name()
+                            try:
+                                row_cells[3].text = str(student.studentformationplan.planned_end_year)
+                            except StudentFormationPlan.DoesNotExist:
+                                row_cells[3].text = '------'
+                            row_cells[4].text = student.country
 
 
 
