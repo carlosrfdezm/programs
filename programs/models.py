@@ -117,6 +117,7 @@ class Program(models.Model):
     icon = models.CharField(max_length=100, null=False, blank=False, choices=ICON_CHOICES,
                             help_text='Seleccione una opcion de la lista')
     center = models.CharField(max_length=120, null=True, blank=True)
+    self_request = models.BooleanField(default=False, help_text='Marcar si se permite la solicitud al programa desde el sitio')
 
     class Meta:
         verbose_name = 'Programa'

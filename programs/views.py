@@ -6227,6 +6227,13 @@ def edit_program(request, program_slug):
             program.center = request.POST['program_center']
             program.branch = request.POST['program_branch']
             program.code = request.POST['program_code']
+            try:
+                if request.POST['is_self_request'] == 'True':
+                    program.self_request = True
+                else:
+                    program.self_request = False
+            except:
+                program.self_request = False
 
             program.save()
 
