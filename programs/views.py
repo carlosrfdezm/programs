@@ -2172,7 +2172,9 @@ def ajx_update_filedoc(request, program_slug):
 
             try:
                 file = request.FILES['file']
-                file.name = slugify(file.name)
+                doc_ext = file.name.split('.')[file.name.split('.').__len__() - 1]
+                doc_name = slugify(file.name.split('.')[0])
+                file.name = doc_name+'.'+doc_ext
                 filedoc.file = file
                 filedoc.save()
                 return HttpResponse(
@@ -2222,9 +2224,10 @@ def ajx_upgrade_filedoc(request, program_slug):
             try:
                 doc_file = request.FILES['file']
                 fs = FileSystemStorage()
-
-                doc_name = slugify(doc_file.name)
-                new_doc_name = 'program_{0}/students/{1}/docs/{2}'.format(program.slug,student.id, doc_name)
+                doc_ext = doc_file.name.split('.')[doc_file.name.split('.').__len__() - 1]
+                doc_name = slugify(doc_file.name.split('.')[0])
+                doc_file_name = doc_name + '.' + doc_ext
+                new_doc_name = 'program_{0}/students/{1}/docs/{2}'.format(program.slug,student.id, doc_file_name)
 
 
                 filename = fs.save(new_doc_name, doc_file)
