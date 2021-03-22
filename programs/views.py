@@ -5119,7 +5119,7 @@ def docx_program_report(request, program_slug):
                 hdr_cells[3].text = 'Requisitos de egreso'
                 hdr_cells[4].text = 'Tema'
 
-                for student in PhdStudent.objects.filter(student__program=program, status='Doctorando'):
+                for student in PhdStudent.objects.filter(student__program=program, status='Doctorando').order_by('student__studentformationplan__planned_end_year'):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(student.student.user.get_full_name())
                     row_cells[1].text = str(student.student.init_date)
