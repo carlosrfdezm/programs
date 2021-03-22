@@ -5115,7 +5115,7 @@ def docx_program_report(request, program_slug):
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
                 hdr_cells[1].text = 'Fecha de ingreso'
-                hdr_cells[2].text = 'Fecha de defensa'
+                hdr_cells[2].text = 'Año de defensa'
                 hdr_cells[3].text = 'Requisitos de egreso'
                 hdr_cells[4].text = 'Tema'
 
