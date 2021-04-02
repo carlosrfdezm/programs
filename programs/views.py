@@ -2174,7 +2174,12 @@ def ajx_update_filedoc(request, program_slug):
                 pass
 
             try:
-                filedoc.file = request.FILES['file']
+                file = request.FILES['file']
+                doc_ext = file.name.split('.')[:: - 1][0]
+                doc_name = slugify(file.name[:file.name.rindex('.')])
+
+                file.name = doc_name+'.'+doc_ext
+                filedoc.file = file
                 filedoc.save()
                 return HttpResponse(
                     json.dumps([{'updated': 1}]),
@@ -2223,9 +2228,10 @@ def ajx_upgrade_filedoc(request, program_slug):
             try:
                 doc_file = request.FILES['file']
                 fs = FileSystemStorage()
-
-                doc_name = doc_file.name
-                new_doc_name = 'program_{0}/students/{1}/docs/{2}'.format(program.slug,student.id, doc_name)
+                doc_ext = doc_file.name.split('.')[:: - 1][0]
+                doc_name = slugify(doc_file.name[:doc_file.name.rindex('.')])
+                doc_file_name = doc_name +'.'+ doc_ext
+                new_doc_name = 'program_{0}/students/{1}/docs/{2}'.format(program.slug,student.id, doc_file_name)
 
 
                 filename = fs.save(new_doc_name, doc_file)
@@ -5112,11 +5118,11 @@ def docx_program_report(request, program_slug):
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
                 hdr_cells[1].text = 'Fecha de ingreso'
-                hdr_cells[2].text = 'Fecha de defensa'
+                hdr_cells[2].text = 'Año de defensa'
                 hdr_cells[3].text = 'Requisitos de egreso'
                 hdr_cells[4].text = 'Tema'
 
-                for student in PhdStudent.objects.filter(student__program=program, status='Doctorando'):
+                for student in PhdStudent.objects.filter(student__program=program, status='Doctorando').order_by('student__studentformationplan__planned_end_year'):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(student.student.user.get_full_name())
                     row_cells[1].text = str(student.student.init_date)
