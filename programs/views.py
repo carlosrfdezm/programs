@@ -43,6 +43,9 @@ def index(request, program_slug):
             'news': New.objects.filter(program=program).order_by('-date')[:5]
 
         }
+        if program.self_request:
+            context['init_requirenments']=program.programfiledoc_set.filter(type='student')
+
         if program.type == 'phd':
             return render(request, 'programs/phd_index.html', context)
         elif program.type == 'msc':
