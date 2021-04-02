@@ -520,13 +520,20 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="form-group">
+                        <div class="row">
 
-                            </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inp_name">Nombre:</label>
+                                    <input class="form-control" id="inp_name" name="name" placeholder="Nombre(s)" maxlength="100" required></input>
+
+                                </div>
+                            <div class="form-group col-md-8">
+                                    <label for="inp_name">Apellidos:</label>
+                                    <input class="form-control" id="inp_surename" name="surename" placeholder="Apellidos" maxlength="100" required></input>
+
+                                </div>
+
                         </div>
-                    </div>
 
                         {% for requirenment in init_requirenments %}
                             <div class="row">
