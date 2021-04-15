@@ -2,6 +2,8 @@ import csv as csv
 import json
 import os
 import random
+import secrets
+import string
 import zipfile
 
 from django.contrib.auth import logout
@@ -26,7 +28,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
     FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message, CGCDocument, \
-    ProgramSpeciality, New, MessageSended
+    ProgramSpeciality, New, MessageSended, Requester
 from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
@@ -3721,6 +3723,44 @@ def ajx_all_massive_msg(request, program_slug ):
             json.dumps([{'sended': 0}]),
             content_type="application/json"
         )
+
+def ajx_auto_request(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if request.method == 'POST':
+        alphabet = string.ascii_letters + string.digits
+        request_id = ''.join(secrets.choice(alphabet) for i in range(50))
+
+        try:
+            requester = Requester.objects.get(email=request.POST['email'])
+            return HttpResponse(
+                json.dumps([{'requested': 2}]),
+                content_type="application/json"
+            )
+        except Requester.DoesNotExist:
+            requester = Requester(
+                program=program,
+                first_name=request.POST['name'],
+                last_name=request.POST['surename'],
+                email = request.POST['email'],
+                phone = request.POST['phone'],
+                dni = request.POST['dni'],
+                gender = request.POST['gender'],
+                theme=request.POST['theme'],
+                request_id=request_id,
+                birthdate=request.POST['birthdate'],
+            )
+            requester.save()
+
+            return HttpResponse(
+                json.dumps([{'requested': 1}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'requested': 0}]),
+            content_type="application/json"
+        )
+
 
 @login_required
 def ajx_everybody_massive_msg(request, program_slug ):

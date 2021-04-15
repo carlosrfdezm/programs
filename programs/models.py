@@ -615,3 +615,19 @@ class New(models.Model):
 
     def __str__(self):
         return self.title
+
+class Requester(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=100, null=False)
+    last_name = models.CharField(max_length=100, null=False)
+    email = models.EmailField(null=False)
+    gender = models.CharField(max_length=1, null=False)
+    dni = models.CharField(max_length=20, null=False)
+    phone = models.CharField(max_length=30, null=False)
+    birthdate = models.DateField(null=False)
+    theme = models.TextField(max_length=200, null=False)
+    request_id = models.CharField(max_length=50, unique=True)
+    request_date = models.DateTimeField(default=now())
+
+    def __str__(self):
+        return self.first_name + ' ' + self.last_name
