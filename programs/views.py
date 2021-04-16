@@ -3730,34 +3730,40 @@ def ajx_auto_request(request, program_slug):
     if request.method == 'POST':
         alphabet = string.ascii_letters + string.digits
         request_id = ''.join(secrets.choice(alphabet) for i in range(50))
-
-        try:
-            requester = Requester.objects.get(email=request.POST['email'])
+º       try:
+            user = User.objects.get(email=request.POST['email'])
             return HttpResponse(
                 json.dumps([{'requested': 2}]),
                 content_type="application/json"
             )
-        except Requester.DoesNotExist:
-            requester = Requester(
-                program=program,
-                first_name=request.POST['name'],
-                last_name=request.POST['surename'],
-                email = request.POST['email'],
-                phone = request.POST['phone'],
-                dni = request.POST['dni'],
-                gender = request.POST['gender'],
-                theme=request.POST['theme'],
-                request_id=request_id,
-                birthdate=request.POST['birthdate'],
-            )
-            requester.save()
+        except User.DoesNotExist:
+            try:
+                requester = Requester.objects.get(email=request.POST['email'])
+                return HttpResponse(
+                    json.dumps([{'requested': 2}]),
+                    content_type="application/json"
+                )
+            except Requester.DoesNotExist:
+                requester = Requester(
+                    program=program,
+                    first_name=request.POST['name'],
+                    last_name=request.POST['surename'],
+                    email = request.POST['email'],
+                    phone = request.POST['phone'],
+                    dni = request.POST['dni'],
+                    gender = request.POST['gender'],
+                    theme=request.POST['theme'],
+                    request_id=request_id,
+                    birthdate=request.POST['birthdate'],
+                )
+                requester.save()
 
-            request_send_email(request, 'request_received',requester, program)
+                request_send_email(request, 'request_received',requester, program)
 
-            return HttpResponse(
-                json.dumps([{'requested': 1}]),
-                content_type="application/json"
-            )
+                return HttpResponse(
+                    json.dumps([{'requested': 1}]),
+                    content_type="application/json"
+                )
     else:
         return HttpResponse(
             json.dumps([{'requested': 0}]),
