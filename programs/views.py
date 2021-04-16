@@ -31,7 +31,8 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     ProgramSpeciality, New, MessageSended, Requester
 from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
-from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, create_new_tuthor
+from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
+    create_new_tuthor, request_send_email
 from docx import Document
 
 def index(request, program_slug):
@@ -3750,6 +3751,8 @@ def ajx_auto_request(request, program_slug):
                 birthdate=request.POST['birthdate'],
             )
             requester.save()
+
+            request_send_email(request, 'request_received',requester, program)
 
             return HttpResponse(
                 json.dumps([{'requested': 1}]),

@@ -1,0 +1,19 @@
+
+{% block author %}
+    Estimad@ {{ requester }}:
+{% endblock %}
+{% block message %}
+    {% if message_type == 'request_received' %}
+        Su solicitud de ingreso a {{ program }}, en {{ protocol }}://{{ domain }}/{{ program.slug }} ha sido recibida.
+        Por motivos de seguridad usted debe confirmarla accediendo a
+        {{ protocol }}://{{ domain }}/{{ program.slug }}/request/confirm/{{ requester.request_id }}
+        este enlace tiene una validez de 24 horas, pasado ese tiempo usted deberá realizar la solicitud nuevamente.
+
+    {% endif %}
+{% endblock %}
+{% block information %}
+    Atentamente, Comité Académico de {{ program.full_name }}.
+
+{% endblock %}
+
+

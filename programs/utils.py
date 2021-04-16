@@ -91,6 +91,28 @@ def utils_send_email(request, type, sender_email, member, subject, body, program
             pass
 
 
+# En este caso type debe ser request_received o request_confirmed. Es request received cdo se crea el requester
+# y es de tipo request_confirmed cuando esa solicitud se confirma
+def request_send_email(request, type, requester, program):
+    if type == 'request_received':
+        try:
+            context = {
+                'program': program,
+                'requester': requester,
+                'message_type': type,
+                'domain': request.META['HTTP_HOST'],
+                'protocol': 'https',
+
+            }
+
+            email_template_name = 'programs/emails/requester_email.html'
+
+            email = loader.render_to_string(email_template_name, context)
+
+            send_mail("Solicitud de ingreso a " + program.full_name, email, program.email, [requester.email],fail_silently=False)
+        except:
+            pass
+
 def create_new_tuthor(request, program, first_name,last_name,institution, email,student):
     success=[]
     try:
