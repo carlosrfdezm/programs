@@ -3730,7 +3730,7 @@ def ajx_auto_request(request, program_slug):
     if request.method == 'POST':
         alphabet = string.ascii_letters + string.digits
         request_id = ''.join(secrets.choice(alphabet) for i in range(50))
-º       try:
+        try:
             user = User.objects.get(email=request.POST['email'])
             return HttpResponse(
                 json.dumps([{'requested': 2}]),
@@ -3770,6 +3770,163 @@ def ajx_auto_request(request, program_slug):
             content_type="application/json"
         )
 
+def confirm_auto_request(request,program_slug, request_id):
+    program = Program.objects.get(slug=program_slug)
+    try:
+        requester = Requester.objects.get(program=program, request_id=request_id)
+        try:
+            user = User.objects.get(email=requester.email)
+            try:
+                Student.objects.get(user=user, program=program)
+                # TODO Devolver template de error en este caso
+                return HttpResponse( 'Error el estudiante ya existe en este programa')
+            except Student.DoesNotExist:
+                student = Student(
+                    user=user,
+                    program=program,
+                    gender=requester.gender,
+                    dni=requester.dni,
+                    birth_date=requester.birthdate,
+
+                )
+
+                student.save()
+
+                formation_plan = StudentFormationPlan(
+                    phdstudent=student,
+                    elaboration_date=now(),
+                    last_update_date=now(),
+                    planned_end_year=requester.planned_end_year,
+
+                )
+                formation_plan.save()
+
+                utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
+
+
+                if program.type == 'phd':
+                    new_student = PhdStudent(
+                        student=student,
+                        status='solicitante',
+                        category='',
+                        center='',
+                    )
+                    new_student.save()
+
+
+
+                else:
+                    return HttpResponse('Tipo de programa aun por crear')
+
+                for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+
+                    new_student_requirement = StudentFileDocument(
+                        student=student,
+                        program_file_document=requirement,
+                        )
+                    new_student_requirement.save()
+
+                return HttpResponse('Usted ha confirmado su soclitud , recuerde presentar los requisitos de ingreso exigidos por el programa')
+        except User.DoesNotExist:
+            passwd = program_slug + str(random.randint(1000000, 9999999))
+            user = User.objects.create_user(
+                request.POST['student_email'],
+                request.POST['student_email'],
+                passwd,  # Cambiar despues por contrase;a generada
+
+            )
+            user.first_name = request.POST['student_name']
+            user.last_name = request.POST['student_surename']
+            user.save()
+
+        student = Student(
+            user=user,
+            program=program,
+            gender=request.POST['gender'],
+            dni=request.POST['student_dni'],
+            birth_date=request.POST['student_birth_date'],
+
+        )
+        student.save()
+
+        formation_plan = StudentFormationPlan(
+            phdstudent=student,
+            elaboration_date=now(),
+            last_update_date=now(),
+            planned_end_year=int(request.POST['student_planned_end_year']),
+
+        )
+        formation_plan.save()
+
+        utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+
+        try:
+            student.picture = request.FILES['picture']
+            student.save()
+
+        except:
+            pass
+
+        if program.type == 'phd':
+            new_student = PhdStudent(
+                student=student,
+                status='solicitante',
+                category=request.POST['student_category'],
+                center=request.POST['student_center'],
+            )
+            new_student.save()
+            for i in range(1, int(request.POST['total_tuthors']) + 1):
+                print(create_new_tuthor(request,
+                                        program,
+                                        request.POST['tuthor_name_' + str(i)],
+                                        request.POST['tuthor_lastname_' + str(i)],
+                                        request.POST['tuthor_institution_' + str(i)],
+                                        request.POST['tuthor_email_' + str(i)],
+                                        new_student))
+
+            new_theme = PhdStudentTheme(
+                phd_student=new_student,
+                description=request.POST['theme'],
+                line=InvestigationLine.objects.get(pk=request.POST['investigation_line']),
+
+            )
+            try:
+                project = InvestigationProject.objects.get(pk=request.POST['investigation_project'])
+                new_theme.project = project
+
+            except:
+                pass
+
+            new_theme.save()
+        else:
+            return HttpResponse('Tipo de programa aun por crear')
+
+        for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+
+            if 'student_requirement_' + str(requirement.id) in request.POST:
+                new_student_requirement = StudentFileDocument(
+                    student=student,
+                    program_file_document=requirement,
+                    accomplished=True,
+                )
+                if requirement.get_old:
+                    try:
+                        new_student_requirement.caducity_date = request.POST[
+                            'doc_caducity_date_' + str(requirement.id)]
+                    except:
+                        pass
+                new_student_requirement.save()
+
+            else:
+                new_student_requirement = StudentFileDocument(
+                    student=student,
+                    program_file_document=requirement,
+                )
+                new_student_requirement.save()
+
+
+    except Requester.DoesNotExist:
+        return HttpResponse('No existe una solicitud asociada a ese id')
 
 @login_required
 def ajx_everybody_massive_msg(request, program_slug ):

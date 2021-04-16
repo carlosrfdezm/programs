@@ -403,4 +403,10 @@ def program_has_secretary(program):
     else:
         return False
 
+@register.simple_tag
+def current_year():
+    return now().year
 
+@register.simple_tag
+def five_years_ahead():
+    return now().year+5

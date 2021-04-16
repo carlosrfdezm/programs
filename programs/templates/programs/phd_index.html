@@ -1,4 +1,5 @@
 {% load static %}
+{% load extra_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -529,7 +530,7 @@
 
                             </div>
                             <div class="form-group col-md-8">
-                                <label for="inp_name">Apellidos:</label>
+                                <label for="inp_surename">Apellidos:</label>
                                 <input class="form-control" type="text" id="inp_surename" name="surename" placeholder="Apellidos" maxlength="100" required></input>
 
                             </div>
@@ -537,27 +538,34 @@
                         </div>
                         <div class="row">
 
-                            <div class="form-group col-md-6">
-                                <label for="inp_name">Correo:</label>
+                            <div class="form-group col-md-4">
+                                <label for="inp_mail">Correo:</label>
                                 <input class="form-control" type="email" id="inp_mail" name="email" placeholder="Correo electrónico" maxlength="100" required></input>
 
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="inp_name">Teléfono:</label>
+                            <div class="form-group col-md-4">
+                                <label for="inp_phone">Teléfono:</label>
                                 <input class="form-control" type="tel" id="inp_phone" name="phone" placeholder="Teléfono de contacto" maxlength="100" required></input>
+
+                            </div>
+                            <div class="form-group col-md-4">
+                                {% current_year as current_year %}
+                                {% five_years_ahead as five_years_ahead %}
+                                <label for="inp_planned_end_year">Año de defensa:</label>
+                                <input class="form-control" type="number" id="inp_planned_end_year" name="planned_end_year" placeholder="Año de defensa previsto" min="{{ current_year }}" max="{{ five_years_ahead }}" required></input>
 
                             </div>
 
                         </div>
                         <div class="row">
-
                             <div class="form-group col-md-4">
-                                <label for="inp_name">ID o Pasaporte:</label>
+                                <label for="inp_dni">ID o Pasaporte:</label>
                                 <input class="form-control" type="text" id="inp_dni" name="dni" placeholder="Número de ID o pasaporte" maxlength="100" required></input>
 
                             </div>
+
                             <div class="form-group col-md-4">
-                                <label for="inp_name">Género:</label>
+                                <label for="slc_gender">Género:</label>
                                 <select class="form-control" id="slc_gender" name="gender" required>
                                     <option value="" selected>Seleccione una opción</option>
                                     <option value="f" >Femenino</option>
@@ -705,7 +713,7 @@
 
 
         });
-         $(document).on('hidden.bs.modal','#modal_request_enter', function () {
+        $(document).on('hidden.bs.modal','#modal_request_enter', function () {
             $('#frm_auto_request')[0].reset();
         });
     })

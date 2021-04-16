@@ -628,6 +628,7 @@ class Requester(models.Model):
     theme = models.TextField(max_length=200, null=False)
     request_id = models.CharField(max_length=50, unique=True)
     request_date = models.DateTimeField(default=now())
+    planned_end_year = models.IntegerField(null=False)
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
