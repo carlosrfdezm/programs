@@ -161,6 +161,9 @@ urlpatterns = [
     path('news/list', views.news_list, name='news_list'),
 
 
+    path('request/confirm/<str:request_id>', views.confirm_auto_request, name='request_confirm'),
+
+
 
 
 

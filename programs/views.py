@@ -3755,6 +3755,7 @@ def ajx_auto_request(request, program_slug):
                     theme=request.POST['theme'],
                     request_id=request_id,
                     birthdate=request.POST['birthdate'],
+                    planned_end_year = request.POST['planned_end_year'],
                 )
                 requester.save()
 
