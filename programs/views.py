@@ -2324,13 +2324,13 @@ def ajx_new_requirenment(request, program_slug, scope):
                         new_init_r.just_for_nationals = True
                     except:
                         pass
-    
+
                     try:
                         get_old = request.POST['init_r_get_old']
                         new_init_r.get_old = True
                     except:
                         pass
-    
+
                     new_init_r.save()
                     return HttpResponse(
                         json.dumps([{'updated': '1','r_id':new_init_r.id, 'r_name':new_init_r.doc_name,
@@ -2382,7 +2382,7 @@ def ajx_new_requirenment(request, program_slug, scope):
                     json.dumps([{'updated': '4', 'errors': form.errors}]),
                     content_type="application/json"
                 )
-                
+
 
         else:
             return HttpResponse(
@@ -2458,7 +2458,7 @@ def ajx_edit_requirenment(request, program_slug):
 
 @login_required
 def ajx_r_data(request, program_slug):
-    
+
     program = Program.objects.get(slug=program_slug)
 
     if request.method == 'POST':
@@ -3824,10 +3824,10 @@ def confirm_auto_request(request,program_slug, request_id):
                     new_student_requirement = StudentFileDocument(
                         student=student,
                         program_file_document=requirement,
-                        )
+                    )
                     new_student_requirement.save()
 
-                return HttpResponse('Usted ha confirmado su soclitud , recuerde presentar los requisitos de ingreso exigidos por el programa')
+                return HttpResponse('Usted ha confirmado su solicitud , recuerde presentar los requisitos de ingreso exigidos por el programa')
         except User.DoesNotExist:
             passwd = program_slug + str(random.randint(1000000, 9999999))
             user = User.objects.create_user(
@@ -3843,9 +3843,9 @@ def confirm_auto_request(request,program_slug, request_id):
         student = Student(
             user=user,
             program=program,
-            gender=request.POST['gender'],
-            dni=request.POST['student_dni'],
-            birth_date=request.POST['student_birth_date'],
+            gender=requester.gender,
+            dni=requester.dni,
+            birth_date=requester.birthdate,
 
         )
         student.save()
@@ -3854,49 +3854,29 @@ def confirm_auto_request(request,program_slug, request_id):
             phdstudent=student,
             elaboration_date=now(),
             last_update_date=now(),
-            planned_end_year=int(request.POST['student_planned_end_year']),
+            planned_end_year=requester.planned_end_year,
 
         )
         formation_plan.save()
 
         utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
 
-        try:
-            student.picture = request.FILES['picture']
-            student.save()
-
-        except:
-            pass
 
         if program.type == 'phd':
             new_student = PhdStudent(
                 student=student,
                 status='solicitante',
-                category=request.POST['student_category'],
-                center=request.POST['student_center'],
+                category='',
+                center='',
             )
             new_student.save()
-            for i in range(1, int(request.POST['total_tuthors']) + 1):
-                print(create_new_tuthor(request,
-                                        program,
-                                        request.POST['tuthor_name_' + str(i)],
-                                        request.POST['tuthor_lastname_' + str(i)],
-                                        request.POST['tuthor_institution_' + str(i)],
-                                        request.POST['tuthor_email_' + str(i)],
-                                        new_student))
 
             new_theme = PhdStudentTheme(
                 phd_student=new_student,
-                description=request.POST['theme'],
-                line=InvestigationLine.objects.get(pk=request.POST['investigation_line']),
+                description=requester.theme,
+                line='',
 
             )
-            try:
-                project = InvestigationProject.objects.get(pk=request.POST['investigation_project'])
-                new_theme.project = project
-
-            except:
-                pass
 
             new_theme.save()
         else:
@@ -3904,26 +3884,11 @@ def confirm_auto_request(request,program_slug, request_id):
 
         for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
 
-            if 'student_requirement_' + str(requirement.id) in request.POST:
-                new_student_requirement = StudentFileDocument(
-                    student=student,
-                    program_file_document=requirement,
-                    accomplished=True,
-                )
-                if requirement.get_old:
-                    try:
-                        new_student_requirement.caducity_date = request.POST[
-                            'doc_caducity_date_' + str(requirement.id)]
-                    except:
-                        pass
-                new_student_requirement.save()
-
-            else:
-                new_student_requirement = StudentFileDocument(
-                    student=student,
-                    program_file_document=requirement,
-                )
-                new_student_requirement.save()
+            new_student_requirement = StudentFileDocument(
+                student=student,
+                program_file_document=requirement,
+            )
+            new_student_requirement.save()
 
 
     except Requester.DoesNotExist:
@@ -6485,14 +6450,14 @@ def export_csv_students(request, program_slug, scope):
                 for student in Student.objects.filter(program=program):
                     try:
                         options = [str(i), student.dni, student.user.first_name,
-                             student.user.last_name.split(" ")[0],
-                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
-                             "MES", str(student.country)[:2],
-                             "DrC",
-                             program,
-                             program.code,
-                             program.branch, "N",
-                             "N"]
+                                   student.user.last_name.split(" ")[0],
+                                   student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                                   "MES", str(student.country)[:2],
+                                   "DrC",
+                                   program,
+                                   program.code,
+                                   program.branch, "N",
+                                   "N"]
                         if student.phdstudent.status == 'graduado':
                             options.append('S')
                         else:
@@ -6689,14 +6654,14 @@ def export_csv_students(request, program_slug, scope):
                 for student in MscStudent.objects.filter(program=program).order_by('request_date'):
                     try:
                         options = [str(i), student.dni, student.user.first_name,
-                             student.user.last_name.split(" ")[0],
-                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
-                             "MES", str(student.country)[:2],
-                             "MSc",
-                             program,
-                             program.code,
-                             program.branch, "N",
-                             "N"]
+                                   student.user.last_name.split(" ")[0],
+                                   student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                                   "MES", str(student.country)[:2],
+                                   "MSc",
+                                   program,
+                                   program.code,
+                                   program.branch, "N",
+                                   "N"]
                         if student.status == 'graduado':
                             options.append('S')
                         else:
@@ -6790,7 +6755,7 @@ def export_csv_students(request, program_slug, scope):
                             [str(i), student.dni, student.user.first_name,
                              student.user.last_name.split(" ")[0],
                              "-------", str(student.gender).upper(),
-                              "MES", str(student.country)[:2],
+                             "MES", str(student.country)[:2],
                              "MSc",
                              program,
                              program.code,
