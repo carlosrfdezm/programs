@@ -3831,13 +3831,13 @@ def confirm_auto_request(request,program_slug, request_id):
         except User.DoesNotExist:
             passwd = program_slug + str(random.randint(1000000, 9999999))
             user = User.objects.create_user(
-                request.POST['student_email'],
-                request.POST['student_email'],
+                requester.email,
+                requester.email,
                 passwd,  # Cambiar despues por contrase;a generada
 
             )
-            user.first_name = request.POST['student_name']
-            user.last_name = request.POST['student_surename']
+            user.first_name = requester.first_name
+            user.last_name = requester.last_name
             user.save()
 
         student = Student(
