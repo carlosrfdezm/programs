@@ -3779,6 +3779,7 @@ def confirm_auto_request(request,program_slug, request_id):
             user = User.objects.get(email=requester.email)
             try:
                 Student.objects.get(user=user, program=program)
+                requester.delete()
                 # TODO Devolver template de error en este caso
                 return HttpResponse( 'Error el estudiante ya existe en este programa')
             except Student.DoesNotExist:
@@ -3826,7 +3827,7 @@ def confirm_auto_request(request,program_slug, request_id):
                         program_file_document=requirement,
                     )
                     new_student_requirement.save()
-
+                requester.delete()
                 return HttpResponse('Usted ha confirmado su solicitud , recuerde presentar los requisitos de ingreso exigidos por el programa')
         except User.DoesNotExist:
             passwd = program_slug + str(random.randint(1000000, 9999999))
@@ -3890,6 +3891,7 @@ def confirm_auto_request(request,program_slug, request_id):
             )
             new_student_requirement.save()
 
+        requester.delete()
 
     except Requester.DoesNotExist:
         return HttpResponse('No existe una solicitud asociada a ese id')
