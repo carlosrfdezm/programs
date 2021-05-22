@@ -9,6 +9,7 @@ import zipfile
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.messages import success
 from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail
 from django.db.models import Q
@@ -3781,7 +3782,7 @@ def confirm_auto_request(request,program_slug, request_id):
                 Student.objects.get(user=user, program=program)
                 requester.delete()
                 # TODO Devolver template de error en este caso
-                return HttpResponse( 'Error el estudiante ya existe en este programa')
+                return error_offlogin(request, program, 'Al parecer esa solicitud ya fue procesada previamente')
             except Student.DoesNotExist:
                 student = Student(
                     user=user,
@@ -3828,7 +3829,7 @@ def confirm_auto_request(request,program_slug, request_id):
                     )
                     new_student_requirement.save()
                 requester.delete()
-                return HttpResponse('Usted ha confirmado su solicitud , recuerde presentar los requisitos de ingreso exigidos por el programa')
+                return success_offlogin(request, program, 'Usted ha confirmado su solicitud , recuerde presentar los requisitos de ingreso exigidos por el programa')
         except User.DoesNotExist:
             passwd = program_slug + str(random.randint(1000000, 9999999))
             user = User.objects.create_user(
@@ -3894,7 +3895,21 @@ def confirm_auto_request(request,program_slug, request_id):
         requester.delete()
 
     except Requester.DoesNotExist:
-        return HttpResponse('No existe una solicitud asociada a ese id')
+        return error_offlogin(request, program, 'Al parecer ésa solicitud ya prescribió, o fue procesada previamente')
+
+def error_offlogin(request, program, error_message):
+    context = {
+        'program': program,
+        'error_message':error_message,
+    }
+    return render(request, 'programs/error_500_offlogin.html', context)
+
+def success_offlogin(request, program, message):
+    context = {
+        'program': program,
+        'message': message,
+    }
+    return render(request, 'programs/success.html', context)
 
 @login_required
 def ajx_everybody_massive_msg(request, program_slug ):
