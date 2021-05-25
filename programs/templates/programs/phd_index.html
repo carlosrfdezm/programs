@@ -112,12 +112,13 @@
     <div class="intro-content">
         <h2>{{ program }}</h2>
         <div>
-            <a href="#contact" class="btn-get-started scrollto">Iniciar sesión</a>
             {% if program.self_request %}
                 <a href="" data-toggle="modal" data-target="#modal_request_enter" class="btn-projects scrollto">Solicitar ingreso</a>
-            {% else %}
-                <a href="#team" class="btn-projects scrollto">Claustro</a>
             {% endif %}
+            <a href="#contact" class="btn-get-started scrollto">Iniciar sesión</a>
+
+            <a href="#team" class="btn-projects scrollto">Claustro</a>
+
         </div>
     </div>
 
