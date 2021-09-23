@@ -102,23 +102,25 @@
                                     </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group col-md-2">
+                                    <div class="form-group col-md-4 col-lg-4">
                                         <label for="inp_birth_date">Fecha de nacimiento:</label>
                                         <input type="date" class="form-control" id="inp_birth_date"  name="member_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" value="{{member.birth_date|date:'Y-m-d' }}" required>
                                     </div>
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-md-8 col-lg-8">
                                         <label for="inp_grade">Grado científico:</label>
                                         <input type="text" class="form-control" id="inp_grade"  name="grade" placeholder="p.e:Doctor en Ciencias de la Educación" required>
                                     </div>
-                                    <div class="form-group col-md-2">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4 col-lg-4">
                                         <label for="inp_fb">Contacto de Facebook:</label>
                                         <input type="url" class="form-control" id="inp_fb"  name="fb_contact" placeholder="Contacto de Facebook" >
                                     </div>
-                                    <div class="form-group col-md-2">
+                                    <div class="form-group col-md-4 col-lg-4">
                                         <label for="inp_tw">Contacto de Twitter:</label>
                                         <input type="url" class="form-control" id="inp_tw"  name="tw_contact" placeholder="Contacto de Twitter" >
                                     </div>
-                                    <div class="form-group col-md-2">
+                                    <div class="form-group col-md-4 col-lg-4">
                                         <label for="inp_tw">Contacto de Linkedin:</label>
                                         <input type="url" class="form-control" id="inp_in"  name="ln_contact" placeholder="Contacto de Linkedin" >
                                     </div>
