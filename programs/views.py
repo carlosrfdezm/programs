@@ -3795,26 +3795,36 @@ def confirm_auto_request(request,program_slug, request_id):
 
                 student.save()
 
-                formation_plan = StudentFormationPlan(
-                    phdstudent=student,
-                    elaboration_date=now(),
-                    last_update_date=now(),
-                    planned_end_year=requester.planned_end_year,
 
-                )
-                formation_plan.save()
 
                 utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
 
 
                 if program.type == 'phd':
+                    formation_plan = StudentFormationPlan(
+                        phdstudent=student,
+                        elaboration_date=now(),
+                        last_update_date=now(),
+                        planned_end_year=requester.planned_end_year,
+
+                    )
+                    formation_plan.save()
+
                     new_student = PhdStudent(
                         student=student,
                         status='solicitante',
                         category='',
                         center='',
+
                     )
                     new_student.save()
+
+                    student_theme = PhdStudentTheme(
+                        phd_student = new_student,
+                        line = InvestigationLine.objects.get(pk=requester.line),
+                        description = requester.theme,
+                    )
+                    student_theme.save()
 
 
 

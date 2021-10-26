@@ -514,7 +514,8 @@
 
     <div class="modal fade" id="modal_request_enter">
         <div class="modal-dialog modal-lg">
-            <form class="form" id="frm_auto_request">
+            <form class="form" id="frm_auto_request" method="post">
+            {% csrf_token %}
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Solicitar ingreso</h4>
@@ -579,6 +580,22 @@
                                 <input class="form-control" type="date" id="inp_birthdate" name="birthdate" value="1960-01-01" required></input>
 
                             </div>
+
+                        </div>
+                        <div class="row">
+
+
+                            <div class="form-group col-md-12">
+                                <label for="slc_line">Línea de investigación:</label>
+                                <select class="form-control" id="slc_line" name="line" required>
+                                    <option value="" selected>Seleccione una opción</option>
+                                    {% for line in lines %}
+                                    <option value="line.id" >{{ line }}</option>
+                                    {% endfor %}
+                                </select>
+
+                            </div>
+
 
                         </div>
                         <div class="row">
