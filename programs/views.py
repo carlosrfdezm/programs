@@ -74,9 +74,9 @@ def home(request, program_slug):
                 'last_requesters': PhdStudent.objects.filter(student__program=program, status='solicitante').order_by(
                     '-student__request_date')[:4],
                 'last_aproved': PhdStudent.objects.filter(student__program=program, status='doctorando').order_by(
-                    '-student__request_date')[:4],
+                    '-student__init_date')[:4],
                 'last_graduated': PhdStudent.objects.filter(student__program=program, status='graduado').order_by(
-                    '-student__request_date')[:4],
+                    '-student__graduate_date')[:4],
 
             }
             try:
