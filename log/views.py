@@ -30,7 +30,8 @@ def index(request):
         'institution_has_postg': INSTITUTION_HAS_POSTG,
     }
     if request.user.is_authenticated:
-        return logout(request)
+        logout(request)
+        return render(request, 'log/index.html', context)
     else:
         return render(request, 'log/index.html', context)
 
