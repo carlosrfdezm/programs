@@ -3744,6 +3744,7 @@ def ajx_auto_request(request, program_slug):
                     json.dumps([{'requested': 2}]),
                     content_type="application/json"
                 )
+
             except Requester.DoesNotExist:
                 requester = Requester(
                     program=program,
@@ -3757,6 +3758,7 @@ def ajx_auto_request(request, program_slug):
                     request_id=request_id,
                     birthdate=request.POST['birthdate'],
                     planned_end_year = request.POST['planned_end_year'],
+                    line=request.POST['line'],
                 )
                 requester.save()
 
