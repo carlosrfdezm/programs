@@ -5610,11 +5610,21 @@ def docx_program_report(request, program_slug):
 
         docname = 'Reporte_Programa_'+program.slug.upper() + str(now().year) + '_' + str(now().month) + '.docx'
         # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
+        program_path = MEDIA_ROOT + '/program_{0}'.format(program_slug)
         docpath = MEDIA_ROOT + '/program_{0}/{1}'.format(program_slug, docname)
         try:
             document.save(docpath)
         except:
-            return error_500(request, program, "Ha ocurrido un error al intentar guardar el documento solicitado")
+            try:
+                if os.path.isdir(program_path):
+                    document.save(docpath)
+                else:
+                    os.mkdir(program_path)
+                    document.save(docpath)
+
+            except:
+                return error_500(request, program, "Ha ocurrido un error al intentar guardar el documento solicitado")
+
         fs = FileSystemStorage()
 
         filename = docpath
