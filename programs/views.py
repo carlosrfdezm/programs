@@ -3888,7 +3888,7 @@ def confirm_auto_request(request,program_slug, request_id):
             new_theme = PhdStudentTheme(
                 phd_student=new_student,
                 description=requester.theme,
-                line='',
+                line=InvestigationLine.objects.get(pk=requester.line),
 
             )
 
