@@ -5559,36 +5559,45 @@ def docx_program_report(request, program_slug):
 
                 for member in ProgramMember.objects.filter(program=program):
 
-                    if member.tuthor_set.filter(Q(phd_student__status = 'solicitante')|Q(phd_student__status = 'doctorando')).count()>0:
+                    if member.tuthor_set.filter(Q(phd_student__status = 'solicitante')|Q(phd_student__status = 'doctorando')|Q(phd_student__status = 'graduado')).count()>0:
                         table = document.add_table(rows=1, cols=6)
                         hdr_cells = table.rows[0].cells
                         hdr_cells[0].text = member.user.get_full_name()
                         hdr_cells[1].text = str(member.role)
-                        first_aspirant = member.tuthor_set.filter(Q(phd_student__status = 'solicitante')|Q(phd_student__status = 'doctorando'))[0].phd_student.student
+                        first_aspirant = member.tuthor_set.filter(Q(phd_student__status = 'solicitante')|Q(phd_student__status = 'doctorando')|Q(phd_student__status = 'graduado'))[0].phd_student.student
 
                         hdr_cells[2].text = first_aspirant.user.get_full_name()
-                        hdr_cells[3].text = first_aspirant.phdstudent.status[0].upper()
+                        hdr_cells[3].text = first_aspirant.phdstudent.status[:3].upper()
 
-                        try:
-                            hdr_cells[4].text = str(first_aspirant.studentformationplan.planned_end_year)
-                        except StudentFormationPlan.DoesNotExist:
-                            hdr_cells[4].text = '------'
+                        if first_aspirant.phdstudent.status == 'graduado':
+                            hdr_cells[4].text = str(first_aspirant.graduate_date.year)
+                        else:
+                            try:
+                                hdr_cells[4].text = str(first_aspirant.studentformationplan.planned_end_year)
+                            except StudentFormationPlan.DoesNotExist:
+                                hdr_cells[4].text = '------'
                         hdr_cells[5].text = first_aspirant.country
 
 
-                        for tuthor in member.tuthor_set.filter(Q(phd_student__status = 'solicitante')|Q(phd_student__status = 'doctorando'))[1:]:
+                        for tuthor in member.tuthor_set.filter(Q(phd_student__status = 'solicitante')|Q(phd_student__status = 'doctorando')|Q(phd_student__status = 'graduado'))[1:]:
                             student = tuthor.phd_student.student
+                            end_date = ''
+                            if student.phdstudent.status == 'graduado':
+                                end_date = str(student.graduate_date.year)
+                            else:
+                                try:
+                                    end_date = str(student.studentformationplan.planned_end_year)
+                                except StudentFormationPlan.DoesNotExist:
+                                    end_date = '------'
+
+
 
                             row_cells = table.add_row().cells
                             row_cells[0].text = ''
                             row_cells[1].text = ''
                             row_cells[2].text = student.user.get_full_name()
-                            row_cells[3].text = student.phdstudent.status[0].upper()
-
-                            try:
-                                row_cells[4].text = str(student.studentformationplan.planned_end_year)
-                            except StudentFormationPlan.DoesNotExist:
-                                row_cells[4].text = '------'
+                            row_cells[3].text = student.phdstudent.status[:3].upper()
+                            row_cells[4].text = end_date
                             row_cells[5].text = student.country
 
 
