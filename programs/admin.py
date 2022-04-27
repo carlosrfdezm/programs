@@ -47,6 +47,7 @@ class ProgramEditionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(New, NewAdmin)
+admin.site.register(ProgramEdition, ProgramEditionAdmin)
 
 admin.site.register(PhdStudent, PhdStudentAdmin)
 
