@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from programs.models import InvestigationLine, Student, MscStudent, Tuthor, StudentFormationPlan, InnerAreas, \
     PhdStudent, DipStudent, PostgMember, ProgramSpeciality, New
-from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember, ProgramFileDoc
+from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember, ProgramFileDoc, ProgramEdition
 
 # Register your models here.
 
@@ -41,6 +41,9 @@ class PhdStudentAdmin(admin.ModelAdmin):
 
 class NewAdmin(admin.ModelAdmin):
     list_display = ['program','date', 'title', ]
+
+class ProgramEditionAdmin(admin.ModelAdmin):
+    list_display = ['program', 'order', 'observations', ]
 
 
 admin.site.register(New, NewAdmin)
