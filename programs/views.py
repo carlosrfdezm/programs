@@ -4509,6 +4509,7 @@ def create_program_edition(request, program_slug):
                     init_date=request.POST['init_date'],
                     end_date=request.POST['end_date'],
                     observations=request.POST['observations'],
+                    order=request.POST['order'],
 
                 )
                 try:
@@ -4565,6 +4566,7 @@ def edit_program_edition(request, program_slug, edition_id):
                     init_date = request.POST['init_date'],
                     end_date = request.POST['end_date'],
                     observations= request.POST['observations'],
+                    order= request.POST['order'],
 
                 )
                 return HttpResponseRedirect(reverse('programs:editions_list', args=[program_slug]))

@@ -39,13 +39,17 @@
                                 <div class="card-body">
                                     <div class="form-row">
 
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-4">
                                             <label for="inp_init_date">Fecha de inicio:</label>
                                             <input type="date" class="form-control" id="inp_init_date" name="init_date" value="{{ edition.init_date|date:'Y-m-d' }}" required>
                                         </div>
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-4">
                                             <label for="inp_end_date">Fecha de fin:</label>
                                             <input type="date" class="form-control" id="inp_end_date" name="end_date" value="{{ edition.end_date|date:'Y-m-d' }}" required>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="inp_order">Orden:</label>
+                                            <input type="number" class="form-control" id="inp_order" name="order" value="{{ edition.order }}" min="1" required>
                                         </div>
 
                                     </div>
