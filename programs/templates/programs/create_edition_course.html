@@ -161,8 +161,8 @@
                 var index = $(this).attr('data');
                 var email = $(this).val();
                 var id = '#'+$(this).attr('id');
-                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-                if(emailReg.test( email ) && email != ''){
+                var emailReg1 = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+                if(emailReg1.test( email ) && email != ''){
                     var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
                     $.ajax({
                         url : url,
@@ -200,7 +200,7 @@
                                     type: 'error',
                                     title: 'No existe miembro del claustro con ese email, debe agregarlo previamente.'
                                 });
-                                $(id).val('');
+<!--                                $(id).val('');-->
                                 $('#inp_prof_name_'+index).val('');
                                 $('#inp_prof_lastname_'+index).val('');
                                 $('#inp_prof_institution_'+index).val('');
