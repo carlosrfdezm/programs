@@ -78,20 +78,20 @@
                 <li><a href="#team">Claustro</a></li>
                 {#                <li class="menu-has-children"><a href="">Drop Down</a>#}
                 {#                    <ul>#}
-                {#                        <li><a href="#">Drop Down 1</a></li>#}
-                {#                        <li><a href="#">Drop Down 3</a></li>#}
-                {#                        <li><a href="#">Drop Down 4</a></li>#}
-                {#                        <li><a href="#">Drop Down 5</a></li>#}
-                {#                    </ul>#}
+                    {#                        <li><a href="#">Drop Down 1</a></li>#}
+                    {#                        <li><a href="#">Drop Down 3</a></li>#}
+                    {#                        <li><a href="#">Drop Down 4</a></li>#}
+                    {#                        <li><a href="#">Drop Down 5</a></li>#}
+                    {#                    </ul>#}
                 {#                </li>#}
                 {% if public_docs %}
-                    <li><a href="#services">Documentos</a></li>
+                <li><a href="#services">Documentos</a></li>
                 {% else %}
-                    <li><a href="#services">Ayuda</a></li>
+                <li><a href="#services">Ayuda</a></li>
 
                 {% endif %}
                 {% if news %}
-                    <li><a href="#news">Noticias</a></li>
+                <li><a href="#news">Noticias</a></li>
                 {% endif %}
                 <li><a href="#contact">Login</a></li>
 
@@ -115,15 +115,15 @@
 
     <div id="intro-carousel" class="owl-carousel" >
         {% if program.programbackgrounds_set.all.count > 0 %}
-            {% for background in program.programbackgrounds_set.all %}
-                <div class="item" style="background-image: url({% url 'programs:program_background' program.slug background.id %});"></div>
-            {% endfor %}
+        {% for background in program.programbackgrounds_set.all %}
+        <div class="item" style="background-image: url({% url 'programs:program_background' program.slug background.id %});"></div>
+        {% endfor %}
         {% else %}
-            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/1.jpg' %});"></div>
-            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/2.jpg' %});"></div>
-            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/3.jpg' %});"></div>
-            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/4.jpg' %});"></div>
-            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/5.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/1.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/2.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/3.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/4.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/5.jpg' %});"></div>
         {% endif %}
     </div>
 
@@ -143,30 +143,30 @@
 
                 <div class="col-lg-6 content">
                     {% if not lines %}
-                        <h2>El posgrado en Cuba</h2>
-                        <h3>La educación de posgrado, como nivel más alto del sistema de educación,
-                            garantiza la superación permanente de los graduados universitarios.</h3>
+                    <h2>El posgrado en Cuba</h2>
+                    <h3>La educación de posgrado, como nivel más alto del sistema de educación,
+                        garantiza la superación permanente de los graduados universitarios.</h3>
 
-                        <h3>Algunos principios de la educación de posgrado son:</h3>
+                    <h3>Algunos principios de la educación de posgrado son:</h3>
 
-                        <ul>
-                            <li><i class="ion-android-checkmark-circle"></i> La participación de los estudiantes en el desarrollo social a través de procesos
-                                continuos de creación, difusión, transferencia, adaptación y aplicación de
-                                conocimientos;</li>
-                            <li><i class="ion-android-checkmark-circle"></i> el favorecimiento al acceso a las fronteras nacionales e internacionales más
-                                avanzadas de los conocimientos;</li>
-                            <li><i class="ion-android-checkmark-circle"></i> la promoción del desarrollo sostenible de la sociedad mediante la formación de los
-                                profesionales en estrecho vínculo con la práctica, como una fuerza social
-                                transformadora.</li>
-                        </ul>
+                    <ul>
+                        <li><i class="ion-android-checkmark-circle"></i> La participación de los estudiantes en el desarrollo social a través de procesos
+                            continuos de creación, difusión, transferencia, adaptación y aplicación de
+                            conocimientos;</li>
+                        <li><i class="ion-android-checkmark-circle"></i> el favorecimiento al acceso a las fronteras nacionales e internacionales más
+                            avanzadas de los conocimientos;</li>
+                        <li><i class="ion-android-checkmark-circle"></i> la promoción del desarrollo sostenible de la sociedad mediante la formación de los
+                            profesionales en estrecho vínculo con la práctica, como una fuerza social
+                            transformadora.</li>
+                    </ul>
                     {% else %}
-                        <h2>Líneas de investigación</h2>
+                    <h2>Líneas de investigación</h2>
 
-                        <ul>
-                            {% for line in lines %}
-                                <li><i class="ion-android-checkmark-circle"></i> {{ line.name }}</li>
-                            {% endfor %}
-                        </ul>
+                    <ul>
+                        {% for line in lines %}
+                        <li><i class="ion-android-checkmark-circle"></i> {{ line.name }}</li>
+                        {% endfor %}
+                    </ul>
                     {% endif %}
                 </div>
             </div>
@@ -201,22 +201,22 @@
 
             <div class="row">
                 {% for member in program.programmember_set.all %}
-                    <div class="col-lg-3 col-md-6">
-                        <div class="member">
-                            <div class="pic" >{% if member.picture %}<img src="{% url 'programs:program_member_picture' program.slug member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.sex == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="">{% elif member.sex == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="">{% endif %}</div>
-                            <div class="details">
-                                <h6 class="text-bold">{{member|truncatewords:3}}</h6>
-                                <span title="{{ member.degree }}">{{ member.degree|truncatewords:3 }}</span>
+                <div class="col-lg-3 col-md-6">
+                    <div class="member">
+                        <div class="pic" >{% if member.picture %}<img src="{% url 'programs:program_member_picture' program.slug member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.sex == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="">{% elif member.sex == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="">{% endif %}</div>
+                        <div class="details">
+                            <h6 class="text-bold">{{member|truncatewords:3}}</h6>
+                            <span title="{{ member.degree }}">{{ member.degree|truncatewords:3 }}</span>
 
-                                <span>{{ member.role }}</span>
-                                <div class="social">
-                                    <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
-                                    <a href="{{ member.fb_contact }}"><i class="fa fa-facebook"></i></a>
-                                    <a href="{{ member.ln_contact }}"><i class="fa fa-linkedin"></i></a>
-                                </div>
+                            <span>{{ member.role }}</span>
+                            <div class="social">
+                                <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
+                                <a href="{{ member.fb_contact }}"><i class="fa fa-facebook"></i></a>
+                                <a href="{{ member.ln_contact }}"><i class="fa fa-linkedin"></i></a>
                             </div>
                         </div>
                     </div>
+                </div>
                 {% endfor %}
 
             </div>
@@ -245,130 +245,131 @@
       Services Section
     ============================-->
     {% if public_docs %}
-        <section id="services">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Documentos de consulta</h2>
-                    <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+    <section id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Documentos de consulta</h2>
+                <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+            </div>
+
+            {% for doc in public_docs %}
+
+            <div class="row">
+                <div class="col-md-10 offset-1">
+                    <p title="{{ doc.description }}">{{ doc.description|truncatewords:15 }}</p>
+                </div>
+                <div class="col-md-1">
+                    <a href="{% url 'programs:public_program_doc_view' program.slug doc.id %}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
                 </div>
 
-                {% for doc in public_docs %}
-
-                    <div class="row">
-                        <div class="col-md-10 offset-1">
-                            <p title="{{ doc.description }}">{{ doc.description|truncatewords:15 }}</p>
-                        </div>
-                        <div class="col-md-1">
-                            <a href="{% url 'programs:public_program_doc_view' program.slug doc.id %}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
-                        </div>
-
-                    </div>
-                {% endfor %}
-
             </div>
-        </section>
+            {% endfor %}
+
+        </div>
+    </section>
     {% else %}
-        <section id="services">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Preguntas frecuentes</h2>
-                    <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+    <section id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Preguntas frecuentes</h2>
+                <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+            </div>
+
+            <div class="row">
+
+                <div class="col-lg-6">
+                    <div class="box wow fadeInLeft">
+                        <div class="icon"><i class="fa fa-bar-chart"></i></div>
+                        <h4 class="title"><a href="">Sobre la solicitud de matrícula</a></h4>
+                        <p class="description text-justify">La solicitud de ingreso se realiza por escrito al Coordinador del Programa, y entregar una foto carnet (2 cm x 2cm),la Carta de Autorización del Jefe Inmediato y el Aval del Jefe de Proyecto al cual se vinculará el resultado de la investigación.</p>
+                    </div>
                 </div>
 
-                <div class="row">
-
-                    <div class="col-lg-6">
-                        <div class="box wow fadeInLeft">
-                            <div class="icon"><i class="fa fa-bar-chart"></i></div>
-                            <h4 class="title"><a href="">Sobre la solicitud de matrícula</a></h4>
-                            <p class="description text-justify">La solicitud de ingreso se realiza por escrito al Coordinador del Programa, y entregar una foto carnet (2 cm x 2cm),la Carta de Autorización del Jefe Inmediato y el Aval del Jefe de Proyecto al cual se vinculará el resultado de la investigación.</p>
-                        </div>
+                <div class="col-lg-6">
+                    <div class="box wow fadeInRight">
+                        <div class="icon"><i class="fa fa-ticket"></i></div>
+                        <h4 class="title"><a href="">Sobre el Ingreso</a></h4>
+                        <p class="description text-justify">Una vez el Comité Académico haya valorado los documentos presentados presentados, y haya entrevistado al solicitante, siempre que se cumplan los requisitos de ingreso determina el ingreso del solicitante al programa de la maestría.</p>
                     </div>
+                </div>
 
-                    <div class="col-lg-6">
-                        <div class="box wow fadeInRight">
-                            <div class="icon"><i class="fa fa-ticket"></i></div>
-                            <h4 class="title"><a href="">Sobre el Ingreso</a></h4>
-                            <p class="description text-justify">Una vez el Comité Académico haya valorado los documentos presentados presentados, y haya entrevistado al solicitante, siempre que se cumplan los requisitos de ingreso determina el ingreso del solicitante al programa de la maestría.</p>
-                        </div>
+                <div class="col-lg-6">
+                    <div class="box wow fadeInLeft" data-wow-delay="0.2s">
+                        <div class="icon"><i class="fa fa-copy"></i></div>
+                        <h4 class="title"><a href="">Sobre los cursos</a></h4>
+                        <p class="description text-justify">Los cursos se desarrollarán con la frecuencia determinada por el Comité Académico, y con la calidad que requiere un programa académico. Finalizando siempre con una evaluación de rigor y  la  asignación de los créditos correspondientes.
+                            .</p>
                     </div>
+                </div>
 
-                    <div class="col-lg-6">
-                        <div class="box wow fadeInLeft" data-wow-delay="0.2s">
-                            <div class="icon"><i class="fa fa-copy"></i></div>
-                            <h4 class="title"><a href="">Sobre los cursos</a></h4>
-                            <p class="description text-justify">Los cursos se desarrollarán con la frecuencia determinada por el Comité Académico, y con la calidad que requiere un programa académico. Finalizando siempre con una evaluación de rigor y  la  asignación de los créditos correspondientes.
-                                .</p>
-                        </div>
+                <div class="col-lg-6">
+                    <div class="box wow fadeInRight" data-wow-delay="0.2s">
+                        <div class="icon"><i class="fa fa-graduation-cap"></i></div>
+                        <h4 class="title"><a href="">Sobre la defensa de la tesis.</a></h4>
+                        <p class="description text-justify">La defensa de la tesis se realiza una vez el estudiante haya vencido los cursos, las publicaciones, los eventos requeridos por el programa y el sistema de talleres del mismo; a solicitud de los tutores y el aspirante, el comité académico convoca al tribunal pertinente.</p>
                     </div>
-
-                    <div class="col-lg-6">
-                        <div class="box wow fadeInRight" data-wow-delay="0.2s">
-                            <div class="icon"><i class="fa fa-graduation-cap"></i></div>
-                            <h4 class="title"><a href="">Sobre la defensa de la tesis.</a></h4>
-                            <p class="description text-justify">La defensa de la tesis se realiza una vez el estudiante haya vencido los cursos, las publicaciones, los eventos requeridos por el programa y el sistema de talleres del mismo; a solicitud de los tutores y el aspirante, el comité académico convoca al tribunal pertinente.</p>
-                        </div>
-                    </div>
-
                 </div>
 
             </div>
-        </section><!-- #services -->
+
+        </div>
+    </section><!-- #services -->
     {% endif %}
 
     <!--==========================
       News Section
     ============================-->
     {% if news %}
-        <section id="call-to-action" class="wow fadeInUp">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12 text-center text-lg-left">
-                        <h3 class="cta-title">Decreto Ley No. 372</h3>
-                        <p class="cta-text"> El grado científico de Doctor en determinada área del
-                            conocimiento se otorga a los graduados de nivel universitario que
-                            contribuyen significativamente al desarrollo del conocimiento en su tema
-                            de investigación y satisfacen a plenitud los requisitos y las evaluaciones
-                            correspondientes de sus programas de doctorados.
+    <section id="call-to-action" class="wow fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center text-lg-left">
+                    <h3 class="cta-title">Resolucion 140-2019 (MES)</h3>
+                    <p class="cta-text"> El claustro de un programa de maestría o de especialidad de posgrado
+                        posee un alto nivel académico y amplia experiencia profesional en el área del
+                        conocimiento del programa, avalados por un grado científico, especialista de segundo y
+                        tercer grado, el título de Máster o Especialista de Posgrado; las categorías docentes de
+                        Profesor Titular, Profesor Auxiliar o las categorías científicas de Investigador Titular o
+                        Investigador Auxiliar.
 
-                            .</p>
-                    </div>
-
+                        .</p>
                 </div>
 
             </div>
-        </section><!-- #call-to-action -->
 
-        <section id="news">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Noticias</h2>
+        </div>
+    </section><!-- #call-to-action -->
+
+    <section id="news">
+        <div class="container pt-4">
+            <div class="section-header">
+                <h2>Noticias</h2>
+            </div>
+
+            {% for new in news %}
+
+            <div class="row pt-2">
+                <div class="alert alert-warning align-items-baseline col-md-12">
+                    <h4 class="text-center" title="{{ new.title }}">{{ new.title }}</h4>
                 </div>
 
-                {% for new in news %}
+            </div>
+            <div class="row pb-3 align-items-stretch">
+                <div class="col-md-10 offset-1">
+                    <span class="small pb-3">{{ new.date|date:'d-m-Y' }}</span>
 
-                    <div class="row pt-2">
-                        <div class="alert alert-warning align-items-baseline col-md-12">
-                            <h4 class="text-center" title="{{ new.title }}">{{ new.title }}</h4>
-                        </div>
-
-                    </div>
-                    <div class="row pb-3 align-items-stretch">
-                        <div class="col-md-10 offset-1">
-                            <span class="small pb-3">{{ new.date|date:'d-m-Y' }}</span>
-
-                            <p class="text-justify">
-                                {% autoescape off %}
-                                    {{ new.body }}
-                                {% endautoescape %}
-                            </p>
-                        </div>
-
-                    </div>
-                {% endfor %}
+                    <p class="text-justify">
+                        {% autoescape off %}
+                        {{ new.body }}
+                        {% endautoescape %}
+                    </p>
+                </div>
 
             </div>
-        </section>
+            {% endfor %}
+
+        </div>
+    </section>
 
     {% endif %}
 
