@@ -90,6 +90,9 @@
                     <li><a href="#services">Ayuda</a></li>
 
                 {% endif %}
+                {% if news %}
+                    <li><a href="#news">Noticias</a></li>
+                {% endif %}
                 <li><a href="#contact">Login</a></li>
 
             </ul>
@@ -311,6 +314,62 @@
 
             </div>
         </section><!-- #services -->
+    {% endif %}
+
+    <!--==========================
+      News Section
+    ============================-->
+    {% if news %}
+        <section id="call-to-action" class="wow fadeInUp">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 text-center text-lg-left">
+                        <h3 class="cta-title">Decreto Ley No. 372</h3>
+                        <p class="cta-text"> El grado científico de Doctor en determinada área del
+                            conocimiento se otorga a los graduados de nivel universitario que
+                            contribuyen significativamente al desarrollo del conocimiento en su tema
+                            de investigación y satisfacen a plenitud los requisitos y las evaluaciones
+                            correspondientes de sus programas de doctorados.
+
+                            .</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section><!-- #call-to-action -->
+
+        <section id="news">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Noticias</h2>
+                </div>
+
+                {% for new in news %}
+
+                    <div class="row pt-2">
+                        <div class="alert alert-warning align-items-baseline col-md-12">
+                            <h4 class="text-center" title="{{ new.title }}">{{ new.title }}</h4>
+                        </div>
+
+                    </div>
+                    <div class="row pb-3 align-items-stretch">
+                        <div class="col-md-10 offset-1">
+                            <span class="small pb-3">{{ new.date|date:'d-m-Y' }}</span>
+
+                            <p class="text-justify">
+                                {% autoescape off %}
+                                    {{ new.body }}
+                                {% endautoescape %}
+                            </p>
+                        </div>
+
+                    </div>
+                {% endfor %}
+
+            </div>
+        </section>
+
     {% endif %}
 
 
