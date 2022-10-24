@@ -4641,7 +4641,7 @@ def program_documents(request, program_slug):
             'program':program,
             'years': sorted(years),
             'documents': ProgramDocument.objects.filter(program=program),
-            'member':ProgramMember.objects.get(user=request.user),
+            'member':ProgramMember.objects.get(user=request.user, progra=program),
         }
         return render(request, 'programs/program_documents_list.html',context)
     else:
