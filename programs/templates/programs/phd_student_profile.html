@@ -7,725 +7,734 @@
 {% endblock %}
 
 {% block content %}
-    {% if student %}
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Perfil</h1>
+{% if student %}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Perfil</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Perfil de usuario</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+
+                <!-- Profile Image -->
+                <div class="card card-primary card-outline">
+                    <div class="card-body box-profile">
+                        <div class="text-center">
+                            {% if student.picture %}
+                            <img class="profile-user-img img-fluid img-circle"
+                                 src="{% url 'programs:program_student_picture' program.slug student.id %}"
+                                 alt="User profile picture">
+                            {% elif student.gender == 'm' %}
+                            <img class="profile-user-img img-fluid img-circle" src="{% static 'programs/dist/img/avatar5.png' %}" alt="">
+                            {% elif student.gender == 'f' %}
+                            <img class="profile-user-img img-fluid img-circle" src="{% static 'programs/dist/img/avatar3.png' %}" alt="">
+                            {% endif %}
+                        </div>
+
+                        <h3 class="profile-username text-center">{{ student }}</h3>
+
+                        <p class="text-muted text-center">{{ student.phdstudent.status|capfirst }}</p>
+
+                        <ul class="list-group list-group-unbordered mb-3" id="ul_edit_profile"  data="0">
+                            <li class="list-group-item">
+                                <b>Solicitud</b> <a class="float-right">{{ student.request_date|date:'M/Y'}}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Ingreso</b> <a class="float-right">{% if student.init_date %}{{ student.init_date|date:'M/Y' }}{% else %}----{% endif %}</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Egreso</b> <a class="float-right">{% if student.graduate_date != None %}{{ student.graduate_date|date:'M/Y' }}{% else %}----{% endif %}</a>
+                            </li>
+                            <strong>Tutores</strong>
+
+                            <p class="text-muted">
+                            <ul>
+                                {% for tuthor in student.phdstudent.tuthor_set.all %}
+                                <li>{{ tuthor }}</li>
+                                {% endfor %}
+                            </ul>
+                            </p>
+                            <li class="list-group-item">
+                                <b>Defensa prevista</b> <a class="float-right">{% if student.studentformationplan.planned_end_year != None %}{{ student.studentformationplan.planned_end_year }}{% else %}----{% endif %}</a>
+                            </li>
+                            {% if user == student.user %}
+                            <li class="list-group-item text-center" id="li_edit_profile">
+                                <button type="button" class="btn btn-sm btn-warning text-center" title="Editar datos personales" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>
+                            </li>
+                            {% endif %}
+                        </ul>
+
+
                     </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Perfil de usuario</li>
-                        </ol>
-                    </div>
+                    <!-- /.card-body -->
                 </div>
-            </div><!-- /.container-fluid -->
-        </section>
+                <!-- /.card -->
 
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-3">
-
-                        <!-- Profile Image -->
-                        <div class="card card-primary card-outline">
-                            <div class="card-body box-profile">
-                                <div class="text-center">
-                                    {% if student.picture %}
-                                        <img class="profile-user-img img-fluid img-circle"
-                                             src="{% url 'programs:program_student_picture' program.slug student.id %}"
-                                             alt="User profile picture">
-                                    {% elif student.gender == 'm' %}
-                                        <img class="profile-user-img img-fluid img-circle" src="{% static 'programs/dist/img/avatar5.png' %}" alt="">
-                                    {% elif student.gender == 'f' %}
-                                        <img class="profile-user-img img-fluid img-circle" src="{% static 'programs/dist/img/avatar3.png' %}" alt="">
-                                    {% endif %}
-                                </div>
-
-                                <h3 class="profile-username text-center">{{ student }}</h3>
-
-                                <p class="text-muted text-center">{{ student.phdstudent.status|capfirst }}</p>
-
-                                <ul class="list-group list-group-unbordered mb-3" id="ul_edit_profile"  data="0">
-                                    <li class="list-group-item">
-                                        <b>Solicitud</b> <a class="float-right">{{ student.request_date|date:'M/Y'}}</a>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <b>Ingreso</b> <a class="float-right">{% if student.init_date %}{{ student.init_date|date:'M/Y' }}{% else %}----{% endif %}</a>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <b>Egreso</b> <a class="float-right">{% if student.graduate_date != None %}{{ student.graduate_date|date:'M/Y' }}{% else %}----{% endif %}</a>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <b>Defensa prevista</b> <a class="float-right">{% if student.studentformationplan.planned_end_year != None %}{{ student.studentformationplan.planned_end_year }}{% else %}----{% endif %}</a>
-                                    </li>
-                                    {% if user == student.user %}
-                                        <li class="list-group-item text-center" id="li_edit_profile">
-                                            <button type="button" class="btn btn-sm btn-warning text-center" title="Editar datos personales" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>
-                                        </li>
-                                    {% endif %}
-                                </ul>
-
-
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-
-                        <!-- About Me Box -->
-                        <div class="card card-primary">
-                            <div class="card-header">
-                                <h3 class="card-title">De mi investigación</h3>
+                <!-- About Me Box -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">De mi investigación</h3>
 
 
 
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <strong><i class="fas fa-book mr-1"></i> Tema</strong>
-
-                                <p class="text-muted">
-                                    {{ student.phdstudent.phdstudenttheme}}
-                                </p>
-
-                                <hr>
-
-                                <strong><i class="fas fa-user-friends mr-1"></i> Tutores</strong>
-
-                                <p class="text-muted">
-                                <ul>
-                                    {% for tuthor in student.phdstudent.tuthor_set.all %}
-                                        <li>{{ tuthor }}</li>
-                                    {% endfor %}
-                                </ul>
-                                </p>
-
-
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
                     </div>
-                    <!-- /.col -->
-                    <div class="col-md-9">
-                        <div class="card">
-                            <div class="card-header p-2">
-                                <ul class="nav nav-pills">
-                                    <li class="nav-item"><a class="nav-link active" id="a_tab_personal" href="#personal" data-toggle="tab">Datos personales</a></li>
-                                    <li class="nav-item"><a class="nav-link" id="a_tab_docs" href="#file_docs" data-toggle="tab">Expediente</a></li>
-                                    <li class="nav-item"><a class="nav-link" id="a_tab_plan" href="#timeline" data-toggle="tab">Tareas</a></li>
-                                    {% if user == student.user %}
-                                        <li class="nav-item"><a class="nav-link" id="a_tab_messages" href="#messages" data-toggle="tab">Mensajes</a></li>
-                                    {% endif %}
-                                </ul>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <strong><i class="fas fa-book mr-1"></i> Tema</strong>
 
-                            </div><!-- /.card-header -->
-                            <div class="card-body">
-                                <div class="tab-content">
-                                    {% if user == student.user %}
-                                        <div class="tab-pane" id="messages">
-                                            {% if messages %}
-                                                {% for message in messages %}
-                                                    {% user_is_program_member message.sender program as user_is_program_member%}
-                                                    {% user_is_program_student message.sender program as user_is_program_student%}
-                                                    <!-- Post -->
-                                                    <div id="div_msg_{{ message.id }}" class="post">
-                                                        <div class="user-block">
-                                                            {% if user_is_program_member %}
-                                                                {% sender_program_member message.sender program as program_member %}
-                                                                <img class="img-circle img-bordered-sm" {% if program_member.picture %}src="{% url 'programs:program_member_picture' program.slug program_member.id %}"{% else %}src="{% static 'programs/dist/img/user1-128x128.jpg' %}"{% endif %} alt="user image">
-                                                            {% elif user_is_program_student %}
-                                                                {% sender_program_student message.sender program as program_student %}
-                                                                <img class="img-circle img-bordered-sm" {% if program_member.picture %}src="{% url 'programs:program_member_picture' program.slug program_member.id %}"{% else %}src="{% static 'programs/dist/img/user2-128x128.jpg' %}"{% endif %} alt="user image">
-                                                            {% endif %}
-                                                            <span class="username">
+                        <p class="text-muted">
+                            {{ student.phdstudent.phdstudenttheme}}
+                        </p>
+
+                        <hr>
+
+
+
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item"><a class="nav-link active" id="a_tab_personal" href="#personal" data-toggle="tab">Datos personales</a></li>
+                            <li class="nav-item"><a class="nav-link" id="a_tab_docs" href="#file_docs" data-toggle="tab">Expediente</a></li>
+                            <li class="nav-item"><a class="nav-link" id="a_tab_plan" href="#timeline" data-toggle="tab">Tareas</a></li>
+                            {% if user == student.user %}
+                            <li class="nav-item"><a class="nav-link" id="a_tab_messages" href="#messages" data-toggle="tab">Mensajes</a></li>
+                            {% endif %}
+                        </ul>
+
+                    </div><!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="tab-content">
+                            {% if user == student.user %}
+                            <div class="tab-pane" id="messages">
+                                {% if messages %}
+                                {% for message in messages %}
+                                {% user_is_program_member message.sender program as user_is_program_member%}
+                                {% user_is_program_student message.sender program as user_is_program_student%}
+                                <!-- Post -->
+                                <div id="div_msg_{{ message.id }}" class="post">
+                                    <div class="user-block">
+                                        {% if user_is_program_member %}
+                                        {% sender_program_member message.sender program as program_member %}
+                                        <img class="img-circle img-bordered-sm" {% if program_member.picture %}src="{% url 'programs:program_member_picture' program.slug program_member.id %}"{% else %}src="{% static 'programs/dist/img/user1-128x128.jpg' %}"{% endif %} alt="user image">
+                                        {% elif user_is_program_student %}
+                                        {% sender_program_student message.sender program as program_student %}
+                                        <img class="img-circle img-bordered-sm" {% if program_member.picture %}src="{% url 'programs:program_member_picture' program.slug program_member.id %}"{% else %}src="{% static 'programs/dist/img/user2-128x128.jpg' %}"{% endif %} alt="user image">
+                                        {% endif %}
+                                        <span class="username">
                                                           <a href="#">{{ message.sender.get_full_name }}</a>
                                                           <a href="#" class="float-right btn-tool"><i class="fas fa-times"></i></a>
                                                     </span>
-                                                            <span class="description">
+                                        <span class="description">
                                                         {% if message.readed %}<i id="i_msg_{{ message.id }}" class="fa fa-envelope-open"></i>{% else %}<i id="i_msg_{{ message.id }}" class="fa fa-envelope"></i>{% endif %}
                                                                 {{ message.date|date:'d-m-Y'}}
                                                     </span>
-                                                        </div>
-                                                        <!-- /.user-block -->
-                                                        <p id="p_message_body_{{ message.id }}" {% if not message.readed %} class="text-bold" {% endif %}>
-                                                            {{ message.subject }}
-                                                        </p>
+                                    </div>
+                                    <!-- /.user-block -->
+                                    <p id="p_message_body_{{ message.id }}" {% if not message.readed %} class="text-bold" {% endif %}>
+                                        {{ message.subject }}
+                                    </p>
 
 
-                                                        <p>
-                                                            {% if message.readed %}
-                                                                <a href="#" id="a_remove_message_{{ message.id }}" data="{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>
-                                                            {% else %}
-                                                                <a href="#" id="a_read_message_{{ message.id }}" data="{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eye mr-1"></i> Leer</a>
-                                                            {% endif %}
-                                                            <span class="float-right">
+                                    <p>
+                                        {% if message.readed %}
+                                        <a href="#" id="a_remove_message_{{ message.id }}" data="{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>
+                                        {% else %}
+                                        <a href="#" id="a_read_message_{{ message.id }}" data="{{ message.id }}" class="link-black text-sm mr-2"><i class="fas fa-eye mr-1"></i> Leer</a>
+                                        {% endif %}
+                                        <span class="float-right">
 
                                                     </span>
-                                                        </p>
+                                    </p>
 
 
-                                                    </div>
-                                                    <!-- /.post -->
-                                                    <div class="modal fade" id="modal_read_message_{{ message.id }}">
-                                                        <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h4 class="modal-title">{{ message.subject }}</h4>
-                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                        <span aria-hidden="true">&times;</span>
-                                                                    </button>
-                                                                </div>
+                                </div>
+                                <!-- /.post -->
+                                <div class="modal fade" id="modal_read_message_{{ message.id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">{{ message.subject }}</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
 
-                                                                <div class="modal-body alert alert-success">
-                                                                    <p>
-                                                                        {% autoescape off %}
+                                            <div class="modal-body alert alert-success">
+                                                <p>
+                                                    {% autoescape off %}
 
-                                                                            {{  message.body }}
+                                                    {{  message.body }}
 
-                                                                        {% endautoescape %}
-                                                                    </p>
+                                                    {% endautoescape %}
+                                                </p>
 
 
 
-                                                                </div>
-                                                                <div class="modal-footer justify-content-between">
-                                                                </div>
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                            </div>
 
-                                                            </div>
-                                                            <!-- /.modal-content -->
-                                                        </div>
-                                                        <!-- /.modal-dialog -->
-                                                    </div>
-                                                    <div class="modal fade" id="modal_rm_message_{{ message.id }}">
-                                                        <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h4 class="modal-title">Eliminar mensaje</h4>
-                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                        <span aria-hidden="true">&times;</span>
-                                                                    </button>
-                                                                </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+                                <div class="modal fade" id="modal_rm_message_{{ message.id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Eliminar mensaje</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
 
-                                                                <form id="frm_remove_message_{{ message.id }}" data="{{ message.id }}" method="post">
-                                                                    <div class="modal-body alert alert-danger">
-                                                                        <h4>Seguro desea eliminar el mensaje:<br>{{ message }}</h4>
+                                            <form id="frm_remove_message_{{ message.id }}" data="{{ message.id }}" method="post">
+                                                <div class="modal-body alert alert-danger">
+                                                    <h4>Seguro desea eliminar el mensaje:<br>{{ message }}</h4>
 
-                                                                        <input type="hidden" name="message_{{ message.id }}" value="{{ message.id }}">
+                                                    <input type="hidden" name="message_{{ message.id }}" value="{{ message.id }}">
 
-                                                                    </div>
-                                                                    <div class="modal-footer justify-content-between">
-                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                                        <button type="submit" class="btn btn-danger" id="btn_rm_message_{{ message.id }}">Eliminar</button>
-                                                                    </div>
-                                                                </form>
-                                                                <div class="modal-footer justify-content-between">
-                                                                </div>
-
-                                                            </div>
-                                                            <!-- /.modal-content -->
-                                                        </div>
-                                                        <!-- /.modal-dialog -->
-                                                    </div>
-
-                                                {% endfor %}
-                                            {% else %}
-                                                <div class="alert alert-warning">
-                                                    <h5 class="text-center">Usted no ha recibido mensaje alguno en este programa.</h5>
                                                 </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-danger" id="btn_rm_message_{{ message.id }}">Eliminar</button>
+                                                </div>
+                                            </form>
+                                            <div class="modal-footer justify-content-between">
+                                            </div>
+
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+
+                                {% endfor %}
+                                {% else %}
+                                <div class="alert alert-warning">
+                                    <h5 class="text-center">Usted no ha recibido mensaje alguno en este programa.</h5>
+                                </div>
+                                {% endif %}
+
+
+                            </div>
+                            {% endif %}
+                            <div class="tab-pane" id="file_docs">
+                                <h6>Requisitos de Ingreso:</h6>
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center">Resp.</th>
+                                        <th >Nombre del documento</th>
+                                        <th class="text-center">Copia digital</th>
+                                        <th class="text-center">Listo</th>
+                                        <th class="text-center">Caduca</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for doc in program.programfiledoc_set.all %}
+                                    <div class="modal fade" id="modal_up_filedoc_{{ doc.id }}" data="{{ doc.id }}">
+                                        <div class="modal-lg modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Documento digital</h4>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+
+                                                    <div class="modal-body">
+                                                        <p class="text-sm">Subir copia digital de {{ doc }}</p>
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                        <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                                        <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" accept=".doc, .docx, .pdf" required>
+
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                        <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+                                            <!-- /.modal-content -->
+                                        </div>
+                                        <!-- /.modal-dialog -->
+                                    </div>
+                                    <div class="modal fade" id="modal_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}">
+                                        <div class="modal-lg modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Documento digital</h4>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form id="frm_upgrade_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+
+                                                    <div class="modal-body">
+                                                        <p class="text-sm">Actualizar copia digital de {{ doc }}</p>
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="student_id" value="{{ student.id }}">
+                                                        <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                                        <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" accept=".doc, .docx, .pdf" required>
+
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                        <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+                                            <!-- /.modal-content -->
+                                        </div>
+                                        <!-- /.modal-dialog -->
+                                    </div>
+                                    <div class="modal fade" id="modal_rm_filedoc_{{ doc.id }}">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Documento digital</h4>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-2">
+                                                            <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                                                        </div>
+                                                        <div class="col-md-10">
+                                                            <p class="text-center">¿Seguro que desea eliminar la copia digital de:<br><strong>{{ doc|truncatewords:5 }}</strong>?
+                                                                <br>Siempre podrá agregarlo nuevamente&hellip;</p>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                    <button type="button" class="btn btn-danger" data-dismiss="modal" data="{{ doc.id }}" id="btn_rm_docfile_{{ doc.id }}">Eliminar</button>
+                                                </div>
+
+                                            </div>
+                                            <!-- /.modal-content -->
+                                        </div>
+                                        <!-- /.modal-dialog -->
+                                    </div>
+                                    {% endfor %}
+
+                                    {% for doc in program.programfiledoc_set.all %}
+                                    {% student_doc_has_file student doc as student_doc_has_file %}
+
+
+                                    <!-- Post -->
+                                    {% if doc.is_init_requirenment %}
+
+                                    <tr>
+                                        <td class="text-center">
+                                            {% if doc.type == 'student' %}
+                                            <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                            {% elif doc.type == 'program' %}
+                                            <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                            {% elif doc.type == 'comission' %}
+                                            <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td style="width: 55%">
+                                            {{ doc }}
+                                        </td>
+                                        <td class="text-center">
+                                            {% if student_doc_has_file %}
+                                            {% if doc.type == 'student' %}
+                                            <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
+                                                <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_upgrade_filedoc_{{ doc.id }}" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                                <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_rm_filedoc_{{ doc.id }}" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
+
+                                            </div>
+                                            {% else %}
+                                            <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+
+
+                                            {% endif %}
+                                            {% else %}
+                                            {% if doc.type == 'student' %}
+                                            <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data-toggle="modal" data-target="#modal_up_filedoc_{{ doc.id }}" ><i class="fa fa-upload"></i> </button>
+
+                                            {% else %}
+                                            <button type="button" class="btn btn-sm btn-default" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye-slash"></i> </button>
+                                            {% endif %}
                                             {% endif %}
 
 
-                                        </div>
+                                        </td>
+                                        <td class="text-center">
+                                            {% student_requirement_accomplished student doc as doc_accomplished %}
+                                            {% if doc_accomplished %}
+                                            <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
+                                            {% else %}
+                                            <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
+
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            {% if doc.get_old %}
+                                            {% student_doc_caducity_date student doc as caducity_date %}
+                                            {{ caducity_date|date:'d-m-Y' }}
+                                            {% else %}
+                                            --------------------
+                                            {% endif  %}
+                                        </td>
+                                    </tr>
                                     {% endif %}
-                                    <div class="tab-pane" id="file_docs">
-                                        <h6>Requisitos de Ingreso:</h6>
-                                        <table class="table table-striped">
-                                            <thead>
-                                            <tr>
-                                                <th class="text-center">Resp.</th>
-                                                <th >Nombre del documento</th>
-                                                <th class="text-center">Copia digital</th>
-                                                <th class="text-center">Listo</th>
-                                                <th class="text-center">Caduca</th>
+                                    <!-- /.post -->
+                                    {% endfor %}
 
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for doc in program.programfiledoc_set.all %}
-                                                <div class="modal fade" id="modal_up_filedoc_{{ doc.id }}" data="{{ doc.id }}">
-                                                    <div class="modal-lg modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h4 class="modal-title">Documento digital</h4>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
-
-                                                                <div class="modal-body">
-                                                                    <p class="text-sm">Subir copia digital de {{ doc }}</p>
-                                                                    {% csrf_token %}
-                                                                    <input type="hidden" name="student_id" value="{{ student.id }}">
-                                                                    <input type="hidden" name="doc_id" value="{{ doc.id }}">
-                                                                    <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" accept=".doc, .docx, .pdf" required>
-
-                                                                </div>
-                                                                <div class="modal-footer justify-content-between">
-                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                                    <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
-                                                                </div>
-                                                            </form>
-
-                                                        </div>
-                                                        <!-- /.modal-content -->
-                                                    </div>
-                                                    <!-- /.modal-dialog -->
-                                                </div>
-                                                <div class="modal fade" id="modal_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}">
-                                                    <div class="modal-lg modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h4 class="modal-title">Documento digital</h4>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <form id="frm_upgrade_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
-
-                                                                <div class="modal-body">
-                                                                    <p class="text-sm">Actualizar copia digital de {{ doc }}</p>
-                                                                    {% csrf_token %}
-                                                                    <input type="hidden" name="student_id" value="{{ student.id }}">
-                                                                    <input type="hidden" name="doc_id" value="{{ doc.id }}">
-                                                                    <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" accept=".doc, .docx, .pdf" required>
-
-                                                                </div>
-                                                                <div class="modal-footer justify-content-between">
-                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                                    <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
-                                                                </div>
-                                                            </form>
-
-                                                        </div>
-                                                        <!-- /.modal-content -->
-                                                    </div>
-                                                    <!-- /.modal-dialog -->
-                                                </div>
-                                                <div class="modal fade" id="modal_rm_filedoc_{{ doc.id }}">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h4 class="modal-title">Documento digital</h4>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="row">
-                                                                    <div class="col-md-2">
-                                                                        <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
-
-                                                                    </div>
-                                                                    <div class="col-md-10">
-                                                                        <p class="text-center">¿Seguro que desea eliminar la copia digital de:<br><strong>{{ doc|truncatewords:5 }}</strong>?
-                                                                            <br>Siempre podrá agregarlo nuevamente&hellip;</p>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                            <div class="modal-footer justify-content-between">
-                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                                <button type="button" class="btn btn-danger" data-dismiss="modal" data="{{ doc.id }}" id="btn_rm_docfile_{{ doc.id }}">Eliminar</button>
-                                                            </div>
-
-                                                        </div>
-                                                        <!-- /.modal-content -->
-                                                    </div>
-                                                    <!-- /.modal-dialog -->
-                                                </div>
-                                            {% endfor %}
-
-                                            {% for doc in program.programfiledoc_set.all %}
-                                                {% student_doc_has_file student doc as student_doc_has_file %}
+                                    </tbody>
 
 
-                                                <!-- Post -->
-                                                {% if doc.is_init_requirenment %}
+                                </table>
 
-                                                    <tr>
-                                                        <td class="text-center">
-                                                            {% if doc.type == 'student' %}
-                                                                <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
-                                                            {% elif doc.type == 'program' %}
-                                                                <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
-                                                            {% elif doc.type == 'comission' %}
-                                                                <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
-                                                            {% endif %}
-                                                        </td>
-                                                        <td style="width: 55%">
-                                                            {{ doc }}
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {% if student_doc_has_file %}
-                                                                {% if doc.type == 'student' %}
-                                                                    <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
-                                                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
-                                                                        <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_upgrade_filedoc_{{ doc.id }}" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
-                                                                        <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_rm_filedoc_{{ doc.id }}" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
+                                <h6>Requisitos de Egreso:</h6>
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center">Resp.</th>
+                                        <th >Nombre del documento</th>
+                                        <th class="text-center">Copia digital</th>
+                                        <th class="text-center">Listo</th>
+                                        <th class="text-center">Caduca</th>
 
-                                                                    </div>
-                                                                {% else %}
-                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for doc in program.programfiledoc_set.all %}
+                                    {% student_doc_has_file student doc as student_doc_has_file %}
 
+                                    <!-- Post -->
+                                    {% if doc.is_finish_requirenment %}
 
-                                                                {% endif %}
-                                                            {% else %}
-                                                                {% if doc.type == 'student' %}
-                                                                    <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data-toggle="modal" data-target="#modal_up_filedoc_{{ doc.id }}" ><i class="fa fa-upload"></i> </button>
+                                    <tr>
+                                        <td class="text-center">
+                                            {% if doc.type == 'student' %}
+                                            <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                            {% elif doc.type == 'program' %}
+                                            <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                            {% elif doc.type == 'comission' %}
+                                            <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td style="width: 55%">
+                                            {{ doc }}
+                                        </td>
+                                        <td class="text-center">
+                                            {% if student_doc_has_file %}
+                                            {% if doc.type == 'student' %}
+                                            <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
+                                                <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_upgrade_filedoc_{{ doc.id }}"  title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                                <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_rm_filedoc_{{ doc.id }}"  title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
 
-                                                                {% else %}
-                                                                    <button type="button" class="btn btn-sm btn-default" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye-slash"></i> </button>
-                                                                {% endif %}
-                                                            {% endif %}
-
-
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {% student_requirement_accomplished student doc as doc_accomplished %}
-                                                            {% if doc_accomplished %}
-                                                                <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
-                                                            {% else %}
-                                                                <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
-
-                                                            {% endif %}
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {% if doc.get_old %}
-                                                                {% student_doc_caducity_date student doc as caducity_date %}
-                                                                {{ caducity_date|date:'d-m-Y' }}
-                                                            {% else %}
-                                                                --------------------
-                                                            {% endif  %}
-                                                        </td>
-                                                    </tr>
-                                                {% endif %}
-                                                <!-- /.post -->
-                                            {% endfor %}
-
-                                            </tbody>
-
-
-                                        </table>
-
-                                        <h6>Requisitos de Egreso:</h6>
-                                        <table class="table table-striped">
-                                            <thead>
-                                            <tr>
-                                                <th class="text-center">Resp.</th>
-                                                <th >Nombre del documento</th>
-                                                <th class="text-center">Copia digital</th>
-                                                <th class="text-center">Listo</th>
-                                                <th class="text-center">Caduca</th>
-
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for doc in program.programfiledoc_set.all %}
-                                                {% student_doc_has_file student doc as student_doc_has_file %}
-
-                                                <!-- Post -->
-                                                {% if doc.is_finish_requirenment %}
-
-                                                    <tr>
-                                                        <td class="text-center">
-                                                            {% if doc.type == 'student' %}
-                                                                <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
-                                                            {% elif doc.type == 'program' %}
-                                                                <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
-                                                            {% elif doc.type == 'comission' %}
-                                                                <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
-                                                            {% endif %}
-                                                        </td>
-                                                        <td style="width: 55%">
-                                                            {{ doc }}
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {% if student_doc_has_file %}
-                                                                {% if doc.type == 'student' %}
-                                                                    <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
-                                                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
-                                                                        <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_upgrade_filedoc_{{ doc.id }}"  title="Actualizar documento"><i class="fa fa-edit"></i> </button>
-                                                                        <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_rm_filedoc_{{ doc.id }}"  title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
-
-                                                                    </div>
-                                                                {% else %}
-                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
-
-
-                                                                {% endif %}
-                                                            {% else %}
-                                                                {% if doc.type == 'student' %}
-                                                                    <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data-toggle="modal" data-target="#modal_up_filedoc_{{ doc.id }}" ><i class="fa fa-upload"></i> </button>
-
-                                                                {% else %}
-                                                                    <button type="button" class="btn btn-sm btn-default" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye-slash"></i> </button>
-                                                                {% endif %}
-                                                            {% endif %}
-
-
-                                                        </td>
-
-                                                        <td class="text-center">
-                                                            {% student_requirement_accomplished student doc as doc_accomplished %}
-                                                            {% if doc_accomplished %}
-                                                                <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
-                                                            {% else %}
-                                                                <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
-
-                                                            {% endif %}
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {% if doc.get_old %}
-                                                                {% student_doc_caducity_date student doc as caducity_date %}
-                                                                {{ caducity_date|date:'d-m-Y' }}
-                                                            {% else %}
-                                                                --------------------
-                                                            {% endif  %}
-                                                        </td>
-                                                    </tr>
-                                                {% endif %}
-                                                <!-- /.post -->
-                                            {% endfor %}
-
-                                            </tbody>
-
-
-                                        </table>
-
-                                        <h6>Otros documentos:</h6>
-                                        <table class="table table-striped">
-                                            <thead>
-                                            <tr>
-                                                <th class="text-center">Resp.</th>
-                                                <th>Nombre del documento</th>
-                                                <th class="text-center">Copia digital</th>
-                                                <th class="text-center">Listo</th>
-                                                <th class="text-center">Caduca</th>
-
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for doc in program.programfiledoc_set.all %}
-                                                {% student_doc_has_file student doc as student_doc_has_file %}
-
-                                                <!-- Post -->
-                                                {% if not doc.is_finish_requirenment and not doc.is_init_requirenment %}
-
-                                                    <tr>
-                                                        <td class="text-center">
-                                                            {% if doc.type == 'student' %}
-                                                                <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
-                                                            {% elif doc.type == 'program' %}
-                                                                <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
-                                                            {% elif doc.type == 'comission' %}
-                                                                <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
-                                                            {% endif %}
-                                                        </td>
-                                                        <td style="width: 55%">
-                                                            {{ doc }}
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {% if student_doc_has_file %}
-                                                                {% if doc.type == 'student' %}
-                                                                    <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
-                                                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
-                                                                        <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_upgrade_filedoc_{{ doc.id }}"  title="Actualizar documento"><i class="fa fa-edit"></i> </button>
-                                                                        <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_rm_filedoc_{{ doc.id }}"  title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
-
-                                                                    </div>
-                                                                {% else %}
-                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
-
-
-                                                                {% endif %}
-                                                            {% else %}
-                                                                {% if doc.type == 'student' %}
-                                                                    <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data-toggle="modal" data-target="#modal_up_filedoc_{{ doc.id }}" ><i class="fa fa-upload"></i> </button>
-                                                                {% else %}
-                                                                    <button type="button" class="btn btn-sm btn-default" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye-slash"></i> </button>
-                                                                {% endif %}
-                                                            {% endif %}
-
-                                                        </td>
-                                                        <td class="text-center">
-                                                            {% student_requirement_accomplished student doc as doc_accomplished %}
-                                                            {% if doc_accomplished %}
-                                                                <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
-                                                            {% else %}
-                                                                <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
-
-                                                            {% endif %}
-                                                        </td>
-
-                                                        <td class="text-center">
-                                                            {% if doc.get_old %}
-                                                                {% student_doc_caducity_date student doc as caducity_date %}
-                                                                {{ caducity_date|date:'d-m-Y' }}
-                                                            {% else %}
-                                                                --------------------
-                                                            {% endif  %}
-                                                        </td>
-                                                    </tr>
-                                                {% endif %}
-                                                <!-- /.post -->
-                                            {% endfor %}
-
-                                            </tbody>
-
-                                        </table>
-
-                                        <!-- Post -->
-
-                                        <!-- /.post -->
-                                    </div>
-                                    <!-- /.tab-pane -->
-                                    <div class="tab-pane" id="timeline">
-                                        <!-- The timeline -->
-                                        {% if  student.studentformationplan.formationplanactivities_set.all %}
-                                            <div class="timeline timeline-inverse">
-
-
-                                                {% for activity in student.studentformationplan.formationplanactivities_set.all %}
-                                                    {% is_past activity.init_date as is_past %}
-                                                    <!-- timeline time label -->
-                                                    <div class="time-label">
-                                                        <span {% if activity.status == 'ready' %}class="bg-success"{% else %}class="bg-danger"{% endif %}>
-                                                          {{ activity.init_date|date:'Y-m-d'}}{{ now|date:'Y-m-d' }}
-                                                        </span>
-                                                    </div>
-                                                    <!-- /.timeline-label -->
-                                                    <!-- timeline item -->
-                                                    <div>
-                                                        {% if activity.status == 'ready' %}
-                                                            <i class="fas fa-code bg-primary"></i>
-                                                        {% else %}
-                                                            <i class="fas fa-calendar-alt bg-warning"></i>
-
-                                                        {% endif %}
-
-                                                        <div class="timeline-item">
-                                                            {% if activity.status == 'ready' %}
-                                                                <span class="time" title="Completada"><i class="fa fa-toggle-on"></i></span>
-                                                            {% else %}
-                                                                <span class="time" title="Pendiente"><i class="fa fa-toggle-off"></i></span>
-                                                            {% endif %}
-
-                                                            <h3 class="timeline-header"><p class="{% if activity.status == 'ready' %}text-blue{% else %}text-warning{% endif %} text-bold">{% if activity.status == 'ready' %}Tarea completada{% else %}Tarea pendiente{% endif %}</p></h3>
-
-                                                            <div class="timeline-body">
-                                                                {{activity}}
-                                                            </div>
-                                                            {#                                                            <div class="timeline-footer">#}
-                                                            {#                                                                <a href="#" class="btn btn-primary btn-sm" title="Editar"><i class="fa fa-edit"></i></a>#}
-                                                            {#                                                                <a href="#" class="btn btn-danger btn-sm" title="eliminar"><i class="fa fa-eraser"></i></a>#}
-                                                            {#                                                            </div>#}
-                                                        </div>
-                                                    </div>
-                                                    <!-- END timeline item -->
-                                                {% endfor %}
-
-
-                                                <!-- END timeline item -->
-                                                <div>
-                                                    <i class="fas fa-certificate bg-gray"></i>
-                                                </div>
                                             </div>
+                                            {% else %}
+                                            <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+
+
+                                            {% endif %}
+                                            {% else %}
+                                            {% if doc.type == 'student' %}
+                                            <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data-toggle="modal" data-target="#modal_up_filedoc_{{ doc.id }}" ><i class="fa fa-upload"></i> </button>
+
+                                            {% else %}
+                                            <button type="button" class="btn btn-sm btn-default" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye-slash"></i> </button>
+                                            {% endif %}
+                                            {% endif %}
+
+
+                                        </td>
+
+                                        <td class="text-center">
+                                            {% student_requirement_accomplished student doc as doc_accomplished %}
+                                            {% if doc_accomplished %}
+                                            <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
+                                            {% else %}
+                                            <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
+
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            {% if doc.get_old %}
+                                            {% student_doc_caducity_date student doc as caducity_date %}
+                                            {{ caducity_date|date:'d-m-Y' }}
+                                            {% else %}
+                                            --------------------
+                                            {% endif  %}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    <!-- /.post -->
+                                    {% endfor %}
+
+                                    </tbody>
+
+
+                                </table>
+
+                                <h6>Otros documentos:</h6>
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center">Resp.</th>
+                                        <th>Nombre del documento</th>
+                                        <th class="text-center">Copia digital</th>
+                                        <th class="text-center">Listo</th>
+                                        <th class="text-center">Caduca</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for doc in program.programfiledoc_set.all %}
+                                    {% student_doc_has_file student doc as student_doc_has_file %}
+
+                                    <!-- Post -->
+                                    {% if not doc.is_finish_requirenment and not doc.is_init_requirenment %}
+
+                                    <tr>
+                                        <td class="text-center">
+                                            {% if doc.type == 'student' %}
+                                            <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                            {% elif doc.type == 'program' %}
+                                            <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                            {% elif doc.type == 'comission' %}
+                                            <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td style="width: 55%">
+                                            {{ doc }}
+                                        </td>
+                                        <td class="text-center">
+                                            {% if student_doc_has_file %}
+                                            {% if doc.type == 'student' %}
+                                            <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
+                                                <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                                <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_upgrade_filedoc_{{ doc.id }}"  title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                                <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" data-toggle="modal" data-target="#modal_rm_filedoc_{{ doc.id }}"  title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
+
+                                            </div>
+                                            {% else %}
+                                            <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+
+
+                                            {% endif %}
+                                            {% else %}
+                                            {% if doc.type == 'student' %}
+                                            <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data-toggle="modal" data-target="#modal_up_filedoc_{{ doc.id }}" ><i class="fa fa-upload"></i> </button>
+                                            {% else %}
+                                            <button type="button" class="btn btn-sm btn-default" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye-slash"></i> </button>
+                                            {% endif %}
+                                            {% endif %}
+
+                                        </td>
+                                        <td class="text-center">
+                                            {% student_requirement_accomplished student doc as doc_accomplished %}
+                                            {% if doc_accomplished %}
+                                            <i class="text-success fa fa-toggle-on" title="Documento entregado"></i>
+                                            {% else %}
+                                            <i class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
+
+                                            {% endif %}
+                                        </td>
+
+                                        <td class="text-center">
+                                            {% if doc.get_old %}
+                                            {% student_doc_caducity_date student doc as caducity_date %}
+                                            {{ caducity_date|date:'d-m-Y' }}
+                                            {% else %}
+                                            --------------------
+                                            {% endif  %}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    <!-- /.post -->
+                                    {% endfor %}
+
+                                    </tbody>
+
+                                </table>
+
+                                <!-- Post -->
+
+                                <!-- /.post -->
+                            </div>
+                            <!-- /.tab-pane -->
+                            <div class="tab-pane" id="timeline">
+                                <!-- The timeline -->
+                                {% if  student.studentformationplan.formationplanactivities_set.all %}
+                                <div class="timeline timeline-inverse">
+
+
+                                    {% for activity in student.studentformationplan.formationplanactivities_set.all %}
+                                    {% is_past activity.init_date as is_past %}
+                                    <!-- timeline time label -->
+                                    <div class="time-label">
+                                        <span {% if activity.status == 'ready' %}class="bg-success"{% else %}class="bg-danger"{% endif %}>
+                                        {{ activity.init_date|date:'Y-m-d'}}{{ now|date:'Y-m-d' }}
+                                        </span>
+                                    </div>
+                                    <!-- /.timeline-label -->
+                                    <!-- timeline item -->
+                                    <div>
+                                        {% if activity.status == 'ready' %}
+                                        <i class="fas fa-code bg-primary"></i>
                                         {% else %}
-                                            <div class="alert alert-warning">
-                                                <h5 class="text-center">No hay actividades en el Plan de Formación</h5>
-                                            </div>
+                                        <i class="fas fa-calendar-alt bg-warning"></i>
+
                                         {% endif %}
+
+                                        <div class="timeline-item">
+                                            {% if activity.status == 'ready' %}
+                                            <span class="time" title="Completada"><i class="fa fa-toggle-on"></i></span>
+                                            {% else %}
+                                            <span class="time" title="Pendiente"><i class="fa fa-toggle-off"></i></span>
+                                            {% endif %}
+
+                                            <h3 class="timeline-header"><p class="{% if activity.status == 'ready' %}text-blue{% else %}text-warning{% endif %} text-bold">{% if activity.status == 'ready' %}Tarea completada{% else %}Tarea pendiente{% endif %}</p></h3>
+
+                                            <div class="timeline-body">
+                                                {{activity}}
+                                            </div>
+                                            {#                                                            <div class="timeline-footer">#}
+                                            {#                                                                <a href="#" class="btn btn-primary btn-sm" title="Editar"><i class="fa fa-edit"></i></a>#}
+                                            {#                                                                <a href="#" class="btn btn-danger btn-sm" title="eliminar"><i class="fa fa-eraser"></i></a>#}
+                                            {#                                                            </div>#}
+                                        </div>
                                     </div>
-                                    <!-- /.tab-pane -->
+                                    <!-- END timeline item -->
+                                    {% endfor %}
 
-                                    <div class="active tab-pane" id="personal">
-                                        <form class="form-horizontal" id="frm_personal_data" enctype="multipart/form-data" method="post" action="{% url 'programs:autoedit_student_profile' program.slug student.id %}">
-                                            {% csrf_token %}
-                                            <div class="form-group row">
-                                                <label for="inp_name" class="col-sm-2 col-form-label">Nombre</label>
-                                                <div class="col-sm-3">
-                                                    <input type="text" class="form-control" id="inp_name" placeholder="Name" name="student_name" readonly required value="{{ student.user.first_name }}">
-                                                </div>
-                                                <label for="inp_lastname" class="col-sm-2 col-form-label">Apellidos</label>
-                                                <div class="col-sm-5">
-                                                    <input type="text" class="form-control" id="inp_lastname" placeholder="Name" name="student_lastname" readonly required  value="{{ student.user.last_name }}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="inp_email" class="col-sm-2 col-form-label">Email</label>
-                                                <div class="col-sm-10">
-                                                    <input type="email" class="form-control" id="inp_email" name="student_email" readonly required  value="{{ student.user.email }}" placeholder="Email">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="inp_birthdate" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
-                                                <div class="col-sm-4">
-                                                    <input class="form-control" type="date" id="inp_birthdate" name="student_bdate" readonly required  value="{{ student.birth_date|date:'Y-m-d' }}">
-                                                </div>
-                                                <label for="inputCategory" class="col-sm-2 col-form-label">Categoría</label>
-                                                <div class="col-sm-4">
-                                                    <input id="inputCategory" class="form-control" type="text" name="student_category" readonly required  value="{{ student.phdstudent.category|capfirst }}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="inputCenter" class="col-sm-2 col-form-label">Centro</label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" class="form-control" id="inputCenter" name="student_institution" readonly required  value="{{ student.phdstudent.center }}" placeholder="Name">
-                                                </div>
-                                            </div>
 
-                                            <div class="form-group row">
-                                                <label for="inp_phone" class="col-sm-2 col-form-label">Teléfono</label>
-                                                <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="inp_phone" name="student_phone" readonly
-                                                           value="{% if student.phone %}{{ student.phone }}{% else %}{% endif %}" placeholder="Teléfono">
-                                                </div>
-                                                <label for="inp_gender" class="col-sm-2 col-form-label">Género</label>
-                                                <div class="col-sm-4">
-                                                    <input type="text" class="form-control" id="inp_gender" readonly {% if student.gender == 'm' %}value="Masculino" data="m"{% else %}value="Femenino" data="f"{% endif %} placeholder="Teléfono">
-                                                </div>
-                                            </div>
-
-                                        </form>
+                                    <!-- END timeline item -->
+                                    <div>
+                                        <i class="fas fa-certificate bg-gray"></i>
                                     </div>
-                                    <!-- /.tab-pane -->
                                 </div>
-                                <!-- /.tab-content -->
-                            </div><!-- /.card-body -->
+                                {% else %}
+                                <div class="alert alert-warning">
+                                    <h5 class="text-center">No hay actividades en el Plan de Formación</h5>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- /.tab-pane -->
+
+                            <div class="active tab-pane" id="personal">
+                                <form class="form-horizontal" id="frm_personal_data" enctype="multipart/form-data" method="post" action="{% url 'programs:autoedit_student_profile' program.slug student.id %}">
+                                    {% csrf_token %}
+                                    <div class="form-group row">
+                                        <label for="inp_name" class="col-sm-2 col-form-label">Nombre</label>
+                                        <div class="col-sm-3">
+                                            <input type="text" class="form-control" id="inp_name" placeholder="Name" name="student_name" readonly required value="{{ student.user.first_name }}">
+                                        </div>
+                                        <label for="inp_lastname" class="col-sm-2 col-form-label">Apellidos</label>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control" id="inp_lastname" placeholder="Name" name="student_lastname" readonly required  value="{{ student.user.last_name }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="inp_email" class="col-sm-2 col-form-label">Email</label>
+                                        <div class="col-sm-10">
+                                            <input type="email" class="form-control" id="inp_email" name="student_email" readonly required  value="{{ student.user.email }}" placeholder="Email">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="inp_birthdate" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
+                                        <div class="col-sm-4">
+                                            <input class="form-control" type="date" id="inp_birthdate" name="student_bdate" readonly required  value="{{ student.birth_date|date:'Y-m-d' }}">
+                                        </div>
+                                        <label for="inputCategory" class="col-sm-2 col-form-label">Categoría</label>
+                                        <div class="col-sm-4">
+                                            <input id="inputCategory" class="form-control" type="text" name="student_category" readonly required  value="{{ student.phdstudent.category|capfirst }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="inputCenter" class="col-sm-2 col-form-label">Centro</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputCenter" name="student_institution" readonly required  value="{{ student.phdstudent.center }}" placeholder="Name">
+                                        </div>
+                                    </div>
+                                    {% if program.type == 'phd' %}
+                                    <div class="form-group row">
+                                        <label for="txtTheme" class="col-sm-2 col-form-label">Tema</label>
+                                        <div class="col-sm-10">
+                                            <textarea class="form-control" id="txtTheme" name="student_theme" readonly required placeholder="Tema de investigación">{{ student.phdstudent.phdstudenttheme }}</textarea>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+                                    <div class="form-group row">
+                                        <label for="inp_phone" class="col-sm-2 col-form-label">Teléfono</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" id="inp_phone" name="student_phone" readonly
+                                                   value="{% if student.phone %}{{ student.phone }}{% else %}{% endif %}" placeholder="Teléfono">
+                                        </div>
+                                        <label for="inp_gender" class="col-sm-2 col-form-label">Género</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" id="inp_gender" readonly {% if student.gender == 'm' %}value="Masculino" data="m"{% else %}value="Femenino" data="f"{% endif %} placeholder="Teléfono">
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <!-- /.tab-pane -->
                         </div>
-                        <!-- /.nav-tabs-custom -->
-                    </div>
-                    <!-- /.col -->
+                        <!-- /.tab-content -->
+                    </div><!-- /.card-body -->
                 </div>
-                <!-- /.row -->
-            </div><!-- /.container-fluid -->
-            {% csrf_token %}
-        </section>
+                <!-- /.nav-tabs-custom -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+    {% csrf_token %}
+</section>
 
 
-    {% endif %}
-    <!-- /.content -->
+{% endif %}
+<!-- /.content -->
 {% endblock %}
 <!-- jQuery -->
 {% block extra_scripts %}
 
-    <script type="text/javascript">
+<script type="text/javascript">
         $(document).ready(function () {
             var student_name = '';
             var student_surename = '';
@@ -1125,7 +1134,9 @@
                     student_bdate = $('#inp_birthdate').val();
                     student_phone = $('#inp_phone').val();
                     student_gender = $('#inp_gender').val();
+                    student_theme = $('#txtTheme').val();
                     $("input[id^='inp_']").removeAttr('readonly');
+                    $("#txtTheme").removeAttr('readonly');
                     {#$('#btn_edit_profile').replaceWith('<button type="button" class="btn btn-sm btn-default text-center" title="Ver perfil" id="btn_view_profile"><i class="fa fa-eye"></i> </button>\n')#}
                     $('#btn_edit_profile').removeClass('btn-warning');
                     $('#btn_edit_profile').addClass('btn-default');
@@ -1161,6 +1172,8 @@
                     $('#inp_email').val(student_mail);
                     $('#inp_birthdate').val(student_bdate);
                     $('#inp_phone').val(student_phone);
+                    $('#txtTheme').val(student_theme);
+                    $('#txtTheme').attr('readonly','readonly');
                     $("input[id^='inp_']").attr('readonly','readonly');
                     $('#btn_edit_profile').addClass('btn-warning');
                     $('#btn_edit_profile').removeClass('btn-default');

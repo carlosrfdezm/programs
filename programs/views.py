@@ -4718,6 +4718,11 @@ def autoedit_student_profile(request, program_slug, student_id):
                 student.birth_date = request.POST['student_bdate']
                 student.gender = request.POST['student_gender']
                 student.phone = request.POST['student_phone']
+                if program.type == 'phd':
+                    theme = student.phdstudent.phdstudenttheme
+                    theme.description = request.POST['student_theme']
+                    theme.save()
+
                 try:
                     student.picture = request.FILES['student_picture']
                 except:
