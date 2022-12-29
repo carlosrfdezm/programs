@@ -85,31 +85,7 @@
                 </div>
                 <!-- /.card -->
 
-                <!-- About Me Box -->
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">De mi investigación</h3>
 
-
-
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <strong><i class="fas fa-book mr-1"></i> Tema</strong>
-
-                        <p class="text-muted">
-                            {{ student.phdstudent.phdstudenttheme}}
-                        </p>
-
-                        <hr>
-
-
-
-
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
             </div>
             <!-- /.col -->
             <div class="col-md-9">
@@ -690,14 +666,7 @@
                                             <input type="text" class="form-control" id="inputCenter" name="student_institution" readonly required  value="{{ student.phdstudent.center }}" placeholder="Name">
                                         </div>
                                     </div>
-                                    {% if program.type == 'phd' %}
-                                    <div class="form-group row">
-                                        <label for="txtTheme" class="col-sm-2 col-form-label">Tema</label>
-                                        <div class="col-sm-10">
-                                            <textarea class="form-control" id="txtTheme" name="student_theme" readonly required placeholder="Tema de investigación">{{ student.phdstudent.phdstudenttheme }}</textarea>
-                                        </div>
-                                    </div>
-                                    {% endif %}
+
 
                                     <div class="form-group row">
                                         <label for="inp_phone" class="col-sm-2 col-form-label">Teléfono</label>
@@ -710,6 +679,15 @@
                                             <input type="text" class="form-control" id="inp_gender" readonly {% if student.gender == 'm' %}value="Masculino" data="m"{% else %}value="Femenino" data="f"{% endif %} placeholder="Teléfono">
                                         </div>
                                     </div>
+
+                                     {% if program.type == 'phd' %}
+                                    <div class="form-group row">
+                                        <label for="txtTheme" class="col-sm-2 col-form-label">Tema</label>
+                                        <div class="col-sm-10">
+                                            <textarea class="form-control" id="txtTheme" name="student_theme" readonly required placeholder="Tema de investigación">{{ student.phdstudent.phdstudenttheme }}</textarea>
+                                        </div>
+                                    </div>
+                                    {% endif %}
 
                                 </form>
                             </div>
