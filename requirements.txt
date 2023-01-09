@@ -1,6 +1,9 @@
 asgiref==3.6.0
 backports.zoneinfo==0.2.1
+crispy-bootstrap4==2022.1
 Django==4.1.5
+django-crispy-forms==1.14.0
+fontawesome-free==5.15.4
 lxml==4.9.2
 mysqlclient==2.1.1
 Pillow==9.4.0
