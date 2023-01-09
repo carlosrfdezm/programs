@@ -17,6 +17,7 @@ urlpatterns = [
     path('students/csv/export/<str:scope>', views.export_csv_students, name='export_csv_students'),
     path('students/<int:student_id>/edit', views.edit_student, name='edit_student'),
     path('students/<int:student_id>/profile', views.view_student_profile, name='view_student_profile'),
+    path('students/<int:student_id>/announcement/new', views.new_phd_announcement, name='new_phd_announcement'),
     path('students/<int:student_id>/autoedit/profile', views.autoedit_student_profile, name='autoedit_student_profile'),
     path('students/<int:student_id>/picture', views.program_student_picture, name='program_student_picture'),
     path('students/<int:student_id>/evaluate', views.evaluate_student, name='evaluate_student'),

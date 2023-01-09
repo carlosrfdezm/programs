@@ -64,6 +64,9 @@ def student_filedoc_directory_path(instance, filename):
 
     # file will be uploaded to MEDIA_ROOT/program_<slug>/students/<student_id>/docs/<filename>
     return 'program_{0}/students/{1}/docs/{2}'.format(program.slug,student.id, filename)
+def phd_thesis_directory_path(instance, filename):
+    program = instance.phd_student.student.program
+    return 'program_{0}/students/{1}/docs/thesis/{2}'.format(program.slug, instance.phdstudent.student.id, filename)
 
 def background_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
@@ -386,6 +389,27 @@ class PhdStudentTheme(models.Model):
 
     def __str__(self):
         return self.description
+
+
+class PhdStudentThesis(models.Model):
+    phd_student = models.OneToOneField(PhdStudent, on_delete=models.CASCADE)
+    title = models.TextField(max_length=1500, null=False, blank=False, help_text="Título de la tesis")
+    file = models.FileField(null=False, upload_to=phd_thesis_directory_path, help_text='Tesis')
+
+    def __str__(self):
+        return self.title
+
+class PhdAnnouncement(models.Model):
+    phd_student = models.OneToOneField(PhdStudent, on_delete=models.CASCADE)
+    date = models.DateTimeField(null=False, help_text='Día y hora de la defensa de tesis')
+    text = models.TextField(max_length=1500, null=True, blank=True, help_text='Texto de la convocatoria')
+    thesis = models.OneToOneField(PhdStudentThesis, null=False, on_delete=models.CASCADE, help_text='Tesis lista para defensa')
+
+    def __str__(self):
+        return self.text
+
+
+
 
 class MscStudentTheme(models.Model):
     student=models.OneToOneField(MscStudent, on_delete=models.CASCADE)

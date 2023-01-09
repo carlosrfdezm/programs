@@ -6,6 +6,7 @@ import secrets
 import string
 import zipfile
 
+from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -23,7 +24,7 @@ from django.utils.text import slugify
 from django.utils.timezone import now
 
 from programas.settings import MEDIA_ROOT
-from programs.forms import FileUploadForm
+from programs.forms import FileUploadForm, AnnouncementForm
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, \
     ProgramMember, ProgramFinishRequirements, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
@@ -164,6 +165,33 @@ def home(request, program_slug):
 
 
     # TODO Verificar lo del user is authenticate
+
+@login_required
+def new_phd_announcement(request, program_slug, student_id):
+    program = Program.objects.get(slug=program_slug)
+    phd_student = PhdStudent.objects.get(student=Student.objects.get(pk=student_id))
+    if program.type == 'phd':
+        if request.method == 'POST':
+            announcement_form = AnnouncementForm(request.POST, request.FILES, initial={'phd_student':phd_student, 'thesis': phd_student.phd_student_thesis})
+            if announcement_form.is_valid():
+                announcement_form.save()
+                messages.success(request, ('Nueva convocatoria creada exitosamente'))
+                return HttpResponseRedirect(reverse('programs:new_announcement'))
+
+            else:
+                print(announcement_form.errors)
+                messages.error(request, 'Error al guardar nueva convocatoria')
+                return HttpResponseRedirect(reverse('programs:new_announcement'))
+
+        else:
+            context = {
+                'announcement_form': AnnouncementForm(),
+                'program':program,
+
+            }
+            return render(request, 'programs/new_phd_announcement.html', context)
+    else:
+        pass
 
 
 @login_required
