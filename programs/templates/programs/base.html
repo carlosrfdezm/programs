@@ -11,11 +11,8 @@
     <title>{% if program %} Programa académico "{{ program  }}"{% else %}Programas académicos {% endif %}</title>
 
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/all.min.css' %}">
-    {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/fontawesome.css' %}">#}
-    {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/brands.css' %}">#}
-    {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/solid.css' %}">#}
-    {#    <i class="fa fa-graduation-cap" rel="icon"></i>#}
+    <link rel="stylesheet" href="{% static 'fontawesome_free/css/all.min.css' %}">
+
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{% static 'programs/plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}" >
     <!-- Theme style -->
@@ -27,7 +24,7 @@
     {% block extra_css %}
     {% endblock %}
     <!-- Google Font: Source Sans Pro -->
-    {#    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">#}
+
 </head>
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 {% if program %}
@@ -1133,6 +1130,7 @@
 <script src="{% static 'programs/plugins/summernote/lang/summernote-es-ES.js'  %}"></script>
 
 <script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+<script src="{% static 'fontawesome_free/js/all.min.js' %}"></script>
 <script>
     $(document).ready(function () {
         const Toast = Swal.mixin({

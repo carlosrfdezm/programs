@@ -4,439 +4,446 @@
 {% user_is_program_cs user program as user_is_program_cs %}
 
 {% block extra_css %}
-    <!-- Ionicons -->
-    {# <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' %}"> #}
-    <!-- DataTables -->
-    <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
+<!-- Ionicons -->
+{# <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' %}"> #}
+<!-- DataTables -->
+<link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
+<!-- Theme style -->
+<link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
 {% endblock %}
 
 {% block content %}
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Estudiantes</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Estudiantes</li>
-                    </ol>
-                </div>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Estudiantes</h1>
             </div>
-        </div><!-- /.container-fluid -->
-    </section>
-
-    <!-- Main content -->
-    <section class="content">
-        <div class="row">
-            <div class="col-12">
-
-                <!-- /.card -->
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">{% if scope == 'all' %}Estudiantes {% else %}{{ scope }} {% endif %} de {{  program }}</h3>
-                    {% if user_is_program_cs %}
-                        <div class="card-tools">
-
-
-                            <a class="btn btn-tool"  title="Exportar CSV" href="{% url 'programs:export_csv_students' program.slug en_scope %}" >
-                                <i class="fas fa-download"></i>
-                            </a>
-
-                        </div>
-                    {% endif %}
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        {% if program.type == 'phd' %}
-                            <table id="example1" class="table table-bordered table-striped table-responsive-sm table-responsive-md">
-                                <thead>
-                                {% user_is_program_cs user program as user_is_program_cs %}
-
-                                <tr>
-                                    <th>Nombre y apellidos</th>
-                                    {% if scope == 'Solicitantes' %}
-                                        <th >Fecha<br>(solicitud)</th>
-                                    {% endif %}
-                                    {% if scope == 'all' %}
-                                        <th>Estado</th>
-                                    {% endif %}
-                                    {% if scope != 'Graduados' %}
-                                        <th class="text-center">Requisitos<br> (ingreso)</th>
-                                    {% else %}
-                                        <th class="text-center">Año<br> defensa</th>
-
-                                    {% endif %}
-                                    {% if scope == 'Doctorandos' %}
-                                        <th class="text-center">Requisitos<br> (egreso)</th>
-                                        <th class="text-center">Año de <br> defensa previsto</th>
-                                    {% endif %}
-                                    <th>Tutores</th>
-
-                                    <th></th>
-
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for student in students %}
-                                    {% init_requirements_accomplished student program as init_requirements_accomplished %}
-                                    <tr id="tr_student_{{ student.id }}">
-                                        <td>{{ student.user.last_name|upper }}, {{ student.user.first_name }}</td>
-                                        {% if scope == 'Solicitantes' %}
-                                            <td>{{ student.request_date|date:'Y-m-d' }}</td>
-                                        {% endif %}
-                                        {% if scope == 'all' %}
-                                            <td>{{ student.phdstudent.status|capfirst }}</td>
-                                        {% endif %}
-                                        {% if scope != 'Graduados' %}
-                                            <td class="text-center">{% if init_requirements_accomplished %}
-                                                <span class="text-success">
-                                             <i class="fas fa-check" title="Requisitos cumplidos"></i>
-                                        </span>
-                                            {% else %}
-                                                <span class="text-warning">
-                                             <i class="fa fa-exclamation-triangle" title="Faltan requisitos de ingreso"></i>
-                                        </span>
-                                            {% endif %} </td>
-                                        {% else %}
-                                            <td class="text-center">{{ student.graduate_date.year }}</td>
-
-                                        {% endif %}
-
-                                        {% if scope == 'Doctorandos' %}
-                                            {% finish_requirements_accomplished student program as finish_requirements_accomplished %}
-
-                                            <td class="text-center">
-                                                {% if finish_requirements_accomplished %}
-                                                    <span class="text-success">
-                                             <i class="fas fa-check" title="Requisitos cumplidos"></i>
-
-                                        </span>
-                                                {% else %}
-                                                    <span class="text-warning">
-                                             <i class="fa fa-exclamation-triangle" title="Faltan requisitos de egreso"></i>
-                                        </span>
-                                                {% endif %}
-                                            </td>
-                                            <td class="text-center">
-                                                {% if student.studentformationplan %}
-                                                    {{ student.studentformationplan.planned_end_year }}
-                                                {% else %}
-                                                    _______
-                                                {% endif %}
-                                            </td>
-
-                                        {% endif %}
-                                        <td class="pl-1">{{ student.phdstudent.tuthor_set.all|unordered_list }}</td>
-                                        {% if user_is_program_cs %}
-                                            <td class="text-center">
-                                                <div class="btn-group" role="group">
-                                                    <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
-                                                    <a class="btn btn-primary btn-sm text-white" href="{% url 'programs:view_student_profile' program.slug student.id %}" title="Ver perfil" > <i class="fa fa-user"></i></a>
-                                                    {% if scope == 'Doctorandos' %}
-                                                        <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.phdstudent.id %}" title="Ver evaluaciones">  <i class="fa fa-user-graduate"></i></a>
-                                                        <a class="btn btn-success btn-sm text-white" href="{% url 'programs:view_formation_plan' program.slug student.id %}" title="Ver plan de formación">  <i class="fa fa-calendar-check"></i></a>
-                                                        <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:evaluate_student' program.slug student.phdstudent.id %}" title="Asignar evaluación"> <i class="fa fa-check-square"></i></a>
-                                                    {% elif scope == 'Graduados' %}
-                                                        <a class="btn btn-success btn-sm text-white" href="" title="Ver evaluaciones">  <i class="fa fa-user-graduate"></i></a>
-                                                    {% endif %}
-                                                    <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_student' program.slug student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
-                                                    <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_student_{{ student.id }}"><i class="fa fa-eraser"></i></a>
-
-                                                </div>
-                                            </td>
-                                        {% else %}
-                                            <td class="text-center">
-                                                <div class="btn-group" role="group">
-
-
-                                                    <a class="btn btn-success btn-sm text-white  {% if user == student.user %}disabled{% endif %}" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
-
-                                                </div>
-                                            </td>
-                                        {% endif %}
-                                    </tr>
-                                    <div class="modal fade" id="modal_rm_student_{{ student.id }}">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Eliminar estudiante</h4>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
-
-                                                        </div>
-                                                        <div class="col-md-10">
-                                                            <p class="text-center">¿Seguro que desea eliminar a {{ student }}?<br>Esto no se puede deshacer&hellip;</p>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <div class="modal-footer justify-content-between">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_student_{{ student.id }}">Eliminar</button>
-                                                </div>
-                                            </div>
-                                            <!-- /.modal-content -->
-                                        </div>
-                                        <!-- /.modal-dialog -->
-                                    </div>
-                                    <div class="modal fade" id="modal_msg_student_{{ student.id }}">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Enviar mensaje a {{ student }}</h4>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <form id="frm_msg_student_{{ student.id }}" method="post">
-                                                    <div class="modal-body alert alert-success">
-
-                                                        <div class="form-row ">
-                                                            <div class="col-md-12">
-                                                                <input class="form-control" id="inp_msg_subject_{{ student.id }}" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
-
-                                                                <textarea class="form-control textarea col-md-12" id="txt_msg_body_{{ student.id }}"
-                                                                          name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
-                                                            </div>
-                                                            <div class="col-xs-12 text-right">
-                                                                <span id="total-characters"></span>
-                                                            </div>
-
-                                                        </div>
-
-
-
-                                                    </div>
-                                                    <div class="modal-footer justify-content-between">
-                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                        <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <!-- /.modal-content -->
-                                        </div>
-                                        <!-- /.modal-dialog -->
-                                    </div>
-
-                                {% endfor %}
-
-
-
-
-                                </tbody>
-                                <tfoot>
-                                {#                            <tr>#}
-                                {#                                <th>Nombre y apellidos</th>#}
-                                {#                                <th>Fecha solicitud</th>#}
-                                {#                                <th>Estado</th>#}
-                                {#                                <th class="text-center">Requisitos</th>#}
-                                {#                                <th></th>#}
-                                {#                            </tr>#}
-                                </tfoot>
-                            </table>
-                        {% elif program.type == 'msc' %}
-                            <table id="example1" class="table table-bordered table-striped">
-                                <thead>
-                                {% user_is_program_cs user program as user_is_program_cs %}
-
-                                <tr>
-                                    <th class="text-center">Edición</th>
-                                    <th>Nombre y apellidos</th>
-                                    <th>Fecha<br>(solicitud)</th>
-                                    <th>Estado</th>
-                                    <th>Fecha de <br>nacimiento</th>
-                                    <th>Número de <br>identidad</th>
-                                    <th class="text-center">Requisitos<br> (ingreso)</th>
-                                    {% if scope == 'Maestrantes' %}
-                                        <th class="text-center">Requisitos<br> (egreso)</th>
-                                    {% endif %}
-
-                                    <th></th>
-
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for student in students %}
-                                    {% init_requirements_accomplished student program as init_requirements_accomplished %}
-                                    <tr id="tr_student_{{ student.id }}">
-                                        <td class="text-center">{{ student.edition }}</td>
-                                        <td>{{ student.user.last_name|upper }}, {{ student.user.first_name }}</td>
-                                        <td>{{ student.request_date|date:'Y-m-d' }}</td>
-                                        <td>{{ student.status|capfirst }}</td>
-                                        <td>{{ student.birth_date|date:'Y-m-d'}}</td>
-                                        <td>{{ student.dni }}</td>
-                                        <td class="text-center">{% if init_requirements_accomplished %}
-                                            <span class="text-success">
-                                             <i class="fas fa-check" title="Requisitos cumplidos"></i>
-                                        </span>
-                                        {% else %}
-                                            <span class="text-warning">
-                                             <i class="fa fa-exclamation-triangle" title="Faltan requisitos de ingreso"></i>
-                                        </span>
-                                        {% endif %} </td>
-                                        {% if scope == 'Maestrantes' %}
-                                            {% finish_requirements_accomplished student program as finish_requirements_accomplished %}
-
-                                            <td class="text-center">
-                                                {% if finish_requirements_accomplished %}
-                                                    <span class="text-success">
-                                             <i class="fas fa-check" title="Requisitos cumplidos"></i>
-                                        </span>
-                                                {% else %}
-                                                    <span class="text-warning">
-                                             <i class="fa fa-exclamation-triangle" title="Faltan requisitos de egreso"></i>
-                                        </span>
-                                                {% endif %}
-                                            </td>
-                                        {% endif %}
-                                        {% if user_is_program_cs %}
-                                            <td class="text-center">
-                                                <div class="btn-group" role="group">
-                                                    <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
-
-                                                    <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_msc_student' program.slug edition.id student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
-                                                    <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_student_{{ student.id }}"><i class="fa fa-eraser"></i></a>
-
-                                                </div>
-                                            </td>
-                                        {% else %}
-                                            <td class="text-center">
-                                                <div class="btn-group" role="group">
-
-
-                                                    <a class="btn btn-success btn-sm text-white  {% if user == student.user %}disabled{% endif %}" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
-
-                                                </div>
-                                            </td>
-                                        {% endif %}
-                                    </tr>
-                                    <div class="modal fade" id="modal_rm_student_{{ student.id }}">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Eliminar estudiante</h4>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
-
-                                                        </div>
-                                                        <div class="col-md-10">
-                                                            <p class="text-center">¿Seguro que desea eliminar a {{ student }}?<br>Esto no se puede deshacer&hellip;</p>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <div class="modal-footer justify-content-between">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_student_{{ student.id }}">Eliminar</button>
-                                                </div>
-                                            </div>
-                                            <!-- /.modal-content -->
-                                        </div>
-                                        <!-- /.modal-dialog -->
-                                    </div>
-                                    <div class="modal fade" id="modal_msg_student_{{ student.id }}">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Enviar mensaje a {{ student }}</h4>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <form id="frm_msg_student_{{ student.id }}" method="post">
-                                                    <div class="modal-body alert alert-success">
-
-                                                        <div class="form-row ">
-                                                            <div class="col-md-12">
-                                                                <input class="form-control" id="inp_msg_subject_{{ student.id }}" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
-
-                                                                <textarea class="form-control textarea col-md-12" id="txt_msg_body_{{ student.id }}"
-                                                                          name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
-                                                            </div>
-                                                            <div class="col-xs-12 text-right">
-                                                                <span id="total-characters"></span>
-                                                            </div>
-
-                                                        </div>
-
-
-
-                                                    </div>
-                                                    <div class="modal-footer justify-content-between">
-                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                        <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <!-- /.modal-content -->
-                                        </div>
-                                        <!-- /.modal-dialog -->
-                                    </div>
-
-                                {% endfor %}
-
-
-
-
-                                </tbody>
-                                <tfoot>
-                                {#                            <tr>#}
-                                {#                                <th>Nombre y apellidos</th>#}
-                                {#                                <th>Fecha solicitud</th>#}
-                                {#                                <th>Estado</th>#}
-                                {#                                <th class="text-center">Requisitos</th>#}
-                                {#                                <th></th>#}
-                                {#                            </tr>#}
-                                </tfoot>
-                            </table>
-
-                        {% endif %}
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Estudiantes</li>
+                </ol>
             </div>
-            <!-- /.col -->
         </div>
-        {% csrf_token %}
-        <!-- /.row -->
-    </section>
-    <!-- /.content -->
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+
+            <!-- /.card -->
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{% if scope == 'all' %}Estudiantes {% else %}{{ scope }} {% endif %} de {{  program }}</h3>
+                    {% if user_is_program_cs %}
+                    <div class="card-tools">
+
+
+                        <a class="btn btn-tool"  title="Exportar CSV" href="{% url 'programs:export_csv_students' program.slug en_scope %}" >
+                            <i class="fas fa-download"></i>
+                        </a>
+
+                    </div>
+                    {% endif %}
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    {% if program.type == 'phd' %}
+                    <table id="example1" class="table table-bordered table-striped table-responsive-sm table-responsive-md">
+                        <thead>
+                        {% user_is_program_cs user program as user_is_program_cs %}
+
+                        <tr>
+                            <th>Nombre y apellidos</th>
+                            {% if scope == 'Solicitantes' %}
+                            <th >Fecha<br>(solicitud)</th>
+                            {% endif %}
+                            {% if scope == 'all' %}
+                            <th>Estado</th>
+                            {% endif %}
+                            {% if scope != 'Graduados' %}
+                            <th class="text-center">Requisitos<br> (ingreso)</th>
+                            {% else %}
+                            <th class="text-center">Año<br> defensa</th>
+
+                            {% endif %}
+                            {% if scope == 'Doctorandos' %}
+                            <th class="text-center">Requisitos<br> (egreso)</th>
+                            <th class="text-center">Año de <br> defensa previsto</th>
+                            {% endif %}
+                            <th>Tutores</th>
+
+                            <th></th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for student in students %}
+                        {% init_requirements_accomplished student program as init_requirements_accomplished %}
+                        <tr id="tr_student_{{ student.id }}">
+                            <td>
+                                <a href="{% url 'programs:view_student_profile' program.slug student.id %}" title="Ver perfil" >
+                                    {{ student.user.last_name|upper }}, {{ student.user.first_name }}
+                                </a>
+                            </td>
+                            {% if scope == 'Solicitantes' %}
+                            <td>{{ student.request_date|date:'Y-m-d' }}</td>
+                            {% endif %}
+                            {% if scope == 'all' %}
+                            <td>{{ student.phdstudent.status|capfirst }}</td>
+                            {% endif %}
+                            {% if scope != 'Graduados' %}
+                            <td class="text-center">{% if init_requirements_accomplished %}
+                                <span class="text-success">
+                                             <i class="fas fa-check" title="Requisitos cumplidos"></i>
+                                        </span>
+                                {% else %}
+                                <span class="text-warning">
+                                             <i class="fa fa-exclamation-triangle" title="Faltan requisitos de ingreso"></i>
+                                        </span>
+                                {% endif %} </td>
+                            {% else %}
+                            <td class="text-center">{{ student.graduate_date.year }}</td>
+
+                            {% endif %}
+
+                            {% if scope == 'Doctorandos' %}
+                            {% finish_requirements_accomplished student program as finish_requirements_accomplished %}
+
+                            <td class="text-center">
+                                {% if finish_requirements_accomplished %}
+                                <span class="text-success">
+                                             <i class="fas fa-check" title="Requisitos cumplidos"></i>
+
+                                        </span>
+                                {% else %}
+                                <span class="text-warning">
+                                             <i class="fa fa-exclamation-triangle" title="Faltan requisitos de egreso"></i>
+                                        </span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if student.studentformationplan %}
+                                {{ student.studentformationplan.planned_end_year }}
+                                {% else %}
+                                _______
+                                {% endif %}
+                            </td>
+
+                            {% endif %}
+                            <td class="pl-1">{{ student.phdstudent.tuthor_set.all|unordered_list }}</td>
+                            {% if user_is_program_cs %}
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    {% if scope == 'Doctorandos' %}
+                                    <a class="btn btn-primary btn-sm text-white" href="{% url 'programs:new_phd_announcement' program.slug student.id %}" title="Crear convocatoria para la defensa"> <i class="fa fa-bullhorn"></i></a>
+
+                                    {% endif %}
+                                    <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
+                                    {% if scope == 'Doctorandos' %}
+                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.phdstudent.id %}" title="Ver evaluaciones">  <i class="fa fa-user-graduate"></i></a>
+                                    <a class="btn btn-success btn-sm text-white" href="{% url 'programs:view_formation_plan' program.slug student.id %}" title="Ver plan de formación">  <i class="fa fa-calendar-check"></i></a>
+                                    <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:evaluate_student' program.slug student.phdstudent.id %}" title="Asignar evaluación"> <i class="fa fa-check-square"></i></a>
+                                    {% elif scope == 'Graduados' %}
+                                    <a class="btn btn-success btn-sm text-white" href="" title="Ver evaluaciones">  <i class="fa fa-user-graduate"></i></a>
+                                    {% endif %}
+                                    <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_student' program.slug student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_student_{{ student.id }}"><i class="fa fa-eraser"></i></a>
+
+                                </div>
+                            </td>
+                            {% else %}
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+
+
+                                    <a class="btn btn-success btn-sm text-white  {% if user == student.user %}disabled{% endif %}" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
+
+                                </div>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        <div class="modal fade" id="modal_rm_student_{{ student.id }}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Eliminar estudiante</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                                            </div>
+                                            <div class="col-md-10">
+                                                <p class="text-center">¿Seguro que desea eliminar a {{ student }}?<br>Esto no se puede deshacer&hellip;</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_student_{{ student.id }}">Eliminar</button>
+                                    </div>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                        <div class="modal fade" id="modal_msg_student_{{ student.id }}">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Enviar mensaje a {{ student }}</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form id="frm_msg_student_{{ student.id }}" method="post">
+                                        <div class="modal-body alert alert-success">
+
+                                            <div class="form-row ">
+                                                <div class="col-md-12">
+                                                    <input class="form-control" id="inp_msg_subject_{{ student.id }}" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
+
+                                                    <textarea class="form-control textarea col-md-12" id="txt_msg_body_{{ student.id }}"
+                                                              name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
+                                                </div>
+                                                <div class="col-xs-12 text-right">
+                                                    <span id="total-characters"></span>
+                                                </div>
+
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+
+                        {% endfor %}
+
+
+
+
+                        </tbody>
+                        <tfoot>
+                        {#                            <tr>#}
+                            {#                                <th>Nombre y apellidos</th>#}
+                            {#                                <th>Fecha solicitud</th>#}
+                            {#                                <th>Estado</th>#}
+                            {#                                <th class="text-center">Requisitos</th>#}
+                            {#                                <th></th>#}
+                            {#                            </tr>#}
+                        </tfoot>
+                    </table>
+                    {% elif program.type == 'msc' %}
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                        {% user_is_program_cs user program as user_is_program_cs %}
+
+                        <tr>
+                            <th class="text-center">Edición</th>
+                            <th>Nombre y apellidos</th>
+                            <th>Fecha<br>(solicitud)</th>
+                            <th>Estado</th>
+                            <th>Fecha de <br>nacimiento</th>
+                            <th>Número de <br>identidad</th>
+                            <th class="text-center">Requisitos<br> (ingreso)</th>
+                            {% if scope == 'Maestrantes' %}
+                            <th class="text-center">Requisitos<br> (egreso)</th>
+                            {% endif %}
+
+                            <th></th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for student in students %}
+                        {% init_requirements_accomplished student program as init_requirements_accomplished %}
+                        <tr id="tr_student_{{ student.id }}">
+                            <td class="text-center">{{ student.edition }}</td>
+                            <td>{{ student.user.last_name|upper }}, {{ student.user.first_name }}</td>
+                            <td>{{ student.request_date|date:'Y-m-d' }}</td>
+                            <td>{{ student.status|capfirst }}</td>
+                            <td>{{ student.birth_date|date:'Y-m-d'}}</td>
+                            <td>{{ student.dni }}</td>
+                            <td class="text-center">{% if init_requirements_accomplished %}
+                                <span class="text-success">
+                                             <i class="fas fa-check" title="Requisitos cumplidos"></i>
+                                        </span>
+                                {% else %}
+                                <span class="text-warning">
+                                             <i class="fa fa-exclamation-triangle" title="Faltan requisitos de ingreso"></i>
+                                        </span>
+                                {% endif %} </td>
+                            {% if scope == 'Maestrantes' %}
+                            {% finish_requirements_accomplished student program as finish_requirements_accomplished %}
+
+                            <td class="text-center">
+                                {% if finish_requirements_accomplished %}
+                                <span class="text-success">
+                                             <i class="fas fa-check" title="Requisitos cumplidos"></i>
+                                        </span>
+                                {% else %}
+                                <span class="text-warning">
+                                             <i class="fa fa-exclamation-triangle" title="Faltan requisitos de egreso"></i>
+                                        </span>
+                                {% endif %}
+                            </td>
+                            {% endif %}
+                            {% if user_is_program_cs %}
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
+
+                                    <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_msc_student' program.slug edition.id student.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_student_{{ student.id }}"><i class="fa fa-eraser"></i></a>
+
+                                </div>
+                            </td>
+                            {% else %}
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+
+
+                                    <a class="btn btn-success btn-sm text-white  {% if user == student.user %}disabled{% endif %}" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
+
+                                </div>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        <div class="modal fade" id="modal_rm_student_{{ student.id }}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Eliminar estudiante</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                                            </div>
+                                            <div class="col-md-10">
+                                                <p class="text-center">¿Seguro que desea eliminar a {{ student }}?<br>Esto no se puede deshacer&hellip;</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_student_{{ student.id }}">Eliminar</button>
+                                    </div>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                        <div class="modal fade" id="modal_msg_student_{{ student.id }}">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Enviar mensaje a {{ student }}</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form id="frm_msg_student_{{ student.id }}" method="post">
+                                        <div class="modal-body alert alert-success">
+
+                                            <div class="form-row ">
+                                                <div class="col-md-12">
+                                                    <input class="form-control" id="inp_msg_subject_{{ student.id }}" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
+
+                                                    <textarea class="form-control textarea col-md-12" id="txt_msg_body_{{ student.id }}"
+                                                              name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
+                                                </div>
+                                                <div class="col-xs-12 text-right">
+                                                    <span id="total-characters"></span>
+                                                </div>
+
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+
+                        {% endfor %}
+
+
+
+
+                        </tbody>
+                        <tfoot>
+                        {#                            <tr>#}
+                            {#                                <th>Nombre y apellidos</th>#}
+                            {#                                <th>Fecha solicitud</th>#}
+                            {#                                <th>Estado</th>#}
+                            {#                                <th class="text-center">Requisitos</th>#}
+                            {#                                <th></th>#}
+                            {#                            </tr>#}
+                        </tfoot>
+                    </table>
+
+                    {% endif %}
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
     </div>
+    {% csrf_token %}
+    <!-- /.row -->
+</section>
+<!-- /.content -->
+</div>
 {% endblock %}
 {% block extra_scripts %}
-    <!-- jQuery -->
-    <!-- Bootstrap 4 -->
-    <!-- DataTables -->
-    <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
-    <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
+<!-- jQuery -->
+<!-- Bootstrap 4 -->
+<!-- DataTables -->
+<script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
+<script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
 
 
 
-    <!-- AdminLTE App -->
-    {#    <script src="{% static 'programs/dist/js/adminlte.min.js' %}"></script>#}
-    <!-- AdminLTE for demo purposes -->
-    {#    <script src="{% static 'programs/dist/js/demo.js' %}"></script>#}
-    <!-- page script -->
-    <script>
+<!-- AdminLTE App -->
+{#    <script src="{% static 'programs/dist/js/adminlte.min.js' %}"></script>#}
+<!-- AdminLTE for demo purposes -->
+{#    <script src="{% static 'programs/dist/js/demo.js' %}"></script>#}
+<!-- page script -->
+<script>
 
         $(document).ready(function () {
             var myTable= $("#example1").DataTable({

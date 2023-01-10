@@ -6,6 +6,7 @@ import secrets
 import string
 import zipfile
 
+from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -23,7 +24,7 @@ from django.utils.text import slugify
 from django.utils.timezone import now
 
 from programas.settings import MEDIA_ROOT
-from programs.forms import FileUploadForm
+from programs.forms import FileUploadForm, AnnouncementForm
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, \
     ProgramMember, ProgramFinishRequirements, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
@@ -60,97 +61,138 @@ def index(request, program_slug):
     else:
         return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
 
-
+@login_required
 def home(request, program_slug):
-    program = Program.objects.get(slug=program_slug)
-    # TODO Verificar lo del user is authenticate
-    if request.user.is_authenticated:
-        if program.type == 'phd':
-            context = {
-                'program': program,
-                'requesters': PhdStudent.objects.filter(student__program=program, status='solicitante').__len__(),
-                'doctorands': PhdStudent.objects.filter(student__program=program, status='doctorando').__len__(),
-                'graduated': PhdStudent.objects.filter(student__program=program, status='graduado').__len__(),
-                'last_requesters': PhdStudent.objects.filter(student__program=program, status='solicitante').order_by(
-                    '-student__request_date')[:4],
-                'last_aproved': PhdStudent.objects.filter(student__program=program, status='doctorando').order_by(
-                    '-student__init_date')[:4],
-                'last_graduated': PhdStudent.objects.filter(student__program=program, status='graduado').order_by(
-                    '-student__graduate_date')[:4],
 
-            }
-            try:
-                context['member'] = ProgramMember.objects.get(user=request.user, program=program)
-            except ProgramMember.DoesNotExist:
+    try:
+        program = Program.objects.get(slug=program_slug)
+
+        if request.user.is_authenticated:
+            if program.type == 'phd':
+                context = {
+                    'program': program,
+                    'requesters': PhdStudent.objects.filter(student__program=program, status='solicitante').__len__(),
+                    'doctorands': PhdStudent.objects.filter(student__program=program, status='doctorando').__len__(),
+                    'graduated': PhdStudent.objects.filter(student__program=program, status='graduado').__len__(),
+                    'last_requesters': PhdStudent.objects.filter(student__program=program,
+                                                                 status='solicitante').order_by(
+                        '-student__request_date')[:4],
+                    'last_aproved': PhdStudent.objects.filter(student__program=program, status='doctorando').order_by(
+                        '-student__init_date')[:4],
+                    'last_graduated': PhdStudent.objects.filter(student__program=program, status='graduado').order_by(
+                        '-student__graduate_date')[:4],
+
+                }
                 try:
-                    student = Student.objects.get(user=request.user, program=program)
-                    context['student'] = student
+                    context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+                except ProgramMember.DoesNotExist:
                     try:
-                        formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
-                    except StudentFormationPlan.DoesNotExist:
-                        return HttpResponseRedirect(
-                            reverse('programs:create_formation_plan', args=[program_slug, student.id]))
+                        student = Student.objects.get(user=request.user, program=program)
+                        context['student'] = student
+                        try:
+                            formation_plan = StudentFormationPlan.objects.get(phdstudent=student)
+                        except StudentFormationPlan.DoesNotExist:
+                            return HttpResponseRedirect(
+                                reverse('programs:create_formation_plan', args=[program_slug, student.id]))
 
-                except Student.DoesNotExist:
-                    logout(request)
-                    raise Http404('No hay profesor o estudiante de este programa con ese usuario')
+                    except Student.DoesNotExist:
+                        logout(request)
+                        raise Http404('No hay profesor o estudiante de este programa con ese usuario')
 
-            return render(request, 'programs/phd_home.html', context)
-        elif program.type == 'msc':
-            context = {
-                'program': program,
-                'requesters': MscStudent.objects.filter(program=program, status='solicitante').__len__(),
-                'masters': MscStudent.objects.filter(program=program, status='maestrante').__len__(),
-                'graduated': MscStudent.objects.filter(program=program, status='graduado').__len__(),
-                'last_requesters': MscStudent.objects.filter(program=program, status='solicitante').order_by(
-                    '-request_date')[:4],
-                'last_aproved': MscStudent.objects.filter(program=program, status='maestrante').order_by('-init_date')[
-                                :4],
-                'last_graduated': MscStudent.objects.filter(program=program, status='graduado').order_by(
-                    '-graduate_date')[
-                                  :4],
+                return render(request, 'programs/phd_home.html', context)
+            elif program.type == 'msc':
+                context = {
+                    'program': program,
+                    'requesters': MscStudent.objects.filter(program=program, status='solicitante').__len__(),
+                    'masters': MscStudent.objects.filter(program=program, status='maestrante').__len__(),
+                    'graduated': MscStudent.objects.filter(program=program, status='graduado').__len__(),
+                    'last_requesters': MscStudent.objects.filter(program=program, status='solicitante').order_by(
+                        '-request_date')[:4],
+                    'last_aproved': MscStudent.objects.filter(program=program, status='maestrante').order_by(
+                        '-init_date')[
+                                    :4],
+                    'last_graduated': MscStudent.objects.filter(program=program, status='graduado').order_by(
+                        '-graduate_date')[
+                                      :4],
 
-            }
-            try:
-                context['member'] = ProgramMember.objects.get(user=request.user, program=program)
-            except ProgramMember.DoesNotExist:
+                }
                 try:
-                    context['student'] = MscStudent.objects.get(user=request.user, program=program)
-                except MscStudent.DoesNotExist:
-                    logout(request)
-                    raise Http404('No hay profesor o estudiante de este programa con ese usuario')
+                    context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+                except ProgramMember.DoesNotExist:
+                    try:
+                        context['student'] = MscStudent.objects.get(user=request.user, program=program)
+                    except MscStudent.DoesNotExist:
+                        logout(request)
+                        raise Http404('No hay profesor o estudiante de este programa con ese usuario')
 
-            return render(request, 'programs/msc_home.html', context)
-        elif program.type == 'dip':
-            context = {
-                'program': program,
-                'requesters': DipStudent.objects.filter(program=program, status='solicitante').__len__(),
-                'diplomantes': DipStudent.objects.filter(program=program, status='diplomante').__len__(),
-                'graduated': DipStudent.objects.filter(program=program, status='graduado').__len__(),
-                'last_requesters': DipStudent.objects.filter(program=program, status='solicitante').order_by(
-                    '-request_date')[:4],
-                'last_aproved': DipStudent.objects.filter(program=program, status='diplomante').order_by('-init_date')[
-                                :4],
-                'last_graduated': DipStudent.objects.filter(program=program, status='graduado').order_by(
-                    '-graduate_date')[
-                                  :4],
+                return render(request, 'programs/msc_home.html', context)
+            elif program.type == 'dip':
+                context = {
+                    'program': program,
+                    'requesters': DipStudent.objects.filter(program=program, status='solicitante').__len__(),
+                    'diplomantes': DipStudent.objects.filter(program=program, status='diplomante').__len__(),
+                    'graduated': DipStudent.objects.filter(program=program, status='graduado').__len__(),
+                    'last_requesters': DipStudent.objects.filter(program=program, status='solicitante').order_by(
+                        '-request_date')[:4],
+                    'last_aproved': DipStudent.objects.filter(program=program, status='diplomante').order_by(
+                        '-init_date')[
+                                    :4],
+                    'last_graduated': DipStudent.objects.filter(program=program, status='graduado').order_by(
+                        '-graduate_date')[
+                                      :4],
 
-            }
-            try:
-                context['member'] = ProgramMember.objects.get(user=request.user, program=program)
-            except ProgramMember.DoesNotExist:
+                }
                 try:
-                    context['student'] = DipStudent.objects.get(user=request.user, program=program)
-                except DipStudent.DoesNotExist:
-                    logout(request)
-                    raise Http404('No hay profesor o estudiante de este programa con ese usuario')
+                    context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+                except ProgramMember.DoesNotExist:
+                    try:
+                        context['student'] = DipStudent.objects.get(user=request.user, program=program)
+                    except DipStudent.DoesNotExist:
+                        logout(request)
+                        raise Http404('No hay profesor o estudiante de este programa con ese usuario')
 
-            return render(request, 'programs/dip_home.html', context)
+                return render(request, 'programs/dip_home.html', context)
+
+            else:
+                pass
+        else:
+            return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+    except Program.DoesNotExist:
+        if program_slug == 'favicon.ico':
+            pass
+        else:
+            return HttpResponse('El programa no existe: ', program_slug)
+
+
+    # TODO Verificar lo del user is authenticate
+
+@login_required
+def new_phd_announcement(request, program_slug, student_id):
+    program = Program.objects.get(slug=program_slug)
+    phd_student = PhdStudent.objects.get(student=Student.objects.get(pk=student_id))
+    if program.type == 'phd':
+        if request.method == 'POST':
+            announcement_form = AnnouncementForm(request.POST, request.FILES, initial={'phd_student':phd_student, 'thesis': phd_student.phd_student_thesis})
+            if announcement_form.is_valid():
+                announcement_form.save()
+                messages.success(request, ('Nueva convocatoria creada exitosamente'))
+                return HttpResponseRedirect(reverse('programs:new_announcement'))
+
+            else:
+                print(announcement_form.errors)
+                messages.error(request, 'Error al guardar nueva convocatoria')
+                return HttpResponseRedirect(reverse('programs:new_announcement'))
 
         else:
-            pass
+            context = {
+                'announcement_form': AnnouncementForm(),
+                'program':program,
+
+            }
+            return render(request, 'programs/new_phd_announcement.html', context)
     else:
-        return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+        pass
+
 
 @login_required
 def create_student(request, program_slug):
@@ -4718,6 +4760,11 @@ def autoedit_student_profile(request, program_slug, student_id):
                 student.birth_date = request.POST['student_bdate']
                 student.gender = request.POST['student_gender']
                 student.phone = request.POST['student_phone']
+                if program.type == 'phd':
+                    theme = student.phdstudent.phdstudenttheme
+                    theme.description = request.POST['student_theme']
+                    theme.save()
+
                 try:
                     student.picture = request.FILES['student_picture']
                 except:
