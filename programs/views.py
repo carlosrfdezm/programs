@@ -24,13 +24,13 @@ from django.utils.text import slugify
 from django.utils.timezone import now
 
 from programas.settings import MEDIA_ROOT
-from programs.forms import FileUploadForm, AnnouncementForm
+from programs.forms import FileUploadForm, AnnouncementForm, PhdStudentThesisForm
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, \
     ProgramMember, ProgramFinishRequirements, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
     FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message, CGCDocument, \
-    ProgramSpeciality, New, MessageSended, Requester
+    ProgramSpeciality, New, MessageSended, Requester, PhdStudentThesis
 from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
@@ -185,6 +185,7 @@ def new_phd_announcement(request, program_slug, student_id):
 
         else:
             context = {
+                'student':phd_student.student,
                 'announcement_form': AnnouncementForm(),
                 'program':program,
 
@@ -669,6 +670,24 @@ def create_dip_student(request, program_slug, edition_id):
                 return HttpResponse('El programa no es un diplomado')
     else:
         return HttpResponse('Error, acceso solo a coordinadores y secretarios')
+
+
+@login_required
+def new_phd_thesis(request, program_slug, student_id):
+    program=Program.objects.get(slug=program_slug)
+    student = Student.objects.get(pk=student_id)
+
+    if request.method == 'POST':
+        thesis_form = PhdStudentThesisForm(request.POST, request.FILES)
+        if thesis_form.is_valid():
+            thesis_form.save()
+
+            messages.success(request, 'Tesis subida exitosamente')
+            return HttpResponseRedirect(reverse('programs:edit_student', args=[program_slug, student_id]))
+        else:
+            messages.error(request, thesis_form.errors)
+            return HttpResponseRedirect(reverse('programs:edit_student', args=[program_slug, student_id]))
+
 
 
 @login_required

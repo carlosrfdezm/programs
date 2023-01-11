@@ -2,73 +2,95 @@
 {% load static %}
 {% load extra_tags %}
 {% load crispy_forms_tags %}
+{% load crispy_forms_field %}
 
 {% block content %}
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-9">
-                    <h1>Convocatoria nueva defensa</h1>
-                </div>
-                <div class="col-sm-3">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Nueva convocatoria</li>
-                    </ol>
-                </div>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-9">
+                <h1>Convocatoria nueva defensa</h1>
             </div>
-        </div><!-- /.container-fluid -->
-    </section>
+            <div class="col-sm-3">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Nueva convocatoria</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <!-- left column -->
-                <div class="col-md-12">
-                    <!-- general form elements -->
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">Convocatoria</h3>
-                        </div>
-                        <!-- /.card-header -->
-                        <!-- form start -->
-                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_line' program.slug %}">
-                        {% csrf_token %}
-                            <div class="card-body">
-                                {{ announcement_form|crispy }}
-
-                            </div>
-                            <!-- /.card-body -->
-
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                            </div>
-                        </form>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-12">
+                <!-- general form elements -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Convocatoria</h3>
                     </div>
-                    <!-- /.card -->
+                    <!-- /.card-header -->
+                    <!-- form start -->
+                    <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:new_phd_announcement' program.slug student.id %}">
+                        {% csrf_token %}
+                        <div class="card-body">
+                            <input type="hidden" name="phd_student" value="{{ student.phd_student.id }}">
+                            <input type="hidden" name="thesis" value="{{ student.phd_student.phd_student_thesis.id }}">
+                            <div class="form-row">
+                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                    {{ announcement_form.type|as_crispy_field }}
+
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                    {{ announcement_form.date|as_crispy_field }}
+
+
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                    {{ announcement_form.place|as_crispy_field }}
+
+                                </div>
+                            </div>
+                            {{ announcement_form.text|as_crispy_field }}
 
 
 
-                    <!-- /.card -->
 
-                    <!-- Input addon -->
-                    <!-- /.card -->
-                    <!-- Horizontal Form -->
-                    <!-- /.card -->
+                        </div>
+                        <!-- /.card-body -->
 
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
                 </div>
-                <!--/.col (left) -->
-                <!-- right column -->
-                <!--/.col (right) -->
+                <!-- /.card -->
+
+
+
+                <!-- /.card -->
+
+                <!-- Input addon -->
+                <!-- /.card -->
+                <!-- Horizontal Form -->
+                <!-- /.card -->
+
             </div>
-            <!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
+            <!--/.col (left) -->
+            <!-- right column -->
+            <!--/.col (right) -->
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
 {% endblock %}
 
+{% block extra_scripts %}
 <!-- jQuery -->
 <script src="../../plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
@@ -82,7 +104,49 @@
 <script type="text/javascript">
     $(document).ready(function () {
         bsCustomFileInput.init();
+        $('#id_date').addClass('value');
+
     });
 </script>
-</body>
-</html>
+<script>
+    $(document).ready(function () {
+        $('#id_date').attr('type', 'datetime-local');
+        $('#id_place').attr('placeholder','Lugar en que sesionará la defensa de la tesis.P.E: Centro de Convenciones, UNAH')
+
+        $('#id_type').change(function (){
+            if ($(this).val() == 'Presencial'){
+             $('#id_place').attr('placeholder','Lugar en que sesionará la defensa de la tesis.P.E: Centro de Convenciones, UNAH')
+             $('#hint_id_place').text('Lugar en que sesionará la defensa de la tesis')
+            }
+            else if ($(this).val() == 'On-line'){
+             $('#id_place').attr('placeholder','Url de la sala de videoconferencia.P.E: https://meet.jit.si/DefensaCE')
+             $('#hint_id_place').text('Url de la videoconferencia')
+
+
+            }
+
+        });
+        $('#id_text').summernote({
+            lang: 'es-Es',
+            placeholder: "El cuerpo de la convocatoria debe incluir la conformación del tribunal y cualquier otra información que se considere pertinente",
+            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+            dialogsInBody: true,
+            dialogsFade: true,
+            height: 200,
+            toolbar: [
+                // [groupName, [list of button]]
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                {#['fontname', ['fontname']],#}
+                {#['fontsize', ['fontsize']],#}
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link']],
+            ],
+
+        });
+
+    });
+</script>
+{% endblock %}

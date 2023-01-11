@@ -66,7 +66,7 @@ def student_filedoc_directory_path(instance, filename):
     return 'program_{0}/students/{1}/docs/{2}'.format(program.slug,student.id, filename)
 def phd_thesis_directory_path(instance, filename):
     program = instance.phd_student.student.program
-    return 'program_{0}/students/{1}/docs/thesis/{2}'.format(program.slug, instance.phdstudent.student.id, filename)
+    return 'program_{0}/students/{1}/docs/thesis/{2}'.format(program.slug, instance.phd_student.student.id, filename)
 
 def background_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
@@ -399,16 +399,25 @@ class PhdStudentThesis(models.Model):
     def __str__(self):
         return self.title
 
+
 class PhdAnnouncement(models.Model):
+    PRESENCIAL = "Presencial"
+    ONLINE = "On-line"
+
+    ANNOUNCEMENT_TYPE_CHOICES = [
+        (PRESENCIAL , "Presencial"),
+        (ONLINE , "On-line")
+    ]
+
     phd_student = models.OneToOneField(PhdStudent, on_delete=models.CASCADE)
-    date = models.DateTimeField(null=False, help_text='Día y hora de la defensa de tesis')
-    text = models.TextField(max_length=1500, null=True, blank=True, help_text='Texto de la convocatoria')
+    date = models.DateTimeField(null=False, verbose_name="Fecha y hora de la defensa", help_text='Día y hora del acto de defensa de la tesis')
+    text = models.TextField(max_length=1500, null=False, blank=False,verbose_name="Texto de la convocatoria", help_text='Texto de la convocatoria')
     thesis = models.OneToOneField(PhdStudentThesis, null=False, on_delete=models.CASCADE, help_text='Tesis lista para defensa')
+    place = models.CharField(max_length=500, null=False, blank=False, verbose_name="Lugar", help_text="Lugar en que sesionará la defensa de la tesis" )
+    type = models.CharField(max_length=20, choices=ANNOUNCEMENT_TYPE_CHOICES, default='Presencial', verbose_name="Modalidad", help_text="Modalidad: Presencial u Online")
 
     def __str__(self):
         return self.text
-
-
 
 
 class MscStudentTheme(models.Model):

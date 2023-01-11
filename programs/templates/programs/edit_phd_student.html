@@ -3,652 +3,732 @@
 {% load extra_tags %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'programs/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'programs/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
 
 {% endblock %}
 
 {% block content %}
-    {% if doc_student %}
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-9">
-                        <h1>Editar estudiante</h1>
-                    </div>
-                    <div class="col-sm-3">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Editar estudiante</li>
-                        </ol>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
+{% if doc_student %}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-9">
+                <h1>Editar estudiante</h1>
+            </div>
+            <div class="col-sm-3">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Editar estudiante</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
 
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <!-- left column -->
-                    <div class="col-md-12">
-                        <!-- general form elements -->
-                        <div class="card card-primary">
-                            <div class="card-header">
-                                <h3 class="card-title">Estudiante</h3>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-12">
+                <!-- general form elements -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Estudiante</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <!-- form start -->
+
+
+                    <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_student' program.slug doc_student.id %}">
+                        {% csrf_token %}
+                        <div class="card-body">
+                            {% for message in messages %}
+
+
+                            <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    {{ message}}
                             </div>
-                            <!-- /.card-header -->
-                            <!-- form start -->
 
+                            {% endfor %}
 
-                            <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:edit_student' program.slug doc_student.id %}">
-                                {% csrf_token %}
-                                <div class="card-body">
+                            <div class="form-row">
 
-                                    <div class="form-row">
-
-                                        <div class="form-group col-md-3">
-                                            <label for="inp_name">Nombre(s):</label>
-                                            <input type="text" class="form-control" id="inp_name" name="student_name" placeholder="Nombre(s)" value="{{ doc_student.user.first_name }}" required>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="inp_name">Apellidos:</label>
-                                            <input type="text" class="form-control" id="inp_surename" name="student_surename" placeholder="Apellidos" value="{{  doc_student.user.last_name }}" required>
-                                        </div>
-                                        <div class="form-group col-md-3">
-                                            <label for="inp_dni">DNI:</label>
-                                            <input type="text" class="form-control" id="inp_dni" name="student_dni" placeholder="DNI o pasaporte" maxlength="11" value="{{ doc_student.dni }}" required>
-                                        </div>
-
-                                        <div class="form-group col-md-2">
-                                            <label for="slc_status">Estado:</label>
-                                            <select class="form-control" id="slc_status" name="student_status" required>
-                                                <option value="">Seleccione un estado</option>
-                                                <option value="solicitante" {% if phd_student.status == 'solicitante' %}selected{% endif %}>Solicitante</option>
-                                                <option value="doctorando" {% if phd_student.status == 'doctorando' %}selected{% endif %}>Doctorando</option>
-                                                <option value="graduado" {% if phd_student.status == 'graduado' %}selected{% endif %}>Graduado</option>
-                                                <option value="denegado" {% if phd_student.status == 'denegado' %}selected{% endif %}>Denegado</option>
-
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-
-                                        <div class="form-group col-md-3">
-                                            <label for="inp_email">Email:</label>
-                                            <input type="email" class="form-control" id="inp_email"  name="student_email" placeholder="Email" value="{{doc_student.user.email }}" required>
-                                        </div>
-                                        <div class="form-group col-md-3">
-                                            <label for="slc_gender">Género:</label>
-                                            <select class="form-control" id="slc_gender" name="gender" required>
-                                                <option value="" >Seleccione una opción</option>
-                                                <option value="f" {% if doc_student.gender == 'f' %}selected{% endif %}  >Femenino</option>
-                                                <option value="m" {% if doc_student.gender == 'm' %}selected{% endif %}>Masculino</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-md-3">
-                                            <label for="inp_birth_date">Fecha de nacimiento:</label>
-                                            <input type="date" class="form-control" id="inp_birth_date"  name="student_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" value="{{ doc_student.birth_date|date:'Y-m-d' }}" required>
-                                        </div>
-                                        <div class="form-group col-md-3">
-                                            <label for="inp_phone">Teléfono:</label>
-                                            <input type="text" class="form-control" id="inp_phone"  name="student_phone"  value="{% if doc_student.phone %}{{ doc_student.phone }}{% endif %}" placeholder="Teléfono" >
-                                        </div>
-
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-3">
-                                            <label for="slc_country">País:</label>
-                                            <select class="form-control" id="slc_country" name="student_country" required>
-                                                {% country_list as country_list%}
-                                                {% for country in country_list %}
-                                                    <option value="{{ country }}" {% if doc_student.country == country %}selected{% endif %}>{{ country }}</option>
-                                                {% endfor %}
-
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-md-3">
-                                            <label for="slc_category">Categoría:</label>
-                                            <select class="form-control" id="slc_category" name="student_category" required>
-                                                <option value="" selected>Seleccione una opción</option>
-                                                <option value="interno" {% if phd_student.category == 'interno' %}selected{% endif %} >Interno</option>
-                                                <option value="externo" {% if phd_student.category == 'externo' %}selected{% endif %}>Externo</option>
-                                            </select>
-                                        </div>
-                                        {% if phd_student.category == 'externo' %}
-                                            <div class="form-group col-md-3" id="div_workcenter">
-                                                <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>
-                                                <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante" value="{{ phd_student.center }}">
-
-                                            </div>
-                                        {% elif phd_student.category == 'interno' %}
-                                            <div class="form-group col-md-3" id="div_workcenter">
-                                                <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>
-                                                <select class="form-control" id="slc_center" required name="student_center" >
-                                                    <option value="" >Seleccione una opción</option>
-                                                    {% for area in inner_areas %}
-                                                        <option value="{{ area.name }}" {% if area.name == phd_student.center %}selected{% endif %}>{{ area }}</option>
-                                                    {% endfor %}
-
-                                                </select>
-                                            </div>
-
-                                        {% endif %}
-                                        <div class="form-group col-md-3" id="div_specialty">
-                                            <label for="slc_planned_end_year" id="lbl_slc_end_year">Año de defensa previsto: </label>
-                                            <select class="form-control" id="slc_planned_end_year" required name="student_planned_end_year" >
-                                                <option value="" >Seleccione una opción</option>
-
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-row align-items-end">
-                                        <div class="form-group col-md-2">
-                                            <div class="icheck-primary d-inline">
-                                                <input type="checkbox" id="chk_is_msc"  name="is_master" {% if doc_student.is_master %}checked value="True"{% else %}value="False"{% endif %}>
-                                                <label for="chk_is_msc">
-                                                    Es máster
-                                                </label>
-                                            </div>
-
-                                        </div>
-                                        <div class="form-group col-md-5 {% if not doc_student.is_master %}invisible{% endif %}" id="div_is_master">
-                                            <label for="inp_msc_title">Título de maestría:</label>
-
-                                            <input class="form-control" type="text" id="inp_msc_title"  maxlength="100" name="msc_title" placeholder="Título de maestría del estudiante" {% if doc_student.is_master %}value="{{ doc_student.msc_title }}"{% endif %}>
-
-                                        </div>
-                                        <div class="form-group col-md-2">
-                                            <div class="icheck-primary d-inline">
-                                                <input type="checkbox" id="chk_prorrogue"  name="have_prorrogue" {% if doc_student.have_prorrogue %}checked value="True" {% else %} value="False" {% endif %}>
-                                                <label for="chk_prorrogue">
-                                                    Tiene prórroga
-                                                </label>
-                                            </div>
-
-                                        </div>
-                                        <div class="form-group col-md-3 {% if not doc_student.have_prorrogue %}invisible{% endif %}"  id="div_prorrogue">
-                                            <label for="inp_prorrogue">Fecha de fin:</label>
-                                            <input class="form-control" type="date" id="inp_prorrogue"  name="prorrogue_end_date" {% if doc_student.have_prorrogue %}value="{{ doc_student.prorrogue_end_date|date:'Y-m-d' }}"{% endif %}>
-
-                                        </div>
-
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-4">
-                                            <label  for="inp_request_date">Fecha de solicitud: </label>
-
-                                            <input type="date" class="form-control" id="inp_request_date" name="request_date" value="{{ doc_student.request_date|date:'Y-m-d' }}" required>
-
-                                        </div>
-                                        <div class="form-group  col-md-4">
-                                            <label for="inp_init_date">Fecha de ingreso: </label>
-
-                                            <input type="date" class="form-control" id="inp_init_date" name="init_date" value="{{ doc_student.init_date|date:'Y-m-d' }}">
-
-
-                                        </div>
-
-                                        <div class="form-group  col-md-4">
-                                            <label for="inp_graduate_date">Fecha de egreso: </label>
-
-                                            <input type="date" class="form-control" id="inp_graduate_date" name="graduate_date" value="{{ doc_student.graduate_date|date:'Y-m-d' }}">
-
-                                        </div>
-
-                                    </div>
-
-                                    <hr>
-                                    <h4><strong>Tema de investigación:</strong></h4>
-
-                                    <div class="form-row">
-                                        <div class="form-group col-md-12">
-                                            <label for="txt_theme">Tema:</label>
-                                            <textarea class="form-control" id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2">{{ doc_student.phdstudent.phdstudenttheme }}</textarea>
-                                        </div>
-                                    </div>
-                                 <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label for="slc_line">Línea de investigación:</label>
-                                        <select class="form-control" id="slc_line" name="investigation_line" required >
-                                            <option value="" >Seleccione una opción</option>
-
-                                            {% for line in lines %}
-                                                <option value="{{ line.id }}" {% if doc_student.phdstudent.phdstudenttheme.line == line %}selected{% endif %} >{{ line|truncatewords:10 }}</option>
-                                            {% endfor %}
-
-                                        </select>
-                                    </div>
+                                <div class="form-group col-md-3">
+                                    <label for="inp_name">Nombre(s):</label>
+                                    <input type="text" class="form-control" id="inp_name" name="student_name" placeholder="Nombre(s)" value="{{ doc_student.user.first_name }}" required>
                                 </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-12">
-                                            <label for="slc_project">Proyecto asociado:</label>
-                                            <select class="form-control" id="slc_project" name="investigation_project" >
-                                                <option value="" >Seleccione una opción</option>
+                                <div class="form-group col-md-4">
+                                    <label for="inp_name">Apellidos:</label>
+                                    <input type="text" class="form-control" id="inp_surename" name="student_surename" placeholder="Apellidos" value="{{  doc_student.user.last_name }}" required>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="inp_dni">DNI:</label>
+                                    <input type="text" class="form-control" id="inp_dni" name="student_dni" placeholder="DNI o pasaporte" maxlength="11" value="{{ doc_student.dni }}" required>
+                                </div>
 
-                                                {% for project in projects %}
-                                                    <option value="{{ project.id }}" {% if project.id == doc_student.phdstudent.phdstudenttheme.project.id %}selected{% endif %} >{{ project|truncatewords:10 }}</option>
-                                                {% endfor %}
+                                <div class="form-group col-md-2">
+                                    <label for="slc_status">Estado:</label>
+                                    <select class="form-control" id="slc_status" name="student_status" required>
+                                        <option value="">Seleccione un estado</option>
+                                        <option value="solicitante" {% if phd_student.status == 'solicitante' %}selected{% endif %}>Solicitante</option>
+                                        <option value="doctorando" {% if phd_student.status == 'doctorando' %}selected{% endif %}>Doctorando</option>
+                                        <option value="graduado" {% if phd_student.status == 'graduado' %}selected{% endif %}>Graduado</option>
+                                        <option value="denegado" {% if phd_student.status == 'denegado' %}selected{% endif %}>Denegado</option>
 
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="form-row">
-                                        <div class="col-md-11">
-                                            <h4><strong>Tutores:</strong></h4>
-                                        </div>
-                                        <div class="col-md-1 pl-4">
-                                            <button type="button" class="btn btn-warning btn-sm text-white" id="btn_add_tuthor" data-toggle="modal" data-target="#modal_add_tuthor" title="Agregar tutor"><i class="fa fa-plus"></i> </button>
-                                        </div>
-                                    </div>
-                                    {% if phd_student.tuthor_set.all %}
-                                        {% for tuthor in phd_student.tuthor_set.all %}
-                                            <div class="form-row align-items-center pb-2" id="div_tuthor_{{tuthor.id}}">
-                                                <div class="col-md-2">
-                                                    <input type="email" class="form-control" readonly id="inp_tuthor_email_{{ tuthor.id }}" data="{{ tuthor.id }}" name="tuthor_email_{{ tuthor.id }}" placeholder="Email del tutor" value="{{ tuthor.professor.user.email }}" required></input>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <input type="text" class="form-control" readonly id="inp_tuthor_name_{{ tuthor.id }}" name="tuthor_name_{{ tuthor.id }}" placeholder="Nombre(s) del tutor" value="{{ tuthor.professor.user.first_name }}" required></input>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <input type="text" class="form-control" readonly id="inp_tuthor_lastname_{{ tuthor.id }}" name="tuthor_lastname_{{ tuthor.id }}" placeholder="Apellidos del tutor" value="{{ tuthor.professor.user.last_name }}" required></input>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <input type="text" class="form-control" readonly id="inp_tuthor_institution_{{ tuthor.id }}" name="tuthor_institution_{{ tuthor.id }}" placeholder="Institución del tutor" value="{{ tuthor.professor.institution }}" required></input>
-                                                </div>
-                                                <div class="col-md-1 pl-4 ">
-                                                    <button type="button" class="text-white btn btn-sm btn-danger" id="btn_modal_rm_tuthor_{{ tuthor.id }}" data="{{ tuthor.id }}" data-toggle="modal" data-target="#modal_rm_tuthor_{{ tuthor.id }}" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>
-                                                </div>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
 
+                                <div class="form-group col-md-3">
+                                    <label for="inp_email">Email:</label>
+                                    <input type="email" class="form-control" id="inp_email"  name="student_email" placeholder="Email" value="{{doc_student.user.email }}" required>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="slc_gender">Género:</label>
+                                    <select class="form-control" id="slc_gender" name="gender" required>
+                                        <option value="" >Seleccione una opción</option>
+                                        <option value="f" {% if doc_student.gender == 'f' %}selected{% endif %}  >Femenino</option>
+                                        <option value="m" {% if doc_student.gender == 'm' %}selected{% endif %}>Masculino</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="inp_birth_date">Fecha de nacimiento:</label>
+                                    <input type="date" class="form-control" id="inp_birth_date"  name="student_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" value="{{ doc_student.birth_date|date:'Y-m-d' }}" required>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="inp_phone">Teléfono:</label>
+                                    <input type="text" class="form-control" id="inp_phone"  name="student_phone"  value="{% if doc_student.phone %}{{ doc_student.phone }}{% endif %}" placeholder="Teléfono" >
+                                </div>
 
-                                            </div>
-                                            <div class="modal fade" id="modal_rm_tuthor_{{ tuthor.id }}">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Eliminar tutor</h4>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div class="row">
-                                                                <div class="col-md-2">
-                                                                    <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
-
-                                                                </div>
-                                                                <div class="col-md-10">
-                                                                    <p class="text-center">¿Seguro que desea eliminar a {{ tuthor }}?<br>Esto no se puede deshacer&hellip;</p>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="modal-footer justify-content-between">
-                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                            <button type="button" class="btn btn-danger" data-dismiss="modal" data="{{ tuthor.id }}" id="btn_rm_tuthor_{{ tuthor.id }}">Eliminar</button>
-                                                        </div>
-                                                    </div>
-                                                    <!-- /.modal-content -->
-                                                </div>
-                                                <!-- /.modal-dialog -->
-                                            </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <label for="slc_country">País:</label>
+                                    <select class="form-control" id="slc_country" name="student_country" required>
+                                        {% country_list as country_list%}
+                                        {% for country in country_list %}
+                                        <option value="{{ country }}" {% if doc_student.country == country %}selected{% endif %}>{{ country }}</option>
                                         {% endfor %}
-                                    {% else %}
-                                        <div class="alert alert-warning col-md-10 offset-1" id="div_no_tuthors">
-                                            <h4 class="text-center"><i class="text-white fa fa-exclamation-triangle"></i> Este estudiante no tiene tutores asignados</h4>
-                                        </div>
-                                    {% endif %}
 
-                                    <section id="div_new_tuthors">
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="slc_category">Categoría:</label>
+                                    <select class="form-control" id="slc_category" name="student_category" required>
+                                        <option value="" selected>Seleccione una opción</option>
+                                        <option value="interno" {% if phd_student.category == 'interno' %}selected{% endif %} >Interno</option>
+                                        <option value="externo" {% if phd_student.category == 'externo' %}selected{% endif %}>Externo</option>
+                                    </select>
+                                </div>
+                                {% if phd_student.category == 'externo' %}
+                                <div class="form-group col-md-3" id="div_workcenter">
+                                    <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>
+                                    <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante" value="{{ phd_student.center }}">
 
-                                    </section>
-                                    <hr>
-                                    <h5><strong>Requisitos</strong></h5>
+                                </div>
+                                {% elif phd_student.category == 'interno' %}
+                                <div class="form-group col-md-3" id="div_workcenter">
+                                    <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>
+                                    <select class="form-control" id="slc_center" required name="student_center" >
+                                        <option value="" >Seleccione una opción</option>
+                                        {% for area in inner_areas %}
+                                        <option value="{{ area.name }}" {% if area.name == phd_student.center %}selected{% endif %}>{{ area }}</option>
+                                        {% endfor %}
 
+                                    </select>
+                                </div>
 
-                                    <h6>De ingreso:</h6>
-                                    <div class="row">
-                                        <div class="col-md-1 col-sm-1">
-                                            <h6 class="text-center"><strong>Resp.</strong></h6>
-                                        </div>
-                                        <div class="col-md-6 col-sm-4">
-                                            <h6><strong>Nombre del documento</strong></h6>
-                                        </div>
-                                        <div class="col-md-2 col-sm-2 text-center">
-                                            <h6><strong>Copia digital</strong></h6>
-                                        </div>
-                                        <div class="col-md-1 col-sm-1 text-center">
-                                            <h6><strong>Listo.</strong></h6>
-                                        </div>
-                                        <div class="col-md-2 col-sm-4 text-center">
-                                            <h6><strong> Fecha de Caducidad</strong></h6>
-                                        </div>
-                                    </div>
-                                    {% for doc in new_init_requirements %}
-                                        {% student_doc_has_file doc_student doc as student_doc_has_file %}
+                                {% endif %}
+                                <div class="form-group col-md-3" id="div_specialty">
+                                    <label for="slc_planned_end_year" id="lbl_slc_end_year">Año de defensa previsto: </label>
+                                    <select class="form-control" id="slc_planned_end_year" required name="student_planned_end_year" >
+                                        <option value="" >Seleccione una opción</option>
 
-                                        <div class="row pt-1 pb-1 align-items-center">
-                                            <div class="col-md-1 col-sm-1 text-center">
-                                                {% if doc.type == 'student' %}
-                                                    <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
-                                                {% elif doc.type == 'program' %}
-                                                    <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
-                                                {% elif doc.type == 'comission' %}
-                                                    <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-md-6 col-sm-4">
-                                                <h6>{{ doc.doc_name }}</h6>
-                                            </div>
-                                            <div class="col-md-2 col-sm-2 text-center">
-                                                {% if student_doc_has_file %}
-                                                    {% if doc.type == 'student' %}
-                                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
-
-
-                                                    {% else %}
-                                                        <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
-                                                            <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
-                                                            <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
-                                                            <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}"  title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
-
-                                                        </div>
-
-
-                                                    {% endif %}
-                                                {% else %}
-                                                    {% if doc.type == 'student' %}
-                                                        <button type="button" class="btn btn-sm btn-default" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye-slash"></i> </button>
-
-                                                    {% else %}
-                                                        <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data="{{ doc.id }}"  ><i class="fa fa-upload"></i> </button>
-
-                                                    {% endif %}
-                                                {% endif %}
-
-                                            </div>
-                                            <div class="col-md-1 col-sm-1 text-center">
-                                                {% student_requirement_accomplished doc_student doc as doc_accomplished %}
-                                                <div class="icheck-primary d-inline">
-                                                    <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_requirement_{{ doc.id }}" {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
-                                                    <label for="inp_student_new_requirement_{{ doc.id }}">
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 col-sm-4 text-center">
-                                                {% if doc.get_old %}
-                                                    {% student_doc_caducity_date doc_student doc as caducity_date %}
-                                                    <input type="date" class="form-control" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% else %} readonly {% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
-                                                {% else %}
-                                                    ---------------------------
-                                                {% endif  %}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-
-                                    <h6>De egreso:</h6>
-                                    <div class="row">
-                                        <div class="col-md-1 col-sm-1">
-                                            <h6 class="text-center"><strong>Resp.</strong></h6>
-                                        </div>
-                                        <div class="col-md-6 col-sm-4">
-                                            <h6><strong>Nombre del documento</strong></h6>
-                                        </div>
-                                        <div class="col-md-2 col-sm-2 text-center">
-                                            <h6><strong>Copia digital</strong></h6>
-                                        </div>
-                                        <div class="col-md-1 col-sm-1 text-center">
-                                            <h6><strong>Listo.</strong></h6>
-                                        </div>
-                                        <div class="col-md-2 col-sm-4 text-center">
-                                            <h6><strong> Fecha de Caducidad</strong></h6>
-                                        </div>
-                                    </div>
-                                    {% for doc in new_finish_requirements %}
-                                        {% student_doc_has_file doc_student doc as student_doc_has_file %}
-
-                                        <div class="row pt-1 pb-1 align-items-center">
-                                            <div class="col-md-1 col-sm-1 text-center">
-                                                {% if doc.type == 'student' %}
-                                                    <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
-                                                {% elif doc.type == 'program' %}
-                                                    <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
-                                                {% elif doc.type == 'comission' %}
-                                                    <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-md-6 col-sm-4">
-                                                <p>{{ doc.doc_name }}</p>
-                                            </div>
-                                            <div class="col-md-2 col-sm-2 text-center">
-                                                {% if student_doc_has_file %}
-                                                    {% if doc.type == 'student' %}
-                                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
-
-
-                                                    {% else %}
-                                                        <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
-                                                            <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
-                                                            <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
-                                                            <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
-
-                                                        </div>
-
-
-                                                    {% endif %}
-                                                {% else %}
-                                                    {% if doc.type == 'student' %}
-                                                        <button type="button" class="btn btn-sm btn-default" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye-slash"></i> </button>
-
-                                                    {% else %}
-                                                        <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data="{{ doc.id }}"><i class="fa fa-upload"></i> </button>
-
-                                                    {% endif %}
-                                                {% endif %}
-
-                                            </div>
-                                            <div class="col-md-1 col-sm-1 text-center">
-                                                {% student_requirement_accomplished doc_student doc as doc_accomplished %}
-                                                <div class="icheck-primary d-inline ">
-                                                    <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_f_requirement_{{ doc.id }}" {% if phd_student.status == "solicitante" %} disabled {% endif %} {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
-                                                    <label for="inp_student_new_requirement_{{ doc.id }}">
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2 col-sm-4 text-center">
-                                                {% if doc.get_old %}
-                                                    {% student_doc_caducity_date doc_student doc as caducity_date %}
-                                                    <input type="date" class="form-control" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% else %} readonly {% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
-                                                {% else %}
-                                                    ---------------------------
-                                                {% endif  %}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-
-
-
-
-
-                                    <div class="form-row align-items-center">
-                                        <div class="col-md-1 text-center">
-                                            {% if doc_student.picture %}
-                                                <img class="rounded" src="{% url 'programs:program_student_picture' program.slug doc_student.id %}" style="width: 100px;">
-                                            {% elif doc_student.gender == 'm' %}
-                                                <i class="fa fa-male fa-3x"></i>
-                                            {% elif doc_student.gender == 'f' %}
-                                                <i class="fa fa-female fa-3x"></i>
-                                            {% endif %}
-                                        </div>
-                                        <div class="form-group col-md-11">
-                                            <label for="exampleInputFile">Foto: </label>
-                                            <input type="file" class="form-control-file" id="exampleInputFile" name="student_picture" accept="image/*">
-                                            <div class="help text-sm text-gray">
-                                                {{ doc_student.picture }}
-                                            </div>
-                                        </div>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row align-items-end">
+                                <div class="form-group col-md-2">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="chk_is_msc"  name="is_master" {% if doc_student.is_master %}checked value="True"{% else %}value="False"{% endif %}>
+                                        <label for="chk_is_msc">
+                                            Es máster
+                                        </label>
                                     </div>
 
                                 </div>
-                                <!-- /.card-body -->
+                                <div class="form-group col-md-5 {% if not doc_student.is_master %}invisible{% endif %}" id="div_is_master">
+                                    <label for="inp_msc_title">Título de maestría:</label>
 
-                                <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary" id="btn_save">Guardar</button>
+                                    <input class="form-control" type="text" id="inp_msc_title"  maxlength="100" name="msc_title" placeholder="Título de maestría del estudiante" {% if doc_student.is_master %}value="{{ doc_student.msc_title }}"{% endif %}>
+
                                 </div>
-                            </form>
-                        </div>
+                                <div class="form-group col-md-2">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="chk_prorrogue"  name="have_prorrogue" {% if doc_student.have_prorrogue %}checked value="True" {% else %} value="False" {% endif %}>
+                                        <label for="chk_prorrogue">
+                                            Tiene prórroga
+                                        </label>
+                                    </div>
+
+                                </div>
+                                <div class="form-group col-md-3 {% if not doc_student.have_prorrogue %}invisible{% endif %}"  id="div_prorrogue">
+                                    <label for="inp_prorrogue">Fecha de fin:</label>
+                                    <input class="form-control" type="date" id="inp_prorrogue"  name="prorrogue_end_date" {% if doc_student.have_prorrogue %}value="{{ doc_student.prorrogue_end_date|date:'Y-m-d' }}"{% endif %}>
+
+                                </div>
+
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label  for="inp_request_date">Fecha de solicitud: </label>
+
+                                    <input type="date" class="form-control" id="inp_request_date" name="request_date" value="{{ doc_student.request_date|date:'Y-m-d' }}" required>
+
+                                </div>
+                                <div class="form-group  col-md-4">
+                                    <label for="inp_init_date">Fecha de ingreso: </label>
+
+                                    <input type="date" class="form-control" id="inp_init_date" name="init_date" value="{{ doc_student.init_date|date:'Y-m-d' }}">
 
 
-                    </div>
+                                </div>
 
-                </div>
-                <!-- /.row -->
-            </div><!-- /.container-fluid -->
+                                <div class="form-group  col-md-4">
+                                    <label for="inp_graduate_date">Fecha de egreso: </label>
 
-        </section>
+                                    <input type="date" class="form-control" id="inp_graduate_date" name="graduate_date" value="{{ doc_student.graduate_date|date:'Y-m-d' }}">
 
-        <div class="modal fade" id="modal_add_tuthor">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Agregar nuevo tutor a {{ student }}</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form id="frm_add_tuthor" method="post">
-                        <div class="modal-body alert alert-success">
+                                </div>
 
-                            <div class="form-row align-items-center pb-2" id="div_tuthor_1">
+                            </div>
+
+                            <hr>
+                            <h4><strong>Tema de investigación:</strong></h4>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label for="txt_theme">Tema:</label>
+                                    <textarea class="form-control" id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2">{{ doc_student.phdstudent.phdstudenttheme }}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label for="slc_line">Línea de investigación:</label>
+                                    <select class="form-control" id="slc_line" name="investigation_line" required >
+                                        <option value="" >Seleccione una opción</option>
+
+                                        {% for line in lines %}
+                                        <option value="{{ line.id }}" {% if doc_student.phdstudent.phdstudenttheme.line == line %}selected{% endif %} >{{ line|truncatewords:10 }}</option>
+                                        {% endfor %}
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label for="slc_project">Proyecto asociado:</label>
+                                    <select class="form-control" id="slc_project" name="investigation_project" >
+                                        <option value="" >Seleccione una opción</option>
+
+                                        {% for project in projects %}
+                                        <option value="{{ project.id }}" {% if project.id == doc_student.phdstudent.phdstudenttheme.project.id %}selected{% endif %} >{{ project|truncatewords:10 }}</option>
+                                        {% endfor %}
+
+                                    </select>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-row">
+                                <div class="col-md-11">
+                                    <h4><strong>Tutores:</strong></h4>
+                                </div>
+                                <div class="col-md-1 pl-4">
+                                    <button type="button" class="btn btn-warning btn-sm text-white" id="btn_add_tuthor" data-toggle="modal" data-target="#modal_add_tuthor" title="Agregar tutor"><i class="fa fa-plus"></i> </button>
+                                </div>
+                            </div>
+                            {% if phd_student.tuthor_set.all %}
+                            {% for tuthor in phd_student.tuthor_set.all %}
+                            <div class="form-row align-items-center pb-2" id="div_tuthor_{{tuthor.id}}">
                                 <div class="col-md-2">
-                                    <input type="email" class="form-control" id="inp_tuthor_email" data="1" name="tuthor_email" placeholder="Email del tutor" required></input>
+                                    <input type="email" class="form-control" readonly id="inp_tuthor_email_{{ tuthor.id }}" data="{{ tuthor.id }}" name="tuthor_email_{{ tuthor.id }}" placeholder="Email del tutor" value="{{ tuthor.professor.user.email }}" required></input>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="text" class="form-control" readonly id="inp_tuthor_name_{{ tuthor.id }}" name="tuthor_name_{{ tuthor.id }}" placeholder="Nombre(s) del tutor" value="{{ tuthor.professor.user.first_name }}" required></input>
                                 </div>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control" readonly  id="inp_tuthor_name" name="tuthor_name" placeholder="Nombre(s) del tutor" required></input>
+                                    <input type="text" class="form-control" readonly id="inp_tuthor_lastname_{{ tuthor.id }}" name="tuthor_lastname_{{ tuthor.id }}" placeholder="Apellidos del tutor" value="{{ tuthor.professor.user.last_name }}" required></input>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="text" class="form-control" readonly  id="inp_tuthor_lastname" name="tuthor_lastname" placeholder="Apellidos del tutor" required></input>
+                                    <input type="text" class="form-control" readonly id="inp_tuthor_institution_{{ tuthor.id }}" name="tuthor_institution_{{ tuthor.id }}" placeholder="Institución del tutor" value="{{ tuthor.professor.institution }}" required></input>
                                 </div>
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" readonly  id="inp_tuthor_institution" name="tuthor_institution" placeholder="Institución del tutor" required></input>
+                                <div class="col-md-1 pl-4 ">
+                                    <button type="button" class="text-white btn btn-sm btn-danger" id="btn_modal_rm_tuthor_{{ tuthor.id }}" data="{{ tuthor.id }}" data-toggle="modal" data-target="#modal_rm_tuthor_{{ tuthor.id }}" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>
                                 </div>
 
 
+                            </div>
+                            <div class="modal fade" id="modal_rm_tuthor_{{ tuthor.id }}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Eliminar tutor</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
 
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <p class="text-center">¿Seguro que desea eliminar a {{ tuthor }}?<br>Esto no se puede deshacer&hellip;</p>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal" data="{{ tuthor.id }}" id="btn_rm_tuthor_{{ tuthor.id }}">Eliminar</button>
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="alert alert-warning col-md-10 offset-1" id="div_no_tuthors">
+                                <h4 class="text-center"><i class="text-white fa fa-exclamation-triangle"></i> Este estudiante no tiene tutores asignados</h4>
+                            </div>
+                            {% endif %}
+
+                            <section id="div_new_tuthors">
+
+                            </section>
+                            <hr>
+                            <h5><strong>Requisitos</strong></h5>
+
+
+                            <h6>De ingreso:</h6>
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1">
+                                    <h6 class="text-center"><strong>Resp.</strong></h6>
+                                </div>
+                                <div class="col-md-6 col-sm-4">
+                                    <h6><strong>Nombre del documento</strong></h6>
+                                </div>
+                                <div class="col-md-2 col-sm-2 text-center">
+                                    <h6><strong>Copia digital</strong></h6>
+                                </div>
+                                <div class="col-md-1 col-sm-1 text-center">
+                                    <h6><strong>Listo.</strong></h6>
+                                </div>
+                                <div class="col-md-2 col-sm-4 text-center">
+                                    <h6><strong> Fecha de Caducidad</strong></h6>
+                                </div>
+                            </div>
+                            {% for doc in new_init_requirements %}
+                            {% student_doc_has_file doc_student doc as student_doc_has_file %}
+
+                            <div class="row pt-1 pb-1 align-items-center">
+                                <div class="col-md-1 col-sm-1 text-center">
+                                    {% if doc.type == 'student' %}
+                                    <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                    {% elif doc.type == 'program' %}
+                                    <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                    {% elif doc.type == 'comission' %}
+                                    <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 col-sm-4">
+                                    <h6>{{ doc.doc_name }}</h6>
+                                </div>
+                                <div class="col-md-2 col-sm-2 text-center">
+                                    {% if student_doc_has_file %}
+                                    {% if doc.type == 'student' %}
+                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+
+
+                                    {% else %}
+                                    <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
+                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}"  title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
+
+                                    </div>
+
+
+                                    {% endif %}
+                                    {% else %}
+                                    {% if doc.type == 'student' %}
+                                    <button type="button" class="btn btn-sm btn-default" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye-slash"></i> </button>
+
+                                    {% else %}
+                                    <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data="{{ doc.id }}"  ><i class="fa fa-upload"></i> </button>
+
+                                    {% endif %}
+                                    {% endif %}
+
+                                </div>
+                                <div class="col-md-1 col-sm-1 text-center">
+                                    {% student_requirement_accomplished doc_student doc as doc_accomplished %}
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_requirement_{{ doc.id }}" {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
+                                        <label for="inp_student_new_requirement_{{ doc.id }}">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-4 text-center">
+                                    {% if doc.get_old %}
+                                    {% student_doc_caducity_date doc_student doc as caducity_date %}
+                                    <input type="date" class="form-control" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% else %} readonly {% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
+                                    {% else %}
+                                    ---------------------------
+                                    {% endif  %}
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            <h6>De egreso:</h6>
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1">
+                                    <h6 class="text-center"><strong>Resp.</strong></h6>
+                                </div>
+                                <div class="col-md-6 col-sm-4">
+                                    <h6><strong>Nombre del documento</strong></h6>
+                                </div>
+                                <div class="col-md-2 col-sm-2 text-center">
+                                    <h6><strong>Copia digital</strong></h6>
+                                </div>
+                                <div class="col-md-1 col-sm-1 text-center">
+                                    <h6><strong>Listo.</strong></h6>
+                                </div>
+                                <div class="col-md-2 col-sm-4 text-center">
+                                    <h6><strong> Fecha de Caducidad</strong></h6>
+                                </div>
+                            </div>
+                            {% for doc in new_finish_requirements %}
+                            {% student_doc_has_file doc_student doc as student_doc_has_file %}
+
+                            <div class="row pt-1 pb-1 align-items-center">
+                                <div class="col-md-1 col-sm-1 text-center">
+                                    {% if doc.type == 'student' %}
+                                    <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                    {% elif doc.type == 'program' %}
+                                    <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                    {% elif doc.type == 'comission' %}
+                                    <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 col-sm-4">
+                                    <p>{{ doc.doc_name }}</p>
+                                </div>
+                                <div class="col-md-2 col-sm-2 text-center">
+                                    {% if student_doc_has_file %}
+                                    {% if doc.type == 'student' %}
+                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+
+
+                                    {% else %}
+                                    <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
+                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
+
+                                    </div>
+
+
+                                    {% endif %}
+                                    {% else %}
+                                    {% if doc.type == 'student' %}
+                                    <button type="button" class="btn btn-sm btn-default" disabled id="btn_see_filedoc_{{ doc.id }}" data="{{ doc.id }}" title="Ver documento"><i class="fa fa-eye-slash"></i> </button>
+
+                                    {% else %}
+                                    <button class="btn btn-sm btn-primary" id="btn_up_filedoc_{{ doc.id }}" data="{{ doc.id }}"><i class="fa fa-upload"></i> </button>
+
+                                    {% endif %}
+                                    {% endif %}
+
+                                </div>
+                                <div class="col-md-1 col-sm-1 text-center">
+                                    {% student_requirement_accomplished doc_student doc as doc_accomplished %}
+                                    <div class="icheck-primary d-inline ">
+                                        <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_f_requirement_{{ doc.id }}" {% if phd_student.status == "solicitante" %} disabled {% endif %} {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
+                                        <label for="inp_student_new_requirement_{{ doc.id }}">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-4 text-center">
+                                    {% if doc.get_old %}
+                                    {% student_doc_caducity_date doc_student doc as caducity_date %}
+                                    <input type="date" class="form-control" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}" {% if doc_accomplished %}required{% else %} readonly {% endif %} value="{{ caducity_date|date:'Y-m-d' }}">
+                                    {% else %}
+                                    ---------------------------
+                                    {% endif  %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <div class="row pt-1 pb-1 align-items-center">
+                                <div class="col-md-1 col-sm-1 text-center">
+                                    <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+
+                                </div>
+                                <div class="col-md-6 col-sm-4">
+                                    <p>Tesis lista para defensa</p>
+                                </div>
+                                <div class="col-md-2 col-sm-2 text-center">
+                                    {% if phd_student.phd_student_thesis %}
+
+                                    <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
+                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_thesis"  title="Ver documento"><i class="fa fa-eye"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_thesis" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-danger" id="btn_rm_thesis"  title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
+
+                                    </div>
+
+
+
+                                    {% else %}
+                                    <button type="button" class="btn btn-sm btn-primary" id="btn_up_thesis" data-toggle="modal" data-target="#modal_up_thesis" ><i class="fa fa-upload"></i> </button>
+
+                                    {% endif %}
+
+                                </div>
+                                <div class="col-md-1 col-sm-1 text-center">
+
+                                    <div class="icheck-primary d-inline ">
+                                        <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_f_requirement_{{ doc.id }}" {% if phd_student.status == "solicitante" %} disabled {% endif %} {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
+                                        <label for="inp_student_new_requirement_{{ doc.id }}">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-4 text-center">
+
+                                    ---------------------------
+
+                                </div>
                             </div>
 
 
 
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
-                        </div>
-                    </form>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
 
-    {% endif %}
 
-    <!-- /.content -->
-    {% for doc in program.programfiledoc_set.all %}
-        <div class="modal fade" id="modal_up_filedoc_{{ doc.id }}" data="{{ doc.id }}">
-            <div class="modal-lg modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Documento digital</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" action="{% url 'programs:ajx_update_filedoc' program.slug %}" data="{{ doc.id }}" method="post">
-
-                        <div class="modal-body">
-                            <p class="text-sm">Subir copia digital de {{ doc }}</p>
-                            {% csrf_token %}
-                            <input type="hidden" name="student_id" value="{{ doc_student.id }}">
-                            <input type="hidden" name="doc_id" value="{{ doc.id }}">
-                            <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" accept=".doc, .docx, .pdf" required>
-
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
-                        </div>
-                    </form>
-
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-        <div class="modal fade" id="modal_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}">
-            <div class="modal-lg modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Documento digital</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form id="frm_upgrade_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
-
-                        <div class="modal-body">
-                            <p class="text-sm">Actualizar copia digital de {{ doc }}</p>
-                            {% csrf_token %}
-                            <input type="hidden" name="student_id" value="{{ doc_student.id }}">
-                            <input type="hidden" name="doc_id" value="{{ doc.id }}">
-                            <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" accept=".doc, .docx, .pdf" required>
-
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
-                        </div>
-                    </form>
-
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-        <div class="modal fade" id="modal_rm_filedoc_{{ doc.id }}">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Documento digital</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-2">
-                                <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
-
+                            <div class="form-row align-items-center">
+                                <div class="col-md-1 text-center">
+                                    {% if doc_student.picture %}
+                                    <img class="rounded" src="{% url 'programs:program_student_picture' program.slug doc_student.id %}" style="width: 100px;">
+                                    {% elif doc_student.gender == 'm' %}
+                                    <i class="fa fa-male fa-3x"></i>
+                                    {% elif doc_student.gender == 'f' %}
+                                    <i class="fa fa-female fa-3x"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group col-md-11">
+                                    <label for="exampleInputFile">Foto: </label>
+                                    <input type="file" class="form-control-file" id="exampleInputFile" name="student_picture" accept="image/*">
+                                    <div class="help text-sm text-gray">
+                                        {{ doc_student.picture }}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-10">
-                                <p class="text-center">¿Seguro que desea eliminar la copia digital de:<br><strong>{{ doc|truncatewords:5 }}</strong>?
-                                    <br>Siempre podrá agregarlo nuevamente&hellip;</p>
-                            </div>
+
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary" id="btn_save">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+
+
+            </div>
+
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+
+</section>
+
+<div class="modal fade" id="modal_add_tuthor">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Agregar nuevo tutor a {{ student }}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="frm_add_tuthor" method="post">
+                <div class="modal-body alert alert-success">
+
+                    <div class="form-row align-items-center pb-2" id="div_tuthor_1">
+                        <div class="col-md-2">
+                            <input type="email" class="form-control" id="inp_tuthor_email" data="1" name="tuthor_email" placeholder="Email del tutor" required></input>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" readonly  id="inp_tuthor_name" name="tuthor_name" placeholder="Nombre(s) del tutor" required></input>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" readonly  id="inp_tuthor_lastname" name="tuthor_lastname" placeholder="Apellidos del tutor" required></input>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" readonly  id="inp_tuthor_institution" name="tuthor_institution" placeholder="Institución del tutor" required></input>
                         </div>
 
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" data="{{ doc.id }}" id="btn_rm_docfile_{{ doc.id }}">Eliminar</button>
+
+
                     </div>
 
+
+
                 </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
+                </div>
+            </form>
         </div>
-    {% endfor %}
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+{% endif %}
+
+<!-- /.content -->
+{% for doc in program.programfiledoc_set.all %}
+<div class="modal fade" id="modal_up_filedoc_{{ doc.id }}" data="{{ doc.id }}">
+    <div class="modal-lg modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Documento digital</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="frm_filedoc_{{ doc.id }}" enctype="multipart/form-data" action="{% url 'programs:ajx_update_filedoc' program.slug %}" data="{{ doc.id }}" method="post">
+
+                <div class="modal-body">
+                    <p class="text-sm">Subir copia digital de {{ doc }}</p>
+                    {% csrf_token %}
+                    <input type="hidden" name="student_id" value="{{ doc_student.id }}">
+                    <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                    <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" accept=".doc, .docx, .pdf" required>
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                </div>
+            </form>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<div class="modal fade" id="modal_upgrade_filedoc_{{ doc.id }}" data="{{ doc.id }}">
+    <div class="modal-lg modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Documento digital</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="frm_upgrade_filedoc_{{ doc.id }}" enctype="multipart/form-data" data="{{ doc.id }}" method="post">
+
+                <div class="modal-body">
+                    <p class="text-sm">Actualizar copia digital de {{ doc }}</p>
+                    {% csrf_token %}
+                    <input type="hidden" name="student_id" value="{{ doc_student.id }}">
+                    <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                    <input type="file" id="inp_filedoc_{{ doc.id }}" data="{{  doc.id }}" name="file" accept=".doc, .docx, .pdf" required>
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success" id="btn_save_filedoc_{{ doc.id }}">Guardar</button>
+                </div>
+            </form>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<div class="modal fade" id="modal_rm_filedoc_{{ doc.id }}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Documento digital</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                    </div>
+                    <div class="col-md-10">
+                        <p class="text-center">¿Seguro que desea eliminar la copia digital de:<br><strong>{{ doc|truncatewords:5 }}</strong>?
+                            <br>Siempre podrá agregarlo nuevamente&hellip;</p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" data="{{ doc.id }}" id="btn_rm_docfile_{{ doc.id }}">Eliminar</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+{% endfor %}
+<div class="modal fade" id="modal_up_thesis" >
+    <div class="modal-lg modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tesis lista para defensa</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="frm_upload_thesis" enctype="multipart/form-data" action="{% url 'programs:new_phd_thesis' program.slug phd_student.student.id %}"  method="post">
+
+                <div class="modal-body">
+                    <p class="text-sm">Subir copia digital de la tesis lista para defensa</p>
+                    {% csrf_token %}
+                    <input type="hidden" name="phd_student" value="{{ doc_student.phdstudent.id }}">
+                    <input type="hidden" name="title" value="{{ doc_student.phdstudent.phdstudenttheme }}">
+                    <input type="file" id="inp_thesis" name="file" accept=".pdf" required>
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success" id="">Guardar</button>
+                </div>
+            </form>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
 
 {% endblock %}
 <!-- jQuery -->
@@ -668,7 +748,7 @@
 </script>
 {% block extra_scripts %}
 
-    <script type="text/javascript">
+<script type="text/javascript">
         $(document).ready(function () {
 
             var tutores = {{ phd_student.tuthor_set.all.count }};
