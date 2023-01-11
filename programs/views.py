@@ -673,7 +673,7 @@ def create_dip_student(request, program_slug, edition_id):
 
 
 @login_required
-def new_phd_thesis(request, program_slug, student_id):
+def ajx_new_phd_thesis(request, program_slug, student_id):
     program=Program.objects.get(slug=program_slug)
     student = Student.objects.get(pk=student_id)
 
@@ -682,11 +682,31 @@ def new_phd_thesis(request, program_slug, student_id):
         if thesis_form.is_valid():
             thesis_form.save()
 
-            messages.success(request, 'Tesis subida exitosamente')
-            return HttpResponseRedirect(reverse('programs:edit_student', args=[program_slug, student_id]))
+            return HttpResponse(
+                json.dumps([{'uploaded': '1'}]),
+                content_type="application/json")
         else:
-            messages.error(request, thesis_form.errors)
-            return HttpResponseRedirect(reverse('programs:edit_student', args=[program_slug, student_id]))
+            return HttpResponse(
+                json.dumps([{'uploaded': '0', 'errors':thesis_form.errors }]),
+                content_type="application/json")
+
+@login_required
+def ajx_rm_phd_thesis(request, program_slug, student_id):
+    program=Program.objects.get(slug=program_slug)
+    student = Student.objects.get(pk=student_id)
+
+    if request.method == 'POST':
+        thesis = student.phdstudent.phdstudentthesis
+        try:
+            thesis.delete()
+
+            return HttpResponse(
+                json.dumps([{'deleted': '1'}]),
+                content_type="application/json")
+        except:
+            return HttpResponse(
+                json.dumps([{'deleted': '0'}]),
+                content_type="application/json")
 
 
 

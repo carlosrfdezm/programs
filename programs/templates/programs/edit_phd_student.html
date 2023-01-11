@@ -484,12 +484,12 @@
                                     <p>Tesis lista para defensa</p>
                                 </div>
                                 <div class="col-md-2 col-sm-2 text-center">
-                                    {% if phd_student.phd_student_thesis %}
+                                    {% if phd_student.phdstudentthesis %}
 
-                                    <div class="btn-group btn-group-sm" id="div_btn_filedoc_{{ doc.id }}">
+                                    <div class="btn-group btn-group-sm" id="div_btn_thesis">
                                         <button type="button" class="btn btn-sm btn-success" id="btn_see_thesis"  title="Ver documento"><i class="fa fa-eye"></i> </button>
                                         <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_thesis" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
-                                        <button type="button" class="btn btn-sm btn-danger" id="btn_rm_thesis"  title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
+                                        <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal_rm_thesis"  title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
 
                                     </div>
 
@@ -707,7 +707,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="frm_upload_thesis" enctype="multipart/form-data" action="{% url 'programs:new_phd_thesis' program.slug phd_student.student.id %}"  method="post">
+            <form id="frm_upload_thesis" enctype="multipart/form-data" method="post">
 
                 <div class="modal-body">
                     <p class="text-sm">Subir copia digital de la tesis lista para defensa</p>
@@ -722,6 +722,38 @@
                     <button type="submit" class="btn btn-success" id="">Guardar</button>
                 </div>
             </form>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<div class="modal fade" id="modal_rm_thesis">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tesis</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                    </div>
+                    <div class="col-md-10">
+                        <p class="text-center">¿Seguro que desea eliminar la copia digital de la tesis?
+                            <br>Siempre podrá agregarlo nuevamente&hellip;</p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal"  id="btn_rm_thesis">Eliminar</button>
+            </div>
 
         </div>
         <!-- /.modal-content -->
@@ -1107,6 +1139,58 @@
                 $(div_selector).remove();
 
             });
+
+            $(document).on('click',"button[id*='btn_rm_thesis']",function () {
+                var url = "{% url 'programs:ajx_rm_phd_thesis' program.slug doc_student.id %}";
+
+                $('#modal_rm_thesis').modal('hide');
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+
+
+                            $('#div_btn_thesis').replaceWith('<button type="button" class="btn btn-sm btn-primary" id="btn_up_thesis" data-toggle="modal" data-target="#modal_up_thesis" ><i class="fa fa-upload"></i> </button>');
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Tesis eliminada exitosamente'
+                            });
+
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar la tesis.'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+                $(div_selector).remove();
+
+            });
+
             $(document).on('submit','#frm_add_tuthor', function (e) {
                 e.preventDefault();
                 var url = "{% url 'programs:ajx_create_tuthor' program.slug doc_student.id%}";
@@ -1290,6 +1374,64 @@
                             })
 
                         }
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
+
+             $(document).on('submit',"form[id*='frm_upload_thesis']", function (e) {
+                e.preventDefault();
+                var data = new FormData($(this).get(0));
+                $('#frm_upload_thesis')[0].reset();
+
+                var url = "{% url 'programs:ajx_new_phd_thesis' program.slug doc_student.id %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].uploaded == 1) {
+                            var div = '<div class="btn-group btn-group-sm" id="div_btn_thesis">\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_thesis" title="Ver documento"><i class="fa fa-eye"></i> </button>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_thesis" title="Editar documento"><i class="fa fa-edit"></i> </button>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal_rm_thesis" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>\n' +
+                                '                                                                </div>'
+
+                            $('#btn_up_thesis').replaceWith(div);
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Documento actualizado exitosamente'
+                            })
+
+                        } else if(json[0].uploaded == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido subir la tesis. Errores:'+ json[0].errors
+                            })
+
+                        }
+
                         console.log(json); // log the returned json to the console
                         console.log("success"); // another sanity check
 
