@@ -140,17 +140,22 @@
                             {% if user_is_program_cs %}
                             <td class="text-center">
                                 <div class="btn-group" role="group">
-                                    {% if scope == 'Doctorandos' %}
 
-                                    <a class="btn btn-primary btn-sm text-white {% if not student.phdstudent.phdstudentthesis or student.phdstudent.phdannouncement %} disabled {% endif %}"
-                                       href="{% url 'programs:new_phd_announcement' program.slug student.id %}"
-                                       title="Crear convocatoria para la defensa"> <i class="fa fa-bullhorn"></i></a>
-
-                                    {% endif %}
                                     <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ student.id }}"> <i class="fa fa-envelope"></i></a>
                                     {% if scope == 'Doctorandos' %}
                                     <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug student.phdstudent.id %}" title="Ver evaluaciones">  <i class="fa fa-user-graduate"></i></a>
                                     <a class="btn btn-success btn-sm text-white" href="{% url 'programs:view_formation_plan' program.slug student.id %}" title="Ver plan de formación">  <i class="fa fa-calendar-check"></i></a>
+                                    {% if not student.phdstudent.phdannouncement %}
+
+                                    <a class="btn btn-warning btn-sm text-white {% if not student.phdstudent.phdstudentthesis  %} disabled {% endif %}"
+                                       href="{% url 'programs:new_phd_announcement' program.slug student.id %}"
+                                       title="Crear convocatoria para la defensa"> <i class="fa fa-bullhorn"></i></a>
+
+                                    {% else %}
+                                    <a class="btn btn-warning btn-sm text-white"
+                                       href="{% url 'programs:edit_phd_announcement' program.slug student.phdstudent.phdannouncement.id %}"
+                                       title="Editar convocatoria para la defensa"> <i class="far fa-edit"></i></a>
+                                    {% endif %}
                                     <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:evaluate_student' program.slug student.phdstudent.id %}" title="Asignar evaluación"> <i class="fa fa-check-square"></i></a>
                                     {% elif scope == 'Graduados' %}
                                     <a class="btn btn-success btn-sm text-white" href="" title="Ver evaluaciones">  <i class="fa fa-user-graduate"></i></a>
