@@ -487,8 +487,8 @@
                                     {% if phd_student.phdstudentthesis %}
 
                                     <div class="btn-group btn-group-sm" id="div_btn_thesis">
-                                        <button type="button" class="btn btn-sm btn-success" id="btn_see_thesis"  title="Ver documento"><i class="fa fa-eye"></i> </button>
-                                        <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_thesis" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                        <a class="btn btn-sm btn-success" href="{{ phd_student.phdstudentthesis.file.url }}" id="btn_see_thesis"  title="Ver documento"><i class="fa fa-eye"></i> </a>
+                                        <button type="button" class="btn btn-sm btn-warning disabled" id="btn_upgrade_thesis" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
                                         <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal_rm_thesis"  title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
 
                                     </div>
@@ -504,7 +504,9 @@
                                 <div class="col-md-1 col-sm-1 text-center">
 
                                     <div class="icheck-primary d-inline ">
-                                        <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_new_f_requirement_{{ doc.id }}" {% if phd_student.status == "solicitante" %} disabled {% endif %} {% if doc_accomplished %} checked value="True" {% else %} value="False" {% endif %}>
+                                        <input type="checkbox" id="chk_thesis_status"
+                                               {% if phd_student.status == "solicitante" %} disabled {% endif %}
+                                        {% if phd_student.phdstudentthesis %} checked value="True" {% else %} value="False" {% endif %}>
                                         <label for="inp_student_new_requirement_{{ doc.id }}">
                                         </label>
                                     </div>
@@ -1159,7 +1161,8 @@
 
 
                             $('#div_btn_thesis').replaceWith('<button type="button" class="btn btn-sm btn-primary" id="btn_up_thesis" data-toggle="modal" data-target="#modal_up_thesis" ><i class="fa fa-upload"></i> </button>');
-
+                            $('#chk_thesis_status').removeAttr('checked');
+                            $('#chk_thesis_status').attr('value', 'False');
                             Toast.fire({
                                 type: 'success',
                                 title: 'Tesis eliminada exitosamente'
@@ -1342,7 +1345,7 @@
                         if (json[0].updated == 1) {
                             var div = '<div class="btn-group btn-group-sm" id="div_btn_filedoc_'+doc_id+'">\n' +
                                 '                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_filedoc_'+doc_id+'" data="'+doc_id+'" title="Ver documento"><i class="fa fa-eye"></i> </button>\n' +
-                                '                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_filedoc_'+doc_id+'" data="'+doc_id+'" title="Editar documento"><i class="fa fa-edit"></i> </button>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-warning disabled" id="btn_upgrade_filedoc_'+doc_id+'" data="'+doc_id+'" title="Editar documento"><i class="fa fa-edit"></i> </button>\n' +
                                 '                                                                    <button type="button" class="btn btn-sm btn-danger" id="btn_rm_filedoc_'+doc_id+'" data="'+doc_id+'" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>\n' +
                                 '                                                                </div>'
 
@@ -1412,13 +1415,15 @@
 
                         if (json[0].uploaded == 1) {
                             var div = '<div class="btn-group btn-group-sm" id="div_btn_thesis">\n' +
-                                '                                                                    <button type="button" class="btn btn-sm btn-success" id="btn_see_thesis" title="Ver documento"><i class="fa fa-eye"></i> </button>\n' +
+                                '                                                                    <a class="btn btn-sm btn-success" id="btn_see_thesis" href="'+json[0].url+'" title="Ver documento"><i class="fa fa-eye"></i> </a>\n' +
                                 '                                                                    <button type="button" class="btn btn-sm btn-warning" id="btn_upgrade_thesis" title="Editar documento"><i class="fa fa-edit"></i> </button>\n' +
                                 '                                                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal_rm_thesis" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>\n' +
                                 '                                                                </div>'
 
                             $('#btn_up_thesis').replaceWith(div);
                             $('.modal').modal('hide');
+                            $('#chk_thesis_status').attr('checked','True');
+                            $('#chk_thesis_status').attr('value','True');
                             Toast.fire({
                                 type: 'success',
                                 title: 'Documento actualizado exitosamente'

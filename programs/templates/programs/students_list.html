@@ -141,8 +141,8 @@
                             <td class="text-center">
                                 <div class="btn-group" role="group">
                                     {% if scope == 'Doctorandos' %}
-                                    <a class="btn btn-primary btn-sm text-white" href="{% url 'programs:new_phd_announcement' program.slug student.id %}"
-                                       {% if not student.phdstudent.phdstudentthesis %} disable {% endif %}
+                                    <a class="btn btn-primary btn-sm text-white {% if not student.phdstudent.phdstudentthesis %} disabled {% endif %}"
+                                       href="{% url 'programs:new_phd_announcement' program.slug student.id %}"
                                        title="Crear convocatoria para la defensa"> <i class="fa fa-bullhorn"></i></a>
 
                                     {% endif %}

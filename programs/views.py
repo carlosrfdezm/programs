@@ -680,10 +680,10 @@ def ajx_new_phd_thesis(request, program_slug, student_id):
     if request.method == 'POST':
         thesis_form = PhdStudentThesisForm(request.POST, request.FILES)
         if thesis_form.is_valid():
-            thesis_form.save()
+            thesis=thesis_form.save()
 
             return HttpResponse(
-                json.dumps([{'uploaded': '1'}]),
+                json.dumps([{'uploaded': '1', 'url':thesis.file.url }]),
                 content_type="application/json")
         else:
             return HttpResponse(
