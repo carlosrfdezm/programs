@@ -30,7 +30,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
     FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message, CGCDocument, \
-    ProgramSpeciality, New, MessageSended, Requester, PhdStudentThesis
+    ProgramSpeciality, New, MessageSended, Requester, PhdStudentThesis, PhdAnnouncement
 from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
@@ -172,16 +172,16 @@ def new_phd_announcement(request, program_slug, student_id):
     phd_student = PhdStudent.objects.get(student=Student.objects.get(pk=student_id))
     if program.type == 'phd':
         if request.method == 'POST':
-            announcement_form = AnnouncementForm(request.POST, request.FILES, initial={'phd_student':phd_student, 'thesis': phd_student.phd_student_thesis})
+            announcement_form = AnnouncementForm(request.POST, request.FILES, initial={'phd_student':phd_student, 'thesis': phd_student.phdstudentthesis})
             if announcement_form.is_valid():
                 announcement_form.save()
                 messages.success(request, ('Nueva convocatoria creada exitosamente'))
-                return HttpResponseRedirect(reverse('programs:new_announcement'))
+                return HttpResponseRedirect(reverse('programs:program_announcements', args=[program_slug]))
 
             else:
                 print(announcement_form.errors)
-                messages.error(request, 'Error al guardar nueva convocatoria')
-                return HttpResponseRedirect(reverse('programs:new_announcement'))
+                messages.error(request, announcement_form.errors)
+                return HttpResponseRedirect(reverse('programs:new_phd_announcement', args=[program_slug, student_id]))
 
         else:
             context = {
@@ -191,6 +191,35 @@ def new_phd_announcement(request, program_slug, student_id):
 
             }
             return render(request, 'programs/new_phd_announcement.html', context)
+    else:
+        pass
+
+@login_required
+def edit_phd_announcement(request, program_slug, announcement_id):
+    program = Program.objects.get(slug=program_slug)
+    announcement = PhdAnnouncement.objects.get(pk=announcement_id)
+    if program.type == 'phd':
+        if request.method == 'POST':
+            announcement_form = AnnouncementForm(request.POST, instance=announcement)
+            if announcement_form.is_valid():
+                announcement_form.save()
+                messages.success(request, ('Nueva convocatoria editada exitosamente'))
+                return HttpResponseRedirect(reverse('programs:program_announcements', args=[program_slug]))
+
+            else:
+                print(announcement_form.errors)
+                messages.error(request, announcement_form.errors)
+                return HttpResponseRedirect(reverse('programs:edit_phd_announcement', args=[program_slug, announcement_id]))
+
+        else:
+            context = {
+                'student':announcement.phd_student.student,
+                'announcement_form': AnnouncementForm(instance=announcement),
+                'announcement':announcement,
+                'program':program,
+
+            }
+            return render(request, 'programs/edit_phd_announcement.html', context)
     else:
         pass
 
@@ -1818,6 +1847,32 @@ def program_lines(request, program_slug):
 
     return render(request, 'programs/lines_list.html', context)
 
+
+@login_required
+def program_annoucements(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    context={
+        'program': program,
+
+    }
+    if user_is_program_member(request.user, program):
+        context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+        context['announcements'] = PhdAnnouncement.objects.filter(phd_student__student__program=program)
+
+    elif user_is_program_student(request.user, program):
+        if program.type =='phd':
+            context['student'] = Student.objects.get(user=request.user, program=program)
+            context['announcements'] = PhdAnnouncementobjects.filter(phd_student__student__program= program)
+        elif program.type =='msc':
+            # TODO
+            pass
+        elif program.type =='dip':
+            # TODO
+            pass
+
+    return render(request, 'programs/announcements_list.html', context)
+
+
 @login_required
 def students_by_line(request, program_slug, line_id):
     program=Program.objects.get(slug=program_slug)
@@ -2907,6 +2962,36 @@ def ajx_delete_line(request, program_slug):
             line_id=request.POST['line_id']
             try:
                 InvestigationLine.objects.get(pk=line_id).delete()
+                return HttpResponse(
+                    json.dumps([{'deleted': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                return HttpResponse(
+                    json.dumps([{'deleted': 0}]),
+                    content_type="application/json"
+                )
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'deleted': 0}]),
+            content_type="application/json"
+        )
+
+
+@login_required
+def ajx_delete_announcement(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+
+    if user_is_program_cs(request.user,program ):
+        if request.method=='POST':
+            announcement_id=request.POST['announcement_id']
+            try:
+                PhdAnnouncement.objects.get(pk=announcement_id).delete()
                 return HttpResponse(
                     json.dumps([{'deleted': 1}]),
                     content_type="application/json"

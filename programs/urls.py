@@ -19,7 +19,6 @@ urlpatterns = [
     path('students/<int:student_id>/thesis/new', views.ajx_new_phd_thesis, name='ajx_new_phd_thesis'),
     path('students/<int:student_id>/thesis/remove', views.ajx_rm_phd_thesis, name='ajx_rm_phd_thesis'),
     path('students/<int:student_id>/profile', views.view_student_profile, name='view_student_profile'),
-    path('students/<int:student_id>/announcement/new', views.new_phd_announcement, name='new_phd_announcement'),
     path('students/<int:student_id>/autoedit/profile', views.autoedit_student_profile, name='autoedit_student_profile'),
     path('students/<int:student_id>/picture', views.program_student_picture, name='program_student_picture'),
     path('students/<int:student_id>/evaluate', views.evaluate_student, name='evaluate_student'),
@@ -131,6 +130,7 @@ urlpatterns = [
     path('ajx/speciality/delete', views.ajx_delete_speciality, name='ajx_delete_speciality'),
     path('ajx/student/<int:student_id>/activity/status/change', views.ajx_change_activity_status, name='ajx_change_activity_status'),
     path('ajx/new/delete', views.ajx_delete_new, name='ajx_delete_new'),
+    path('ajx/announcement/delete', views.ajx_delete_announcement, name='ajx_delete_announcement'),
 
     path('ajx/requirenment/<str:scope>/create', views.ajx_new_requirenment, name='ajx_new_requirenment'),
     path('ajx/requirenment/delete', views.ajx_delete_r, name='ajx_delete_r'),
@@ -166,10 +166,10 @@ urlpatterns = [
 
     path('request/confirm/<str:request_id>', views.confirm_auto_request, name='request_confirm'),
 
-
-
-
-
+    # Paths de convocatorias
+    path('annoucement/student/<int:student_id>/new', views.new_phd_announcement, name='new_phd_announcement'),
+    path('annoucements/list', views.program_annoucements, name='program_announcements'),
+    path('annoucements/<int:announcement_id>/edit', views.edit_phd_announcement, name='edit_phd_announcement'),
 
     # path('login', views.mylogin, name='my_login'),
     # path('logout/<str:court_slug>/', views.mylogout, name='my_logout'),
