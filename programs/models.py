@@ -399,6 +399,15 @@ class PhdStudentThesis(models.Model):
     def __str__(self):
         return self.title
 
+class PhdThesisComment(models.Model):
+    thesis = models.ForeignKey(PhdStudentThesis, null=False, on_delete=models.CASCADE)
+    date = models.DateField(auto_now=True)
+    commenter_name = models.CharField(max_length=100, null=False, blank=False, verbose_name="Nombre y apellidos", help_text="Nombre y apellidos del que comenta")
+    commenter_email = models.EmailField(max_length=100, null=False, blank=False, verbose_name="Correo electrónico", help_text="Correo electrónico del que comenta")
+    text = models.TextField(max_length=2000, null=False, blank=False, help_text="Comentario")
+
+    def __str__(self):
+        return self.text
 
 class PhdAnnouncement(models.Model):
     PRESENCIAL = "Presencial"

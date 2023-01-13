@@ -1,6 +1,6 @@
 from django import forms
 
-from programs.models import PhdAnnouncement, PhdStudentThesis
+from programs.models import PhdAnnouncement, PhdStudentThesis, PhdThesisComment
 
 
 class FileUploadForm(forms.Form):
@@ -18,3 +18,11 @@ class PhdStudentThesisForm(forms.ModelForm):
     class Meta:
         model = PhdStudentThesis
         fields = '__all__'
+
+
+class PhdThesisCommentForm(forms.ModelForm):
+
+    class Meta:
+        model = PhdThesisComment
+        fields = '__all__'
+

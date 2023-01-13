@@ -1,16 +1,17 @@
-import string
 
-import math
 from django import template
 from django.contrib.auth.models import User
 from math import floor
 
 from django.db.models import Q
 from django.utils.timezone import now
+from datetime import date, timedelta,datetime
+
+
 
 from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember, StudentFinishRequirement, \
     ProgramFinishRequirements, CGC_Member, PhdStudent, PhdStudentTheme, InvestigationProject, Student, \
-    StudentFormationPlan, MscStudent, DipStudent, StudentFileDocument, ProgramFileDoc
+    StudentFormationPlan, MscStudent, DipStudent, StudentFileDocument, ProgramFileDoc, PhdAnnouncement
 
 register = template.Library()
 
@@ -66,7 +67,7 @@ def init_requirements_accomplished(student, program):
     elif program.type == 'dip':
         for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
             student_requirement, created = StudentFileDocument.objects.get_or_create(msc_student=student,
-                                                                                        program_file_document=requirement)
+                                                                                     program_file_document=requirement)
             if not student_requirement.accomplished:
                 accomplished = False
 
@@ -75,6 +76,19 @@ def init_requirements_accomplished(student, program):
 @register.simple_tag
 def is_past(date):
     if date < now().date():
+        return True
+    else:
+        return False
+
+@register.simple_tag
+def announcement_is_on_time(announcement_id):
+    announcement = PhdAnnouncement.objects.get(pk=announcement_id)
+    announcement_date = announcement.date
+    d1 = announcement_date.date()
+    d2 = now().date()
+
+    delta =d1 - d2
+    if delta.days >= 15:
         return True
     else:
         return False

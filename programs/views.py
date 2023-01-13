@@ -24,7 +24,7 @@ from django.utils.text import slugify
 from django.utils.timezone import now
 
 from programas.settings import MEDIA_ROOT
-from programs.forms import FileUploadForm, AnnouncementForm, PhdStudentThesisForm
+from programs.forms import FileUploadForm, AnnouncementForm, PhdStudentThesisForm, PhdThesisCommentForm
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, \
     ProgramMember, ProgramFinishRequirements, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
@@ -52,6 +52,7 @@ def index(request, program_slug):
             context['init_requirenments']=program.programfiledoc_set.filter(type='student')
 
         if program.type == 'phd':
+            context['announcements'] = PhdAnnouncement.objects.filter( phd_student__student__program = program )
             return render(request, 'programs/phd_index.html', context)
         elif program.type == 'msc':
             return render(request, 'programs/msc_index.html', context)
@@ -69,6 +70,7 @@ def home(request, program_slug):
 
         if request.user.is_authenticated:
             if program.type == 'phd':
+
                 context = {
                     'program': program,
                     'requesters': PhdStudent.objects.filter(student__program=program, status='solicitante').__len__(),
@@ -717,6 +719,25 @@ def ajx_new_phd_thesis(request, program_slug, student_id):
         else:
             return HttpResponse(
                 json.dumps([{'uploaded': '0', 'errors':thesis_form.errors }]),
+                content_type="application/json")
+
+
+def ajx_new_phd_thesis_comment(request, program_slug, thesis_id):
+    program=Program.objects.get(slug=program_slug)
+    thesis = PhdStudentThesis.objects.get(pk=thesis_id)
+
+    if request.method == 'POST':
+        thesis_comment_form = PhdThesisCommentForm(request.POST)
+        if thesis_comment_form.is_valid():
+            thesis=thesis_comment_form.save()
+
+            return HttpResponse(
+                json.dumps([{'uploaded': '1'}]),
+                content_type="application/json")
+        else:
+            print(thesis_comment_form.errors)
+            return HttpResponse(
+                json.dumps([{'uploaded': '0', 'errors':thesis_comment_form.errors }]),
                 content_type="application/json")
 
 @login_required

@@ -171,6 +171,8 @@ urlpatterns = [
     path('annoucements/list', views.program_annoucements, name='program_announcements'),
     path('annoucements/<int:announcement_id>/edit', views.edit_phd_announcement, name='edit_phd_announcement'),
 
+    path('thesis/<int:thesis_id>/new/comment', views.ajx_new_phd_thesis_comment, name='ajx_new_phd_thesis_comment')
+
     # path('login', views.mylogin, name='my_login'),
     # path('logout/<str:court_slug>/', views.mylogout, name='my_logout'),
     # path('cngc/member/<int:member_id>/pic', views.cngc_member_picture, name='cngc_member_picture'),

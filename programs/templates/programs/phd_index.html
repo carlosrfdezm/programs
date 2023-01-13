@@ -28,6 +28,7 @@
     <link href="{% static 'programs/index/lib/magnific-popup/magnific-popup.css' %}" rel="stylesheet">
     <link href="{% static 'programs/index/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'programs/plugins/summernote/summernote-bs4.css'  %}">
 
     <!-- Main Stylesheet File -->
     <link href="{% static 'programs/index/css/style.css' %}" rel="stylesheet">
@@ -81,20 +82,23 @@
                 <li><a href="#team">Claustro</a></li>
                 {#                <li class="menu-has-children"><a href="">Drop Down</a>#}
                 {#                    <ul>#}
-                {#                        <li><a href="#">Drop Down 1</a></li>#}
-                {#                        <li><a href="#">Drop Down 3</a></li>#}
-                {#                        <li><a href="#">Drop Down 4</a></li>#}
-                {#                        <li><a href="#">Drop Down 5</a></li>#}
-                {#                    </ul>#}
+                    {#                        <li><a href="#">Drop Down 1</a></li>#}
+                    {#                        <li><a href="#">Drop Down 3</a></li>#}
+                    {#                        <li><a href="#">Drop Down 4</a></li>#}
+                    {#                        <li><a href="#">Drop Down 5</a></li>#}
+                    {#                    </ul>#}
                 {#                </li>#}
 
                 {% if public_docs %}
-                    <li><a href="#services">Documentos</a></li>
+                <li><a href="#services">Documentos</a></li>
                 {% else %}
-                    <li><a href="#services">Ayuda</a></li>
+                <li><a href="#services">Ayuda</a></li>
                 {% endif %}
                 {% if news %}
-                    <li><a href="#news">Noticias</a></li>
+                <li><a href="#news">Noticias</a></li>
+                {% endif %}
+                {% if announcements %}
+                <li><a href="#announcements">Convocatorias</a></li>
                 {% endif %}
 
                 <li><a href="#contact">Login</a></li>
@@ -113,7 +117,7 @@
         <h2>{{ program }}</h2>
         <div>
             {% if program.self_request %}
-                <a href="" data-toggle="modal" data-target="#modal_request_enter" class="btn-projects scrollto">Solicitar ingreso</a>
+            <a href="" data-toggle="modal" data-target="#modal_request_enter" class="btn-projects scrollto">Solicitar ingreso</a>
             {% endif %}
             <a href="#contact" class="btn-get-started scrollto">Iniciar sesión</a>
 
@@ -124,15 +128,15 @@
 
     <div id="intro-carousel" class="owl-carousel" >
         {% if program.programbackgrounds_set.all.count > 0 %}
-            {% for background in program.programbackgrounds_set.all %}
-                <div class="item" style="background-image: url({% url 'programs:program_background' program.slug background.id %});"></div>
-            {% endfor %}
+        {% for background in program.programbackgrounds_set.all %}
+        <div class="item" style="background-image: url({% url 'programs:program_background' program.slug background.id %});"></div>
+        {% endfor %}
         {% else %}
-            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/1.jpg' %});"></div>
-            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/2.jpg' %});"></div>
-            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/3.jpg' %});"></div>
-            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/4.jpg' %});"></div>
-            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/5.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/1.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/2.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/3.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/4.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/5.jpg' %});"></div>
         {% endif %}
     </div>
 
@@ -151,33 +155,33 @@
                 </div>
                 {% if not lines %}
 
-                    <div class="col-lg-6 content">
-                        <h2>Formación doctoral en Cuba</h2>
-                        <h3>El proceso de formación doctoral contribuye a crear el
-                            potencial humano de alta calificación, esencial para el avance de la
-                            ciencia, la tecnología y la innovación.</h3>
-                        <h3>El Sistema Nacional de Grados Científicos está integrado por los órganos ejecutivos siguientes:</h3>
+                <div class="col-lg-6 content">
+                    <h2>Formación doctoral en Cuba</h2>
+                    <h3>El proceso de formación doctoral contribuye a crear el
+                        potencial humano de alta calificación, esencial para el avance de la
+                        ciencia, la tecnología y la innovación.</h3>
+                    <h3>El Sistema Nacional de Grados Científicos está integrado por los órganos ejecutivos siguientes:</h3>
 
-                        <ul>
-                            <li><i class="ion-android-checkmark-circle"></i> la Comisión Nacional de Grados Científicos, que lo preside;</li>
-                            <li><i class="ion-android-checkmark-circle"></i> las instituciones autorizadas para la formación de doctores,
-                                aprobadas por la Comisión Nacional de Grados Científicos, sus
-                                comisiones de grados científicos y comités de doctorado; y</li>
-                            <li><i class="ion-android-checkmark-circle"></i> los tribunales de grado.</li>
-                        </ul>
+                    <ul>
+                        <li><i class="ion-android-checkmark-circle"></i> la Comisión Nacional de Grados Científicos, que lo preside;</li>
+                        <li><i class="ion-android-checkmark-circle"></i> las instituciones autorizadas para la formación de doctores,
+                            aprobadas por la Comisión Nacional de Grados Científicos, sus
+                            comisiones de grados científicos y comités de doctorado; y</li>
+                        <li><i class="ion-android-checkmark-circle"></i> los tribunales de grado.</li>
+                    </ul>
 
-                    </div>
+                </div>
                 {% else %}
-                    <div class="col-lg-6 content">
-                        <h2>Líneas de investigación</h2>
+                <div class="col-lg-6 content">
+                    <h2>Líneas de investigación</h2>
 
-                        <ul>
-                            {% for line in lines %}
-                                <li><i class="ion-android-checkmark-circle"></i> {{ line.name }}</li>
-                            {% endfor %}
-                        </ul>
+                    <ul>
+                        {% for line in lines %}
+                        <li><i class="ion-android-checkmark-circle"></i> {{ line.name }}</li>
+                        {% endfor %}
+                    </ul>
 
-                    </div>
+                </div>
                 {% endif %}
             </div>
 
@@ -212,21 +216,21 @@
 
             <div class="row">
                 {% for member in program.programmember_set.all %}
-                    <div class="col-lg-3 col-md-6">
-                        <div class="member">
-                            <div class="pic" >{% if member.picture %}<img src="{% url 'programs:program_member_picture' program.slug member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.sex == 'f' %}<img src="{% static 'programs/dist/img/avatar3.png' %}" alt="">{% elif member.sex == 'm' %}<img src="{% static 'programs/dist/img/avatar5.png' %}" alt="">{% endif %}</div>
-                            <div class="details">
-                                <h6 class="text-bold">{{member|truncatewords:3}}</h6>
-                                <span title="{{ member.degree }}">{{ member.degree|truncatewords:3 }}</span>
-                                <span>{{ member.role }}</span>
-                                <div class="social">
-                                    <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
-                                    <a href="{{ member.fb_contact }}"><i class="fa fa-facebook"></i></a>
-                                    <a href="{{ member.ln_contact }}"><i class="fa fa-linkedin"></i></a>
-                                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="member">
+                        <div class="pic" >{% if member.picture %}<img src="{% url 'programs:program_member_picture' program.slug member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.sex == 'f' %}<img src="{% static 'programs/dist/img/avatar3.png' %}" alt="">{% elif member.sex == 'm' %}<img src="{% static 'programs/dist/img/avatar5.png' %}" alt="">{% endif %}</div>
+                        <div class="details">
+                            <h6 class="text-bold">{{member|truncatewords:3}}</h6>
+                            <span title="{{ member.degree }}">{{ member.degree|truncatewords:3 }}</span>
+                            <span>{{ member.role }}</span>
+                            <div class="social">
+                                <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
+                                <a href="{{ member.fb_contact }}"><i class="fa fa-facebook"></i></a>
+                                <a href="{{ member.ln_contact }}"><i class="fa fa-linkedin"></i></a>
                             </div>
                         </div>
                     </div>
+                </div>
                 {% endfor %}
 
             </div>
@@ -256,98 +260,98 @@
       Services Section
     ============================-->
     {% if public_docs %}
-        <section id="services">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Documentos de consulta</h2>
-                    <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+    <section id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Documentos de consulta</h2>
+                <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+            </div>
+
+            {% for doc in public_docs %}
+
+            {% if forloop.counter == public_docs.count %}
+            <div class="row pt-1 pb-2">
+                <div class="col-md-10 offset-1">
+                    <p class="text-primary" title="{{ doc.description }}"><a class="text-primary" href="{% url 'programs:public_program_doc_view' program.slug doc.id %}">{{ doc.description|truncatewords:15 }}</a></p>
+                </div>
+                <div class="col-md-1">
+                    <a href="{% url 'programs:public_program_doc_view' program.slug doc.id %}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
                 </div>
 
-                {% for doc in public_docs %}
+            </div>
+            {% else %}
 
-                    {% if forloop.counter == public_docs.count %}
-                        <div class="row pt-1 pb-2">
-                            <div class="col-md-10 offset-1">
-                                <p class="text-primary" title="{{ doc.description }}"><a class="text-primary" href="{% url 'programs:public_program_doc_view' program.slug doc.id %}">{{ doc.description|truncatewords:15 }}</a></p>
-                            </div>
-                            <div class="col-md-1">
-                                <a href="{% url 'programs:public_program_doc_view' program.slug doc.id %}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
-                            </div>
-
-                        </div>
-                    {% else %}
-
-                        <div class="row pt-1">
-                            <div class="col-md-10 offset-1">
-                                <p class="text-primary" title="{{ doc.description }}"><a class="text-primary" href="{% url 'programs:public_program_doc_view' program.slug doc.id %}">{{ doc.description|truncatewords:15 }}</a></p>
-                            </div>
-                            <div class="col-md-1">
-                                <a href="{% url 'programs:public_program_doc_view' program.slug doc.id %}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
-                            </div>
-
-                        </div>
-                    {% endif %}
-                {% endfor %}
+            <div class="row pt-1">
+                <div class="col-md-10 offset-1">
+                    <p class="text-primary" title="{{ doc.description }}"><a class="text-primary" href="{% url 'programs:public_program_doc_view' program.slug doc.id %}">{{ doc.description|truncatewords:15 }}</a></p>
+                </div>
+                <div class="col-md-1">
+                    <a href="{% url 'programs:public_program_doc_view' program.slug doc.id %}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
+                </div>
 
             </div>
-        </section>
+            {% endif %}
+            {% endfor %}
+
+        </div>
+    </section>
     {% else %}
-        <section id="services">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Preguntas frecuentes</h2>
-                    <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Doctoral.</p>
+    <section id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Preguntas frecuentes</h2>
+                <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Doctoral.</p>
+            </div>
+
+            <div class="row">
+
+                <div class="col-lg-6">
+                    <div class="box wow fadeInLeft">
+                        <div class="icon"><i class="fa fa-bar-chart"></i></div>
+                        <h4 class="title"><a href="">Sobre la solicitud de matrícula</a></h4>
+                        <p class="description text-justify">La solicitud de ingreso se realiza por escrito al Coordinador
+                            del Programa, y debe estar acompañada de una foto carnet (2 cm x 2cm),la Carta de Autorización
+                            del Jefe Inmediato, el Aval del Jefe de Proyecto, la planilla de datos personales (Modelo 2)
+                            y la descripción del tema de investigación.</p>
+                    </div>
                 </div>
 
-                <div class="row">
-
-                    <div class="col-lg-6">
-                        <div class="box wow fadeInLeft">
-                            <div class="icon"><i class="fa fa-bar-chart"></i></div>
-                            <h4 class="title"><a href="">Sobre la solicitud de matrícula</a></h4>
-                            <p class="description text-justify">La solicitud de ingreso se realiza por escrito al Coordinador
-                                del Programa, y debe estar acompañada de una foto carnet (2 cm x 2cm),la Carta de Autorización
-                                del Jefe Inmediato, el Aval del Jefe de Proyecto, la planilla de datos personales (Modelo 2)
-                                y la descripción del tema de investigación.</p>
-                        </div>
+                <div class="col-lg-6">
+                    <div class="box wow fadeInRight">
+                        <div class="icon"><i class="fa fa-ticket"></i></div>
+                        <h4 class="title"><a href="">Sobre el Ingreso</a></h4>
+                        <p class="description text-justify">Una vez el Comité Doctoral haya valorado el tema de investigación
+                            presentado, y haya entrevistado al solicitante, siempre que se cumplan los requisitos de ingreso,
+                            presenta el expediente a la Comisión de Grados Científicos quien valora y determina el ingreso
+                            del aspirante al programa doctoral.</p>
                     </div>
+                </div>
 
-                    <div class="col-lg-6">
-                        <div class="box wow fadeInRight">
-                            <div class="icon"><i class="fa fa-ticket"></i></div>
-                            <h4 class="title"><a href="">Sobre el Ingreso</a></h4>
-                            <p class="description text-justify">Una vez el Comité Doctoral haya valorado el tema de investigación
-                                presentado, y haya entrevistado al solicitante, siempre que se cumplan los requisitos de ingreso,
-                                presenta el expediente a la Comisión de Grados Científicos quien valora y determina el ingreso
-                                del aspirante al programa doctoral.</p>
-                        </div>
+                <div class="col-lg-6">
+                    <div class="box wow fadeInLeft" data-wow-delay="0.2s">
+                        <div class="icon"><i class="fa fa-copy"></i></div>
+                        <h4 class="title"><a href="">Sobre los exámenes de mínimo</a></h4>
+                        <p class="description text-justify">Los mínimos de Idioma Extranjero y de Problemas Sociales de
+                            la Ciencia y la Tecnología son obligatorios, el de la especialidad puede convalidarse, demostrando
+                            los conocimientos requeridos del componente teórico metodológico.</p>
                     </div>
+                </div>
 
-                    <div class="col-lg-6">
-                        <div class="box wow fadeInLeft" data-wow-delay="0.2s">
-                            <div class="icon"><i class="fa fa-copy"></i></div>
-                            <h4 class="title"><a href="">Sobre los exámenes de mínimo</a></h4>
-                            <p class="description text-justify">Los mínimos de Idioma Extranjero y de Problemas Sociales de
-                                la Ciencia y la Tecnología son obligatorios, el de la especialidad puede convalidarse, demostrando
-                                los conocimientos requeridos del componente teórico metodológico.</p>
-                        </div>
+                <div class="col-lg-6">
+                    <div class="box wow fadeInRight" data-wow-delay="0.2s">
+                        <div class="icon"><i class="fa fa-graduation-cap"></i></div>
+                        <h4 class="title"><a href="">Sobre la defensa de la tesis.</a></h4>
+                        <p class="description text-justify">La defensa de la tesis se realiza una vez el doctorando haya
+                            vencido los exámenes de mínimo, las publicaciones (al menos dos, y una en grupos I o II),
+                            el ejercicio de predefensa, los eventos requeridos por el programa y a solicitud de los tutores
+                            se presente al Tribunal Nacional Permanente en cuestión.</p>
                     </div>
-
-                    <div class="col-lg-6">
-                        <div class="box wow fadeInRight" data-wow-delay="0.2s">
-                            <div class="icon"><i class="fa fa-graduation-cap"></i></div>
-                            <h4 class="title"><a href="">Sobre la defensa de la tesis.</a></h4>
-                            <p class="description text-justify">La defensa de la tesis se realiza una vez el doctorando haya
-                                vencido los exámenes de mínimo, las publicaciones (al menos dos, y una en grupos I o II),
-                                el ejercicio de predefensa, los eventos requeridos por el programa y a solicitud de los tutores
-                                se presente al Tribunal Nacional Permanente en cuestión.</p>
-                        </div>
-                    </div>
-
                 </div>
 
             </div>
-        </section><!-- #services -->
+
+        </div>
+    </section><!-- #services -->
     {% endif %}
 
 
@@ -356,55 +360,55 @@
       News Section
     ============================-->
     {% if news %}
-        <section id="call-to-action" class="wow fadeInUp">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12 text-center text-lg-left">
-                        <h3 class="cta-title">Decreto Ley No. 372</h3>
-                        <p class="cta-text"> El grado científico de Doctor en determinada área del
-                            conocimiento se otorga a los graduados de nivel universitario que
-                            contribuyen significativamente al desarrollo del conocimiento en su tema
-                            de investigación y satisfacen a plenitud los requisitos y las evaluaciones
-                            correspondientes de sus programas de doctorados.
+    <section id="call-to-action" class="wow fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center text-lg-left">
+                    <h3 class="cta-title">Decreto Ley No. 372</h3>
+                    <p class="cta-text"> El grado científico de Doctor en determinada área del
+                        conocimiento se otorga a los graduados de nivel universitario que
+                        contribuyen significativamente al desarrollo del conocimiento en su tema
+                        de investigación y satisfacen a plenitud los requisitos y las evaluaciones
+                        correspondientes de sus programas de doctorados.
 
-                            .</p>
-                    </div>
-
+                        .</p>
                 </div>
 
             </div>
-        </section><!-- #call-to-action -->
 
-        <section id="news">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Noticias</h2>
+        </div>
+    </section><!-- #call-to-action -->
+
+    <section id="news">
+        <div class="container">
+            <div class="section-header">
+                <h2>Noticias</h2>
+            </div>
+
+            {% for new in news %}
+
+            <div class="row pt-2">
+                <div class="alert alert-warning align-items-baseline col-md-12">
+                    <h4 class="text-center" title="{{ new.title }}">{{ new.title }}</h4>
                 </div>
 
-                {% for new in news %}
+            </div>
+            <div class="row pb-3 align-items-stretch">
+                <div class="col-md-10 offset-1">
+                    <span class="small pb-3">{{ new.date|date:'d-m-Y' }}</span>
 
-                    <div class="row pt-2">
-                        <div class="alert alert-warning align-items-baseline col-md-12">
-                            <h4 class="text-center" title="{{ new.title }}">{{ new.title }}</h4>
-                        </div>
-
-                    </div>
-                    <div class="row pb-3 align-items-stretch">
-                        <div class="col-md-10 offset-1">
-                            <span class="small pb-3">{{ new.date|date:'d-m-Y' }}</span>
-
-                            <p class="text-justify">
-                                {% autoescape off %}
-                                    {{ new.body }}
-                                {% endautoescape %}
-                            </p>
-                        </div>
-
-                    </div>
-                {% endfor %}
+                    <p class="text-justify">
+                        {% autoescape off %}
+                        {{ new.body }}
+                        {% endautoescape %}
+                    </p>
+                </div>
 
             </div>
-        </section>
+            {% endfor %}
+
+        </div>
+    </section>
 
     {% endif %}
 
@@ -413,6 +417,7 @@
     <!--==========================
       Call To Action Section
     ============================-->
+    {% if announcements %}
     <section id="call-to-action" class="wow fadeInUp">
         <div class="container">
             <div class="row">
@@ -431,6 +436,127 @@
 
         </div>
     </section><!-- #call-to-action -->
+
+    <section id="announcements" class="wow fadeInUp pt-3">
+        <div class="container">
+            <div class="section-header">
+                <h2>Convocatorias</h2>
+            </div>
+
+            {% for announcement in announcements %}
+
+            <div class="row pt-2">
+                <div class="alert alert-warning align-items-baseline col-md-12 text-center">
+                    <h4 class="" title="{{ announcement.phdstudent.student }}">Defensa de la tesis "{{ announcement.phd_student.phdstudentthesis|capfirst }}"</h4>
+                    <span class="small pb-3">Fecha: {{ announcement.date|date:'d-m-Y' }}, Hora: {{ announcement.date|time:'H:i' }},
+                        Modalidad: {{ announcement.type }}, Lugar: {{ announcement.place|capfirst }}</span>
+                </div>
+
+            </div>
+            <div class="row pb-3 align-items-stretch">
+                <div class="col-md-10 offset-1">
+
+
+                    <p class="text-justify">
+                        {% autoescape off %}
+                        {{ announcement.text }}
+                        {% endautoescape %}
+                    </p>
+
+                </div>
+
+            </div>
+            <div class="row pb-3 text-center align-items-stretch">
+                {% announcement_is_on_time announcement.id as announcement_on_time %}
+                <div class="col-md-3 offset-1">
+
+
+                    <a class="text-primary" title="Descargar tesis"  href="{{ announcement.phd_student.phdstudentthesis.file.url }}"> <i class="fa fa-download"></i></a>
+
+                </div>
+                {% if announcement_on_time %}
+                <div class="col-md-4">
+
+                    <a class="text-primary" href="" title=" Comentar tesis"  data-toggle="modal" data-target="#modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}"><i class="fa fa-comment"></i></a>
+
+                </div>
+                {% endif %}
+                <div class="col-md-3">
+
+                    <a class="text-primary" href="" title="Ver comentarios"> <i class="fa fa-comments"></i></a>
+
+                </div>
+
+            </div>
+            <div class="modal fade" id="modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}" >
+                <div class="modal-lg modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Comentario</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="frm_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}" enctype="multipart/form-data" data="{{ announcement.phd_student.phdstudentthesis.id }}" method="post">
+
+                            <div class="modal-body">
+                                <p class="text-sm">Nuevo comentario de la tesis "{{ announcement.phd_student.phdstudentthesis|capfirst }}"</p>
+                                {% csrf_token %}
+                                <input type="hidden" name="thesis" value="{{ announcement.phd_student.phdstudentthesis.id }}">
+                                <div class="form-row">
+                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                        <input type="text" class="form-control" name="commenter_name" placeholder="Nombre y apellidos" required>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                        <input type="email" class="form-control" name="commenter_email" placeholder="Correo electrónico" required>
+                                    </div>
+                                </div>
+                                <div class="form-row pt-2">
+                                    <div class="col-12">
+                                        <textarea name="text" class="textarea form-control" id="txt_comment_text_{{ announcement.phd_student.phdstudentthesis.id }}"></textarea>
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-success" id="">Guardar</button>
+                            </div>
+                        </form>
+
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+            {% endfor %}
+
+        </div>
+    </section>
+    {% endif %}
+
+    <section id="call-to-action" class="wow fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center text-lg-left">
+                    <h3 class="cta-title">Decreto Ley No. 372</h3>
+                    <p class="cta-text"> El proceso de formación culmina con la defensa ante el tribunal
+                        designado de una tesis original que demuestre un grado de madurez
+                        científica, su capacidad de enfrentar y resolver problemas complejos de
+                        manera independiente y un profundo dominio teórico y práctico del área
+                        del conocimiento del programa cursado, a través de la exposición del
+                        resultado alcanzado, basado en la solución novedosa de un problema
+                        científico teórico o práctico.</p>
+                </div>
+
+            </div>
+
+        </div>
+    </section><!-- #call-to-action -->
+
+
 
     <!--==========================
       Our Team Section
@@ -515,7 +641,7 @@
     <div class="modal fade" id="modal_request_enter">
         <div class="modal-dialog modal-lg">
             <form class="form" id="frm_auto_request" method="post">
-            {% csrf_token %}
+                {% csrf_token %}
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Solicitar ingreso</h4>
@@ -664,6 +790,10 @@
 <!-- Template Main Javascript File -->
 <script src="{% static 'programs/index/js/main.js' %}"></script>
 
+<script src="{% static 'programs/plugins/summernote/summernote-bs4.js'  %}"></script>
+
+<script src="{% static 'programs/plugins/summernote/lang/summernote-es-ES.js'  %}"></script>
+
 <script>
     $(document).ready(function (){
         const Toast = Swal.mixin({
@@ -672,6 +802,79 @@
             showConfirmButton: false,
             timer: 7000
         });
+        $("textarea[id^='txt_comment_text']").summernote({
+            lang: 'es-Es',
+            placeholder: "Escriba su comentario aquí, es imprescindible que utilice un lenguaje adecuado, acorde con el acto científico que se convoca. :-)",
+            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+            dialogsInBody: true,
+            dialogsFade: true,
+            height: 200,
+            toolbar: [
+                // [groupName, [list of button]]
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                {#['fontname', ['fontname']],#}
+                {#['fontsize', ['fontsize']],#}
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link']],
+            ],
+
+        });
+
+        $(document).on('submit',"form[id*='frm_new_comment']", function (e) {
+                e.preventDefault();
+                thesis_id = $(this).attr('data');
+                var data = new FormData($(this).get(0));
+                $('#frm_new_comment_'+thesis_id)[0].reset();
+
+                var url = "thesis/"+thesis_id+"/new/comment";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].uploaded == 1) {
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Comentario guardado exitosamente'
+                            })
+
+                        } else if(json[0].uploaded == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido guardar el comentario. Errores:'+ json[0].errors
+                            })
+
+                        }
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
+
         $('#frm_auto_request').on('submit', function (e) {
             e.preventDefault();
             $('#modal_request_enter').modal('hide');
