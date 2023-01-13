@@ -131,6 +131,7 @@ urlpatterns = [
     path('ajx/student/<int:student_id>/activity/status/change', views.ajx_change_activity_status, name='ajx_change_activity_status'),
     path('ajx/new/delete', views.ajx_delete_new, name='ajx_delete_new'),
     path('ajx/announcement/delete', views.ajx_delete_announcement, name='ajx_delete_announcement'),
+    path('ajx/comment/delete', views.ajx_rm_phd_thesis_comment, name='ajx_rm_phd_thesis_comment'),
 
     path('ajx/requirenment/<str:scope>/create', views.ajx_new_requirenment, name='ajx_new_requirenment'),
     path('ajx/requirenment/delete', views.ajx_delete_r, name='ajx_delete_r'),
@@ -171,7 +172,8 @@ urlpatterns = [
     path('annoucements/list', views.program_annoucements, name='program_announcements'),
     path('annoucements/<int:announcement_id>/edit', views.edit_phd_announcement, name='edit_phd_announcement'),
 
-    path('thesis/<int:thesis_id>/new/comment', views.ajx_new_phd_thesis_comment, name='ajx_new_phd_thesis_comment')
+    path('thesis/<int:thesis_id>/new/comment', views.ajx_new_phd_thesis_comment, name='ajx_new_phd_thesis_comment'),
+    path('thesis/<int:thesis_id>/comments', views.phd_thesis_comments, name='phd_thesis_comments'),
 
     # path('login', views.mylogin, name='my_login'),
     # path('logout/<str:court_slug>/', views.mylogout, name='my_logout'),

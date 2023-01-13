@@ -20,12 +20,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-9">
-                    <h1>Convocatorias a defensas</h1>
+                    <h1>Comentarios a tesis</h1>
                 </div>
                 <div class="col-sm-3">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Convocatorias</li>
+                        <li class="breadcrumb-item active">Comentarios</li>
                     </ol>
                 </div>
             </div>
@@ -41,7 +41,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Convocatorias realizadas en el programa</h3>
+                        <h3 class="card-title">Comentarios realizados en {{ thesis }}</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -54,13 +54,14 @@
                             </div>
 
                             {% endfor %}
-                        <table id="example1" class="table table-bordered table-striped">
+                        <table id="example1" class="table table-bordered table-striped responsive">
                             <thead>
                             {% user_is_program_cs user program as user_is_program_cs %}
 
                             <tr>
-                                <th>Año</th>
-                                <th class="">Doctorando</th>
+                                <th>Fecha</th>
+                                <th class="">Comenta</th>
+                                <th class="desktop">Comentario</th>
 
                                 {% if user_is_program_cs %}
                                     <th></th>
@@ -68,34 +69,31 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for announcement in announcements %}
+                            {% for comment in comments %}
 
-                                <tr id="tr_announcement_{{ announcement.id }}">
-                                    <td>{{ announcement.date|date:'Y' }} </td>
+                                <tr id="tr_comment_{{ comment.id }}">
+                                    <td>{{ comment.date|date:'Y-m-d' }} </td>
                                     <td class="">
 
-                                            <a>{{ announcement.phd_student.student }}</a>
+                                            <a href="mailto:{{ comment.commenter_email }}">{{ comment.commenter_name }}</a>
 
                                     </td>
+                                    <td>{{ comment|safe }}</td>
 
 
                                     {% if user_is_program_cs %}
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
-
-                                                <a class="btn btn-success btn-sm text-white" href="{% url 'programs:phd_thesis_comments' program.slug announcement.phd_student.phdstudentthesis.id %}" title="Ver comentarios"> <i class="fa fa-list"></i></a>
-                                                <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_phd_announcement' program.slug announcement.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
-                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_announcement_{{ announcement.id }}"><i class="fa fa-eraser"></i></a>
-
+                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_comment_{{ comment.id }}"><i class="fa fa-eraser"></i></a>
                                             </div>
                                         </td>
                                     {% endif %}
                                 </tr>
-                                <div class="modal fade" id="modal_rm_announcement_{{ announcement.id }}">
+                                <div class="modal fade" id="modal_rm_comment_{{ comment.id }}">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h4 class="modal-title">Eliminar línea</h4>
+                                                <h4 class="modal-title">Eliminar comentario</h4>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -107,14 +105,14 @@
 
                                                     </div>
                                                     <div class="col-md-10">
-                                                        <p class="text-center">¿Seguro que desea eliminar la convocatoria de:<br><strong>{{ announcement.phd_student.student }}</strong>?<br>Esto no se puede deshacer&hellip;</p>
+                                                        <p class="text-center">¿Seguro que desea eliminar el comentario a:<br><strong>{{ thesis }}</strong>?<br>Esto no se puede deshacer&hellip;</p>
                                                     </div>
                                                 </div>
 
                                             </div>
                                             <div class="modal-footer justify-content-between">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_announcement_{{ announcement.id }}" data="{{ announcement.id }}">Eliminar</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_comment_{{ comment.id }}" data="{{ comment.id }}">Eliminar</button>
                                             </div>
                                         </div>
                                         <!-- /.modal-content -->
@@ -175,9 +173,9 @@
 
 
 
-                $(document).on('click',"button[id*='btn_rm_announcement']", function () {
-                    var  announcement_id =$(this).attr('data');
-                    var url = "{% url 'programs:ajx_delete_announcement' program.slug  %}";
+                $(document).on('click',"button[id*='btn_rm_comment']", function () {
+                    var  comment_id =$(this).attr('data');
+                    var url = "{% url 'programs:ajx_rm_phd_thesis_comment' program.slug  %}";
 
                     {#$('#modal_rm_line_{{ line.id }}').modal('hide');#}
 
@@ -185,7 +183,7 @@
                         url : url,
                         type : "POST", // http method
                         data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                            'announcement_id':announcement_id,
+                            'comment_id':comment_id,
                         }, // data sent with the post request
 
                         // handle a successful response
@@ -193,18 +191,18 @@
 
                             if (json[0].deleted == 1) {
 
-                                var row = myTable.row( $('#tr_announcement_'+announcement_id) );
+                                var row = myTable.row( $('#tr_comment_'+comment_id) );
                                 row.remove().draw();
 
                                 Toast.fire({
                                     type: 'success',
-                                    title: 'Convocatoria eliminada exitosamente'
+                                    title: 'Comentario eliminado exitosamente'
                                 });
 
                             } else if(json[0].deleted == 0){
                                 Toast.fire({
                                     type: 'error',
-                                    title: 'No se ha podido eliminar la convocatoria seleccionada.'
+                                    title: 'No se ha podido eliminar el comentario seleccionado.'
                                 })
 
                             }

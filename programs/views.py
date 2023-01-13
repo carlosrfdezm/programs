@@ -30,7 +30,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
     FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message, CGCDocument, \
-    ProgramSpeciality, New, MessageSended, Requester, PhdStudentThesis, PhdAnnouncement
+    ProgramSpeciality, New, MessageSended, Requester, PhdStudentThesis, PhdAnnouncement, PhdThesisComment
 from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
@@ -758,6 +758,23 @@ def ajx_rm_phd_thesis(request, program_slug, student_id):
                 json.dumps([{'deleted': '0'}]),
                 content_type="application/json")
 
+@login_required
+def ajx_rm_phd_thesis_comment(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+    comment = PhdThesisComment.objects.get(pk=request.POST['comment_id'])
+
+    if request.method == 'POST':
+
+        try:
+            comment.delete()
+
+            return HttpResponse(
+                json.dumps([{'deleted': '1'}]),
+                content_type="application/json")
+        except:
+            return HttpResponse(
+                json.dumps([{'deleted': '0'}]),
+                content_type="application/json")
 
 
 @login_required
@@ -831,6 +848,17 @@ def students_list(request, program_slug, scope):
 
     else:
         return error_500(request, program, 'Usted no tiene acceso a esta página')
+
+@login_required
+def phd_thesis_comments(request, program_slug, thesis_id):
+    program = Program.objects.get(slug=program_slug)
+    context = {
+        'program':program,
+        'comments': PhdThesisComment.objects.filter(thesis=PhdStudentThesis.objects.get(pk=thesis_id)),
+        'member': ProgramMember.objects.get(user=request.user, program=program),
+    }
+    return render(request, 'programs/comments_list.html', context)
+
 
 
 @login_required
