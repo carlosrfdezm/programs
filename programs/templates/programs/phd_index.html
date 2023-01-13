@@ -98,7 +98,7 @@
                 <li><a href="#news">Noticias</a></li>
                 {% endif %}
                 {% if announcements %}
-                <li><a href="#announcements">Convocatorias</a></li>
+                <li><a href="#announcements">Próximas defensas</a></li>
                 {% endif %}
 
                 <li><a href="#contact">Login</a></li>
@@ -440,16 +440,29 @@
     <section id="announcements" class="wow fadeInUp pt-3">
         <div class="container">
             <div class="section-header">
-                <h2>Convocatorias</h2>
+                <h2>Próximas defensas</h2>
             </div>
 
             {% for announcement in announcements %}
 
             <div class="row pt-2">
                 <div class="alert alert-warning align-items-baseline col-md-12 text-center">
-                    <h4 class="" title="{{ announcement.phdstudent.student }}">Defensa de la tesis "{{ announcement.phd_student.phdstudentthesis|capfirst }}"</h4>
-                    <span class="small pb-3">Fecha: {{ announcement.date|date:'d-m-Y' }}, Hora: {{ announcement.date|time:'H:i' }},
-                        Modalidad: {{ announcement.type }}, Lugar: {{ announcement.place|capfirst }}</span>
+                    <h4 class="" title="{{ announcement.phdstudent.student }}">Defensa de la tesis "{{ announcement.phd_student.phdstudentthesis|capfirst }}" de {{ announcement.phd_student.student|capfirst }} </h4>
+                    <span class="small pb-3">
+                        <strong>Tutores:</strong>
+
+                        {% for tuthor in announcement.phd_student.tuthor_set.all %}
+                           {% if forloop.last %}
+                            Dr.C. {{ tuthor }}
+                           {% else %}
+                            Dr.C. {{ tuthor }},
+                           {% endif %}
+                         {% endfor %}
+
+
+                    </span><br>
+                    <span class="small pb-3"><strong>Fecha:</strong> {{ announcement.date|date:'d-m-Y' }},<strong>Hora:</strong>  {{ announcement.date|time:'H:i' }},
+                        <strong>Modalidad: </strong> {{ announcement.type }}, <strong>Lugar: </strong> {{ announcement.place|capfirst }}</span>
                 </div>
 
             </div>
@@ -468,24 +481,20 @@
             </div>
             <div class="row pb-3 text-center align-items-stretch">
                 {% announcement_is_on_time announcement.id as announcement_on_time %}
-                <div class="col-md-3 offset-1">
+                <div class="col-md-6 offset-1">
 
 
-                    <a class="text-primary" title="Descargar tesis"  href="{{ announcement.phd_student.phdstudentthesis.file.url }}"> <i class="fa fa-download"></i></a>
+                    <a class="text-primary" title="Descargar tesis" target="_blank" href="{{ announcement.phd_student.phdstudentthesis.file.url }}"> <i class="fa fa-download"></i> Descargar</a>
 
                 </div>
                 {% if announcement_on_time %}
                 <div class="col-md-4">
 
-                    <a class="text-primary" href="" title=" Comentar tesis"  data-toggle="modal" data-target="#modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}"><i class="fa fa-comment"></i></a>
+                    <a class="text-primary" href="" title=" Comentar tesis"  data-toggle="modal" data-target="#modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}"><i class="fa fa-comment"></i> Comentar</a>
 
                 </div>
                 {% endif %}
-                <div class="col-md-3">
 
-                    <a class="text-primary" href="" title="Ver comentarios"> <i class="fa fa-comments"></i></a>
-
-                </div>
 
             </div>
             <div class="modal fade" id="modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}" >
