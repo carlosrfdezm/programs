@@ -717,6 +717,7 @@ def ajx_new_phd_thesis(request, program_slug, student_id):
                 json.dumps([{'uploaded': '1', 'url':thesis.file.url }]),
                 content_type="application/json")
         else:
+
             return HttpResponse(
                 json.dumps([{'uploaded': '0', 'errors':thesis_form.errors }]),
                 content_type="application/json")

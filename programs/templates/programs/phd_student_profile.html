@@ -480,6 +480,51 @@
                                     <!-- /.post -->
                                     {% endfor %}
 
+                                    <tr>
+                                        <td class="text-center">
+                                            <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+
+                                        </td>
+                                        <td class="text-center">
+                                            <p>Tesis lista para defensa</p>
+                                        </td>
+                                        <td class="text-center">
+                                            {% if phd_student.phdstudentthesis %}
+
+                                            <div class="btn-group btn-group-sm" id="div_btn_thesis">
+                                                <a class="btn btn-sm btn-success" target="_blank" href="{{ phd_student.phdstudentthesis.file.url }}" id="btn_see_thesis"  title="Ver documento"><i class="fa fa-eye"></i> </a>
+                                                <button type="button" class="btn btn-sm btn-warning disabled" id="btn_upgrade_thesis" title="Actualizar documento"><i class="fa fa-edit"></i> </button>
+                                                <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal_rm_thesis"  title="Eliminar documento"><i class="fa fa-eraser"></i> </button>
+
+                                            </div>
+
+
+
+                                            {% else %}
+                                            <button type="button" class="btn btn-sm btn-primary" id="btn_up_thesis" data-toggle="modal" data-target="#modal_up_thesis" ><i class="fa fa-upload"></i> </button>
+
+                                            {% endif %}
+
+                                        </td>
+                                        <td class="text-center">
+
+
+
+                                                {% if phd_student.phdstudentthesis %}
+                                                    <i id="i_thesis_status" class="text-success fa fa-toggle-on" title="Documento entregado"></i>
+                                                {% else %}
+                                                    <i id="i_thesis_status" class="text-danger fa fa-toggle-off" title="Documento faltante"></i>
+                                                {% endif %}
+
+
+                                        </td>
+                                        <td class="text-center">
+
+                                            -------------------
+
+                                        </td>
+                                    </tr>
+
                                     </tbody>
 
 
@@ -563,9 +608,74 @@
                                     <!-- /.post -->
                                     {% endfor %}
 
+
+
                                     </tbody>
 
                                 </table>
+
+                                <div class="modal fade" id="modal_up_thesis" >
+                                    <div class="modal-lg modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Tesis lista para defensa</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form id="frm_upload_thesis" enctype="multipart/form-data" method="post">
+
+                                                <div class="modal-body">
+                                                    <p class="text-sm">Subir copia digital de la tesis lista para defensa</p>
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="phd_student" value="{{ phd_student.id }}">
+                                                    <input type="hidden" name="title" value="{{ phd_student.phdstudenttheme }}">
+                                                    <input type="file" id="inp_thesis" name="file" accept=".pdf" required>
+
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-success" id="">Guardar</button>
+                                                </div>
+                                            </form>
+
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+                                <div class="modal fade" id="modal_rm_thesis">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Tesis</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <p class="text-center">¿Seguro que desea eliminar la copia digital de la tesis?
+                                                            <br>Siempre podrá agregarlo nuevamente&hellip;</p>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal"  id="btn_rm_thesis">Eliminar</button>
+                                            </div>
+
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
 
                                 <!-- Post -->
 
@@ -680,7 +790,7 @@
                                         </div>
                                     </div>
 
-                                     {% if program.type == 'phd' %}
+                                    {% if program.type == 'phd' %}
                                     <div class="form-group row">
                                         <label for="txtTheme" class="col-sm-2 col-form-label">Tema</label>
                                         <div class="col-sm-10">
@@ -744,6 +854,66 @@
                 showConfirmButton: false,
                 timer: 7000
             });
+
+            $(document).on('submit',"form[id*='frm_upload_thesis']", function (e) {
+                e.preventDefault();
+                var data = new FormData($(this).get(0));
+                $('#frm_upload_thesis')[0].reset();
+
+                var url = "{% url 'programs:ajx_new_phd_thesis' program.slug student.id %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].uploaded == 1) {
+                            var div = '<div class="btn-group btn-group-sm" id="div_btn_thesis">\n' +
+                                '                                                                    <a class="btn btn-sm btn-success" id="btn_see_thesis" target="_blank" href="'+json[0].url+'" title="Ver documento"><i class="fa fa-eye"></i> </a>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-warning disabled" id="btn_upgrade_thesis" title="Editar documento"><i class="fa fa-edit"></i> </button>\n' +
+                                '                                                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal_rm_thesis" title="Eliminar documento"><i class="fa fa-eraser"></i> </button>\n' +
+                                '                                                                </div>'
+
+                            $('#btn_up_thesis').replaceWith(div);
+                            $('.modal').modal('hide');
+                            $('#i_thesis_status').replaceWith('<i id="i_thesis_status" class="text-success fa fa-toggle-on" title="Documento entregado"></i>');
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Documento actualizado exitosamente'
+                            })
+
+                        } else if(json[0].uploaded == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido subir la tesis. Errores:'+ json[0].errors
+                            })
+
+                        }
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
+
             $(document).on('keyup','#inp_email', function () {
                 var email = $('#inp_email').val();
                 var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
@@ -1201,6 +1371,56 @@
 
                 }
                 $('#li_edit_profile').remove();
+
+            });
+            $(document).on('click',"#btn_rm_thesis",function () {
+                var url = "{% url 'programs:ajx_rm_phd_thesis' program.slug phd_student.id %}";
+
+                $('#modal_rm_thesis').modal('hide');
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+
+
+                            $('#div_btn_thesis').replaceWith('<button type="button" class="btn btn-sm btn-primary" id="btn_up_thesis" data-toggle="modal" data-target="#modal_up_thesis" ><i class="fa fa-upload"></i> </button>');
+                            $('#i_thesis_status').replaceWith('<i id="i_thesis_status" class="text-danger fa fa-toggle-off" title="Documento faltante"></i>')
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Tesis eliminada exitosamente'
+                            });
+
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar la tesis.'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+                $(div_selector).remove();
 
             });
             $('#a_tab_docs').click(function (){
