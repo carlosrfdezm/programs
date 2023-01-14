@@ -857,6 +857,7 @@ def phd_thesis_comments(request, program_slug, thesis_id):
         'program':program,
         'comments': PhdThesisComment.objects.filter(thesis=PhdStudentThesis.objects.get(pk=thesis_id)),
         'member': ProgramMember.objects.get(user=request.user, program=program),
+        'thesis': PhdStudentThesis.objects.get(pk=thesis_id),
     }
     return render(request, 'programs/comments_list.html', context)
 
@@ -5841,6 +5842,69 @@ def docx_program_report(request, program_slug):
             document.add_heading('No hay profesores registrados en el claustro del programa', level=5)
 
         docname = 'Reporte_Programa_'+program.slug.upper() + str(now().year) + '_' + str(now().month) + '.docx'
+        # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
+        program_path = MEDIA_ROOT + '/program_{0}'.format(program_slug)
+        docpath = MEDIA_ROOT + '/program_{0}/{1}'.format(program_slug, docname)
+        try:
+            document.save(docpath)
+        except:
+            try:
+                if os.path.isdir(program_path):
+                    document.save(docpath)
+                else:
+                    os.mkdir(program_path)
+                    document.save(docpath)
+
+            except:
+                return error_500(request, program, "Ha ocurrido un error al intentar guardar el documento solicitado")
+
+        fs = FileSystemStorage()
+
+        filename = docpath
+
+        if fs.exists(filename):
+
+            with fs.open(filename) as docx:
+                response = HttpResponse(docx, content_type='application/docx')
+                response['Content-Disposition'] = 'attachment; filename="'+docname+ '"'
+                return response
+        else:
+            return error_500(request, 'No se ha encontrado el archivo del reporte correspondiente')
+
+    else:
+        return error_500(request,program, 'Solo el Coordinador y el Secretario pueden acceder a la vista de reportes')
+
+
+@login_required
+def docx_thesis_comments(request, program_slug, thesis_id):
+    program = Program.objects.get(slug=program_slug)
+    thesis = PhdStudentThesis.objects.get(pk=thesis_id)
+    if user_is_program_cs(request.user, program):
+        document = Document()
+        document.add_heading(program.full_name, level=1)
+        document.add_heading('Comentarios realizados a '+thesis.title, level=2)
+
+
+        if program.type == 'phd':
+
+            if PhdThesisComment.objects.filter(thesis =thesis):
+                table = document.add_table(rows=1, cols=1)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Comentario (Fecha, Nombre , Correo): Texto del comentario'
+
+                for comment in PhdThesisComment.objects.filter(thesis =thesis):
+
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = '({0}, {1}, {2}): {3}'.format(str(comment.date), str(comment.commenter_name), str(comment.commenter_email),str(comment.text))
+            else:
+                document.add_heading('No se realizaron comentarios a esta tesis.', level=5)
+
+        elif program.type == 'msc':
+            pass
+        elif program.type == 'dip':
+           pass
+
+        docname = 'Comentarios_'+ thesis.title + '.docx'
         # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
         program_path = MEDIA_ROOT + '/program_{0}'.format(program_slug)
         docpath = MEDIA_ROOT + '/program_{0}/{1}'.format(program_slug, docname)

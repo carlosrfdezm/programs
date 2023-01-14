@@ -173,6 +173,7 @@ urlpatterns = [
     path('annoucements/<int:announcement_id>/edit', views.edit_phd_announcement, name='edit_phd_announcement'),
 
     path('thesis/<int:thesis_id>/new/comment', views.ajx_new_phd_thesis_comment, name='ajx_new_phd_thesis_comment'),
+    path('thesis/<int:thesis_id>/download/comments', views.docx_thesis_comments, name='docx_thesis_comments'),
     path('thesis/<int:thesis_id>/comments', views.phd_thesis_comments, name='phd_thesis_comments'),
 
     # path('login', views.mylogin, name='my_login'),

@@ -522,7 +522,7 @@
                                 </div>
                                 <div class="form-row pt-2">
                                     <div class="col-12">
-                                        <textarea name="text" class="textarea form-control" id="txt_comment_text_{{ announcement.phd_student.phdstudentthesis.id }}"></textarea>
+                                        <textarea name="text" class="textarea form-control" id="txt_comment_text_{{ announcement.phd_student.phdstudentthesis.id }}" placeholder="Escriba el comentario aquí, debe ser breve y respetuoso."></textarea>
 
                                     </div>
                                 </div>
@@ -811,26 +811,7 @@
             showConfirmButton: false,
             timer: 7000
         });
-        $("textarea[id^='txt_comment_text']").summernote({
-            lang: 'es-Es',
-            placeholder: "Escriba su comentario aquí, es imprescindible que utilice un lenguaje adecuado, acorde con el acto científico que se convoca. :-)",
-            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
-            dialogsInBody: true,
-            dialogsFade: true,
-            height: 200,
-            toolbar: [
-                // [groupName, [list of button]]
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                {#['fontname', ['fontname']],#}
-                {#['fontsize', ['fontsize']],#}
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-                ['insert', ['link']],
-            ],
 
-        });
 
         $(document).on('submit',"form[id*='frm_new_comment']", function (e) {
                 e.preventDefault();
