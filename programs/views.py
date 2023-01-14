@@ -5890,7 +5890,7 @@ def docx_thesis_comments(request, program_slug, thesis_id):
             if PhdThesisComment.objects.filter(thesis =thesis):
                 table = document.add_table(rows=1, cols=1)
                 hdr_cells = table.rows[0].cells
-                hdr_cells[0].text = 'Comentario (Fecha, Nombre , Correo): Texto del comentario'
+                hdr_cells[0].text = '(Fecha, Nombre , Correo): Texto del comentario'
 
                 for comment in PhdThesisComment.objects.filter(thesis =thesis):
 
