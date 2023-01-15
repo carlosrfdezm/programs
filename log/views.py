@@ -14,7 +14,7 @@ from programas.settings import INSTITUTION_FULL_NAME, INSTITUTION_SHORT_NAME, IN
     INSTITUTION_PHONE, INSTITUTION_HAS_CGC, INSTITUTION_HAS_POSTG
 from programs.apps import ProgramsConfig
 from programs.models import Program, ProgramMember, CGC_Member, Student, MscStudent, PhdStudent, DipStudent, \
-    PostgMember
+    PostgMember, PhdAnnouncement
 
 
 def index(request):
@@ -28,6 +28,7 @@ def index(request):
         'institution_phone': INSTITUTION_PHONE,
         'institution_has_cgc': INSTITUTION_HAS_CGC,
         'institution_has_postg': INSTITUTION_HAS_POSTG,
+        'next_phd_announcements': PhdAnnouncement.objects.filter(date__gte = now())
     }
     if request.user.is_authenticated:
         logout(request)

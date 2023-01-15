@@ -80,7 +80,9 @@
             <h2>Sistema de <br><span>gestión</span><br>de Programas Académicos</h2>
             <div>
                 <a href="#services" class="btn-get-started scrollto">Programas</a>
-                {#          <a href="#services" class="btn-services scrollto">Servicios</a>#}
+                {% if next_phd_annoucements %}
+                <a href="#next_announcements" class="btn-services scrollto">Próximas defensas</a>
+                {% endif %}
             </div>
         </div>
 
@@ -282,7 +284,41 @@
         </div>
     </section><!-- End Team Section -->
 
+    {% if next_phd_announcements %}
+    <!-- ======= Announcements Section ======= -->
+    <section id="next_announcements" class="section-bg">
+        <div class="container">
 
+            <header class="section-header">
+                <h3>Programas</h3>
+                {% if next_phd_announcements %}
+                <h4 class="text-center">Defensas de tesis doctorales</h4>
+                {% endif %}
+            </header>
+
+            <div class="row">
+                {% for announcement in next_phd_announcements %}
+
+
+                    <div class="col-sm-12 col-md-12 col-lg-12 {% cycle 'offset-lg-1 wow' 'wow' %} bounceInUp" data-wow-duration="1.4s" >
+                            <div class="box" style="height: 165px">
+                                <div class="icon"><i class="{{ program.icon }}" style="color: #ff689b;"></i></div>
+                                <h4 class="title"><a href="">{{ announcement.phd_student.phdstudentthesis|capfirst }}</a> de {{ announcement.phd_student.student }} </h4>
+                                <p class="description">{{ announcement }}</p>
+                            </div>
+
+                    </div>
+
+                {% endfor %}
+                {% resetcycle %}
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- End Announcements Section -->
+    {% endif %}
 </main><!-- End #main -->
 
 <!-- ======= Footer ======= -->

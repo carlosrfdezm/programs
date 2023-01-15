@@ -52,7 +52,7 @@ def index(request, program_slug):
             context['init_requirenments']=program.programfiledoc_set.filter(type='student')
 
         if program.type == 'phd':
-            context['announcements'] = PhdAnnouncement.objects.filter( phd_student__student__program = program )
+            context['announcements'] = PhdAnnouncement.objects.filter( phd_student__student__program = program, date__gte = now() )
             return render(request, 'programs/phd_index.html', context)
         elif program.type == 'msc':
             return render(request, 'programs/msc_index.html', context)
