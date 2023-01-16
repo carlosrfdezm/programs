@@ -1,4 +1,5 @@
 {% load static %}
+{% load extra_tags %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,6 +25,8 @@
     <link href="{% static '/log/vendor/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
     <link href="{% static '/log/vendor/owl.carousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
     <link href="{% static '/log/vendor/venobox/venobox.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+    
 
     <!-- Template Main CSS File -->
     <link href="{% static '/log/css/style.css' %}" rel="stylesheet">
@@ -55,10 +58,10 @@
                 <li><a href="#services">Programas</a></li>
                 {#          <li><a href="#portfolio">Servicios</a></li>#}
                 {% if  institution_has_cgc %}
-                    <li><a href="{% url 'cgc:cgc_index' %}" title="Comisión de Grados Científicos">Comisión de Grados</a></li>
+                <li><a href="{% url 'cgc:cgc_index' %}" title="Comisión de Grados Científicos">Comisión de Grados</a></li>
                 {% endif %}
                 {% if  institution_has_postg %}
-                    <li><a href="{% url 'postg:postg_index' %}" title="Acceso de la dirección de Postgrado">Dirección de Posgrado</a></li>
+                <li><a href="{% url 'postg:postg_index' %}" title="Acceso de la dirección de Postgrado">Dirección de Posgrado</a></li>
                 {% endif %}
 
 
@@ -80,7 +83,7 @@
             <h2>Sistema de <br><span>gestión</span><br>de Programas Académicos</h2>
             <div>
                 <a href="#services" class="btn-get-started scrollto">Programas</a>
-                {% if next_phd_annoucements %}
+                {% if next_phd_announcements %}
                 <a href="#next_announcements" class="btn-services scrollto">Próximas defensas</a>
                 {% endif %}
             </div>
@@ -152,29 +155,29 @@
                 {% for program in programs %}
 
 
-                    <div class="col-md-6 col-lg-5 {% cycle 'offset-lg-1 wow' 'wow' %} bounceInUp" data-wow-duration="1.4s" >
-                        {% if program.type == 'phd' %}
-                            <div class="box" style="height: 165px">
-                                <div class="icon"><i class="{{ program.icon }}" style="color: #ff689b;"></i></div>
-                                <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
-                                <p class="description">{{ program.description }}</p>
-                            </div>
-                        {% elif program.type == 'msc' %}
-
-                            <div class="box" style="height: 165px">
-                                <div class="icon"><i class="{{ program.icon }}" style="color: #14bc12;"></i></div>
-                                <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
-                                <p class="description">{{ program.description }}</p>
-                            </div>
-                        {% elif program.type == 'dip' %}
-
-                            <div class="box" style="height: 165px">
-                                <div class="icon"><i class="{{ program.icon }}" style="color: #0b0fff;"></i></div>
-                                <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
-                                <p class="description">{{ program.description }}</p>
-                            </div>
-                        {% endif %}
+                <div class="col-md-6 col-lg-5 {% cycle 'offset-lg-1 wow' 'wow' %} bounceInUp" data-wow-duration="1.4s" >
+                    {% if program.type == 'phd' %}
+                    <div class="box" style="height: 165px">
+                        <div class="icon"><i class="{{ program.icon }}" style="color: #ff689b;"></i></div>
+                        <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
+                        <p class="description">{{ program.description }}</p>
                     </div>
+                    {% elif program.type == 'msc' %}
+
+                    <div class="box" style="height: 165px">
+                        <div class="icon"><i class="{{ program.icon }}" style="color: #14bc12;"></i></div>
+                        <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
+                        <p class="description">{{ program.description }}</p>
+                    </div>
+                    {% elif program.type == 'dip' %}
+
+                    <div class="box" style="height: 165px">
+                        <div class="icon"><i class="{{ program.icon }}" style="color: #0b0fff;"></i></div>
+                        <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
+                        <p class="description">{{ program.description }}</p>
+                    </div>
+                    {% endif %}
+                </div>
 
                 {% endfor %}
                 {% resetcycle %}
@@ -253,29 +256,29 @@
             <div class="row">
                 {% for member in cgc_members %}
 
-                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.{{forloop.counter0}}s">
-                        <div class="member">
-                            {% if member.picture %}
-                                <img src="{% url 'log:cgc_member_picture' member.id %}" class="img-fluid" style="width: 255px; height: 255px;" alt="">
-                            {% elif member.gender == 'f' %}
-                                <img src="{% static 'log/img/team-2.jpg' %}" class="img-fluid" alt="">
-                            {% elif member.gender == 'm' %}
-                                <img src="{% static 'log/img/team-1.jpg' %}" class="img-fluid" alt="">
-                            {% endif %}
-                            <div class="member-info">
-                                <div class="member-info-content">
-                                    <h4>{{member.user.first_name}} {{ member.user.last_name|truncatewords:1 }}</h4>
-                                    <span>{{member.charge}}</span>
-                                    <div class="social">
-                                        <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
-                                        <a href="{{ member.fb_contact }}"><i class="fa fa-facebook"></i></a>
-                                        <a href="{{ member.gp_contact }}"><i class="fa fa-google-plus"></i></a>
-                                        <a href="{{ member.in_contact }}"><i class="fa fa-linkedin"></i></a>
-                                    </div>
+                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.{{forloop.counter0}}s">
+                    <div class="member">
+                        {% if member.picture %}
+                        <img src="{% url 'log:cgc_member_picture' member.id %}" class="img-fluid" style="width: 255px; height: 255px;" alt="">
+                        {% elif member.gender == 'f' %}
+                        <img src="{% static 'log/img/team-2.jpg' %}" class="img-fluid" alt="">
+                        {% elif member.gender == 'm' %}
+                        <img src="{% static 'log/img/team-1.jpg' %}" class="img-fluid" alt="">
+                        {% endif %}
+                        <div class="member-info">
+                            <div class="member-info-content">
+                                <h4>{{member.user.first_name}} {{ member.user.last_name|truncatewords:1 }}</h4>
+                                <span>{{member.charge}}</span>
+                                <div class="social">
+                                    <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
+                                    <a href="{{ member.fb_contact }}"><i class="fa fa-facebook"></i></a>
+                                    <a href="{{ member.gp_contact }}"><i class="fa fa-google-plus"></i></a>
+                                    <a href="{{ member.in_contact }}"><i class="fa fa-linkedin"></i></a>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
                 {% endfor %}
 
 
@@ -300,14 +303,93 @@
                 {% for announcement in next_phd_announcements %}
 
 
-                    <div class="col-sm-12 col-md-12 col-lg-12 {% cycle 'offset-lg-1 wow' 'wow' %} bounceInUp" data-wow-duration="1.4s" >
-                            <div class="box" style="height: 165px">
-                                <div class="icon"><i class="{{ program.icon }}" style="color: #ff689b;"></i></div>
-                                <h4 class="title"><a href="">{{ announcement.phd_student.phdstudentthesis|capfirst }}</a> de {{ announcement.phd_student.student }} </h4>
-                                <p class="description">{{ announcement }}</p>
+                <div class="col-sm-12 col-md-12 col-lg-12 wow bounceInUp pb-1 bordered" data-wow-duration="1.4s" >
+                    <div class="box">
+                        <div class="icon"><i class="{{ announcement.phd_student.student.program.icon }}" style="color: #ff689b;"></i></div>
+                        <h4 class="title">Defensa de la tesis doctoral <a href="{{ announcement.phd_student.phdstudentthesis.file.url }}" target="_blank" title="Descargar la tesis">  "{{ announcement.phd_student.phdstudentthesis|capfirst }}"</a> de {{ announcement.phd_student.student }} </h4>
+                        <span class="small pb-3">
+                        <strong>Tutores:</strong>
+
+                        {% for tuthor in announcement.phd_student.tuthor_set.all %}
+                           {% if forloop.last %}
+                            Dr.C. {{ tuthor }}
+                           {% else %}
+                            Dr.C. {{ tuthor }},
+                           {% endif %}
+                         {% endfor %}
+
+
+
+                    </span>
+                        , <span class="small pb-3"><strong>Fecha:</strong> {{ announcement.date|date:'d-m-Y' }},<strong>Hora:</strong>  {{ announcement.date|time:'H:i' }},
+                        <strong>Modalidad: </strong> {{ announcement.type }}, <strong>Lugar: </strong> {{ announcement.place|capfirst }}</span>
+
+                        <p class="text-justify">{{ announcement|safe }}</p>
+                    </div>
+                    <div class="row pb-3 text-center align-items-stretch">
+                {% announcement_is_on_time announcement.id as announcement_on_time %}
+                <div class="col-md-6 offset-1">
+
+
+                    <a class="text-primary" title="Descargar tesis" target="_blank" href="{{ announcement.phd_student.phdstudentthesis.file.url }}"> <i class="fa fa-download"></i> Descargar</a>
+
+                </div>
+                {% if announcement_on_time %}
+                <div class="col-md-4">
+
+                    <a class="text-primary" href="" title=" Comentar tesis"  data-toggle="modal" data-target="#modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}"><i class="fa fa-comment"></i> Comentar</a>
+
+                </div>
+                {% endif %}
+
+
+            </div>
+
+                </div>
+
+                <div class="modal fade" id="modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}" >
+                <div class="modal-lg modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Comentario</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="frm_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}" enctype="multipart/form-data" data="{{ announcement.phd_student.phdstudentthesis.id }}" method="post">
+
+                            <div class="modal-body">
+                                <p class="text-sm">Nuevo comentario de la tesis "{{ announcement.phd_student.phdstudentthesis|capfirst }}"</p>
+                                {% csrf_token %}
+                                <input type="hidden" name="thesis" value="{{ announcement.phd_student.phdstudentthesis.id }}">
+                                <div class="form-row">
+                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                        <input type="text" class="form-control" name="commenter_name" placeholder="Nombre y apellidos" required>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                        <input type="email" class="form-control" name="commenter_email" placeholder="Correo electrónico" required>
+                                    </div>
+                                </div>
+                                <div class="form-row pt-2">
+                                    <div class="col-12">
+                                        <textarea name="text" class="textarea form-control" id="txt_comment_text_{{ announcement.phd_student.phdstudentthesis.id }}" placeholder="Escriba el comentario aquí, debe ser breve y respetuoso."></textarea>
+
+                                    </div>
+                                </div>
+
+
                             </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-success" id="">Guardar</button>
+                            </div>
+                        </form>
 
                     </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
 
                 {% endfor %}
                 {% resetcycle %}
@@ -397,9 +479,74 @@
 <script src="{% static '/log/vendor/owl.carousel/owl.carousel.min.js' %}"></script>
 <script src="{% static '/log/vendor/waypoints/jquery.waypoints.min.js' %}"></script>
 <script src="{% static '/log/vendor/venobox/venobox.min.js' %}"></script>
+<script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+
 
 <!-- Template Main JS File -->
 <script src="{% static '/log/js/main.js' %}"></script>
+<script>
+    $(document).ready(function(){
+     const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 7000
+        });
+        {% for announcement in next_phd_announcements %}
+     $(document).on('submit',"form[id*='frm_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}']", function (e) {
+                e.preventDefault();
+                thesis_id = $(this).attr('data');
+                var data = new FormData($(this).get(0));
+                $('#frm_new_comment_'+thesis_id)[0].reset();
+
+                var url = "{% url 'programs:ajx_new_phd_thesis_comment' announcement.phd_student.student.program.slug announcement.phd_student.phdstudentthesis.id %}";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].uploaded == 1) {
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Comentario guardado exitosamente'
+                            })
+
+                        } else if(json[0].uploaded == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido guardar el comentario. Errores:'+ json[0].errors
+                            })
+
+                        }
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
+            {% endfor %}
+    });
+</script>
 
 </body>
 

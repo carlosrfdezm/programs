@@ -59,7 +59,7 @@
                             {% user_is_program_cs user program as user_is_program_cs %}
 
                             <tr>
-                                <th>Año</th>
+                                <th>Fecha</th>
                                 <th class="">Doctorando</th>
 
                                 {% if user_is_program_cs %}
@@ -71,7 +71,7 @@
                             {% for announcement in announcements %}
 
                                 <tr id="tr_announcement_{{ announcement.id }}">
-                                    <td>{{ announcement.date|date:'Y' }} </td>
+                                    <td>{{ announcement.date|date:'Y-m-d' }} </td>
                                     <td class="">
 
                                             <a>{{ announcement.phd_student.student }}</a>
