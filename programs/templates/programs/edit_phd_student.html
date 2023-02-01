@@ -141,6 +141,12 @@
 
                                     </select>
                                 </div>
+                                {% else %}
+                                <div class="form-group col-md-3" id="div_workcenter">
+                                        <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>
+                                        <input class="form-control" type="text" id="inp_center" required name="student_center" placeholder="Centro de trabajo del estudiante">
+
+                                    </div>
 
                                 {% endif %}
                                 <div class="form-group col-md-3" id="div_specialty">
@@ -1312,6 +1318,7 @@
                         '                            </div>');
 
                 }
+                else {}
 
             });
             $(document).on('click', "button[id*='btn_up_filedoc']", function (e){
