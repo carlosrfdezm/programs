@@ -7,7 +7,7 @@
         Su solicitud de ingreso a {{ program }}, en {{ protocol }}://{{ domain }}/{{ program.slug }} ha sido recibida.
         Por motivos de seguridad usted debe confirmarla accediendo a
         {{ protocol }}://{{ domain }}/{{ program.slug }}/request/confirm/{{ requester.request_id }}
-        este enlace tiene una validez de 24 horas, pasado ese tiempo usted deberá realizar la solicitud nuevamente.
+        . Este enlace solo funciona una vez.
 
     {% endif %}
 {% endblock %}
