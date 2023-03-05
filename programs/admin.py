@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from programs.models import InvestigationLine, Student, MscStudent, Tuthor, StudentFormationPlan, InnerAreas, \
-    PhdStudent, DipStudent, PostgMember, ProgramSpeciality, New
+    PhdStudent, DipStudent, PostgMember, ProgramSpeciality, New, Requester
 from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember, ProgramFileDoc, ProgramEdition
 
 # Register your models here.
@@ -62,3 +62,8 @@ class PostgMemberAdmin(admin.ModelAdmin):
     list_display = ['user', 'charge']
 
 admin.site.register(PostgMember, PostgMemberAdmin)
+
+class RequesterAdmin(admin.ModelAdmin):
+    list_display = ['__all__']
+
+admin.site.register(Requester)

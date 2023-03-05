@@ -429,6 +429,38 @@
 
                         </ul>
                     </li>
+                    {% elif user_is_program_student %}
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link" title="Documentos públicos del programa y de la Comisión de Grado.">
+                            <i class="nav-icon fas fa-file"></i>
+                            <p>
+                                Documentos
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+
+                            <li class="nav-item">
+                                <a href="{% url 'programs:program_documents' program.slug %}" class="nav-link">
+                                    <i class="fa fa-list-alt nav-icon"></i>
+                                    <p>Documentos (programa)</p>
+                                </a>
+
+                            </li>
+
+
+                            <li class="nav-item">
+                                <a href="{% url 'programs:program_cgc_documents' program.slug %}" class="nav-link">
+                                    <i class="fa fa-list-ol nav-icon"></i>
+                                    <p>Documentos CGC</p>
+                                </a>
+
+                            </li>
+
+
+
+                        </ul>
+                    </li>
                     {% endif %}
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link" title="Noticias del programa">

@@ -106,12 +106,26 @@
             </ul>
         </nav><!-- #nav-menu-container -->
     </div>
+
 </header><!-- #header -->
 
 <!--==========================
   Intro Section
 ============================-->
+<div class="row">
+    {% for message in messages %}
+    <div class="col-sm-10 col-md-10 col-lg-10 offset-1">
+
+        <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            {{ message}}
+        </div>
+    </div>
+
+    {% endfor %}
+</div>
 <section id="intro">
+
 
     <div class="intro-content">
         <h2>{{ program }}</h2>

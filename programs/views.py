@@ -3997,11 +3997,14 @@ def confirm_auto_request(request,program_slug, request_id):
         requester = Requester.objects.get(program=program, request_id=request_id)
         try:
             user = User.objects.get(email=requester.email)
+
             try:
                 Student.objects.get(user=user, program=program)
                 requester.delete()
                 # TODO Devolver template de error en este caso
-                return error_offlogin(request, program, 'Al parecer esa solicitud ya fue procesada previamente')
+                messages.error(request,
+                                 'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
+                return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
             except Student.DoesNotExist:
                 student = Student(
                     user=user,
@@ -4013,8 +4016,6 @@ def confirm_auto_request(request,program_slug, request_id):
                 )
 
                 student.save()
-
-
 
                 utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
 
@@ -4045,8 +4046,6 @@ def confirm_auto_request(request,program_slug, request_id):
                     )
                     student_theme.save()
 
-
-
                 else:
                     return HttpResponse('Tipo de programa aun por crear')
 
@@ -4058,7 +4057,9 @@ def confirm_auto_request(request,program_slug, request_id):
                     )
                     new_student_requirement.save()
                 requester.delete()
-                return success_offlogin(request, program, 'Usted ha confirmado su solicitud , recuerde presentar los requisitos de ingreso exigidos por el programa')
+                messages.success(request,
+                                 'La solicitud se ha confirmado, revise el correo provisto por usted en busca de más orientaciones')
+                return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
         except User.DoesNotExist:
             passwd = program_slug + str(random.randint(1000000, 9999999))
             user = User.objects.create_user(
@@ -4110,6 +4111,8 @@ def confirm_auto_request(request,program_slug, request_id):
             )
 
             new_theme.save()
+            messages.success(request, 'La solicitud se ha confirmado, revise el correo provisto por usted en busca de más orientaciones')
+            return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
         else:
             return HttpResponse('Tipo de programa aun por crear')
 
@@ -4124,7 +4127,9 @@ def confirm_auto_request(request,program_slug, request_id):
         requester.delete()
 
     except Requester.DoesNotExist:
-        return error_offlogin(request, program, 'Al parecer ésa solicitud ya prescribió, o fue procesada previamente')
+        messages.error(request,
+                       'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
+        return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
 
 def error_offlogin(request, program, error_message):
     context = {
