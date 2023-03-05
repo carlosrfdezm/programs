@@ -4866,8 +4866,18 @@ def program_documents(request, program_slug):
             'member':ProgramMember.objects.get(user=request.user, program=program),
         }
         return render(request, 'programs/program_documents_list.html',context)
+
+    elif user_is_program_student(request.user, program):
+        years = []
+        context = {
+            'program': program,
+            'years': sorted(years),
+            'documents': ProgramDocument.objects.filter(program=program, is_public=True),
+            'student': Student.objects.get(program=program, user=request.user)
+        }
+        return render(request, 'programs/program_documents_list.html',context)
     else:
-        return error_500(request,'Usted no puede ver las actas de este programa')
+        return error_500(request,program,'Usted no puede ver los documentos de este programa')
 
 @login_required
 def autoedit_member_profile(request, program_slug, member_id):
@@ -4984,17 +4994,33 @@ def autoedit_student_profile(request, program_slug, student_id):
 @login_required
 def program_cgc_documents(request, program_slug):
     program = Program.objects.get(slug=program_slug)
+    years = []
     if user_is_program_member(request.user, program):
-        years=[]
+
         for document in CGCDocument.objects.filter(is_public=True):
             if not document.year in years:
                 years.append(document.year)
+
 
         context={
             'program':program,
             'years': sorted(years),
             'documents': CGCDocument.objects.filter(is_public=True),
             'member': ProgramMember.objects.get(user=request.user),
+        }
+        return render(request, 'programs/program_cgc_documents_list.html',context)
+    elif user_is_program_student(request.user, program):
+
+        for document in CGCDocument.objects.filter(is_public=True):
+            if not document.year in years:
+                years.append(document.year)
+
+
+        context={
+            'program':program,
+            'years': sorted(years),
+            'documents': CGCDocument.objects.filter(is_public=True),
+            'student': Student.objects.get(user=request.user, program=program),
         }
         return render(request, 'programs/program_cgc_documents_list.html',context)
     else:
@@ -5119,10 +5145,10 @@ def edit_program_doc(request,program_slug, doc_id):
 @login_required
 def program_doc_view(request,program_slug, doc_id):
     program = Program.objects.get(slug=program_slug)
+    document = ProgramDocument.objects.get(pk=doc_id)
 
-    try:
-        member = ProgramMember.objects.get(user=request.user, program=program)
-        document = ProgramDocument.objects.get(pk=doc_id)
+    if user_is_program_member(request.user, program) or (user_is_program_student(request.user, program) and document.is_public):
+
 
         fs = FileSystemStorage()
 
@@ -5151,8 +5177,8 @@ def program_doc_view(request,program_slug, doc_id):
         else:
 
             return error_500(request, program, 'No existe el archivo solicitado')
-    except ProgramMember.DoesNotExist:
-        return error_500(request,program, 'Solo los miembros del claustro pueden ver documentos del mismo')
+    else:
+        return error_500(request,program, 'Solo los miembros del claustro pueden ver todos los documentos del mismo. Los estudiantes solo pueden ver los documentos públicos')
 
 def public_program_doc_view(request, program_slug,doc_id):
     program = Program.objects.get(slug=program_slug)
