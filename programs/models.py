@@ -305,7 +305,7 @@ class DipStudent(models.Model):
 
 class PhdStudent(models.Model):
     student = models.OneToOneField(Student,on_delete=models.CASCADE)
-    status= models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'),('doctorando','Doctorando'), ('graduado', 'Graduado'), ('denegado', 'Denegado')])
+    status= models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'),('doctorando','Doctorando'), ('graduado', 'Graduado'), ('denegado', 'Denegado'), ('baja', 'Baja')])
     category= models.CharField(max_length=15,default='interno', choices=[('interno', 'Interno'),('externo','Externo')])
     center = models.CharField(max_length=150, default='Universidad Agraria de La Habana')
 
