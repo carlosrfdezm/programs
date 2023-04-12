@@ -42,7 +42,7 @@ def user_is_cgc_member(user):
 def user_is_cgc_ps(user):
     try:
         member=CGC_Member.objects.get(user=user)
-        if member.charge == 'Presidente' or member.charge == 'Secretario':
+        if member.charge == 'Presidente' or member.charge == 'Director' or member.charge == 'Secretario':
             return True
         else:
             return False

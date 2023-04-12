@@ -140,7 +140,7 @@ class ProgramBackgrounds(models.Model):
 # modelo de miembros de la CGC
 class CGC_Member(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    charge = models.CharField(max_length=50,choices=[('Presidente','Presidente'),('Secretario','Secretario'),('Miembro','Miembro')], help_text='Cargo', verbose_name='Cargo')
+    charge = models.CharField(max_length=50,choices=[('Presidente','Presidente'),('Director','Director'),('Secretario','Secretario'),('Miembro','Miembro')], help_text='Cargo', verbose_name='Cargo')
     institution= models.CharField(max_length=60,default='Universidad Agraria de La Habana')
     priority= models.SmallIntegerField(help_text="Prioridad del Cargo", choices=[(1,'1'),(2,'2'),(3,'3')])
     fb_contact = models.URLField(help_text='URL del contacto de Facebook',default='https://www.facebook.com',  blank=True)
@@ -150,8 +150,7 @@ class CGC_Member(models.Model):
     picture= models.ImageField(help_text='Foto', upload_to=cgc_photo_directory_path, null=True, blank=True)
     gender=models.CharField(max_length=1, choices=[('f','Femenino'),('m','Masculino')], help_text='Género')
     phone = models.CharField(max_length=50, null=True, blank=True)
-    degree = models.CharField(max_length=100, default='Doctor en Ciencias',
-                              help_text='Grado cientifico')
+    degree = models.CharField(max_length=100, default='Doctor en Ciencias', help_text='Grado cientifico')
     birth_date = models.DateField(default='1960-01-01', help_text='Fecha de nacimiento')
 
 
