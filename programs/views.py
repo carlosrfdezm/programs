@@ -5006,7 +5006,7 @@ def program_cgc_documents(request, program_slug):
             'program':program,
             'years': sorted(years),
             'documents': CGCDocument.objects.filter(is_public=True),
-            'member': ProgramMember.objects.get(user=request.user),
+            'member': ProgramMember.objects.filter(user=request.user).first(),
         }
         return render(request, 'programs/program_cgc_documents_list.html',context)
     elif user_is_program_student(request.user, program):
