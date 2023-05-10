@@ -51,11 +51,8 @@
                             <input type="hidden" name="phd_student" value="{{ student.phdstudent.id }}">
                             <input type="hidden" name="thesis" value="{{ student.phdstudent.phdstudentthesis.id }}">
                             <div class="form-row">
-                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                    {{ announcement_form.type|as_crispy_field }}
 
-                                </div>
-                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                <div class="col-sm-12 col-md-12 col-lg-6">
                                     {{ announcement_form.date|as_crispy_field }}
 
 
@@ -65,7 +62,96 @@
 
                                 </div>
                             </div>
-                            {{ announcement_form.text|as_crispy_field }}
+                            <div class="form-row">
+                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                    {{ announcement_form.type|as_crispy_field }}
+
+                                </div>
+
+                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                    {{ announcement_form.approval_resolution|as_crispy_field }}
+
+                                </div>
+                            </div>
+                            <hr>
+                            <p>Miembros del tribunal:</p>
+                            <div class="form-row">
+                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                    <input class="form-control" type="text" name="cmember_1_name" placeholder="Nombre(s)" required>
+
+                                </div>
+
+                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                    <input class="form-control" type="text" name="cmember_1_lastname" placeholder="Apellidos" required>
+
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                    <input class="form-control" type="text" name="cmember_1_center" placeholder="Centro de procedencia" required>
+
+                                </div>
+                            </div>
+                            <div class="form-row pt-2">
+                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                    <input class="form-control" type="text" name="cmember_2_name" placeholder="Nombre(s)" required>
+
+                                </div>
+
+                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                    <input class="form-control" type="text" name="cmember_2_lastname" placeholder="Apellidos" required>
+
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                    <input class="form-control" type="text" name="cmember_2_center" placeholder="Centro de procedencia" required>
+
+                                </div>
+                            </div>
+                            <div class="form-row pt-2 pb-2">
+                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                    <input class="form-control" type="text" name="cmember_3_name" placeholder="Nombre(s)" required>
+
+                                </div>
+
+                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                    <input class="form-control" type="text" name="cmember_3_lastname" placeholder="Apellidos" required>
+
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                    <input class="form-control" type="text" name="cmember_3_center" placeholder="Centro de procedencia" required>
+
+                                </div>
+                            </div>
+                            <p>Suplentes:</p>
+                            <div class="form-row pt-2">
+                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                    <input class="form-control" type="text" name="smember_1_name" placeholder="Nombre(s)" required>
+
+                                </div>
+
+                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                    <input class="form-control" type="text" name="smember_1_lastname" placeholder="Apellidos" required>
+
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                    <input class="form-control" type="text" name="smember_1_center" placeholder="Centro de procedencia" required>
+
+                                </div>
+                            </div>
+                            <div class="form-row pt-2">
+                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                    <input class="form-control" type="text" name="smember_2_name" placeholder="Nombre(s)" required>
+
+                                </div>
+
+                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                    <input class="form-control" type="text" name="smember_2_lastname" placeholder="Apellidos" required>
+
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                    <input class="form-control" type="text" name="smember_2_center" placeholder="Centro de procedencia" required>
+
+                                </div>
+                            </div>
+
 
 
 

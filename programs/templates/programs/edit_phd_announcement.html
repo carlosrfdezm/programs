@@ -43,7 +43,7 @@
 
                             <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    {{ message}}
+                                {{ message}}
                             </div>
 
                             {% endfor %}
@@ -51,11 +51,8 @@
                             <input type="hidden" name="phd_student" value="{{ student.phdstudent.id }}">
                             <input type="hidden" name="thesis" value="{{ student.phdstudent.phdstudentthesis.id }}">
                             <div class="form-row">
-                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                    {{ announcement_form.type|as_crispy_field }}
 
-                                </div>
-                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                <div class="col-sm-12 col-md-12 col-lg-6">
                                     {{ announcement_form.date|as_crispy_field }}
 
 
@@ -65,7 +62,62 @@
 
                                 </div>
                             </div>
-                            {{ announcement_form.text|as_crispy_field }}
+                            <div class="form-row">
+                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                    {{ announcement_form.type|as_crispy_field }}
+
+                                </div>
+
+                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                    {{ announcement_form.approval_resolution|as_crispy_field }}
+
+                                </div>
+                            </div>
+                            <hr>
+                            <p>Miembros del tribunal:</p>
+
+
+                            {% for member in student.phdstudent.phdstudentthesis.phddefensecourtmember_set.all %}
+                            {% if member.role == "Miembro" %}
+                            <div class="form-row pt-2">
+                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                    <input class="form-control" value="{{ member.name }}" type="text" name="cmember_{{ member.id }}_name" placeholder="Nombre(s)" required>
+
+                                </div>
+
+                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                    <input class="form-control" value="{{ member.lastname }}" type="text" name="cmember_{{ member.id }}_lastname" placeholder="Apellidos" required>
+
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                    <input class="form-control" type="text"value="{{ member.center }}"  name="cmember_{{ member.id }}_center" placeholder="Centro de procedencia" required>
+
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+
+
+                            <p>Suplentes:</p>
+                            {% for member in student.phdstudent.phdstudentthesis.phddefensecourtmember_set.all %}
+                            {% if member.role == "Suplente"%}
+                            <div class="form-row pt-2">
+                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                    <input class="form-control" type="text" value="{{ member.name }}" name="smember_{{ member.id }}_name" placeholder="Nombre(s)" required>
+
+                                </div>
+
+                                <div class="col-sm-12 col-md-12 col-lg-5">
+                                    <input class="form-control" type="text" value="{{ member.lastname }}" name="smember_{{ member.id }}_lastname" placeholder="Apellidos" required>
+
+                                </div>
+                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                    <input class="form-control" type="text" value="{{ member.center }}" name="smember_{{ member.id }}_center" placeholder="Centro de procedencia" required>
+
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
 
 
 

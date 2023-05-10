@@ -30,7 +30,8 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, Tuthor, \
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
     FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message, CGCDocument, \
-    ProgramSpeciality, New, MessageSended, Requester, PhdStudentThesis, PhdAnnouncement, PhdThesisComment
+    ProgramSpeciality, New, MessageSended, Requester, PhdStudentThesis, PhdAnnouncement, PhdThesisComment, \
+    PhdDefenseCourtMember
 from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
@@ -176,6 +177,36 @@ def new_phd_announcement(request, program_slug, student_id):
         if request.method == 'POST':
             announcement_form = AnnouncementForm(request.POST, request.FILES, initial={'phd_student':phd_student, 'thesis': phd_student.phdstudentthesis})
             if announcement_form.is_valid():
+
+                try:
+                    for i in range(1,4):
+                        court_member = PhdDefenseCourtMember(
+                            thesis = phd_student.phdstudentthesis,
+                            name = request.POST['cmember_{0}_name'.format(i)],
+                            lastname = request.POST['cmember_{0}_lastname'.format(i)],
+                            center = request.POST['cmember_{0}_center'.format(i)],
+                            role = 'Miembro'
+                        )
+                        court_member.save()
+                except Exception as e:
+                    messages.error(request, 'No fue posible guardar uin miembro del tribunal')
+                    return HttpResponseRedirect(
+                        reverse('programs:new_phd_announcement', args=[program_slug, student_id]))
+                try:
+                    for i in range(1, 3):
+                        court_member = PhdDefenseCourtMember(
+                            thesis=phd_student.phdstudentthesis,
+                            name=request.POST['smember_{0}_name'.format(i)],
+                            lastname=request.POST['smember_{0}_lastname'.format(i)],
+                            center=request.POST['smember_{0}_center'.format(i)],
+                            role='Suplente'
+                        )
+                        court_member.save()
+                except Exception as e:
+                    messages.error(request, 'No fue posible guardar un suplente del tribunal')
+                    return HttpResponseRedirect(
+                        reverse('programs:new_phd_announcement', args=[program_slug, student_id]))
+
                 announcement_form.save()
                 messages.success(request, ('Nueva convocatoria creada exitosamente'))
                 return HttpResponseRedirect(reverse('programs:program_announcements', args=[program_slug]))
@@ -204,6 +235,30 @@ def edit_phd_announcement(request, program_slug, announcement_id):
         if request.method == 'POST':
             announcement_form = AnnouncementForm(request.POST, instance=announcement)
             if announcement_form.is_valid():
+                try:
+                    for court_member in PhdDefenseCourtMember.objects.filter(thesis = announcement.phd_student.phdstudentthesis, role = "Miembro" ):
+                        court_member.name = request.POST['cmember_{0}_name'.format(court_member.id)]
+                        court_member.lastname = request.POST['cmember_{0}_lastname'.format(court_member.id)]
+                        court_member.center = request.POST['cmember_{0}_center'.format(court_member.id)]
+
+                        court_member.save()
+                except Exception as e:
+                    messages.error(request, 'No fue posible guardar uin miembro del tribunal')
+                    return HttpResponseRedirect(
+                        reverse('programs:edit_phd_announcement', args=[program_slug, announcement_id]))
+                try:
+                    for court_member in PhdDefenseCourtMember.objects.filter(
+                            thesis=announcement.phd_student.phdstudentthesis, role="Suplente"):
+                        court_member.name = request.POST['smember_{0}_name'.format(court_member.id)]
+                        court_member.lastname = request.POST['smember_{0}_lastname'.format(court_member.id)]
+                        court_member.center = request.POST['smember_{0}_center'.format(court_member.id)]
+
+                        court_member.save()
+                except Exception as e:
+                    messages.error(request, 'No fue posible guardar un suplente del tribunal')
+                    return HttpResponseRedirect(
+                        reverse('programs:edit_phd_announcement', args=[program_slug, announcement_id]))
+
                 announcement_form.save()
                 messages.success(request, ('Nueva convocatoria editada exitosamente'))
                 return HttpResponseRedirect(reverse('programs:program_announcements', args=[program_slug]))

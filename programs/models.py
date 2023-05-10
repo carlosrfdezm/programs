@@ -419,13 +419,33 @@ class PhdAnnouncement(models.Model):
 
     phd_student = models.OneToOneField(PhdStudent, on_delete=models.CASCADE)
     date = models.DateTimeField(null=False, verbose_name="Fecha y hora de la defensa", help_text='Día y hora del acto de defensa de la tesis')
-    text = models.TextField(max_length=1500, null=False, blank=False,verbose_name="Texto de la convocatoria", help_text='Texto de la convocatoria')
     thesis = models.OneToOneField(PhdStudentThesis, null=False, on_delete=models.CASCADE, help_text='Tesis lista para defensa')
     place = models.CharField(max_length=500, null=False, blank=False, verbose_name="Lugar", help_text="Lugar en que sesionará la defensa de la tesis" )
     type = models.CharField(max_length=20, choices=ANNOUNCEMENT_TYPE_CHOICES, default='Presencial', verbose_name="Modalidad", help_text="Modalidad: Presencial u Online")
+    approval_resolution = models.CharField(max_length=10, verbose_name="Resolución de aprobación del tribunal", help_text="Resolución de la CNGC sobre aprobación del tribunal")
 
     def __str__(self):
         return self.text
+
+
+class PhdDefenseCourtMember(models.Model):
+    MIEMBRO = "Miembro"
+    SUPLENTE = "Suplente"
+
+    ROLES_CHOICES = [
+        (MIEMBRO, "Miembro"),
+        (SUPLENTE, "Suplente")
+    ]
+
+    thesis = models.ForeignKey(PhdStudentThesis, null=False, on_delete=models.CASCADE, help_text='Tesis lista para defensa')
+    name = models.CharField(max_length=30, null=False, blank=False, help_text="Nombre(s)")
+    lastname = models.CharField(max_length=50, null=False, blank=False, help_text="Apellidos")
+    center = models.CharField(max_length=60, null=False, blank=False, help_text="Centro de procedencia")
+    role = models.CharField(max_length=20, choices=ROLES_CHOICES, verbose_name="Rol en el tribunal", help_text="Rol en el tribunal")
+
+    def __str__(self):
+        return "{0} {1}".format(self.name, self.lastname)
+
 
 
 class MscStudentTheme(models.Model):
