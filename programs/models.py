@@ -422,7 +422,7 @@ class PhdAnnouncement(models.Model):
     thesis = models.OneToOneField(PhdStudentThesis, null=False, on_delete=models.CASCADE, help_text='Tesis lista para defensa')
     place = models.CharField(max_length=500, null=False, blank=False, verbose_name="Lugar", help_text="Lugar en que sesionará la defensa de la tesis" )
     type = models.CharField(max_length=20, choices=ANNOUNCEMENT_TYPE_CHOICES, default='Presencial', verbose_name="Modalidad", help_text="Modalidad: Presencial u Online")
-    approval_resolution = models.CharField(max_length=10, verbose_name="Resolución de aprobación del tribunal", help_text="Resolución de la CNGC sobre aprobación del tribunal")
+    approval_resolution = models.CharField(max_length=10, verbose_name="Acuerdo de aprobación del tribunal", help_text="Número de acuerdo de la CNGC sobre aprobación del tribunal")
 
     def __str__(self):
         return self.text
