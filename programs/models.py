@@ -392,7 +392,6 @@ class PhdStudentTheme(models.Model):
 
 class PhdStudentThesis(models.Model):
     phd_student = models.OneToOneField(PhdStudent, on_delete=models.CASCADE)
-    title = models.TextField(max_length=1500, null=False, blank=False, help_text="Título de la tesis")
     file = models.FileField(null=False, upload_to=phd_thesis_directory_path, help_text='Tesis')
 
     def __str__(self):

@@ -306,7 +306,7 @@
                 <div class="col-sm-12 col-md-12 col-lg-12 wow bounceInUp pb-1 bordered" data-wow-duration="1.4s" >
                     <div class="box">
                         <div class="icon"><i class="{{ announcement.phd_student.student.program.icon }}" style="color: #ff689b;"></i></div>
-                        <h4 class="title">Defensa de la tesis doctoral <a href="{{ announcement.phd_student.phdstudentthesis.file.url }}" target="_blank" title="Descargar la tesis">  "{{ announcement.phd_student.phdstudentthesis|capfirst }}"</a> de {{ announcement.phd_student.student }} </h4>
+                        <h4 class="title">Defensa de la tesis doctoral <a href="{{ announcement.phd_student.phdstudentthesis.file.url }}" target="_blank" title="Descargar la tesis">  "{{ announcement.phd_student.phdstudenttheme|capfirst }}"</a> de {{ announcement.phd_student.student }} </h4>
                         <span class="small pb-3">
                         <strong>Tutores:</strong>
 
@@ -419,7 +419,7 @@
                             <form id="frm_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}" enctype="multipart/form-data" data="{{ announcement.phd_student.phdstudentthesis.id }}" method="post">
 
                                 <div class="modal-body">
-                                    <p class="text-sm">Nuevo comentario de la tesis "{{ announcement.phd_student.phdstudentthesis|capfirst }}"</p>
+                                    <p class="text-sm">Nuevo comentario de la tesis "{{ announcement.phd_student.phdstudenttheme|capfirst }}"</p>
                                     {% csrf_token %}
                                     <input type="hidden" name="thesis" value="{{ announcement.phd_student.phdstudentthesis.id }}">
                                     <div class="form-row">

@@ -461,7 +461,7 @@
 
             <div class="row pt-2">
                 <div class="alert alert-warning align-items-baseline col-md-12 text-center">
-                    <h4 class="" title="{{ announcement.phdstudent.student }}">Defensa de la tesis "{{ announcement.phd_student.phdstudentthesis|capfirst }}" de {{ announcement.phd_student.student|capfirst }} </h4>
+                    <h4 class="" title="{{ announcement.phdstudent.student }}">Defensa de la tesis "{{ announcement.phd_student.phdstudenttheme|capfirst }}" de {{ announcement.phd_student.student|capfirst }} </h4>
                     <span class="small pb-3">
                         <strong>Tutores:</strong>
 
@@ -570,7 +570,7 @@
                         <form id="frm_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}" enctype="multipart/form-data" data="{{ announcement.phd_student.phdstudentthesis.id }}" method="post">
 
                             <div class="modal-body">
-                                <p class="text-sm">Nuevo comentario de la tesis "{{ announcement.phd_student.phdstudentthesis|capfirst }}"</p>
+                                <p class="text-sm">Nuevo comentario de la tesis "{{ announcement.phd_student.phdstudenttheme|capfirst }}"</p>
                                 {% csrf_token %}
                                 <input type="hidden" name="thesis" value="{{ announcement.phd_student.phdstudentthesis.id }}">
                                 <div class="form-row">
