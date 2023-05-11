@@ -83,6 +83,7 @@
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
 
+                                                <a class="btn btn-success btn-sm text-white" href="" title="Descargar pdf"> <i class="fa fa-file-pdf"></i></a>
                                                 <a class="btn btn-success btn-sm text-white" href="{% url 'programs:phd_thesis_comments' program.slug announcement.phd_student.phdstudentthesis.id %}" title="Ver comentarios"> <i class="fa fa-list"></i></a>
                                                 <a class="btn btn-primary btn-sm text-white" href="{% url 'programs:docx_thesis_comments' program.slug announcement.phd_student.phdstudentthesis.id %}" title="Descargar comentarios"> <i class="fa fa-file"></i></a>
                                                 <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_phd_announcement' program.slug announcement.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
