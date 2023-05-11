@@ -61,6 +61,7 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th class="">Doctorando</th>
+                                <th class="">Modalidad</th>
 
                                 {% if user_is_program_cs %}
                                     <th></th>
@@ -76,6 +77,9 @@
 
                                             <a>{{ announcement.phd_student.student }}</a>
 
+                                    </td>
+                                    <td>
+                                        {{ announcement.type }}
                                     </td>
 
 
