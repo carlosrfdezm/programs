@@ -523,11 +523,17 @@
 
                     </div>
 
+                    {% announcement_is_on_time announcement.id as announcement_on_time %}
 
 
                     <p>
-                        Igualmente lo instamos a <a target="_blank" href="{{ announcement.phd_student.phdstudentthesis.file.url }}">leer</a> la tesis y hacernos conocer su <a href="" data-toggle="modal" data-target="#modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}">opinión</a> al respecto en los enlaces que se proporcionan debajo de este texto.
+                        {% if announcement_on_time %}
+                            Igualmente lo instamos a <a target="_blank" href="{{ announcement.phd_student.phdstudentthesis.file.url }}">leer</a> la tesis y hacernos conocer su <a href="" data-toggle="modal" data-target="#modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}">opinión</a> al respecto en los enlaces que se proporcionan debajo de este texto.
+
+                        {% endif %}
                     </p>
+
+
 
 
 
@@ -535,7 +541,7 @@
 
             </div>
             <div class="row pb-3 text-center align-items-stretch">
-                {% announcement_is_on_time announcement.id as announcement_on_time %}
+
                 <div class="col-md-6 offset-1">
 
 

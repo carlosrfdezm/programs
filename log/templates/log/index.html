@@ -26,7 +26,7 @@
     <link href="{% static '/log/vendor/owl.carousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
     <link href="{% static '/log/vendor/venobox/venobox.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
-    
+
 
     <!-- Template Main CSS File -->
     <link href="{% static '/log/css/style.css' %}" rel="stylesheet">
@@ -324,72 +324,132 @@
                         , <span class="small pb-3"><strong>Fecha:</strong> {{ announcement.date|date:'d-m-Y' }},<strong>Hora:</strong>  {{ announcement.date|time:'H:i' }},
                         <strong>Modalidad: </strong> {{ announcement.type }}, <strong>Lugar: </strong> {{ announcement.place|capfirst }}</span>
 
-                        <p class="text-justify">{{ announcement|safe }}</p>
+
+                    </div>
+                    <div class="row pb-3 align-items-stretch">
+                        <div class="col-md-10 offset-1">
+
+
+                            <p class="text-justify">
+                                Lo invitamos a participar en esta defensa de tesis doctoral, cuyo tribunal, aprobado mediante el
+                                acuerdo {{ announcement.approval_resolution }}, está integrado por los siguientes profesionales:
+
+                            </p>
+                            <div class="row">
+                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                    <p>Miembros:
+                                    <ul>
+                                        {% for member in announcement.phd_student.phdstudentthesis.phddefensecourtmember_set.all %}
+                                        {% if member.role == "Miembro"%}
+                                        <li>
+                                            Dr.C. {{ member }} ({{ member.center }})
+                                        </li>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                    </p>
+
+
+                                </div>
+                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                    <p>Suplentes:
+                                    <ul>
+                                        {% for member in announcement.phd_student.phdstudentthesis.phddefensecourtmember_set.all %}
+                                        {% if member.role == "Suplente"%}
+                                        <li>
+                                            Dr.C. {{ member }} ({{ member.center|truncatechars:20 }})
+                                        </li>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                    </p>
+
+
+                                </div>
+
+                            </div>
+
+                            {% announcement_is_on_time announcement.id as announcement_on_time %}
+
+
+                            <p>
+                                {% if announcement_on_time %}
+                                Igualmente lo instamos a <a target="_blank" href="{{ announcement.phd_student.phdstudentthesis.file.url }}">leer</a> la tesis y hacernos conocer su <a href="" data-toggle="modal" data-target="#modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}">opinión</a> al respecto en los enlaces que se proporcionan debajo de este texto.
+
+                                {% endif %}
+                            </p>
+
+
+
+
+
+                        </div>
+
                     </div>
                     <div class="row pb-3 text-center align-items-stretch">
-                {% announcement_is_on_time announcement.id as announcement_on_time %}
-                <div class="col-md-6 offset-1">
+                        {% announcement_is_on_time announcement.id as announcement_on_time %}
+                        <div class="col-md-6 offset-1">
 
 
-                    <a class="text-primary" title="Descargar tesis" target="_blank" href="{{ announcement.phd_student.phdstudentthesis.file.url }}"> <i class="fa fa-download"></i> Descargar</a>
+                            <a class="text-primary" title="Descargar tesis" target="_blank" href="{{ announcement.phd_student.phdstudentthesis.file.url }}"> <i class="fa fa-download"></i> Descargar</a>
 
-                </div>
-                {% if announcement_on_time %}
-                <div class="col-md-4">
+                        </div>
+                        {% if announcement_on_time %}
+                        <div class="col-md-4">
 
-                    <a class="text-primary" href="" title=" Comentar tesis"  data-toggle="modal" data-target="#modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}"><i class="fa fa-comment"></i> Comentar</a>
+                            <a class="text-primary" href="" title=" Comentar tesis"  data-toggle="modal" data-target="#modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}"><i class="fa fa-comment"></i> Comentar</a>
 
-                </div>
-                {% endif %}
+                        </div>
+                        {% endif %}
 
 
-            </div>
+                    </div>
 
                 </div>
 
                 <div class="modal fade" id="modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}" >
-                <div class="modal-lg modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Comentario</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    <div class="modal-lg modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Comentario</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form id="frm_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}" enctype="multipart/form-data" data="{{ announcement.phd_student.phdstudentthesis.id }}" method="post">
+
+                                <div class="modal-body">
+                                    <p class="text-sm">Nuevo comentario de la tesis "{{ announcement.phd_student.phdstudentthesis|capfirst }}"</p>
+                                    {% csrf_token %}
+                                    <input type="hidden" name="thesis" value="{{ announcement.phd_student.phdstudentthesis.id }}">
+                                    <div class="form-row">
+                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                            <input type="text" class="form-control" name="commenter_name" placeholder="Nombre y apellidos" required>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                            <input type="email" class="form-control" name="commenter_email" placeholder="Correo electrónico" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row pt-2">
+                                        <div class="col-12">
+                                            <textarea name="text" class="textarea form-control" id="txt_comment_text_{{ announcement.phd_student.phdstudentthesis.id }}" placeholder="Escriba el comentario aquí, debe ser breve y respetuoso."></textarea>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-success" id="">Guardar</button>
+                                </div>
+                            </form>
+
                         </div>
-                        <form id="frm_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}" enctype="multipart/form-data" data="{{ announcement.phd_student.phdstudentthesis.id }}" method="post">
-
-                            <div class="modal-body">
-                                <p class="text-sm">Nuevo comentario de la tesis "{{ announcement.phd_student.phdstudentthesis|capfirst }}"</p>
-                                {% csrf_token %}
-                                <input type="hidden" name="thesis" value="{{ announcement.phd_student.phdstudentthesis.id }}">
-                                <div class="form-row">
-                                    <div class="col-sm-12 col-md-12 col-lg-6">
-                                        <input type="text" class="form-control" name="commenter_name" placeholder="Nombre y apellidos" required>
-                                    </div>
-                                    <div class="col-sm-12 col-md-12 col-lg-6">
-                                        <input type="email" class="form-control" name="commenter_email" placeholder="Correo electrónico" required>
-                                    </div>
-                                </div>
-                                <div class="form-row pt-2">
-                                    <div class="col-12">
-                                        <textarea name="text" class="textarea form-control" id="txt_comment_text_{{ announcement.phd_student.phdstudentthesis.id }}" placeholder="Escriba el comentario aquí, debe ser breve y respetuoso."></textarea>
-
-                                    </div>
-                                </div>
-
-
-                            </div>
-                            <div class="modal-footer justify-content-between">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-success" id="">Guardar</button>
-                            </div>
-                        </form>
-
+                        <!-- /.modal-content -->
                     </div>
-                    <!-- /.modal-content -->
+                    <!-- /.modal-dialog -->
                 </div>
-                <!-- /.modal-dialog -->
-            </div>
 
                 {% endfor %}
                 {% resetcycle %}
