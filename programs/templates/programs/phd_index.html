@@ -485,10 +485,39 @@
 
 
                     <p class="text-justify">
-                        {% autoescape off %}
-                        {{ announcement.text }}
-                        {% endautoescape %}
+                        Lo invitamos a participar en esta defensa de tesis doctoral, cuyo tribunal, aprobado mediante el
+                        acuerdo {{ announcement.approval_resolution }}, está integrado por los siguientes profesionales:
+
                     </p>
+                    <p>Miembros:</p>
+                    <p>
+                    <ul>
+                        {% for member in announcement.phd_student.phdstudentthesis.phddefensecourtmember_set.all %}
+                        {% if member.role == "Miembro"%}
+                        <li>
+                            Dr.C. {{ member }}
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                    </p>
+                    <p>Suplentes:</p>
+                    <p>
+                    <ul>
+                        {% for member in announcement.phd_student.phdstudentthesis.phddefensecourtmember_set.all %}
+                        {% if member.role == "Suplente"%}
+                        <li>
+                            Dr.C. {{ member }}
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                    </p>
+                    <p>
+                      Igualmente lo instamos a leer la tesis y hacernos conocer sus opiniones al respecto en los enlaces que se proporcionan debajo de este texto.
+                    </p>
+
+
 
                 </div>
 
