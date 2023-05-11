@@ -489,32 +489,44 @@
                         acuerdo {{ announcement.approval_resolution }}, está integrado por los siguientes profesionales:
 
                     </p>
-                    <p>Miembros:</p>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6 col-lg-6">
+                            <p>Miembros:
+                            <ul>
+                                {% for member in announcement.phd_student.phdstudentthesis.phddefensecourtmember_set.all %}
+                                {% if member.role == "Miembro"%}
+                                <li>
+                                    Dr.C. {{ member }} ({{ member.center }})
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                            </p>
+
+
+                        </div>
+                        <div class="col-sm-6 col-md-6 col-lg-6">
+                            <p>Suplentes:
+                            <ul>
+                                {% for member in announcement.phd_student.phdstudentthesis.phddefensecourtmember_set.all %}
+                                {% if member.role == "Suplente"%}
+                                <li>
+                                    Dr.C. {{ member }} ({{ member.center|truncatechars:20 }})
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                            </p>
+
+
+                        </div>
+
+                    </div>
+
+
+
                     <p>
-                    <ul>
-                        {% for member in announcement.phd_student.phdstudentthesis.phddefensecourtmember_set.all %}
-                        {% if member.role == "Miembro"%}
-                        <li>
-                            Dr.C. {{ member }}
-                        </li>
-                        {% endif %}
-                        {% endfor %}
-                    </ul>
-                    </p>
-                    <p>Suplentes:</p>
-                    <p>
-                    <ul>
-                        {% for member in announcement.phd_student.phdstudentthesis.phddefensecourtmember_set.all %}
-                        {% if member.role == "Suplente"%}
-                        <li>
-                            Dr.C. {{ member }}
-                        </li>
-                        {% endif %}
-                        {% endfor %}
-                    </ul>
-                    </p>
-                    <p>
-                      Igualmente lo instamos a leer la tesis y hacernos conocer sus opiniones al respecto en los enlaces que se proporcionan debajo de este texto.
+                        Igualmente lo instamos a <a target="_blank" href="{{ announcement.phd_student.phdstudentthesis.file.url }}">leer</a> la tesis y hacernos conocer su <a href="" data-toggle="modal" data-target="#modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}">opinión</a> al respecto en los enlaces que se proporcionan debajo de este texto.
                     </p>
 
 
