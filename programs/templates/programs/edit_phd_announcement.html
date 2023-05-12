@@ -73,6 +73,8 @@
 
                                 </div>
                             </div>
+                            {{ announcement_form.url_vc|as_crispy_field }}
+                            {{ announcement_form.sponsor|as_crispy_field }}
                             <hr>
                             <p>Miembros del tribunal:</p>
 
@@ -172,6 +174,9 @@
 </script>
 <script>
     $(document).ready(function () {
+        if ($('#id_type').val() == 'Presencial'){
+             $('#div_id_url_vc').attr('hidden','hidden')
+            }
 
         $('#id_date').attr('type', 'datetime-local');
         $('#id_date').attr('value', "{{announcement.date|date:'Y-m-d'}}T{{announcement.date|time:'H:i'}}");
@@ -179,13 +184,10 @@
 
         $('#id_type').change(function (){
             if ($(this).val() == 'Presencial'){
-             $('#id_place').attr('placeholder','Lugar en que sesionará la defensa de la tesis.P.E: Centro de Convenciones, UNAH')
-             $('#hint_id_place').text('Lugar en que sesionará la defensa de la tesis')
+             $('#div_id_url_vc').attr('hidden','hidden')
             }
             else if ($(this).val() == 'On-line'){
-             $('#id_place').attr('placeholder','Url de la sala de videoconferencia.P.E: https://meet.jit.si/DefensaCE')
-             $('#hint_id_place').text('Url de la videoconferencia')
-
+             $('#div_id_url_vc').removeAttr('hidden')
 
             }
 

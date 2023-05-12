@@ -1,9 +1,12 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.core.validators import MinLengthValidator
 from django.utils.text import slugify
 from django.utils.timezone import now
+
+from programas import settings
 
 
 def program_directory_path(instance, filename):
@@ -419,9 +422,12 @@ class PhdAnnouncement(models.Model):
     phd_student = models.OneToOneField(PhdStudent, on_delete=models.CASCADE)
     date = models.DateTimeField(null=False, verbose_name="Fecha y hora de la defensa", help_text='Día y hora del acto de defensa de la tesis')
     thesis = models.OneToOneField(PhdStudentThesis, null=False, on_delete=models.CASCADE, help_text='Tesis lista para defensa')
-    place = models.CharField(max_length=500, null=False, blank=False, verbose_name="Lugar", help_text="Lugar en que sesionará la defensa de la tesis" )
+    place = models.CharField(max_length=100, null=False, blank=False, verbose_name="Lugar", help_text="Lugar en que sesionará la defensa de la tesis" )
+    url_vc = models.CharField(max_length=100, null=True, blank=True, verbose_name="URL de la sala", help_text="URL de la sala virtual de la videoconferencia" )
     type = models.CharField(max_length=20, choices=ANNOUNCEMENT_TYPE_CHOICES, default='Presencial', verbose_name="Modalidad", help_text="Modalidad: Presencial u Online")
     approval_resolution = models.CharField(max_length=10, verbose_name="Acuerdo de aprobación del tribunal", help_text="Número de acuerdo de la CNGC sobre aprobación del tribunal")
+    sponsor = models.CharField(max_length=100, null=True, blank=True, default=settings.INSTITUTION_FULL_NAME, help_text="Instituciones que auspician el programa doctoral", verbose_name="Insituciones auspiciadoras")
+
 
     def __str__(self):
         return self.text

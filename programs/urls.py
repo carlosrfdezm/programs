@@ -168,9 +168,10 @@ urlpatterns = [
     path('request/confirm/<str:request_id>', views.confirm_auto_request, name='request_confirm'),
 
     # Paths de convocatorias
-    path('annoucement/student/<int:student_id>/new', views.new_phd_announcement, name='new_phd_announcement'),
-    path('annoucements/list', views.program_annoucements, name='program_announcements'),
-    path('annoucements/<int:announcement_id>/edit', views.edit_phd_announcement, name='edit_phd_announcement'),
+    path('announcement/student/<int:student_id>/new', views.new_phd_announcement, name='new_phd_announcement'),
+    path('announcements/list', views.program_annoucements, name='program_announcements'),
+    path('announcements/<int:announcement_id>/edit', views.edit_phd_announcement, name='edit_phd_announcement'),
+    path('announcements/<int:announcement_id>/pdf', views.download_announcement_pdf, name='download_announcement_pdf'),
 
     path('thesis/<int:thesis_id>/new/comment', views.ajx_new_phd_thesis_comment, name='ajx_new_phd_thesis_comment'),
     path('thesis/<int:thesis_id>/download/comments', views.docx_thesis_comments, name='docx_thesis_comments'),

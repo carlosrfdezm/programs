@@ -1,9 +1,12 @@
 import csv as csv
+import io
 import json
 import os
 import random
 import secrets
+import shutil
 import string
+import textwrap
 import zipfile
 
 from django.contrib import messages
@@ -15,15 +18,16 @@ from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.forms import forms
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404, FileResponse
 from django.shortcuts import render
+from django.template.defaultfilters import upper
 
 # Create your views here.
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.timezone import now
 
-from programas.settings import MEDIA_ROOT
+from programas.settings import MEDIA_ROOT, STATIC_ROOT, DIR_COM_EMAIL
 from programs.forms import FileUploadForm, AnnouncementForm, PhdStudentThesisForm, PhdThesisCommentForm
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, \
     ProgramMember, ProgramFinishRequirements, InvestigationLine, PhdStudentTheme, \
@@ -37,6 +41,10 @@ from programs.templatetags.extra_tags import finish_requirements_accomplished, \
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
     create_new_tuthor, request_send_email
 from docx import Document
+from PyPDF2 import PdfFileWriter, PdfFileReader
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfgen import canvas
 
 def index(request, program_slug):
     if not request.user.is_authenticated :
@@ -207,7 +215,8 @@ def new_phd_announcement(request, program_slug, student_id):
                     return HttpResponseRedirect(
                         reverse('programs:new_phd_announcement', args=[program_slug, student_id]))
 
-                announcement_form.save()
+                announcement = announcement_form.save()
+                create_announcement_pdf(request, program_slug, announcement.id)
                 messages.success(request, ('Nueva convocatoria creada exitosamente'))
                 return HttpResponseRedirect(reverse('programs:program_announcements', args=[program_slug]))
 
@@ -493,6 +502,101 @@ def create_student(request, program_slug):
                 return HttpResponse('El programa no es un doctorado')
     else:
         return HttpResponse('Error, acceso solo a coordinadores y secretarios')
+
+def download_announcement_pdf(request, program_slug, announcement_id):
+    announcement = PhdAnnouncement.objects.get(pk=announcement_id)
+    conv_path = '{0}/{1}/Convs/Convocatoria_{1}_{2}.pdf'.format(MEDIA_ROOT, program_slug, announcement.phd_student.id)
+    if os.path.exists(conv_path):
+        return FileResponse(open(create_announcement_pdf(request, program_slug, announcement_id), 'rb'))
+    else:
+        return HttpResponse(create_announcement_pdf(request, program_slug, announcement_id))
+
+def create_announcement_pdf(request, program_slug, announcement_id):
+    program = Program.objects.get(slug=program_slug)
+    announcement = PhdAnnouncement.objects.get(pk=announcement_id)
+    student_name = '{0} {1}'.format(announcement.phd_student.student.user.first_name, announcement.phd_student.student.user.last_name)
+    thesis_title = announcement.phd_student.phdstudenttheme.description
+
+    try:
+
+        packet = io.BytesIO()
+        # create a new PDF with Reportlab
+        can = canvas.Canvas(packet, pagesize=letter)
+
+
+        # can.setFontSize(int(request.POST['font_size']))
+
+        can.setFillColor('000000')
+        can.setFont('Helvetica', 11)
+        can.drawString(202,659, student_name)
+        can.drawString(166,631, thesis_title)
+        can.drawString(202,604, program.full_name)
+        can.drawString(165,576, announcement.sponsor)
+
+        tutors = ''
+        for tutor in announcement.phd_student.tuthor_set.all():
+            tutors = tutors+'Dr.C. {0} {1},'.format(tutor.professor.user.first_name, tutor.professor.user.last_name)
+
+        can.drawString(130, 548, tutors)
+        can.drawString(123, 521, str(announcement.date.date()))
+        can.drawString(239, 521, str(announcement.date.time()))
+        can.drawString(390, 521, announcement.type)
+        can.drawString(123, 495, announcement.place)
+        if announcement.type == 'On-line':
+            can.drawString(83, 465, 'URL de la sala: '+announcement.url_vc)
+
+        # if len(authors_text) > authors_string_large:
+        #     wrap_text = textwrap.wrap(authors_text, width=authors_string_large)
+        #     for item in wrap_text:
+        #         can.drawString(x_authors,
+        #                        y_authors - wrap_text.index(item) * int(request.POST['authors_font_size']),
+        #                        item)
+        # else:
+        #     can.drawString(x_authors, y_authors, authors_text)
+
+        # title_text = upper('Titulo de la ponencia, Titulo de la ponencia, Titulo de la ponencia, Titulo de la ponencia, Titulo de la ponencia')
+        # can.setFillColor(request.POST['title_font_color'])
+        # can.setFont(request.POST['title_font_name'], int(request.POST['title_font_size']))
+        # if len(title_text) > title_string_large:
+        #     wrap_text = textwrap.wrap(title_text, width=title_string_large)
+        #     for item in wrap_text:
+        #         can.drawString(x_name,
+        #                        y_name - wrap_text.index(item) * int(request.POST['title_font_size']), item)
+        # else:
+        #     can.drawString(x_name, y_name, title_text)
+
+        can.showPage()
+        can.save()
+
+        # move to the beginning of the StringIO buffer
+        packet.seek(0)
+        new_pdf = PdfFileReader(packet)
+        # read your existing PDF
+
+        existing_pdf = PdfFileReader(open(STATIC_ROOT+'/programs/docs/CONVOCATORIA.pdf', "rb"))
+        output = PdfFileWriter()
+        # add the "watermark" (which is the new pdf) on the existing page
+        page = existing_pdf.getPage(0)
+        page.mergePage(new_pdf.getPage(0))
+        output.addPage(page)
+        # finally, write "output" to a real file
+        conv_path = '{0}/{1}/Convs/Convocatoria_{1}_{2}.pdf'.format(MEDIA_ROOT, program_slug, announcement.phd_student.id)
+        if not os.path.exists('{0}/{1}/Convs'.format(MEDIA_ROOT, program_slug)):
+            os.makedirs('{0}/{1}/Convs'.format(MEDIA_ROOT, program_slug))
+
+        outputStream = open(conv_path, "wb")
+        output.write(outputStream)
+        outputStream.close()
+
+        send_mail('Nueva convocatoria de defensa pública en '+program.full_name, 'El pdf con los datos de la defensa está disponible en https://eventos.unah.edu.cu/'+conv_path,
+                  program.email,[DIR_COM_EMAIL],fail_silently=True)
+
+        return conv_path
+    except Exception as e:
+        return str(e)
+
+
+    return HttpResponse("Test")
 
 @login_required
 def create_msc_student(request, program_slug, edition_id):
@@ -1968,7 +2072,7 @@ def program_annoucements(request, program_slug):
     elif user_is_program_student(request.user, program):
         if program.type =='phd':
             context['student'] = Student.objects.get(user=request.user, program=program)
-            context['announcements'] = PhdAnnouncementobjects.filter(phd_student__student__program= program)
+            context['announcements'] = PhdAnnouncement.objects.filter(phd_student__student__program= program)
         elif program.type =='msc':
             # TODO
             pass
@@ -4058,7 +4162,7 @@ def confirm_auto_request(request,program_slug, request_id):
                 requester.delete()
                 # TODO Devolver template de error en este caso
                 messages.error(request,
-                                 'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
+                               'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
                 return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
             except Student.DoesNotExist:
                 student = Student(
@@ -5988,7 +6092,7 @@ def docx_thesis_comments(request, program_slug, thesis_id):
         elif program.type == 'msc':
             pass
         elif program.type == 'dip':
-           pass
+            pass
 
         docname = 'Comentarios_'+ thesis.title + '.docx'
         # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
