@@ -8,6 +8,10 @@ import shutil
 import string
 import textwrap
 import zipfile
+from reportlab.platypus import Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+styleSheet = getSampleStyleSheet()
+style = styleSheet['BodyText']
 
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -527,7 +531,7 @@ def create_announcement_pdf(request, program_slug, announcement_id):
         # can.setFontSize(int(request.POST['font_size']))
 
         can.setFillColor('000000')
-        can.setFont('Helvetica', 11)
+        can.setFont('Times-Roman', 12)
         can.drawString(202,659, student_name)
         can.drawString(166,631, thesis_title)
         can.drawString(202,604, program.full_name)
@@ -537,13 +541,35 @@ def create_announcement_pdf(request, program_slug, announcement_id):
         for tutor in announcement.phd_student.tuthor_set.all():
             tutors = tutors+'Dr.C. {0} {1},'.format(tutor.professor.user.first_name, tutor.professor.user.last_name)
 
-        can.drawString(130, 548, tutors)
+        can.drawString(132, 548, tutors)
         can.drawString(123, 521, str(announcement.date.date()))
         can.drawString(239, 521, str(announcement.date.time()))
         can.drawString(390, 521, announcement.type)
-        can.drawString(123, 495, announcement.place)
+        can.drawString(123, 494, announcement.place)
         if announcement.type == 'On-line':
             can.drawString(83, 465, 'URL de la sala: '+announcement.url_vc)
+
+        can.drawString(150, 410, announcement.approval_resolution)
+
+        i=0
+        for member in PhdDefenseCourtMember.objects.filter(thesis = announcement.phd_student.phdstudentthesis, role = "Miembro"):
+            can.drawString(83, 372-i*18, "Dr.C. {0} {1}".format(member.name, member.lastname))
+            i+=1
+
+        i=0
+        for member in PhdDefenseCourtMember.objects.filter(thesis = announcement.phd_student.phdstudentthesis, role = "Suplente"):
+            can.drawString(83, 300-i*18, "Dr.C. {0} {1}".format(member.name, member.lastname))
+            i+=1
+
+        url1 = request.scheme +'://'+request.META['HTTP_HOST']+announcement.phd_student.phdstudentthesis.file.url
+        url2 = request.scheme +'://'+request.META['HTTP_HOST']+announcement.phd_student.phdstudentthesis.file.url
+        p1 = Paragraph(' <a href="{0}" color=blue>aquí (dé click sobre el texto azul)</a>'.format(url1), style)
+        p2 = Paragraph(' <a href="{0}" color=blue>Para comentar la tesis puede dar click aquí</a>'.format(url2), style)
+        p1.wrap(800,800)
+        p1.drawOn(can,250,243)
+        p2.wrap(800, 800)
+        p2.drawOn(can, 350, 216)
+
 
         # if len(authors_text) > authors_string_large:
         #     wrap_text = textwrap.wrap(authors_text, width=authors_string_large)
