@@ -547,7 +547,14 @@ def create_announcement_pdf(request, program_slug, announcement_id):
         can.drawString(390, 521, announcement.type)
         can.drawString(123, 494, announcement.place)
         if announcement.type == 'On-line':
-            can.drawString(83, 465, 'URL de la sala: '+announcement.url_vc)
+            can.drawString(83, 465, 'URL de la sala: ')
+
+            p = Paragraph(' <a href="{0}" color=blue>dé click aquí para acceder a la sala virtual de la defensa</a>'.format(announcement.url_vc), style)
+
+
+            p.wrap(800, 800)
+            p.drawOn(can, 160, 463)
+
 
         can.drawString(150, 410, announcement.approval_resolution)
 
