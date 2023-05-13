@@ -112,7 +112,7 @@
         <h5 class="pt-3">Nuevo comentario a la tesis "{{ thesis|capfirst }}"</h5>
         <form method="post">
             {% csrf_token %}
-            <!--    <input type="hidden" name="thesis" value="{{ thesis.id }}">-->
+            <input type="hidden" name="thesis" value="{{ thesis.id }}">
             <div class="form-row">
                 <div class="col-sm-6 col-md-6 col-lg-6">
                     {{ comment_form.commenter_name|as_crispy_field}}

@@ -569,7 +569,7 @@ def create_announcement_pdf(request, program_slug, announcement_id):
             i+=1
 
         url1 = request.scheme +'://'+request.META['HTTP_HOST']+announcement.phd_student.phdstudentthesis.file.url
-        url2 = request.scheme +'://'+request.META['HTTP_HOST']+announcement.phd_student.phdstudentthesis.file.url
+        url2 = request.scheme +'://'+request.META['HTTP_HOST']+reverse('programs:new_phd_thesis_comment', args=[program_slug,announcement.phd_student.phdstudentthesis.id])
         p1 = Paragraph(' <a href="{0}" color=blue>aquí (dé click sobre el texto azul)</a>'.format(url1), style)
         p2 = Paragraph(' <a href="{0}" color=blue>Para comentar la tesis puede dar click aquí</a>'.format(url2), style)
         p1.wrap(800,800)
@@ -937,6 +937,8 @@ def new_phd_thesis_comment(request, program_slug, thesis_id):
     program=Program.objects.get(slug=program_slug)
     thesis = PhdStudentThesis.objects.get(pk=thesis_id)
 
+
+
     if request.method == 'POST':
         thesis_comment_form = PhdThesisCommentForm(request.POST)
         if thesis_comment_form.is_valid():
@@ -948,7 +950,6 @@ def new_phd_thesis_comment(request, program_slug, thesis_id):
         else:
             print(thesis_comment_form.errors)
     else:
-        messages.error(request, 'Ha ocurrido un error')
         thesis_comment_form = PhdThesisCommentForm()
 
     context = {
