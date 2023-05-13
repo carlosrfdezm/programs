@@ -398,14 +398,14 @@ class PhdStudentThesis(models.Model):
     file = models.FileField(null=False, upload_to=phd_thesis_directory_path, help_text='Tesis')
 
     def __str__(self):
-        return self.title
+        return self.phd_student.phdstudenttheme.description
 
 class PhdThesisComment(models.Model):
     thesis = models.ForeignKey(PhdStudentThesis, null=False, on_delete=models.CASCADE)
     date = models.DateField(auto_now=True)
     commenter_name = models.CharField(max_length=100, null=False, blank=False, verbose_name="Nombre y apellidos", help_text="Nombre y apellidos del que comenta")
     commenter_email = models.EmailField(max_length=100, null=False, blank=False, verbose_name="Correo electrónico", help_text="Correo electrónico del que comenta")
-    text = models.TextField(max_length=2000, null=False, blank=False, help_text="Comentario")
+    text = models.TextField(max_length=2000, null=False, blank=False, help_text="Comentario", verbose_name="Contenido del comentario")
 
     def __str__(self):
         return self.text

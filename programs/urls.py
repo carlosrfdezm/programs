@@ -8,6 +8,7 @@ app_name = 'programs'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('comments/<int:thesis_id>/new', views.new_phd_thesis_comment, name='new_phd_thesis_comment'),
     path('edit', views.edit_program, name='edit_program'),
     path('home/', views.home, name='home'),
     path('background/<int:background_id>', views.program_background, name='program_background'),

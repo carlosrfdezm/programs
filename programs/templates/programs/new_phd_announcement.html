@@ -218,9 +218,11 @@
         $('#id_type').change(function (){
             if ($(this).val() == 'Presencial'){
              $('#div_id_url_vc').attr('hidden','hidden')
+              $('#id_url_vc').removeAttr('required')
             }
             else if ($(this).val() == 'On-line'){
              $('#div_id_url_vc').removeAttr('hidden')
+              $('#id_url_vc').attr('required','required')
 
             }
 

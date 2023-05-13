@@ -1,0 +1,317 @@
+{% load static %}
+{% load extra_tags %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ program.full_name }}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicons -->
+    <link href="{% static 'programs/index/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'programs/index/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+
+    <!-- Bootstrap CSS File -->
+    <link href="{% static 'programs/index/lib/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Libraries CSS Files -->
+    <link href="{% static 'programs/index/lib/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/magnific-popup/magnific-popup.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'programs/plugins/summernote/summernote-bs4.css'  %}">
+
+    <!-- Main Stylesheet File -->
+    <link href="{% static 'programs/index/css/style.css' %}" rel="stylesheet">
+
+    <!-- =======================================================
+      Theme Name: Reveal
+      Theme URL: https://bootstrapmade.com/reveal-bootstrap-corporate-template/
+      Author: BootstrapMade.com
+      License: https://bootstrapmade.com/license/
+    ======================================================= -->
+</head>
+
+<body id="body">
+
+<!--==========================
+  Top Bar
+============================-->
+<section id="topbar" class="d-none d-lg-block">
+    <div class="container clearfix">
+        <div class="float-left">
+            <a href="{% url 'programs:index' program.slug %}" color="blue">{{ program }}</a>
+        </div>
+
+        <div class="contact-info float-left">
+
+            <i class="fa fa-envelope-o"></i> <a href="mailto:{{ program.email }}">{{ program.email }}</a>
+            <i class="fa fa-phone"></i> {{ program.phone }}
+        </div>
+        <div class="social-links float-right">
+            <a href="{{ program.tw_contact}}" class="twitter"><i class="fa fa-twitter"></i></a>
+            <a href="{{ program.fb_contact}}" class="facebook"><i class="fa fa-facebook"></i></a>
+            <a href="{% url 'log:index' %}" class="facebook" title="Ir al inicio del sitio"><i class="fa fa-home"></i></a>
+
+        </div>
+    </div>
+</section>
+
+<!--==========================
+  Header
+============================-->
+
+
+<!--==========================
+  Intro Section
+============================-->
+<main id="main">
+    <div class="row pt-3">
+        {% for message in messages %}
+        <div class="col-sm-10 col-md-10 col-lg-10 offset-1">
+
+            <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                {{ message}}
+            </div>
+        </div>
+
+        {% endfor %}
+
+        {% if comment_form.errors %}
+        {% for field in comment_form %}
+        {% for error in field.errors %}
+        <div class="col-sm-10 col-md-10 col-lg-10 offset-1">
+            <div class="alert alert-danger">
+                <strong>{{field.name}} : {{ error|escape }}</strong>
+            </div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% for error in comment_form.non_field_errors %}
+        <div class="col-sm-10 col-md-10 col-lg-10 offset-1">
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    <section class="col-lg-10 offset-1">
+        <h5 class="pt-3">Nuevo comentario a la tesis "{{ thesis|capfirst }}"</h5>
+        <form method="post">
+            {% csrf_token %}
+            <!--    <input type="hidden" name="thesis" value="{{ thesis.id }}">-->
+            <div class="form-row">
+                <div class="col-sm-6 col-md-6 col-lg-6">
+                    {{ comment_form.commenter_name|as_crispy_field}}
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-6">
+                    {{ comment_form.commenter_email|as_crispy_field}}
+                </div>
+            </div>
+            {{ comment_form.text|as_crispy_field}}
+            <button type="submit" class="btn btn-sm btn-success">Enviar</button>
+
+        </form>
+        <div class="pt-2">
+
+
+        </div>
+
+
+
+
+    </section><!-- #intro -->
+</main>
+
+
+<!--==========================
+  Footer
+============================-->
+<footer id="footer">
+    <div class="container">
+        <div class="copyright">
+            &copy; Copyright <strong>LATED</strong>. Todos los derechos reservados
+        </div>
+        <div class="credits">
+            <!--
+              All the links in the footer should remain intact.
+              You can delete the links only if you purchased the pro version.
+              Licensing information: https://bootstrapmade.com/license/
+              Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=Reveal
+            -->
+            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        </div>
+    </div>
+</footer><!-- #footer -->
+
+<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+<!-- JavaScript Libraries -->
+<script src="{% static 'programs/index/lib/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/jquery/jquery-migrate.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/easing/easing.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/superfish/hoverIntent.js' %}"></script>
+<script src="{% static 'programs/index/lib/superfish/superfish.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/wow/wow.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/magnific-popup/magnific-popup.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/sticky/sticky.js' %}"></script>
+<script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+
+<!-- Contact Form JavaScript File -->
+{#<script src="{% static 'programs/index/contactform/contactform.js' %}"></script>#}
+
+<!-- Template Main Javascript File -->
+<script src="{% static 'programs/index/js/main.js' %}"></script>
+
+<script src="{% static 'programs/plugins/summernote/summernote-bs4.js'  %}"></script>
+
+<script src="{% static 'programs/plugins/summernote/lang/summernote-es-ES.js'  %}"></script>
+
+<script>
+    $(document).ready(function (){
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 7000
+        });
+
+
+        $(document).on('submit',"form[id*='frm_new_comment']", function (e) {
+                e.preventDefault();
+                thesis_id = $(this).attr('data');
+                var data = new FormData($(this).get(0));
+                $('#frm_new_comment_'+thesis_id)[0].reset();
+
+                var url = "thesis/"+thesis_id+"/new/comment";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].uploaded == 1) {
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Comentario guardado exitosamente'
+                            })
+
+                        } else if(json[0].uploaded == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido guardar el comentario. Errores:'+ json[0].errors
+                            })
+
+                        }
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
+
+        $('#frm_auto_request').on('submit', function (e) {
+            e.preventDefault();
+            $('#modal_request_enter').modal('hide');
+            var url = "{% url 'programs:ajx_auto_request' program.slug %}";
+
+            $.ajax({
+                url : url,
+                type : "POST", // http method
+                data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                    'name': $('#inp_name').val(),
+                    'surename': $('#inp_surename').val(),
+                    'email': $('#inp_mail').val(),
+                    'phone': $('#inp_phone').val(),
+                    'dni': $('#inp_dni').val(),
+                    'gender': $('#slc_gender').val(),
+                    'birthdate': $('#inp_birthdate').val(),
+                    'planned_end_year': $('#inp_planned_end_year').val(),
+                    'theme': $('#txt_theme').val(),
+                    'line':$('#slc_line').val(),
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+
+                    if (json[0].requested == 1) {
+
+                        Toast.fire({
+                            type: 'success',
+                            title: 'Solicitud enviada exitosamente. Revise el correo electrónico y siga las instrucciones'
+                        })
+
+                    }
+                    else if(json[0].requested == 0){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'No se ha podido enviar la solicitud.'
+                        })
+
+                    }
+                    else if(json[0].requested == 2){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Al parecer usted tiene una solicitud pendiente o ya es usuario del sistema.'
+                        })
+
+                    }
+                    console.log(json); // log the returned json to the console
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Uff, ha ocurrido algo desconocido.'
+                    })
+                }
+            });
+
+
+        });
+        $(document).on('hidden.bs.modal','#modal_request_enter', function () {
+            $('#frm_auto_request')[0].reset();
+        });
+    })
+</script>
+
+
+
+</body>
+</html>

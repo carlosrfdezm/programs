@@ -933,6 +933,34 @@ def ajx_new_phd_thesis_comment(request, program_slug, thesis_id):
                 json.dumps([{'uploaded': '0', 'errors':thesis_comment_form.errors }]),
                 content_type="application/json")
 
+def new_phd_thesis_comment(request, program_slug, thesis_id):
+    program=Program.objects.get(slug=program_slug)
+    thesis = PhdStudentThesis.objects.get(pk=thesis_id)
+
+    if request.method == 'POST':
+        thesis_comment_form = PhdThesisCommentForm(request.POST)
+        if thesis_comment_form.is_valid():
+            thesis_comment_form.save()
+
+            messages.success(request, 'Comentario guardado exitosamente. Gracias por dejarnos saber su opinión!!!')
+
+            return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+        else:
+            print(thesis_comment_form.errors)
+    else:
+        messages.error(request, 'Ha ocurrido un error')
+        thesis_comment_form = PhdThesisCommentForm()
+
+    context = {
+        'program': program,
+        'comment_form':thesis_comment_form,
+        'thesis':thesis,
+    }
+    return render(request, 'programs/phd_comment.html', context)
+
+
+
+
 @login_required
 def ajx_rm_phd_thesis(request, program_slug, student_id):
     program=Program.objects.get(slug=program_slug)
