@@ -476,7 +476,12 @@
 
                     </span><br>
                     <span class="small pb-3"><strong>Fecha:</strong> {{ announcement.date|date:'d-m-Y' }},<strong>Hora:</strong>  {{ announcement.date|time:'H:i' }},
-                        <strong>Modalidad: </strong> {{ announcement.type }}, <strong>Lugar: </strong> {{ announcement.place|capfirst }}</span>
+                        <strong>Modalidad: </strong> {{ announcement.type }}, <strong>Lugar: </strong> {{ announcement.place|capfirst }} {{ announcement.type }}</span>
+                    {% if announcement.type == "On-line" %}
+                    <br>
+                    <span class="small pb-3"><strong>Url de la sala virtual: </strong><a href="{{ announcement.url_vc }}">{{ announcement.url_vc }}</a></span>
+
+                    {% endif %}
                 </div>
 
             </div>
