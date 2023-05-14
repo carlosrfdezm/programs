@@ -533,7 +533,14 @@ def create_announcement_pdf(request, program_slug, announcement_id):
         can.setFillColor('000000')
         can.setFont('Times-Roman', 12)
         can.drawString(202,659, student_name)
-        can.drawString(166,631, thesis_title)
+        title_len = 90
+        if len(thesis_title) > title_len:
+            wrap_text = textwrap.wrap(thesis_title, width=title_len)
+            for item in wrap_text:
+                can.drawString(166,631- wrap_text.index(item) * 12, item)
+        else:
+            can.drawString(166, 631, thesis_title)
+
         can.drawString(202,604, program.full_name)
         can.drawString(165,576, announcement.sponsor)
 
