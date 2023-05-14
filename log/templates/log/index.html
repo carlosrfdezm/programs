@@ -303,10 +303,10 @@
                 {% for announcement in next_phd_announcements %}
 
 
-                <div class="col-sm-12 col-md-12 col-lg-12 wow bounceInUp pb-1 bordered" data-wow-duration="1.4s" >
+                <div class="col-sm-12 col-md-12 col-lg-12 wow bounceInUp pb-1 bordered text-center" data-wow-duration="1.4s" >
                     <div class="box">
                         <div class="icon"><i class="{{ announcement.phd_student.student.program.icon }}" style="color: #ff689b;"></i></div>
-                        <h4 class="title">Defensa de la tesis doctoral <a href="{{ announcement.phd_student.phdstudentthesis.file.url }}" target="_blank" title="Descargar la tesis">  "{{ announcement.phd_student.phdstudenttheme|capfirst }}"</a> de {{ announcement.phd_student.student }} </h4>
+                        <h4 class="title text-center">Defensa de la tesis doctoral <a href="{{ announcement.phd_student.phdstudentthesis.file.url }}" target="_blank" title="Descargar la tesis">  "{{ announcement.phd_student.phdstudenttheme|capfirst }}"</a> de {{ announcement.phd_student.student }} </h4>
                         <span class="small pb-3">
                         <strong>Tutores:</strong>
 
@@ -323,6 +323,11 @@
                     </span>
                         , <span class="small pb-3"><strong>Fecha:</strong> {{ announcement.date|date:'d-m-Y' }},<strong>Hora:</strong>  {{ announcement.date|time:'H:i' }},
                         <strong>Modalidad: </strong> {{ announcement.type }}, <strong>Lugar: </strong> {{ announcement.place|capfirst }}</span>
+                        {% if announcement.type == "On-line" %}
+                    <br>
+                    <span class="small pb-3"><strong>Url de la sala virtual: </strong><a href="{{ announcement.url_vc }}">{{ announcement.url_vc }}</a></span>
+
+                    {% endif %}
 
 
                     </div>
@@ -335,7 +340,7 @@
                                 acuerdo {{ announcement.approval_resolution }} de la Comision Nacional de Grados Cientificos, está integrado por los siguientes profesionales:
 
                             </p>
-                            <div class="row">
+                            <div class="row text-left">
                                 <div class="col-sm-6 col-md-6 col-lg-6">
                                     <p>Miembros:
                                     <ul>
@@ -372,7 +377,7 @@
                             {% announcement_is_on_time announcement.id as announcement_on_time %}
 
 
-                            <p>
+                            <p class="text-left">
                                 {% if announcement_on_time %}
                                 Igualmente lo instamos a <a target="_blank" href="{{ announcement.phd_student.phdstudentthesis.file.url }}">leer</a> la tesis y hacernos conocer su <a href="" data-toggle="modal" data-target="#modal_new_comment_{{ announcement.phd_student.phdstudentthesis.id }}">opinión</a> al respecto en los enlaces que se proporcionan debajo de este texto.
 
