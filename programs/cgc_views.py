@@ -2372,7 +2372,11 @@ def docx_cgc_report(request):
 
         docname = 'Reporte_CGC_' + str(now().year) + '_' + str(now().month) + '.docx'
         # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
+
         docpath = MEDIA_ROOT + '/cgc/'+ docname
+
+        if not os.path.exists(MEDIA_ROOT+'/cgc'):
+            os.makedirs(MEDIA_ROOT+'/cgc', exist_ok=True)
 
         document.save(docpath)
 
