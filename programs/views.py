@@ -513,7 +513,8 @@ def download_announcement_pdf(request, program_slug, announcement_id):
     if os.path.exists(conv_path):
         return FileResponse(open(create_announcement_pdf(request, program_slug, announcement_id), 'rb'))
     else:
-        return HttpResponse(create_announcement_pdf(request, program_slug, announcement_id))
+        create_announcement_pdf(request, program_slug, announcement_id)
+        return HttpResponseRedirect(reverse('programs:download_announcement_pdf', args=[program_slug, announcement_id]))
 
 def create_announcement_pdf(request, program_slug, announcement_id):
     program = Program.objects.get(slug=program_slug)
@@ -567,12 +568,12 @@ def create_announcement_pdf(request, program_slug, announcement_id):
 
         i=0
         for member in PhdDefenseCourtMember.objects.filter(thesis = announcement.phd_student.phdstudentthesis, role = "Miembro"):
-            can.drawString(83, 372-i*18, "Dr.C. {0} {1}".format(member.name, member.lastname))
+            can.drawString(83, 373-i*18, "Dr.C. {0} {1}".format(member.name, member.lastname))
             i+=1
 
         i=0
         for member in PhdDefenseCourtMember.objects.filter(thesis = announcement.phd_student.phdstudentthesis, role = "Suplente"):
-            can.drawString(83, 300-i*18, "Dr.C. {0} {1}".format(member.name, member.lastname))
+            can.drawString(83, 299-i*18, "Dr.C. {0} {1}".format(member.name, member.lastname))
             i+=1
 
         url1 = request.scheme +'://'+request.META['HTTP_HOST']+announcement.phd_student.phdstudentthesis.file.url
@@ -628,7 +629,10 @@ def create_announcement_pdf(request, program_slug, announcement_id):
         output.write(outputStream)
         outputStream.close()
 
-        send_mail('Nueva convocatoria de defensa pública en '+program.full_name, 'El pdf con los datos de la defensa está disponible en https://eventos.unah.edu.cu/'+conv_path,
+        send_mail('Nueva convocatoria de defensa pública en '+program.full_name, 'Buenos días!! Nuestro programa anuncia una nueva defensa. '
+                                                                                 'El pdf con los datos de la defensa está '
+                                                                                 'disponible en https://eventos.unah.edu.cu/'+conv_path+
+                                                                                 '.Saludos',
                   program.email,[DIR_COM_EMAIL],fail_silently=True)
 
         return conv_path
