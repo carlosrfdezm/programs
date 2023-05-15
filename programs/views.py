@@ -538,7 +538,8 @@ def create_announcement_pdf(request, program_slug, announcement_id):
         if len(thesis_title) > title_len:
             wrap_text = textwrap.wrap(thesis_title, width=title_len)
             for item in wrap_text:
-                can.drawString(166,631- wrap_text.index(item) * 12, item)
+                if wrap_text.index(item) <=1:
+                    can.drawString(166,631- wrap_text.index(item) * 12, item)
         else:
             can.drawString(166, 631, thesis_title)
 
@@ -568,12 +569,12 @@ def create_announcement_pdf(request, program_slug, announcement_id):
 
         i=0
         for member in PhdDefenseCourtMember.objects.filter(thesis = announcement.phd_student.phdstudentthesis, role = "Miembro"):
-            can.drawString(83, 373-i*18, "Dr.C. {0} {1}".format(member.name, member.lastname))
+            can.drawString(83, 370-i*18, "Dr.C. {0} {1}".format(member.name, member.lastname))
             i+=1
 
         i=0
         for member in PhdDefenseCourtMember.objects.filter(thesis = announcement.phd_student.phdstudentthesis, role = "Suplente"):
-            can.drawString(83, 299-i*18, "Dr.C. {0} {1}".format(member.name, member.lastname))
+            can.drawString(83, 296-i*18, "Dr.C. {0} {1}".format(member.name, member.lastname))
             i+=1
 
         url1 = request.scheme +'://'+request.META['HTTP_HOST']+announcement.phd_student.phdstudentthesis.file.url
