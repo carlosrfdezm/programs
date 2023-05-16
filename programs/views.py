@@ -31,7 +31,7 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.timezone import now
 
-from programas.settings import MEDIA_ROOT, STATIC_ROOT, DIR_COM_EMAIL
+from programas.settings import MEDIA_ROOT, STATIC_ROOT, DIR_COM_EMAIL, MEDIA_URL
 from programs.forms import FileUploadForm, AnnouncementForm, PhdStudentThesisForm, PhdThesisCommentForm
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, \
     ProgramMember, ProgramFinishRequirements, InvestigationLine, PhdStudentTheme, \
@@ -629,10 +629,10 @@ def create_announcement_pdf(request, program_slug, announcement_id):
         outputStream = open(conv_path, "wb")
         output.write(outputStream)
         outputStream.close()
-
+        url3 = request.scheme + '://' + request.META['HTTP_HOST'] + '{0}/{1}/Convs/Convocatoria_{1}_{2}.pdf'.format(MEDIA_URL, program_slug, announcement.phd_student.id)
         send_mail('Nueva convocatoria de defensa pública en '+program.full_name, 'Buenos días!! Nuestro programa anuncia una nueva defensa. '
                                                                                  'El pdf con los datos de la defensa está '
-                                                                                 'disponible en https://eventos.unah.edu.cu/'+conv_path+
+                                                                                 'disponible en '+url3+
                                                                                  '.Saludos',
                   program.email,[DIR_COM_EMAIL],fail_silently=True)
 
