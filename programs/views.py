@@ -629,11 +629,12 @@ def create_announcement_pdf(request, program_slug, announcement_id):
         outputStream = open(conv_path, "wb")
         output.write(outputStream)
         outputStream.close()
-        url3 = request.scheme + '://' + request.META['HTTP_HOST'] + '{0}/{1}/Convs/Convocatoria_{1}_{2}.pdf'.format(MEDIA_URL, program_slug, announcement.phd_student.id)
+        url3 = '{0}//{1}/announcements/{2}/pdf'.format(request.scheme,request.META['HTTP_HOST'], announcement_id )
+        print(url3)
         send_mail('Nueva convocatoria de defensa pública en '+program.full_name, 'Buenos días!! Nuestro programa anuncia una nueva defensa. '
                                                                                  'El pdf con los datos de la defensa está '
                                                                                  'disponible en '+url3+
-                                                                                 '.Saludos',
+                                                                                 ' .Saludos',
                   program.email,[DIR_COM_EMAIL],fail_silently=True)
 
         return conv_path
@@ -4935,11 +4936,11 @@ def program_student_picture(request, program_slug, student_id):
 def program_background(request, program_slug, background_id):
     fs = FileSystemStorage()
     # filename = Papers.objects.get(pk=paper_id).file_url +  str(Papers.objects.get(pk=paper_id).file)
-    filename = ProgramBackgrounds.objects.get(pk=background_id).background.url
+    filename = ProgramBackgrounds.objects.get(pk=background_id).background.path
+    print(filename)
     if fs.exists(filename):
-        with fs.open(filename) as img:
-            response = HttpResponse(img, content_type='image/jpeg')
-            return response
+        return FileResponse(open(filename, 'rb'))
+
     else:
         return HttpResponse('Error')
 
