@@ -6147,7 +6147,7 @@ def docx_thesis_comments(request, program_slug, thesis_id):
     if user_is_program_cs(request.user, program):
         document = Document()
         document.add_heading(program.full_name, level=1)
-        document.add_heading('Comentarios realizados a '+thesis.title, level=2)
+        document.add_heading('Comentarios realizados a '+thesis.phd_student.phdstudenttheme.description, level=2)
 
 
         if program.type == 'phd':
@@ -6169,7 +6169,7 @@ def docx_thesis_comments(request, program_slug, thesis_id):
         elif program.type == 'dip':
             pass
 
-        docname = 'Comentarios_'+ thesis.title + '.docx'
+        docname = 'Comentarios_{0}_{1}.docx'.format(thesis.phd_student.student.user.first_name, thesis.phd_student.student.user.last_name)
         # docpath = MEDIA_ROOT + '/cgc/reports/{0}/{1}/{2}'.format(now().year,now().month,docname)
         program_path = MEDIA_ROOT + '/program_{0}'.format(program_slug)
         docpath = MEDIA_ROOT + '/program_{0}/{1}'.format(program_slug, docname)
