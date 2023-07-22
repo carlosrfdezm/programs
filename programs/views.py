@@ -4035,23 +4035,23 @@ def ajx_member_massive_msg(request, program_slug ):
                     )
                     new_message.save()
 
-            if email_list.__len__()<=10:
+            if email_list.__len__()<=20:
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
                           email_list, fail_silently=False, html_message=request.POST['msg_body'])
             else:
-                count = email_list.__len__() // 10
-                rest = email_list.__len__() % 10
+                count = email_list.__len__() // 4
+                rest = email_list.__len__() % 4
 
-                for i in range(count):
+                for i in range(email_list.__len__() // count):
                     print(i)
                     send_mail(request.POST['msg_subject'], request.POST['msg_body'],
                               request.user.email,
-                              email_list[10 * i:10 * (i + 1)], fail_silently=False, html_message=request.POST['msg_body'])
+                              email_list[count * i:count * (i + 1)], fail_silently=False, html_message=request.POST['msg_body'])
 
                     if rest != 0:
                         send_mail(request.POST['msg_subject'], request.POST['msg_body'],
                                   request.user.email,
-                                  email_list[10 * count:10 * count + rest], fail_silently=False,
+                                  email_list[4 * count:email_list.__len__()], fail_silently=False,
                                   html_message=request.POST['msg_body'])
 
             sended_message = MessageSended(
