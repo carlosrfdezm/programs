@@ -4148,11 +4148,11 @@ def ajx_all_massive_msg(request, program_slug ):
                               request.user.email,
                               email_list[send_number * i:send_number * (i + 1)], fail_silently=False, html_message=request.POST['msg_body'])
 
-                    if rest != 0:
-                        send_mail(request.POST['msg_subject'], request.POST['msg_body'],
-                                  request.user.email,
-                                  email_list[10 * send_number:email_list.__len__()], fail_silently=False,
-                                  html_message=request.POST['msg_body'])
+                if rest != 0:
+                     send_mail(request.POST['msg_subject'], request.POST['msg_body'],
+                              request.user.email,
+                              email_list[4* send_number:email_list.__len__()], fail_silently=False,
+                              html_message=request.POST['msg_body'])
 
 
 
