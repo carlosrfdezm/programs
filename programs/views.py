@@ -15,7 +15,7 @@ style = styleSheet['BodyText']
 
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.contrib.messages import success
 from django.core.files.storage import FileSystemStorage
@@ -7451,3 +7451,21 @@ def export_csv_students(request, program_slug, scope):
 
     else:
         return error_500(request, program, "Usted no tiene privilegios para exportar listado de estudiantes del programa")
+
+
+@login_required
+def download_evidences(request, program_id):
+
+    fpath = "{0}/users/{1}/downloads".format(MEDIA_ROOT, request.user.username)
+
+    if not os.path.exists(fpath):
+        os.makedirs(fpath)
+
+    program = Program.objects.get(pk=program_id)
+
+    if program.type == 'phd':
+        zpath = "{0}/users/{1}/downloads/Evidences.zip".format(MEDIA_ROOT, request.user.username)
+
+        zf = zipfile.ZipFile(zpath, "w")
+
+
