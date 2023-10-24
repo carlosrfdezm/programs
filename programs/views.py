@@ -7454,18 +7454,29 @@ def export_csv_students(request, program_slug, scope):
 
 
 @login_required
-def download_evidences(request, program_id):
+def download_evidences(request, program_slug):
 
-    fpath = "{0}/users/{1}/downloads".format(MEDIA_ROOT, request.user.username)
+    try:
 
-    if not os.path.exists(fpath):
-        os.makedirs(fpath)
+        program = Program.objects.get(slug=program_slug)
 
-    program = Program.objects.get(pk=program_id)
+        fpath = "{0}/users/{1}/downloads".format(MEDIA_ROOT, program.slug)
 
-    if program.type == 'phd':
-        zpath = "{0}/users/{1}/downloads/Evidences.zip".format(MEDIA_ROOT, request.user.username)
+        if not os.path.exists(fpath):
+            os.makedirs(fpath)
 
-        zf = zipfile.ZipFile(zpath, "w")
+
+        if program.type == 'phd':
+            zpath = "{0}/users/{1}/downloads/Evidences.zip".format(MEDIA_ROOT, program_slug)
+
+            zf = zipfile.ZipFile(zpath, "w")
+
+            for student in program.student_set.all():
+                print(student)
+
+        return HttpResponse('Working')
+    except Program.DoesNotExist:
+        messages.error(request, 'El programa no existe')
+        return HttpResponse('El programa no existe')
 
 

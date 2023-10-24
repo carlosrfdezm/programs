@@ -178,6 +178,10 @@ urlpatterns = [
     path('thesis/<int:thesis_id>/download/comments', views.docx_thesis_comments, name='docx_thesis_comments'),
     path('thesis/<int:thesis_id>/comments', views.phd_thesis_comments, name='phd_thesis_comments'),
 
+    path('evidences/download', views.download_evidences , name='download_evidences'),
+
+
+
     # path('login', views.mylogin, name='my_login'),
     # path('logout/<str:court_slug>/', views.mylogout, name='my_logout'),
     # path('cngc/member/<int:member_id>/pic', views.cngc_member_picture, name='cngc_member_picture'),
