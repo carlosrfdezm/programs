@@ -7472,9 +7472,41 @@ def download_evidences(request, program_slug):
             zf = zipfile.ZipFile(zpath, "w")
 
             for student in program.student_set.all():
-                print(student)
+                for requirement in ProgramFileDoc.objects.filter(program=program):
+                    try:
+                        s_f_d = StudentFileDocument.objects.get(student=student, program_file_document=requirement)
+                        if s_f_d.file:
+                            print(s_f_d.file.path)
+                            if os.path.exists(s_f_d.file.path):
+                                fpath = s_f_d.file.path
+                                fdir,fname = os.path.split(fpath)
+                                zip_subdir = "{0}/{1}".format(student.user.get_full_name(), slugify(requirement))
+                                zip_path = os.path.join(zip_subdir, fname)
+                                zf.write(fpath, zip_path)
 
-        return HttpResponse('Working')
+                        else:
+                            print('No hay archivo')
+                    except StudentFileDocument.DoesNotExist:
+                        print("Creando documento de estudiante")
+                        s_f_d = StudentFileDocument(
+                            student = student,
+                            program_file_document = requirement
+                        )
+                        s_f_d.save()
+
+            zf.close()
+
+        fs = FileSystemStorage()
+
+        with fs.open(zpath) as zip:
+            # response = HttpResponse(pdf, content_type='application/pdf')
+            # response['Content-Disposition'] = "inline; filename=" + '"' + filename + '"'
+            # Grab ZIP file from in-memory, make response with correct MIME-type
+            resp = HttpResponse(zip, content_type="application/x-zip-compressed")
+            # ..and correct content-disposition
+            resp['Content-Disposition'] = 'attachment; filename=%s' % '{0}_Evidencias_Estudiantes.zip'.format(program_slug)
+
+        return resp
     except Program.DoesNotExist:
         messages.error(request, 'El programa no existe')
         return HttpResponse('El programa no existe')
