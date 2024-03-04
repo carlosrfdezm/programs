@@ -140,6 +140,110 @@ def cgc_new_document(request):
             return render(request, 'programs/cgc/cgc_create_document.html', context)
     else:
         return error_500(request,'Usted no tiene privilegios para agregar documentos.')
+    
+    
+@login_required
+def view_cgc_member_profile(request, member_id):
+    try:
+    
+        member = CGC_Member.objects.get(pk=member_id)
+        return render(request, 'programs/cgc/cgc_member_profile.html', {'member':member})
+    except CGC_Member.DoesNotExist:
+        
+        return error_500(request, 'Al parecer usted no es miembro de la cgc')
+    
+@login_required
+def view_self_profile(request):
+    try:
+    
+        member = CGC_Member.objects.get(user=request.user)
+        return render(request, 'programs/cgc/cgc_member_profile.html', {'member':member})
+    except CGC_Member.DoesNotExist:
+        
+        return error_500(request, 'Al parecer usted no es miembro de la cgc')
+    
+@login_required
+def ajx_usr_exists(request):
+
+    if request.method=='POST':
+
+        try:
+            user= User.objects.get(email=request.POST['email'])
+            if user_is_cgc_member(user ):
+                return HttpResponse(
+                    json.dumps([{'exists': 2}]),
+                    content_type="application/json"
+                )
+            else:
+                return HttpResponse(
+                    json.dumps([{'exists': 1}]),
+                    content_type="application/json"
+                )
+
+
+        except User.DoesNotExist:
+            return HttpResponse(
+                json.dumps([{'exists': 0}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'exists': 0}]),
+            content_type="application/json"
+        )
+    
+
+@login_required
+def autoedit_member_profile(request):
+    member = CGC_Member.objects.get(user=request.user)
+    if request.user == member.user:
+        if request.method == 'POST':
+            print(request.POST)
+            if member.user.email == request.POST['prof_email']:
+                request.user.first_name = request.POST['prof_name']
+                request.user.last_name = request.POST['prof_lastname']
+                member.birth_date = request.POST['prof_bdate']
+                member.degree = request.POST['prof_degree']
+                member.institution = request.POST['prof_inst']
+                member.gender = request.POST['prof_gender']
+                member.phone = request.POST['prof_phone']
+                try:
+                    member.picture = request.FILES['prof_picture']
+                except:
+                    pass
+                request.user.save()
+                member.save()
+
+                return HttpResponseRedirect(reverse('cgc:view_cgc_member_profile', args=[ member.id]))
+            else:
+                if not CGC_Member.objects.filter(user__email=request.POST['prof_email']):
+                    request.user.first_name = request.POST['prof_name']
+                    request.user.last_name = request.POST['prof_lastname']
+                    request.user.email = request.POST['prof_email']
+                    request.user.username = request.POST['prof_email']
+                    member.birth_date = request.POST['prof_bdate']
+                    member.degree = request.POST['prof_degree']
+                    member.institution = request.POST['prof_inst']
+                    member.gender = request.POST['prof_gender']
+                    member.phone = request.POST['prof_phone']
+                    try:
+                        member.picture = request.FILES['prof_picture']
+                    except:
+                        pass
+                    request.user.save()
+                    member.save()
+
+                    return HttpResponseRedirect(
+                        reverse('programs:view_program_member_profile', args=[program_slug, member_id]))
+
+                else:
+                    return HttpResponse('Error: El correo introducido esta en uso por otro usuario')
+        else:
+            return HttpResponse('Error: Usted no tiene acceso a esta funcionalidad por GET')
+
+    else:
+        return HttpResponse('Error: Usted no tiene acceso a esta funcionalidad')
+
 
 
 @login_required

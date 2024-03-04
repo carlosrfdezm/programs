@@ -15,6 +15,9 @@ urlpatterns = [
     path('members/create', views.cgc_create_cgc_member, name='cgc_create_cgc_member'),
     path('members/list', views.cgc_members_list, name='cgc_members_list'),
     path('members/<int:member_id>/edit', views.cgc_edit_member, name='cgc_edit_member'),
+    path('members/<int:member_id>/profile/view', views.view_cgc_member_profile, name='view_cgc_member_profile'),
+    path('members/self/profile/view', views.view_self_profile, name='view_self_profile'),
+    path('members/profile/edit', views.autoedit_member_profile, name='autoedit_member_profile'),
 
     path('ajx/recent/requests', views.ajx_cgc_this_year_requests, name='ajx_cgc_this_year_requests'),
     path('ajx/recent/years/req_vs_grad', views.ajx_last_years_requests_vs_graduated, name='ajx_last_years_requests_vs_graduated'),
@@ -43,6 +46,7 @@ urlpatterns = [
     path('ajx/member/exists', views.ajx_cgc_usr_exists, name='ajx_cgc_usr_exists'),
     path('ajx/member/delete', views.ajx_cgc_delete_member, name='ajx_cgc_delete_member'),
     path('ajx/document/delete', views.ajx_delete_document, name='ajx_delete_document'),
+    path('ajx/user/exists', views.ajx_usr_exists, name='ajx_usr_exists'),
 
     path('brieffings/create', views.create_cgc_brief, name='create_cgc_brief'),
     path('brieffings/download', views.cgc_brief_zip_download, name='cgc_brief_zip_download'),
