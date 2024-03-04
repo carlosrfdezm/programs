@@ -71,7 +71,7 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
-                                <strong><i class="fas fa-book mr-1"></i> Especialidad</strong>
+                                <strong><i class="fas fa-book mr-1"></i> Grado</strong>
 
                                 <p class="text-muted">
                                     {{ member.degree }}
@@ -158,101 +158,7 @@
 
                                         </form>
                                     </div>
-                                    {% if program.type == 'phd' %}
-                                        <div class="tab-pane" id="students">
-                                            {% if member.tuthor_set %}
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                    <tr>
-                                                        <th >Nombre y apellidos.</th>
-                                                        <th>Tema</th>
-                                                        <th>Estado</th>
-                                                        <th class="text-center">Defensa</th>
-
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {% for tuthor in member.tuthor_set.all %}
-                                                        <!-- Post -->
-
-                                                        <tr>
-                                                            <td>
-                                                                {{ tuthor.phd_student.student }}
-                                                            </td>
-                                                            <td>
-                                                                {{ tuthor.phd_student.phdstudenttheme|truncatewords:7 }}
-                                                            </td>
-                                                            <td>{{ tuthor.phd_student.status|capfirst }}</td>
-                                                            <td class="text-center">
-                                                                {% if tuthor.phd_student.student.studentformationplan.planned_end_year %}
-                                                                    {{ tuthor.phd_student.student.studentformationplan.planned_end_year }}
-                                                                {% else %}
-                                                                    --------
-                                                                {% endif %}
-                                                            </td>
-
-                                                        </tr>
-
-                                                        <!-- /.post -->
-                                                    {% endfor %}
-
-                                                    </tbody>
-
-
-                                                </table>
-                                            {% else %}
-                                                <div class="alert alert-warning text-center">
-                                                    <h6>El profesor no tiene aspirantes en este momento.</h6>
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    {% elif program.type == 'msc' %}
-                                        <div class="tab-pane" id="students">
-                                            {% if member.tuthor_set %}
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>Nombre y apellidos.</th>
-                                                        <th>Estado</th>
-                                                        <th class="text-center">Defensa</th>
-
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {% for tuthor in member.tuthor_set.all %}
-                                                        <!-- Post -->
-
-                                                        <tr>
-                                                            <td>
-                                                                {{ tuthor.msc_student }}
-                                                            </td>
-
-                                                            <td>{{ tuthor.msc_student.status|capfirst }}</td>
-                                                            <td class="text-center">
-                                                                {% if tuthor.phd_student.student.studentformationplan.planned_end_year %}
-                                                                    {{ tuthor.phd_student.student.studentformationplan.planned_end_year }}
-                                                                {% else %}
-                                                                    --------
-                                                                {% endif %}
-                                                            </td>
-
-                                                        </tr>
-
-                                                        <!-- /.post -->
-                                                    {% endfor %}
-
-                                                    </tbody>
-
-
-                                                </table>
-                                            {% else %}
-                                                <div class="alert alert-warning text-center">
-                                                    <h6>El profesor no tiene aspirantes en este momento.</h6>
-                                                </div>
-                                            {% endif %}
-                                        </div>
-
-                                    {% endif %}
+                                    
                                     <!-- /.tab-pane -->
                                 </div>
                                 <!-- /.tab-content -->
