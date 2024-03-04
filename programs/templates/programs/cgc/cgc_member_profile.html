@@ -435,7 +435,7 @@
                                                 <label for="slc_gender" class="col-sm-2 col-form-label">Género</label>
                                                 <div class="col-sm-4">
 
-                                                    <select  class="form-control" id="slc_gender" name="prof_gender" readonly  placeholder="Género" data="{{ member.gender }}">
+                                                    <select  class="form-control disabled" id="slc_gender" name="prof_gender"  disabled data="{{ member.gender }}">
                                                         <option value="">Elige una opción</option>
                                                         <option value="f" {% if member.gender == 'f' %} selected {% endif %}>Femenino</option>
                                                         <option value="m" {% if member.gender == 'm' %} selected {% endif %}>Masculino</option>
@@ -716,7 +716,10 @@
                     $('#btn_edit_profile').addClass('btn-default');
                     $('#btn_edit_profile').attr('data','1');
                     $('#btn_edit_profile').attr('title','Cancelar edición');
-                    if($('#slc_gender').attr('data')=='f'){
+                    $('#slc_gender').removeAttr('disabled')
+                    
+
+                    {% comment %} if($('#slc_gender').attr('data')=='f'){
                         $('#slc_gender').replaceWith(f_slc_prof_gender);
                         prof_gender = 'f';
 
@@ -725,7 +728,7 @@
                         $('#slc_gender').replaceWith(m_slc_prof_gender);
                         prof_gender='m';
 
-                    }
+                    } {% endcomment %}
 
                     $('#frm_personal_data').append('<div class="form-group row pt-3" id="div_prof_picture">\n' +
                         '                                                <label for="inp_picture" class="col-sm-2 col-form-label">Foto de perfil:</label>\n' +
@@ -753,18 +756,8 @@
                     $('#btn_edit_profile').removeClass('btn-default');
                     $('#btn_edit_profile').attr('title','Editar datos personales');
                     $('#btn_edit_profile').attr('data','0');
-                    $('#slc_gender').replaceWith(inp_prof_gender);
-                    if(prof_gender=='f'){
-                        $('#inp_gender').val('Femenino');
-                        $('#inp_gender').attr('data','f');
-
-                    }
-                    else if(prof_gender=='m'){
-                        $('#inp_gender').val('Masculino');
-                        $('#inp_gender').attr('data','m');
-
-
-                    }
+                    $('#slc_gender').attr('disanled','disabled');
+                    
                     $('#div_btn_save').remove();
                     $('#div_prof_picture').remove();
 
