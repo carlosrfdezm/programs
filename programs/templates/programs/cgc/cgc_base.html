@@ -7,9 +7,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
+    
     <title>Programas académicos </title>
-
+    
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome_free/css/all.min.css' %}">
     {#    <link rel="stylesheet" href="{% static 'programs/plugins/fontawesome-free/css/fontawesome.css' %}">#}
@@ -22,15 +22,15 @@
     <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}" >
     <link rel="stylesheet" href="{% static 'programs/plugins/summernote/summernote-bs4.css'  %}">
     <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
-
-
+    
+    
     {% block extra_css %}
     {% endblock %}
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
-
+    
     <div class="wrapper">
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -39,731 +39,764 @@
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
                 </li>
-
+                
             </ul>
-
+            
             <!-- SEARCH FORM -->
             {#        <form class="form-inline ml-3">#}
-            {#            <div class="input-group input-group-sm">#}
-            {#                <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">#}
-            {#                <div class="input-group-append">#}
-            {#                    <button class="btn btn-navbar" type="submit">#}
-            {#                        <i class="fas fa-search"></i>#}
-            {#                    </button>#}
-            {#                </div>#}
-            {#            </div>#}
-            {#        </form>#}
-
-            <!-- Right navbar links -->
-            <ul class="navbar-nav ml-auto">
-                <!-- Messages Dropdown Menu -->
-
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href="#" title="Mensajes masivos">
-                        <i class="text-primary far fa-envelope"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <span class="dropdown-item dropdown-header">Enviar mensajes masivos</span>
-                        <div class="dropdown-divider"></div>
-                        <a href="" class="dropdown-item" data-toggle="modal" data-target="#modal_msg_students">
-                            <i class="fa fa-users"></i> A Estudiantes
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="" class="dropdown-item" data-toggle="modal" data-target="#modal_msg_members">
-                            <i class="fas fa-graduation-cap"></i> A profesores
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="" class="dropdown-item"  data-toggle="modal" data-target="#modal_msg_all">
-                            <i class="fas fa-paper-plane"></i> A todos
-                        </a>
-
-                    </div>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link text-primary" href="{% url 'cgc:view_self_profile' %}" title="Ver perfil">
-                    <i class="fa fa-user"></i>
-                </a>
-            </li>
-
-                <!-- Notifications Dropdown Menu -->
-
-                <li class="nav-item">
-                    <a class="nav-link text-danger" href="{% url 'log:cgc_logout' %}" title="Salir">
-                        <i class="fa fa-power-off"></i>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <!-- /.navbar -->
-
-        <!-- Main Sidebar Container -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <!-- Brand Logo -->
-            <a href="" class="brand-link">
-                <img src="{% static 'programs/dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-                     style="opacity: .8">
-                <span class="brand-text font-weight-light">Programas CGC</span>
-            </a>
-
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <!-- Sidebar user panel (optional) -->
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    {#                <div class="image">#}
-                    {#                    <img src="{% static 'programs/dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">#}
-                    {#                    <img src="{% url 'programs:program_member_picture' %}" class="img-circle elevation-2" alt="User Image">#}
-                    {#                </div>#}
-                    <div class="info">
-                        <a href="#" class="d-block" title="{{ user.get_full_name }}">{{ user.get_full_name }}</a>
-                    </div>
-                </div>
-
-                <!-- Sidebar Menu -->
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
-                        <!-- Add icons to the links using the .nav-icon class
-                             with font-awesome or any other icon font library -->
-                        <li class="nav-item">
-
-                            <a href="{% url 'cgc:cgc_home' %}" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>
-                                    Dashboard
-
-                                </p>
-                            </a>
-                        </li>
-
-
-                        {# Opciones para doctorados#}
-
-                         <li class="nav-item">
-                            <a href="{% url 'cgc:cgc_programs_list' %}" class="nav-link" title="Programas doctorales">
-                                <i class="fa fa-list-alt nav-icon"></i>
-                                <p>Programas</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link" title="Miembros de la CGC">
-                                <i class="nav-icon fas fa-graduation-cap"></i>
-                                <p>
-                                    Miembros
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-
-                                <li class="nav-item">
-                                    <a href="{% url 'cgc:cgc_create_cgc_member' %}" class="nav-link" title="Agregar nuevo miembro a la CGC">
-                                        <i class="fa fa-user-plus nav-icon"></i>
-                                        <p>Nuevo</p>
+                {#            <div class="input-group input-group-sm">#}
+                    {#                <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">#}
+                    {#                <div class="input-group-append">#}
+                        {#                    <button class="btn btn-navbar" type="submit">#}
+                            {#                        <i class="fas fa-search"></i>#}
+                            {#                    </button>#}
+                            {#                </div>#}
+                            {#            </div>#}
+                            {#        </form>#}
+                            
+                            <!-- Right navbar links -->
+                            <ul class="navbar-nav ml-auto">
+                                <!-- Messages Dropdown Menu -->
+                                
+                                
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link" data-toggle="dropdown" href="#" title="Mensajes masivos">
+                                        <i class="text-primary far fa-envelope"></i>
                                     </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <span class="dropdown-item dropdown-header">Enviar mensajes masivos</span>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="" class="dropdown-item" data-toggle="modal" data-target="#modal_msg_students">
+                                            <i class="fa fa-users"></i> A Estudiantes
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="" class="dropdown-item" data-toggle="modal" data-target="#modal_msg_members">
+                                            <i class="fas fa-graduation-cap"></i> A profesores
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="" class="dropdown-item"  data-toggle="modal" data-target="#modal_msg_all">
+                                            <i class="fas fa-paper-plane"></i> A todos
+                                        </a>
+                                        
+                                    </div>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{% url 'cgc:cgc_members_list' %}" title="Ver miembros de la CGC" class="nav-link">
-                                        <i class="fa fa-user-check nav-icon"></i>
-                                        <p>Todos</p>
+                                    <a class="nav-link text-primary" href="{% url 'cgc:view_self_profile' %}" title="Ver perfil">
+                                        <i class="fa fa-user"></i>
                                     </a>
                                 </li>
-
-
+                                
+                                <!-- Notifications Dropdown Menu -->
+                                
+                                <li class="nav-item">
+                                    <a class="nav-link text-danger" href="{% url 'log:cgc_logout' %}" title="Salir">
+                                        <i class="fa fa-power-off"></i>
+                                    </a>
+                                </li>
                             </ul>
-                        </li>
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link" title="Estudiantes y solicitantes">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    Estudiantes
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
+                        </nav>
+                        <!-- /.navbar -->
+                        
+                        <!-- Main Sidebar Container -->
+                        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+                            <!-- Brand Logo -->
+                            <a href="" class="brand-link">
+                                <img src="{% static 'programs/dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+                                style="opacity: .8">
+                                <span class="brand-text font-weight-light">Programas CGC</span>
                             </a>
-                            <ul class="nav nav-treeview">
-
-                                <li class="nav-item">
-                                    <a href="{% url 'cgc:students_list' 'requesters' %}" class="nav-link">
-                                        <i class="fa fa-check nav-icon"></i>
-                                        <p>Solicitantes</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{% url 'cgc:students_list' 'aproved' %}" class="nav-link">
-                                        <i class="fa fa-thumbs-up nav-icon"></i>
-                                        <p>Doctorandos</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{% url 'cgc:students_list' 'graduated' %}" class="nav-link">
-                                        <i class="fa fa-graduation-cap nav-icon"></i>
-                                        <p>Graduados</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{% url 'cgc:students_list' 'all' %}" class="nav-link">
-                                        <i class="fa fa-list-ul nav-icon"></i>
-                                        <p>Todos</p>
-                                    </a>
-                                </li>
-
-                            </ul>
-                        </li>
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link" title="Profesores y tutores del programa">
-                                <i class="nav-icon fas fa-user-check"></i>
-                                <p>
-                                    Claustro
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-
-                                <li class="nav-item">
-                                    <a href="{% url 'cgc:programs_members_list' 'comite' %}" class="nav-link" title="Miembros de Comité Académicos">
-                                        <i class="fa fa-users"></i>
-                                        <p>Comité</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="{% url 'cgc:programs_members_list' 'all' %}" class="nav-link">
-                                        <i class="fa fa-list"></i>
-                                        <p>Todos</p>
-                                    </a>
-                                </li>
-
-                            </ul>
-                        </li>
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link" title="Actas de la CGC y CNGC">
-                                <i class="nav-icon fas fa-archive"></i>
-                                <p>
-                                    Documentos
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-
-                                <li class="nav-item">
-                                    <a href="{% url 'cgc:cgc_new_document' %}" class="nav-link" title="Nueva acta de la CGC UNAH-Complejo">
-                                        <i class="fa fa-folder-plus"></i>
-                                        <p>Nuevo documento</p>
-                                    </a>
-                                </li>
-
-
-                                <li class="nav-item">
-                                    <a href="{% url 'cgc:documents' 'all' %}" class="nav-link" title="Ver documentos de la CGC">
-                                        <i class="fa fa-list-ol"></i>
-                                        <p>Ver documentos</p>
-                                    </a>
-                                </li>
-
-
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'cgc:programs_lines' %}" class="nav-link" title="Líneas de investigación del programa">
-                                <i class="nav-icon fas fa-project-diagram"></i>
-                                <p>
-                                    Líneas
-                                </p>
-                            </a>
-
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'cgc:programs_projects' %}" class="nav-link" title="Proyectos asociados a programas">
-                                <i class="nav-icon fas fa-edit"></i>
-                                <p>
-                                    Proyectos
-                                </p>
-                            </a>
-
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{% url 'cgc:cgc_statistics' %}" class="nav-link" title="Estadísticas del programa">
-                                <i class="fa fa-chart-line nav-icon"></i>
-                                <p>Estadísticas</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{% url 'cgc:docx_cgc_report' %}" class="nav-link" title="Reportes de la CGC">
-                                <i class="fa fa-receipt nav-icon"></i>
-                                <p>Reportes</p>
-                            </a>
-                        </li>
-
-
-
-
-
-
-                    </ul>
-                </nav>
-                <!-- /.sidebar-menu -->
-            </div>
-            <!-- /.sidebar -->
-        </aside>
-
-        <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
-            {% block cgc_content %}
-            {% endblock %}
-            <!-- /.content -->
-        </div>
-        <!-- /.content-wrapper -->
-
-        <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
-        </aside>
-        <!-- /.control-sidebar -->
-
-        <div class="modal fade" id="modal_msg_members">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Enviar mensaje a Profesores</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form id="frm_msg_member" method="post">
-                        <div class="modal-body alert alert-primary">
-
-                            <div class="form-row ">
-                                <div class="col-md-12">
-                                    <select class="form-control" id="slc_msg_scope" name="msg_scope">
-                                        <option value="" selected>Seleccione un contexto</option>
-                                        <option value="comite">A Miembros de Comités Académicos</option>
-                                        <option value="professors">A Profesores</option>
-                                        <option value="tuthors">A Tutores</option>
-                                        <option value="all">A todos los profesores</option>
-                                    </select>
-                                    <input class="form-control" id="inp_msg_subject_members" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
-
-                                    <textarea class="form-control textarea col-md-12" id="txt_msg_body_members"
-                                              name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
+                            
+                            <!-- Sidebar -->
+                            <div class="sidebar">
+                                <!-- Sidebar user panel (optional) -->
+                                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                                    {#                <div class="image">#}
+                                        {#                    <img src="{% static 'programs/dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">#}
+                                        {#                    <img src="{% url 'programs:program_member_picture' %}" class="img-circle elevation-2" alt="User Image">#}
+                                        {#                </div>#}
+                                        <div class="info">
+                                            <a href="#" class="d-block" title="{{ user.get_full_name }}">{{ user.get_full_name }}</a>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Sidebar Menu -->
+                                    <nav class="mt-2">
+                                        <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
+                                            <!-- Add icons to the links using the .nav-icon class
+                                                with font-awesome or any other icon font library -->
+                                                <li class="nav-item">
+                                                    
+                                                    <a href="{% url 'cgc:cgc_home' %}" class="nav-link">
+                                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                                        <p>
+                                                            Dashboard
+                                                            
+                                                        </p>
+                                                    </a>
+                                                </li>
+                                                
+                                                
+                                                {# Opciones para doctorados#}
+                                                
+                                                <li class="nav-item">
+                                                    <a href="{% url 'cgc:cgc_programs_list' %}" class="nav-link" title="Programas doctorales">
+                                                        <i class="fa fa-list-alt nav-icon"></i>
+                                                        <p>Programas</p>
+                                                    </a>
+                                                </li>
+                                                
+                                                <li class="nav-item has-treeview">
+                                                    <a href="#" class="nav-link" title="Miembros de la CGC">
+                                                        <i class="nav-icon fas fa-graduation-cap"></i>
+                                                        <p>
+                                                            Miembros
+                                                            <i class="fas fa-angle-left right"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        
+                                                        <li class="nav-item">
+                                                            <a href="{% url 'cgc:cgc_create_cgc_member' %}" class="nav-link" title="Agregar nuevo miembro a la CGC">
+                                                                <i class="fa fa-user-plus nav-icon"></i>
+                                                                <p>Nuevo</p>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href="{% url 'cgc:cgc_members_list' %}" title="Ver miembros de la CGC" class="nav-link">
+                                                                <i class="fa fa-user-check nav-icon"></i>
+                                                                <p>Todos</p>
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        
+                                                    </ul>
+                                                </li>
+                                                <li class="nav-item has-treeview">
+                                                    <a href="#" class="nav-link" title="Estudiantes y solicitantes">
+                                                        <i class="nav-icon fas fa-users"></i>
+                                                        <p>
+                                                            Estudiantes
+                                                            <i class="fas fa-angle-left right"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        
+                                                        <li class="nav-item">
+                                                            <a href="{% url 'cgc:students_list' 'requesters' %}" class="nav-link">
+                                                                <i class="fa fa-check nav-icon"></i>
+                                                                <p>Solicitantes</p>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href="{% url 'cgc:students_list' 'aproved' %}" class="nav-link">
+                                                                <i class="fa fa-thumbs-up nav-icon"></i>
+                                                                <p>Doctorandos</p>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href="{% url 'cgc:students_list' 'graduated' %}" class="nav-link">
+                                                                <i class="fa fa-graduation-cap nav-icon"></i>
+                                                                <p>Graduados</p>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href="{% url 'cgc:students_list' 'all' %}" class="nav-link">
+                                                                <i class="fa fa-list-ul nav-icon"></i>
+                                                                <p>Todos</p>
+                                                            </a>
+                                                        </li>
+                                                        
+                                                    </ul>
+                                                </li>
+                                                <li class="nav-item has-treeview">
+                                                    <a href="#" class="nav-link" title="Profesores y tutores del programa">
+                                                        <i class="nav-icon fas fa-user-check"></i>
+                                                        <p>
+                                                            Claustro
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        
+                                                        <li class="nav-item">
+                                                            <a href="{% url 'cgc:programs_members_list' 'comite' %}" class="nav-link" title="Miembros de Comité Académicos">
+                                                                <i class="fa fa-users"></i>
+                                                                <p>Comité</p>
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        <li class="nav-item">
+                                                            <a href="{% url 'cgc:programs_members_list' 'all' %}" class="nav-link">
+                                                                <i class="fa fa-list"></i>
+                                                                <p>Todos</p>
+                                                            </a>
+                                                        </li>
+                                                        
+                                                    </ul>
+                                                </li>
+                                                <li class="nav-item has-treeview">
+                                                    <a href="#" class="nav-link" title="Actas de la CGC y CNGC">
+                                                        <i class="nav-icon fas fa-archive"></i>
+                                                        <p>
+                                                            Documentos
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        
+                                                        <li class="nav-item">
+                                                            <a href="{% url 'cgc:cgc_new_document' %}" class="nav-link" title="Nueva acta de la CGC UNAH-Complejo">
+                                                                <i class="fa fa-folder-plus"></i>
+                                                                <p>Nuevo documento</p>
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        
+                                                        <li class="nav-item">
+                                                            <a href="{% url 'cgc:documents' 'all' %}" class="nav-link" title="Ver documentos de la CGC">
+                                                                <i class="fa fa-list-ol"></i>
+                                                                <p>Ver documentos</p>
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        
+                                                    </ul>
+                                                </li>
+                                                <li class="nav-item has-treeview">
+                                                    <a href="#" class="nav-link" title="Actas de la CGC y CNGC">
+                                                        <i class="nav-icon fas fa-book-open"></i>
+                                                        <p>
+                                                            Tesis
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        
+                                                        <<li class="nav-item">
+                                                            <a href="{% url 'cgc:cgc_thesis_list' %}" class="nav-link" title="Lista de tesis doctorales">
+                                                                <i class="nav-icon fas fa-list-ol"></i>
+                                                                <p>
+                                                                    Listar tesis
+                                                                </p>
+                                                            </a>
+                                                            
+                                                        </li>
+                                                        
+                                                        
+                                                        <li class="nav-item">
+                                                            <a href="" class="nav-link" title="Descargar todas las tesis">
+                                                                <i class="fa fa-download"></i>
+                                                                <p>Descargar todas</p>
+                                                            </a>
+                                                        </li>
+                                                        
+                                                        
+                                                    </ul>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="{% url 'cgc:programs_lines' %}" class="nav-link" title="Líneas de investigación del programa">
+                                                        <i class="nav-icon fas fa-project-diagram"></i>
+                                                        <p>
+                                                            Líneas
+                                                        </p>
+                                                    </a>
+                                                    
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="{% url 'cgc:programs_projects' %}" class="nav-link" title="Proyectos asociados a programas">
+                                                        <i class="nav-icon fas fa-edit"></i>
+                                                        <p>
+                                                            Proyectos
+                                                        </p>
+                                                    </a>
+                                                    
+                                                </li>
+                                                
+                                                
+                                                <li class="nav-item">
+                                                    <a href="{% url 'cgc:cgc_statistics' %}" class="nav-link" title="Estadísticas del programa">
+                                                        <i class="fa fa-chart-line nav-icon"></i>
+                                                        <p>Estadísticas</p>
+                                                    </a>
+                                                </li>
+                                                
+                                                <li class="nav-item">
+                                                    <a href="{% url 'cgc:docx_cgc_report' %}" class="nav-link" title="Reportes de la CGC">
+                                                        <i class="fa fa-receipt nav-icon"></i>
+                                                        <p>Reportes</p>
+                                                    </a>
+                                                </li>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                            </ul>
+                                        </nav>
+                                        <!-- /.sidebar-menu -->
+                                    </div>
+                                    <!-- /.sidebar -->
+                                </aside>
+                                
+                                <!-- Content Wrapper. Contains page content -->
+                                <div class="content-wrapper">
+                                    <!-- Content Header (Page header) -->
+                                    {% block cgc_content %}
+                                    {% endblock %}
+                                    <!-- /.content -->
                                 </div>
-                                <div class="col-md-12 text-right">
-                                    <span id="total-characters"></span>
+                                <!-- /.content-wrapper -->
+                                
+                                <!-- Control Sidebar -->
+                                <aside class="control-sidebar control-sidebar-dark">
+                                    <!-- Control sidebar content goes here -->
+                                </aside>
+                                <!-- /.control-sidebar -->
+                                
+                                <div class="modal fade" id="modal_msg_members">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Enviar mensaje a Profesores</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form id="frm_msg_member" method="post">
+                                                <div class="modal-body alert alert-primary">
+                                                    
+                                                    <div class="form-row ">
+                                                        <div class="col-md-12">
+                                                            <select class="form-control" id="slc_msg_scope" name="msg_scope">
+                                                                <option value="" selected>Seleccione un contexto</option>
+                                                                <option value="comite">A Miembros de Comités Académicos</option>
+                                                                <option value="professors">A Profesores</option>
+                                                                <option value="tuthors">A Tutores</option>
+                                                                <option value="all">A todos los profesores</option>
+                                                            </select>
+                                                            <input class="form-control" id="inp_msg_subject_members" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
+                                                            
+                                                            <textarea class="form-control textarea col-md-12" id="txt_msg_body_members"
+                                                            name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
+                                                        </div>
+                                                        <div class="col-md-12 text-right">
+                                                            <span id="total-characters"></span>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    
+                                                    
+                                                    
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary" id="btn_msg_member">Enviar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
                                 </div>
-
+                                <div class="modal fade" id="modal_msg_students">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Enviar mensaje a Estudiantes</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form id="frm_msg_students" method="post">
+                                                <div class="modal-body alert alert-warning">
+                                                    
+                                                    <div class="form-row ">
+                                                        <div class="col-md-12">
+                                                            <select class="form-control" id="slc_msg_scope_students" name="msg_scope">
+                                                                <option value="" selected>Seleccione un contexto</option>
+                                                                <option value="requesters">A solicitantes</option>
+                                                                
+                                                                <option value="aproved">A doctorandos</option>
+                                                                
+                                                                <option value="graduated">A graduados</option>
+                                                                <option value="all">A todos</option>
+                                                            </select>
+                                                            <input class="form-control" id="inp_msg_subject_students" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
+                                                            
+                                                            <textarea class="form-control textarea col-md-12" id="txt_msg_body_students"
+                                                            name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
+                                                        </div>
+                                                        <div class="col-md-12 text-right">
+                                                            <span id="total-characters"></span>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    
+                                                    
+                                                    
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary" id="btn_msg_member">Enviar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+                                <div class="modal fade" id="modal_msg_all">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Enviar mensaje a todos</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form id="frm_msg_all" method="post">
+                                                <div class="modal-body alert alert-danger">
+                                                    
+                                                    <div class="form-row ">
+                                                        <div class="col-md-12">
+                                                            
+                                                            <input class="form-control" id="inp_msg_subject_all" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
+                                                            
+                                                            <textarea class="form-control textarea col-md-12" id="txt_msg_body_all"
+                                                            name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
+                                                        </div>
+                                                        <div class="col-md-12 text-right">
+                                                            <span id="total-characters"></span>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    
+                                                    
+                                                    
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-primary" id="btn_msg_member">Enviar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+                                
+                                <!-- Main Footer -->
+                                <footer class="main-footer">
+                                    <strong>Copyright &copy; LATED/ <a href="http://ceesa.unah.edu.cu">CEESA</a>.</strong>
+                                    Todos los derechos reservados
+                                    <div class="float-right d-none d-sm-inline-block">
+                                        <b>Version</b> 1.0
+                                    </div>
+                                </footer>
+                                {% csrf_token %}
+                                
+                                
                             </div>
-
-
-
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary" id="btn_msg_member">Enviar</button>
-                        </div>
-                    </form>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-        <div class="modal fade" id="modal_msg_students">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Enviar mensaje a Estudiantes</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form id="frm_msg_students" method="post">
-                        <div class="modal-body alert alert-warning">
-
-                            <div class="form-row ">
-                                <div class="col-md-12">
-                                    <select class="form-control" id="slc_msg_scope_students" name="msg_scope">
-                                        <option value="" selected>Seleccione un contexto</option>
-                                        <option value="requesters">A solicitantes</option>
-
-                                            <option value="aproved">A doctorandos</option>
-
-                                        <option value="graduated">A graduados</option>
-                                        <option value="all">A todos</option>
-                                    </select>
-                                    <input class="form-control" id="inp_msg_subject_students" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
-
-                                    <textarea class="form-control textarea col-md-12" id="txt_msg_body_students"
-                                              name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
-                                </div>
-                                <div class="col-md-12 text-right">
-                                    <span id="total-characters"></span>
-                                </div>
-
-                            </div>
-
-
-
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary" id="btn_msg_member">Enviar</button>
-                        </div>
-                    </form>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-        <div class="modal fade" id="modal_msg_all">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Enviar mensaje a todos</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form id="frm_msg_all" method="post">
-                        <div class="modal-body alert alert-danger">
-
-                            <div class="form-row ">
-                                <div class="col-md-12">
-
-                                    <input class="form-control" id="inp_msg_subject_all" type="text" placeholder="Asunto" name="msg_subject" maxlength="100" required >
-
-                                    <textarea class="form-control textarea col-md-12" id="txt_msg_body_all"
-                                              name="msg_body" placeholder="Texto del mensaje" rows="8" maxlength="500" required ></textarea>
-                                </div>
-                                <div class="col-md-12 text-right">
-                                    <span id="total-characters"></span>
-                                </div>
-
-                            </div>
-
-
-
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary" id="btn_msg_member">Enviar</button>
-                        </div>
-                    </form>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-
-        <!-- Main Footer -->
-        <footer class="main-footer">
-            <strong>Copyright &copy; LATED/ <a href="http://ceesa.unah.edu.cu">CEESA</a>.</strong>
-            Todos los derechos reservados
-            <div class="float-right d-none d-sm-inline-block">
-                <b>Version</b> 1.0
-            </div>
-        </footer>
-        {% csrf_token %}
-
-
-    </div>
-
-<!-- ./wrapper -->
-
-<!-- REQUIRED SCRIPTS -->
-<!-- jQuery -->
-<script src="{% static 'programs/plugins/jquery/jquery.min.js' %}"></script>
-<!-- Bootstrap -->
-<script src="{% static 'programs/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<!-- overlayScrollbars -->
-<script src="{% static 'programs/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
-<!-- AdminLTE App -->
-<script src="{% static 'programs/dist/js/adminlte.js' %}"></script>
-
-<!-- OPTIONAL SCRIPTS -->
-<script src="{% static 'programs/dist/js/demo.js' %}"></script>
-
-<!-- PAGE PLUGINS -->
-<!-- jQuery Mapael -->
-<script src="{% static 'programs/plugins/jquery-mousewheel/jquery.mousewheel.js' %}"></script>
-<script src="{% static 'programs/plugins/raphael/raphael.min.js' %}"></script>
-<script src="{% static 'programs/plugins/jquery-mapael/jquery.mapael.min.js' %}"></script>
-<script src="{% static 'programs/plugins/jquery-mapael/maps/usa_states.min.js' %}"></script>
-<!-- ChartJS -->
-<script src="{% static 'programs/plugins/chart.js/Chart.min.js' %}"></script>
-
-<!-- PAGE SCRIPTS -->
-<script src="{% static 'programs/dist/js/pages/dashboard2.js' %}"></script>
-
-<script src="{% static 'programs/plugins/summernote/summernote-bs4.js'  %}"></script>
-
-<script src="{% static 'programs/plugins/summernote/lang/summernote-es-ES.js'  %}"></script>
-
-<script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
-<script>
-    $(document).ready(function () {
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 7000
-        });
-        $('#txt_msg_body_members').summernote({
-            lang: 'es-Es',
-            placeholder: 'Escribe el mensaje aquí (lo recibirá el grupo de profesores seleccionado).',
-            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
-            dialogsInBody: true,
-            dialogsFade: true,
-            height: 200,
-            toolbar: [
-                // [groupName, [list of button]]
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                {#['fontname', ['fontname']],#}
-                {#['fontsize', ['fontsize']],#}
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-            ],
-
-        });
-        $('#txt_msg_body_students').summernote({
-            lang: 'es-Es',
-            placeholder: 'Escribe el mensaje aquí (lo recibirá el grupo de estudiantes seleccionado)',
-            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
-            dialogsInBody: true,
-            dialogsFade: true,
-            height: 200,
-            toolbar: [
-                // [groupName, [list of button]]
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                {#['fontname', ['fontname']],#}
-                {#['fontsize', ['fontsize']],#}
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-            ],
-
-        });
-        $('#txt_msg_body_all').summernote({
-            lang: 'es-Es',
-            placeholder: 'Escribe el mensaje aquí (lo recibirán todos los profesores y estudiantes del programa). ',
-            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
-            dialogsInBody: true,
-            dialogsFade: true,
-            height: 200,
-            toolbar: [
-                // [groupName, [list of button]]
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                {#['fontname', ['fontname']],#}
-                {#['fontsize', ['fontsize']],#}
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-            ],
-
-        });
-
-        $('#frm_msg_member').on('submit', function (e) {
-            e.preventDefault();
-            $('#modal_msg_members').modal('hide');
-            var url = "{% url 'cgc:ajx_cgc_member_massive_msg' %}";
-
-            $.ajax({
-                url : url,
-                type : "POST", // http method
-                data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                    'msg_subject': $('#inp_msg_subject_members').val(),
-                    'msg_body': $('#txt_msg_body_members').val(),
-                    'msg_scope':$('#slc_msg_scope').val(),
-                }, // data sent with the post request
-
-                // handle a successful response
-                success : function(json) {
-
-                    if (json[0].sended == 1) {
-
-                        Toast.fire({
-                            type: 'success',
-                            title: 'Mensaje enviado exitosamente'
-                        })
-
-                    }
-                    else if(json[0].sended == 0){
-                        Toast.fire({
-                            type: 'error',
-                            title: 'No se ha podido enviar el mensaje.'
-                        })
-
-                    }
-                    else if(json[0].sended == 2){
-                        Toast.fire({
-                            type: 'error',
-                            title: 'El texto del mensaje es muy largo.'
-                        })
-
-                    }
-                    else if(json[0].sended == 3){
-                        Toast.fire({
-                            type: 'error',
-                            title: 'Usted no puede enviar mensajes masivos.'
-                        })
-
-                    }
-                    console.log(json); // log the returned json to the console
-
-                },
-
-                // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                    Toast.fire({
-                        type: 'error',
-                        title: 'Uff, ha ocurrido algo desconocido.'
+                            
+                            <!-- ./wrapper -->
+                            
+                            <!-- REQUIRED SCRIPTS -->
+                            <!-- jQuery -->
+                            <script src="{% static 'programs/plugins/jquery/jquery.min.js' %}"></script>
+                            <!-- Bootstrap -->
+                            <script src="{% static 'programs/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+                            <!-- overlayScrollbars -->
+                            <script src="{% static 'programs/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
+                            <!-- AdminLTE App -->
+                            <script src="{% static 'programs/dist/js/adminlte.js' %}"></script>
+                            
+                            <!-- OPTIONAL SCRIPTS -->
+                            <script src="{% static 'programs/dist/js/demo.js' %}"></script>
+                            
+                            <!-- PAGE PLUGINS -->
+                            <!-- jQuery Mapael -->
+                            <script src="{% static 'programs/plugins/jquery-mousewheel/jquery.mousewheel.js' %}"></script>
+                            <script src="{% static 'programs/plugins/raphael/raphael.min.js' %}"></script>
+                            <script src="{% static 'programs/plugins/jquery-mapael/jquery.mapael.min.js' %}"></script>
+                            <script src="{% static 'programs/plugins/jquery-mapael/maps/usa_states.min.js' %}"></script>
+                            <!-- ChartJS -->
+                            <script src="{% static 'programs/plugins/chart.js/Chart.min.js' %}"></script>
+                            
+                            <!-- PAGE SCRIPTS -->
+                            <script src="{% static 'programs/dist/js/pages/dashboard2.js' %}"></script>
+                            
+                            <script src="{% static 'programs/plugins/summernote/summernote-bs4.js'  %}"></script>
+                            
+                            <script src="{% static 'programs/plugins/summernote/lang/summernote-es-ES.js'  %}"></script>
+                            
+                            <script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+                            <script>
+                                $(document).ready(function () {
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 7000
+                                    });
+                                    $('#txt_msg_body_members').summernote({
+                                        lang: 'es-Es',
+                                        placeholder: 'Escribe el mensaje aquí (lo recibirá el grupo de profesores seleccionado).',
+                                        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                                        dialogsInBody: true,
+                                        dialogsFade: true,
+                                        height: 200,
+                                        toolbar: [
+                                        // [groupName, [list of button]]
+                                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                                        {#['fontname', ['fontname']],#}
+                                        {#['fontsize', ['fontsize']],#}
+                                        ['color', ['color']],
+                                        ['para', ['ul', 'ol', 'paragraph']],
+                                        ['table', ['table']],
+                                        ],
+                                        
+                                    });
+                                    $('#txt_msg_body_students').summernote({
+                                        lang: 'es-Es',
+                                        placeholder: 'Escribe el mensaje aquí (lo recibirá el grupo de estudiantes seleccionado)',
+                                        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                                        dialogsInBody: true,
+                                        dialogsFade: true,
+                                        height: 200,
+                                        toolbar: [
+                                        // [groupName, [list of button]]
+                                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                                        {#['fontname', ['fontname']],#}
+                                        {#['fontsize', ['fontsize']],#}
+                                        ['color', ['color']],
+                                        ['para', ['ul', 'ol', 'paragraph']],
+                                        ['table', ['table']],
+                                        ],
+                                        
+                                    });
+                                    $('#txt_msg_body_all').summernote({
+                                        lang: 'es-Es',
+                                        placeholder: 'Escribe el mensaje aquí (lo recibirán todos los profesores y estudiantes del programa). ',
+                                        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                                        dialogsInBody: true,
+                                        dialogsFade: true,
+                                        height: 200,
+                                        toolbar: [
+                                        // [groupName, [list of button]]
+                                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                                        {#['fontname', ['fontname']],#}
+                                        {#['fontsize', ['fontsize']],#}
+                                        ['color', ['color']],
+                                        ['para', ['ul', 'ol', 'paragraph']],
+                                        ['table', ['table']],
+                                        ],
+                                        
+                                    });
+                                    
+                                    $('#frm_msg_member').on('submit', function (e) {
+                                        e.preventDefault();
+                                        $('#modal_msg_members').modal('hide');
+                                        var url = "{% url 'cgc:ajx_cgc_member_massive_msg' %}";
+                                        
+                                        $.ajax({
+                                            url : url,
+                                            type : "POST", // http method
+                                            data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                                            'msg_subject': $('#inp_msg_subject_members').val(),
+                                            'msg_body': $('#txt_msg_body_members').val(),
+                                            'msg_scope':$('#slc_msg_scope').val(),
+                                        }, // data sent with the post request
+                                        
+                                        // handle a successful response
+                                        success : function(json) {
+                                            
+                                            if (json[0].sended == 1) {
+                                                
+                                                Toast.fire({
+                                                    type: 'success',
+                                                    title: 'Mensaje enviado exitosamente'
+                                                })
+                                                
+                                            }
+                                            else if(json[0].sended == 0){
+                                                Toast.fire({
+                                                    type: 'error',
+                                                    title: 'No se ha podido enviar el mensaje.'
+                                                })
+                                                
+                                            }
+                                            else if(json[0].sended == 2){
+                                                Toast.fire({
+                                                    type: 'error',
+                                                    title: 'El texto del mensaje es muy largo.'
+                                                })
+                                                
+                                            }
+                                            else if(json[0].sended == 3){
+                                                Toast.fire({
+                                                    type: 'error',
+                                                    title: 'Usted no puede enviar mensajes masivos.'
+                                                })
+                                                
+                                            }
+                                            console.log(json); // log the returned json to the console
+                                            
+                                        },
+                                        
+                                        // handle a non-successful response
+                                        error : function(xhr,errmsg,err) {
+                                            Toast.fire({
+                                                type: 'error',
+                                                title: 'Uff, ha ocurrido algo desconocido.'
+                                            })
+                                        }
+                                    });
+                                    
+                                    $('#frm_msg_members')[0].reset();
+                                    
+                                    
+                                });
+                                $('#frm_msg_students').on('submit', function (e) {
+                                    e.preventDefault();
+                                    $('#modal_msg_students').modal('hide');
+                                    var url = "{% url 'cgc:ajx_cgc_students_massive_msg' %}";
+                                    
+                                    $.ajax({
+                                        url : url,
+                                        type : "POST", // http method
+                                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                                        'msg_subject': $('#inp_msg_subject_students').val(),
+                                        'msg_body': $('#txt_msg_body_students').val(),
+                                        'msg_scope':$('#slc_msg_scope_students').val(),
+                                    }, // data sent with the post request
+                                    
+                                    // handle a successful response
+                                    success : function(json) {
+                                        
+                                        if (json[0].sended == 1) {
+                                            
+                                            Toast.fire({
+                                                type: 'success',
+                                                title: 'Mensaje enviado exitosamente'
+                                            })
+                                            
+                                        }
+                                        else if(json[0].sended == 0){
+                                            Toast.fire({
+                                                type: 'error',
+                                                title: 'No se ha podido enviar el mensaje.'
+                                            })
+                                            
+                                        }
+                                        else if(json[0].sended == 2){
+                                            Toast.fire({
+                                                type: 'error',
+                                                title: 'El texto del mensaje es muy largo.'
+                                            })
+                                            
+                                        }
+                                        else if(json[0].sended == 3){
+                                            Toast.fire({
+                                                type: 'error',
+                                                title: 'Usted no puede enviar mensajes masivos.'
+                                            })
+                                            
+                                        }
+                                        console.log(json); // log the returned json to the console
+                                        
+                                    },
+                                    
+                                    // handle a non-successful response
+                                    error : function(xhr,errmsg,err) {
+                                        Toast.fire({
+                                            type: 'error',
+                                            title: 'Uff, ha ocurrido algo desconocido.'
+                                        })
+                                    }
+                                });
+                                
+                                $('#frm_msg_students')[0].reset();
+                                
+                                
+                            });
+                            $('#frm_msg_all').on('submit', function (e) {
+                                e.preventDefault();
+                                $('#modal_msg_all').modal('hide');
+                                var url = "{% url 'cgc:ajx_cgc_everybody_massive_msg' %}";
+                                
+                                $.ajax({
+                                    url : url,
+                                    type : "POST", // http method
+                                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                                    'msg_subject': $('#inp_msg_subject_all').val(),
+                                    'msg_body': $('#txt_msg_body_all').val(),
+                                }, // data sent with the post request
+                                
+                                // handle a successful response
+                                success : function(json) {
+                                    
+                                    if (json[0].sended == 1) {
+                                        
+                                        Toast.fire({
+                                            type: 'success',
+                                            title: 'Mensaje enviado exitosamente'
+                                        })
+                                        
+                                    }
+                                    else if(json[0].sended == 0){
+                                        Toast.fire({
+                                            type: 'error',
+                                            title: 'No se ha podido enviar el mensaje.'
+                                        })
+                                        
+                                    }
+                                    else if(json[0].sended == 2){
+                                        Toast.fire({
+                                            type: 'error',
+                                            title: 'El texto del mensaje es muy largo.'
+                                        })
+                                        
+                                    }
+                                    console.log(json); // log the returned json to the console
+                                    
+                                },
+                                
+                                // handle a non-successful response
+                                error : function(xhr,errmsg,err) {
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'Uff, ha ocurrido algo desconocido.'
+                                    })
+                                }
+                            });
+                            
+                            $('#frm_msg_all')[0].reset();
+                            
+                            
+                        });
+                        
+                        $(document).on('hidden.bs.modal','#modal_msg_members', function () {
+                            $('#frm_msg_member')[0].reset();
+                            $('#txt_msg_body_members').summernote('code', '');
+                        });
+                        $(document).on('hidden.bs.modal','#modal_msg_students', function () {
+                            $('#frm_msg_students')[0].reset();
+                            $('#txt_msg_body_students').summernote('code', '');
+                        });
+                        $(document).on('hidden.bs.modal','#modal_msg_all', function () {
+                            $('#frm_msg_all')[0].reset();
+                            $('#txt_msg_body_all').summernote('code', '');
+                        });
+                        
+                        
                     })
-                }
-            });
-
-            $('#frm_msg_members')[0].reset();
-
-
-        });
-        $('#frm_msg_students').on('submit', function (e) {
-            e.preventDefault();
-            $('#modal_msg_students').modal('hide');
-            var url = "{% url 'cgc:ajx_cgc_students_massive_msg' %}";
-
-            $.ajax({
-                url : url,
-                type : "POST", // http method
-                data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                    'msg_subject': $('#inp_msg_subject_students').val(),
-                    'msg_body': $('#txt_msg_body_students').val(),
-                    'msg_scope':$('#slc_msg_scope_students').val(),
-                }, // data sent with the post request
-
-                // handle a successful response
-                success : function(json) {
-
-                    if (json[0].sended == 1) {
-
-                        Toast.fire({
-                            type: 'success',
-                            title: 'Mensaje enviado exitosamente'
-                        })
-
-                    }
-                    else if(json[0].sended == 0){
-                        Toast.fire({
-                            type: 'error',
-                            title: 'No se ha podido enviar el mensaje.'
-                        })
-
-                    }
-                    else if(json[0].sended == 2){
-                        Toast.fire({
-                            type: 'error',
-                            title: 'El texto del mensaje es muy largo.'
-                        })
-
-                    }
-                    else if(json[0].sended == 3){
-                        Toast.fire({
-                            type: 'error',
-                            title: 'Usted no puede enviar mensajes masivos.'
-                        })
-
-                    }
-                    console.log(json); // log the returned json to the console
-
-                },
-
-                // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                    Toast.fire({
-                        type: 'error',
-                        title: 'Uff, ha ocurrido algo desconocido.'
-                    })
-                }
-            });
-
-            $('#frm_msg_students')[0].reset();
-
-
-        });
-        $('#frm_msg_all').on('submit', function (e) {
-            e.preventDefault();
-            $('#modal_msg_all').modal('hide');
-            var url = "{% url 'cgc:ajx_cgc_everybody_massive_msg' %}";
-
-            $.ajax({
-                url : url,
-                type : "POST", // http method
-                data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                    'msg_subject': $('#inp_msg_subject_all').val(),
-                    'msg_body': $('#txt_msg_body_all').val(),
-                }, // data sent with the post request
-
-                // handle a successful response
-                success : function(json) {
-
-                    if (json[0].sended == 1) {
-
-                        Toast.fire({
-                            type: 'success',
-                            title: 'Mensaje enviado exitosamente'
-                        })
-
-                    }
-                    else if(json[0].sended == 0){
-                        Toast.fire({
-                            type: 'error',
-                            title: 'No se ha podido enviar el mensaje.'
-                        })
-
-                    }
-                    else if(json[0].sended == 2){
-                        Toast.fire({
-                            type: 'error',
-                            title: 'El texto del mensaje es muy largo.'
-                        })
-
-                    }
-                    console.log(json); // log the returned json to the console
-
-                },
-
-                // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                    Toast.fire({
-                        type: 'error',
-                        title: 'Uff, ha ocurrido algo desconocido.'
-                    })
-                }
-            });
-
-            $('#frm_msg_all')[0].reset();
-
-
-        });
-
-        $(document).on('hidden.bs.modal','#modal_msg_members', function () {
-            $('#frm_msg_member')[0].reset();
-            $('#txt_msg_body_members').summernote('code', '');
-        });
-        $(document).on('hidden.bs.modal','#modal_msg_students', function () {
-            $('#frm_msg_students')[0].reset();
-            $('#txt_msg_body_students').summernote('code', '');
-        });
-        $(document).on('hidden.bs.modal','#modal_msg_all', function () {
-            $('#frm_msg_all')[0].reset();
-            $('#txt_msg_body_all').summernote('code', '');
-        });
-
-
-    })
-</script>
-{% block extra_scripts %}
-{%  endblock %}
-</body>
-</html>
+                </script>
+                {% block extra_scripts %}
+                {%  endblock %}
+            </body>
+            </html>
+            

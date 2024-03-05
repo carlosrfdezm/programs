@@ -3,6 +3,7 @@ from django.urls import path
 
 from . import views
 from . import cgc_views as views
+from django.contrib.auth.decorators import login_required
 
 app_name = 'programs'
 
@@ -85,6 +86,8 @@ urlpatterns = [
 
     path('statistics', views.cgc_statistics,name='cgc_statistics'),
     path('report', views.docx_cgc_report,name='docx_cgc_report'),
+    
+    path('thesis/list', login_required(views.ThesisListView.as_view()), name='cgc_thesis_list'),
 
 
 

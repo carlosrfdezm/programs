@@ -17,12 +17,13 @@ from django.urls import reverse
 from django.utils import dateparse
 from django.utils.text import slugify, phone2numeric
 from django.utils.timezone import now
+from django.views import generic
 
 from programas.settings import MEDIA_URL, MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, CGC_Member, \
-    CGCBrief, CNGCBrief, CGCDocument
+    CGCBrief, CNGCBrief, CGCDocument, PhdStudentThesis
 from programs.templatetags.extra_tags import init_requirements_accomplished, finish_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
     user_is_cgc_member, user_is_cgc_ps
@@ -245,6 +246,12 @@ def autoedit_member_profile(request):
         return HttpResponse('Error: Usted no tiene acceso a esta funcionalidad')
 
 
+class ThesisListView(generic.ListView):
+    template_name = 'programs/cgc/cgc_thesis_list.html'
+    context_object_name = 'thesis'
+
+    def get_queryset(self):
+        return PhdStudentThesis.objects.all()
 
 @login_required
 def cgc_edit_document(request, document_id):
