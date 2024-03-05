@@ -73,6 +73,7 @@
                                     <th>Tipo</th>
                                     <th>Nivel</th>
                                     <th class="text-center">Contexto</th>
+                                    <th class="text-center">Descripción</th>
                                     <th> </th>
 
                                 </tr>
@@ -83,6 +84,7 @@
                                     <th>Tipo</th>
                                     <th>Nivel</th>
                                     <th class="text-center">Contexto</th>
+                                    <th class="text-center">Descripción</th>
                                     <th> </th>
 
                                 </tr>
@@ -99,6 +101,7 @@
                                     <td>{{ brief.type|capfirst }}</td>
                                     <td>{{  brief.level|upper }}</td>
                                     <td class="text-center"><i class="fa {% if brief.is_public %} text-success fa-toggle-on {% else %} text-danger fa-toggle-off {% endif %}" ></i></td>
+                                    <td>{{brief.description }}</td>
                                     <td class="text-right">
                                         <div class="btn-group">
                                             <button class="btn btn-sm btn-success" type="button" title="Ver acta" onclick="window.open('{% url 'programs:program_cgc_document_view' program.slug brief.id %}');"><i class="fa fa-book-reader"></i> </button>
