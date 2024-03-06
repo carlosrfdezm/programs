@@ -2567,27 +2567,11 @@ def download_thesis(request):
         zf = zipfile.ZipFile(zpath, "w")
 
         for thesis in PhdStudentThesis.objects.all():
-            for requirement in ProgramFileDoc.objects.filter(program=program):
-                try:
-                    s_f_d = StudentFileDocument.objects.get(student=student, program_file_document=requirement)
-                    if s_f_d.file:
-                        print(s_f_d.file.path)
-                        if os.path.exists(s_f_d.file.path):
-                            fpath = s_f_d.file.path
-                            fdir,fname = os.path.split(fpath)
-                            zip_subdir = "{0}/{1}".format(student.user.get_full_name(), slugify(requirement))
-                            zip_path = os.path.join(zip_subdir, fname)
-                            zf.write(fpath, zip_path)
-
-                    else:
-                        print('No hay archivo')
-                except StudentFileDocument.DoesNotExist:
-                    print("Creando documento de estudiante")
-                    s_f_d = StudentFileDocument(
-                        student = student,
-                        program_file_document = requirement
-                    )
-                    s_f_d.save()
+            fpath = thesis.file.path
+            fdir,fname = os.path.split(fpath)
+            zip_subdir = "{0}/{1}_{2}".format(thesis.phd_student.student.program.short_name, thesis.phd_student.student.user.first_name, thesis.phd_student.student.user.last_name)
+            zip_path = os.path.join(zip_subdir, fname)
+            zf.write(fpath, zip_path)
 
         zf.close()
 
@@ -2599,11 +2583,11 @@ def download_thesis(request):
             # Grab ZIP file from in-memory, make response with correct MIME-type
             resp = HttpResponse(zip, content_type="application/x-zip-compressed")
             # ..and correct content-disposition
-            resp['Content-Disposition'] = 'attachment; filename=%s' % '{0}_Evidencias_Estudiantes.zip'.format(program_slug)
+            resp['Content-Disposition'] = 'attachment; filename=Tesis_Doctorales.zip'
 
         return resp
-    except Program.DoesNotExist:
-        messages.error(request, 'El programa no existe')
-        return HttpResponse('El programa no existe')
+    except Exception as e:
+        
+        return HttpResponse('Ha ocurrido una excepción:{0}'.format(str(e)))
 
 

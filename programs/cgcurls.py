@@ -88,6 +88,7 @@ urlpatterns = [
     path('report', views.docx_cgc_report,name='docx_cgc_report'),
     
     path('thesis/list', login_required(views.ThesisListView.as_view()), name='cgc_thesis_list'),
+    path('thesis/download', views.download_thesis, name='download_thesis'),
 
 
 
