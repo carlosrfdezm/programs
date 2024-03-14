@@ -110,7 +110,7 @@
                                     {% endif %}
                                     <td>{{ doc.month }}</td>
                                     <td>{{ doc.type|capfirst }}</td>
-                                    <td>{{ doc.description|truncatewords:7 }}</td>
+                                    <td>{{ doc.description }}</td>
                                     <td class="text-center"><i class="fa {% if doc.is_public %} text-success fa-toggle-on {% else %} text-danger fa-toggle-off {% endif %}"></i></td>
 
                                     <td class="text-right">
