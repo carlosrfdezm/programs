@@ -1461,19 +1461,22 @@ def ajx_cgc_member_massive_msg(request ):
 def ajx_delete_document(request):
     try:
         cgc_member = CGC_Member.objects.get(user=request.user)
-        if cgc_member.charge == 'Presidente' or cgc_member.charge == 'Secretario':
+        if cgc_member.charge != 'Miembro':
             if request.method == 'POST':
-                document = CGCDocument.objects.get(pk=request.POST['document_id'])
+                
                 try:
+                    document = CGCDocument.objects.get(pk=request.POST['document_id'])
                     document.doc.delete()
+                    document.delete()
+                    return HttpResponse(json.dumps([{'deleted': 1}]),content_type="application/json")
                 except:
-                    pass
-
-                document.delete()
-                return HttpResponse(
-                    json.dumps([{'deleted': 1}]),
+                    return HttpResponse(
+                    json.dumps([{'deleted': 2}]),
                     content_type="application/json"
-                )
+                    )
+
+                
+                
             else:
                 return HttpResponse(
                     json.dumps([{'deleted': 2}]),
