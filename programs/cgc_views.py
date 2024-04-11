@@ -395,18 +395,18 @@ def cgc_document_view(request, document_id):
         file_name= filename.split('/')[filename.split('/').__len__()-1]
         doc_ext =filename.split('.')[filename.split('.').__len__()-1]
 
-        if doc_ext =='doc' or doc_ext=='docx' or doc_ext == 'odt':
-
-            with fs.open(filename) as brief:
-                response = HttpResponse(brief, content_type='application/doc')
-                response['Content-Disposition'] =  "inline; filename=" +'"'+  file_name+'"'
-
-                return response
-
-        elif doc_ext == 'pdf' :
+        
+        if doc_ext == 'pdf' :
             with fs.open(filename) as brief:
                 response = HttpResponse(brief, content_type='application/pdf')
                 response['Content-Disposition'] = "inline; filename=" +'"'+ file_name + '"'
+
+                return response
+            
+        else: 
+            with fs.open(filename) as brief:
+                response = HttpResponse(brief, content_type='application/doc')
+                response['Content-Disposition'] =  "inline; filename=" +'"'+  file_name+'"'
 
                 return response
 
