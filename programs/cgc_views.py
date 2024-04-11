@@ -37,7 +37,7 @@ def cgc_index(request):
         return HttpResponseRedirect(reverse('cgc:cgc_home'))
     else:
         context={
-            'director': CGC_Member.objects.get(charge='Presidente'),
+            'director': CGC_Member.objects.get(charge='Director'),
             'members': CGC_Member.objects.all(),
             'documents': CGCDocument.objects.filter(is_public=True),
             'programs': Program.objects.filter(type='phd'),
