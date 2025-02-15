@@ -1,3 +1,4 @@
 settings.py
 
-requirementes.txt
+requirements.txt
+db.sqlite3
