@@ -708,3 +708,14 @@ class Requester(models.Model):
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
+
+class FAQ(models.Model):
+    title = models.CharField(max_length=255, verbose_name="Título")
+    content = models.TextField(verbose_name="Contenido")
+    
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        verbose_name = "Pregunta frecuente"
+        verbose_name_plural = "Preguntas frecuentes"

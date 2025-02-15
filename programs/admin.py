@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from programs.models import InvestigationLine, Student, MscStudent, Tuthor, StudentFormationPlan, InnerAreas, \
     PhdStudent, DipStudent, PostgMember, ProgramSpeciality, New, Requester
-from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember, ProgramFileDoc, ProgramEdition
+from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember, ProgramFileDoc, ProgramEdition, FAQ
 
 # Register your models here.
 
@@ -67,3 +67,10 @@ class RequesterAdmin(admin.ModelAdmin):
     list_display = ['__all__']
 
 admin.site.register(Requester)
+
+class FAQAdmin(admin.ModelAdmin):
+    list_display = ('title', )  # Muestra solo los títulos en la lista de preguntas frecuentes
+    search_fields = ('title', 'content')  # Permite buscar por título y contenido
+    
+# Registra el modelo con su administrador personalizado
+admin.site.register(FAQ, FAQAdmin)
