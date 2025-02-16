@@ -253,7 +253,7 @@
             </div>
 
             {% for doc in public_docs %}
-
+            {% if forloop.counter == public_docs.count %}
             <div class="row">
                 <div class="col-md-10 offset-1">
                     <p title="{{ doc.description }}">{{ doc.description|truncatewords:15 }}</p>
@@ -263,11 +263,13 @@
                 </div>
 
             </div>
+            {% endif %}
             {% endfor %}
 
         </div>
     </section>
-    {% else %}
+   {% endif %}
+    
     <section id="services">
         <div class="container">
             <div class="section-header">
@@ -276,8 +278,18 @@
             </div>
 
             <div class="row">
-
+    {% if faqs %}
+            {% for faq in faqs %}
                 <div class="col-lg-6">
+                    <div class="box wow fadeInLeft">
+                        <div class="icon"><i class="fa fa-list"></i></div>
+                        <h4 class="title"><a href="">{{faq.title}}</a></h4>
+                        <p class="description text-justify">{{faq.content}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+            {% else %}
+               <div class="col-lg-6">
                     <div class="box wow fadeInLeft">
                         <div class="icon"><i class="fa fa-bar-chart"></i></div>
                         <h4 class="title"><a href="">Sobre la solicitud de matrícula</a></h4>
@@ -309,12 +321,13 @@
                         <p class="description text-justify">La defensa de la tesis se realiza una vez el estudiante haya vencido los cursos, las publicaciones, los eventos requeridos por el programa y el sistema de talleres del mismo; a solicitud de los tutores y el aspirante, el comité académico convoca al tribunal pertinente.</p>
                     </div>
                 </div>
-
+        
             </div>
 
+
         </div>
-    </section><!-- #services -->
     {% endif %}
+    </section><!-- #services -->
 
     <!--==========================
       News Section
