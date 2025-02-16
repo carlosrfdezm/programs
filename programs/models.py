@@ -710,6 +710,7 @@ class Requester(models.Model):
         return self.first_name + ' ' + self.last_name
 
 class FAQ(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=255, verbose_name="Título")
     content = models.TextField(verbose_name="Contenido")
     

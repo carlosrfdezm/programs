@@ -1,4 +1,3 @@
-settings.py
+programas/settings.py
 
-requirements.txt
 db.sqlite3
