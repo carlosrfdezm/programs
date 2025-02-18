@@ -311,9 +311,9 @@
             {% for faq in faqs %}
                 <div class="col-lg-6">
                     <div class="box wow fadeInLeft">
-                        <div class="icon"><i class="fa fa-list"></i></div>
+                        <div class="icon"><i class="fa fa-question-circle"></i></div>
                         <h4 class="title"><a href="">{{faq.title}}</a></h4>
-                        <p class="description text-justify">{{faq.content}}</p>
+                        <p class="description text-justify">{% autoescape off %}{{faq.content}}{% endautoescape %}</p>
                     </div>
                 </div>
             {% endfor %}

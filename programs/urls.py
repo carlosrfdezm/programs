@@ -133,6 +133,7 @@ urlpatterns = [
     path('ajx/new/delete', views.ajx_delete_new, name='ajx_delete_new'),
     path('ajx/announcement/delete', views.ajx_delete_announcement, name='ajx_delete_announcement'),
     path('ajx/comment/delete', views.ajx_rm_phd_thesis_comment, name='ajx_rm_phd_thesis_comment'),
+    path('ajx/faq/delete', views.ajx_delete_faq, name='ajx_delete_faq'),
 
     path('ajx/requirenment/<str:scope>/create', views.ajx_new_requirenment, name='ajx_new_requirenment'),
     path('ajx/requirenment/delete', views.ajx_delete_r, name='ajx_delete_r'),
@@ -164,6 +165,11 @@ urlpatterns = [
     path('new/<int:new_id>/edit', views.edit_new, name='edit_new'),
     path('new/create', views.create_new, name='create_new'),
     path('news/list', views.news_list, name='news_list'),
+
+    path('faq/<int:faq_id>/read', views.read_faq, name='read_faq'),
+    path('faq/<int:faq_id>/edit', views.edit_faq, name='edit_faq'),
+    path('faq/create', views.create_faq, name='create_faq'),
+    path('faq/list', views.faq_list, name='faq_list'),
 
 
     path('request/confirm/<str:request_id>', views.confirm_auto_request, name='request_confirm'),

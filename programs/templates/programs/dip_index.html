@@ -277,47 +277,22 @@
             {% for faq in faqs %}
                 <div class="col-lg-6">
                     <div class="box wow fadeInLeft">
-                        <div class="icon"><i class="fa fa-list"></i></div>
+                        <div class="icon"><i class="fa fa-question-circle"></i></div>
                         <h4 class="title"><a href="">{{faq.title}}</a></h4>
-                        <p class="description text-justify">{{faq.content}}</p>
+                        <p class="description text-justify">{% autoescape off %}{{faq.content}}{% endautoescape %}</p>
                     </div>
                 </div>
             {% endfor %}
             {% else %}
-               <div class="col-lg-6">
-                    <div class="box wow fadeInLeft">
-                        <div class="icon"><i class="fa fa-bar-chart"></i></div>
-                        <h4 class="title"><a href="">Sobre la solicitud de matrícula</a></h4>
-                        <p class="description text-justify">La solicitud de ingreso se realiza por escrito al Coordinador del Programa, y entregar una foto carnet (2 cm x 2cm),la Carta de Autorización del Jefe Inmediato y el Aval del Jefe de Proyecto al cual se vinculará el resultado de la investigación.</p>
-                    </div>
+            <div class="col-lg-6">
+                <div class="box wow fadeInLeft">
+                    <div class="icon"><i class="fa fa-question-circle"></i></div>
+                    <h4 class="title"><a href="">Aquí el coordinador ingresará respuestas a sus preguntas</a></h4>
+                    <p class="description text-justify">Desde aquí usted tendra respuesta a sus preguntas</p>
                 </div>
-
-                <div class="col-lg-6">
-                    <div class="box wow fadeInRight">
-                        <div class="icon"><i class="fa fa-ticket"></i></div>
-                        <h4 class="title"><a href="">Sobre el Ingreso</a></h4>
-                        <p class="description text-justify">Una vez el Comité Académico haya valorado los documentos presentados presentados, y haya entrevistado al solicitante, siempre que se cumplan los requisitos de ingreso determina el ingreso del solicitante al programa de la maestría.</p>
-                    </div>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="box wow fadeInLeft" data-wow-delay="0.2s">
-                        <div class="icon"><i class="fa fa-copy"></i></div>
-                        <h4 class="title"><a href="">Sobre los cursos</a></h4>
-                        <p class="description text-justify">Los cursos se desarrollarán con la frecuencia determinada por el Comité Académico, y con la calidad que requiere un programa académico. Finalizando siempre con una evaluación de rigor y  la  asignación de los créditos correspondientes.
-                            .</p>
-                    </div>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="box wow fadeInRight" data-wow-delay="0.2s">
-                        <div class="icon"><i class="fa fa-graduation-cap"></i></div>
-                        <h4 class="title"><a href="">Sobre la defensa de la tesis.</a></h4>
-                        <p class="description text-justify">La defensa de la tesis se realiza una vez el estudiante haya vencido los cursos, las publicaciones, los eventos requeridos por el programa y el sistema de talleres del mismo; a solicitud de los tutores y el aspirante, el comité académico convoca al tribunal pertinente.</p>
-                    </div>
-                </div>
-        
             </div>
+
+                
 
 
         </div>

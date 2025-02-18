@@ -490,6 +490,37 @@
 
                         </ul>
                     </li>
+                    
+                     <!-- Opciones de FAQ -->
+                     <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link" title="Preguntas Frecuentes (FAQ)">
+                            <i class="nav-icon fas fa-question-circle"></i> <!-- Icono de preguntas frecuentes -->
+                            <p>
+                                Preguntas Frecuentes
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <!-- Opción para crear una nueva FAQ -->
+                            {% if user_is_program_cs %}
+                            <li class="nav-item">
+                                <a href="{% url 'programs:create_faq' program.slug %}" class="nav-link">
+                                    <i class="fa fa-plus nav-icon"></i>
+                                    <p>Nueva FAQ</p>
+                                </a>
+                            </li>
+                            {% endif %}
+
+                            <!-- Opción para ver la lista de FAQs -->
+                            <li class="nav-item">
+                                <a href="{% url 'programs:faq_list' program.slug %}" class="nav-link">
+                                    <i class="fa fa-list nav-icon"></i>
+                                    <p>Ver FAQs</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    
                     {%  if user_is_program_cs %}
                     <li class="nav-item">
                         <a href="{% url 'programs:program_announcements' program.slug %}" class="nav-link" title="Convocatorias de defensas de tesis">
@@ -738,6 +769,37 @@
 
                         </ul>
                     </li>
+
+                    <!-- Opciones de FAQ -->
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link" title="Preguntas Frecuentes (FAQ)">
+                            <i class="nav-icon fas fa-question-circle"></i> <!-- Icono de preguntas frecuentes -->
+                            <p>
+                                Preguntas Frecuentes
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <!-- Opción para crear una nueva FAQ -->
+                            {% if user_is_program_cs %}
+                            <li class="nav-item">
+                                <a href="{% url 'programs:create_faq' program.slug %}" class="nav-link">
+                                    <i class="fa fa-plus nav-icon"></i>
+                                    <p>Nueva FAQ</p>
+                                </a>
+                            </li>
+                            {% endif %}
+
+                            <!-- Opción para ver la lista de FAQs -->
+                            <li class="nav-item">
+                                <a href="{% url 'programs:faq_list' program.slug %}" class="nav-link">
+                                    <i class="fa fa-list nav-icon"></i>
+                                    <p>Ver FAQs</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     {%  if user_is_program_cs %}
                     <li class="nav-item">
                         <a href="{% url 'programs:program_statistics' program.slug %}" class="nav-link" title="Estadísticas del programa">
@@ -940,6 +1002,7 @@
 
                             </li>
                             {% endif %}
+
                             <li class="nav-item">
                                 <a href="{% url 'programs:program_documents' program.slug %}" class="nav-link">
                                     <i class="fa fa-list-alt nav-icon"></i>
@@ -951,6 +1014,66 @@
                         </ul>
                     </li>
                     {% endif %}
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link" title="Noticias del programa">
+                            <i class="nav-icon fas fa-newspaper"></i>
+                            <p>
+                                Noticias
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            {% if user_is_program_cs %}
+
+                            <li class="nav-item">
+                                <a href="{% url 'programs:create_new' program.slug %}" class="nav-link">
+                                    <i class="fa fa-plus nav-icon"></i>
+                                    <p>Nueva</p>
+                                </a>
+
+                            </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a href="{% url 'programs:news_list' program.slug %}" class="nav-link">
+                                    <i class="fa fa-list nav-icon"></i>
+                                    <p>Ver noticias</p>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    {% if user_is_program_cs %}
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link" title="Preguntas Frecuentes (FAQ)">
+                            <i class="nav-icon fas fa-question-circle"></i> <!-- Icono de preguntas frecuentes -->
+                            <p>
+                                Preguntas Frecuentes
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <!-- Opción para crear una nueva FAQ -->
+                            
+                            <li class="nav-item">
+                                <a href="{% url 'programs:create_faq' program.slug %}" class="nav-link">
+                                    <i class="fa fa-plus nav-icon"></i>
+                                    <p>Nueva FAQ</p>
+                                </a>
+                            </li>
+                            
+
+                            <!-- Opción para ver la lista de FAQs -->
+                            <li class="nav-item">
+                                <a href="{% url 'programs:faq_list' program.slug %}" class="nav-link">
+                                    <i class="fa fa-list nav-icon"></i>
+                                    <p>Ver FAQs</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% endif %}
+
+
                     {%  if user_is_program_cs %}
                     <li class="nav-item">
                         <a href="{% url 'programs:program_statistics' program.slug %}" class="nav-link" title="Estadísticas del programa">

@@ -53,13 +53,13 @@ from reportlab.pdfgen import canvas
 def index(request, program_slug):
     if not request.user.is_authenticated :
         program = Program.objects.get(slug=program_slug)
-        faqs = FAQ.objects.filter(program=program)
+        # faqs = FAQ.objects.filter(program=program)
         context = {
             'program': program,
             'lines': InvestigationLine.objects.filter(program=program),
             'public_docs':ProgramDocument.objects.filter(program=program, is_public=True),
             'news': New.objects.filter(program=program).order_by('-date')[:5],
-            'faqs' : faqs,
+            'faqs': FAQ.objects.filter(program=program).order_by('-date')[:5],
         }
         if program.self_request:
             context['init_requirenments']=program.programfiledoc_set.filter(type='student')
@@ -7510,5 +7510,127 @@ def download_evidences(request, program_slug):
     except Program.DoesNotExist:
         messages.error(request, 'El programa no existe')
         return HttpResponse('El programa no existe')
+    
+
+    # Gestion de preguntas frecuentes
+
+@login_required
+def create_faq(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            faq=FAQ(
+                program=program,
+                title=request.POST['faq.title'],
+                content=request.POST['faq_content'],
+            )
+            try:
+                faq.img = request.FILES['img_faq']
+            except:
+                pass
+            faq.save()
+            return HttpResponseRedirect(reverse('programs:faq_list', args=[program_slug]))
+        else:
+            context = {
+                'program':program,
+                'member': ProgramMember.objects.get(user=request.user, program=program)
+            }
+            return render(request,'programs/create_faq.html', context)
+    else:
+        return error_500(request,program,'Usted no tiene provilegios para agregar noticias en este programa')
+
+@login_required
+def faq_list(request, program_slug):
+    program = Program.objects.get(slug=program_slug)
+    context={
+        'program':program,
+        'faqs': FAQ.objects.filter(program=program),
+    }
+    if user_is_program_member(request.user, program):
+        context['member']=ProgramMember.objects.get(user=request.user, program=program)
+    elif user_is_program_student(request.user, program):
+        if program.type == 'phd':
+            context['student'] = Student.objects.get(user=request.user, program=program)
+        elif program.type == 'msc':
+            context['student'] = MscStudent.objects.get(user=request.user, program=program)
+        elif program.type == 'dip':
+            context['student'] = DipStudent.objects.get(user=request.user, program=program)
+
+    return render(request, 'programs/faq_list.html', context)
+
+@login_required
+def read_faq(request, program_slug, faq_id):
+    program = Program.objects.get(slug=program_slug)
+    if user_is_program_member( request.user, program) or user_is_program_student(request.user, program):
+        context={
+            'program':program,
+            'faq': FAQ.objects.get(pk=faq_id)
+        }
+        if user_is_program_member(request.user, program):
+            context['member']=ProgramMember.objects.get(user=request.user, program=program)
+        elif user_is_program_student(request.user, program):
+            if program.type == 'phd':
+                context['student']=Student.objects.get(user=request.user, program=program)
+            elif program.type == 'msc':
+                context['student'] = MscStudent.objects.get(user=request.user, program=program)
+            elif program.type == 'dip':
+                context['student'] = DipStudent.objects.get(user=request.user, program=program)
+
+        return render(request, 'programs/read_faq.html',context)
+
+
+@login_required
+def edit_faq(request, program_slug, faq_id):
+    program = Program.objects.get(slug=program_slug)
+    faq = FAQ.objects.get(pk=faq_id)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            faq.title = request.POST['faq.title']
+            faq.content = request.POST['faq.content']
+            try:
+                faq.img = request.FILES['img_faq']
+            except:
+                pass
+            faq.save()
+            return HttpResponseRedirect(reverse('programs:read_faq', args=[program_slug, faq_id]))
+        else:
+            context={
+                'program':program,
+                'faq':faq,
+                'member':ProgramMember.objects.get(user=request.user, program=program)
+            }
+            return render(request, 'programs/edit_faq.html', context)
+    else:
+        return error_500(request, program, 'Usted no tiene privilegios para editar noticias en este programa')
+    
+@login_required
+def ajx_delete_faq(request, program_slug):
+    program=Program.objects.get(slug=program_slug)
+
+    if user_is_program_cs(request.user,program ):
+        if request.method=='POST':
+            faq_id=request.POST['faq_id']
+            try:
+                FAQ.objects.get(pk=faq_id).delete()
+                return HttpResponse(
+                    json.dumps([{'deleted': 1}]),
+                    content_type="application/json"
+                )
+            except:
+                return HttpResponse(
+                    json.dumps([{'deleted': 0}]),
+                    content_type="application/json"
+                )
+        else:
+            return HttpResponse(
+                json.dumps([{'deleted': 2}]),
+                content_type="application/json"
+            )
+    else:
+        return HttpResponse(
+            json.dumps([{'deleted': 3}]),
+            content_type="application/json"
+        )
+
 
 

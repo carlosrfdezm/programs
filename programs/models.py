@@ -713,6 +713,7 @@ class FAQ(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=255, verbose_name="Título")
     content = models.TextField(verbose_name="Contenido")
+    date = models.DateField(default=now)
     
     def __str__(self):
         return self.title
