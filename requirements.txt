@@ -6,7 +6,7 @@ django-crispy-forms==2.0
 fontawesome-free==5.15.4
 lxml==4.9.2
 mysqlclient==2.1.1
-Pillow==9.5.0
+Pillow==10.0.0
 PyPDF2==2.11.1
 python-docx==0.8.11
 reportlab==3.6.12

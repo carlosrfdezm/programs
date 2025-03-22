@@ -108,6 +108,9 @@
     <div class="intro-content">
         <h2>{{ program }}</h2>
         <div>
+            {% if program.self_request %}
+            <a href="" data-toggle="modal" data-target="#modal_request_enter" class="btn-projects scrollto">Solicitar ingreso</a>
+            {% endif %}
             <a href="#contact" class="btn-get-started scrollto">Iniciar sesion</a>
             <a href="#team" class="btn-projects scrollto">Claustro</a>
         </div>
@@ -282,7 +285,7 @@
             {% for faq in faqs %}
                 <div class="col-lg-6">
                     <div class="box wow fadeInLeft">
-                        <div class="icon"><i class="fa-question-circle"></i></div>
+                        <div class="icon"><i class=" fa fa-question-circle"></i></div>
                         <h4 class="title"><a href="">{{faq.title}}</a></h4>
                         <p class="description text-justify">{% autoescape off %}{{faq.content}}{% endautoescape %}</p>
                     </div>
@@ -485,6 +488,115 @@
 
     </section><!-- #contact -->
 
+
+    <div class="modal fade" id="modal_request_enter">
+        <div class="modal-dialog modal-lg">
+            <form class="form" id="frm_auto_request" method="post">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Solicitar ingreso</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <div class="form-group col-md-4">
+                                <label for="inp_name">Nombre:</label>
+                                <input class="form-control" id="inp_name" type="text" name="name" placeholder="Nombre(s)" maxlength="100" required></input>
+
+                            </div>
+                            <div class="form-group col-md-8">
+                                <label for="inp_surename">Apellidos:</label>
+                                <input class="form-control" type="text" id="inp_surename" name="surename" placeholder="Apellidos" maxlength="100" required></input>
+
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                            <div class="form-group col-md-4">
+                                <label for="inp_mail">Correo:</label>
+                                <input class="form-control" type="email" id="inp_mail" name="email" placeholder="Correo electrónico" maxlength="100" required></input>
+
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="inp_phone">Teléfono:</label>
+                                <input class="form-control" type="tel" id="inp_phone" name="phone" placeholder="Teléfono de contacto" maxlength="100" required></input>
+
+                            </div>
+                            <div class="form-group col-md-4">
+                                
+                                <label for="inp_planned_end_year">Año de defensa:</label>
+                                <input class="form-control" type="number" id="inp_planned_end_year" name="planned_end_year" placeholder="Año de defensa previsto" min="{{ current_year }}" max="{{ five_years_ahead }}" required></input>
+
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="inp_dni">ID o Pasaporte:</label>
+                                <input class="form-control" type="text" id="inp_dni" name="dni" placeholder="Número de ID o pasaporte" maxlength="100" required></input>
+
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="slc_gender">Género:</label>
+                                <select class="form-control" id="slc_gender" name="gender" required>
+                                    <option value="" selected>Seleccione una opción</option>
+                                    <option value="f" >Femenino</option>
+                                    <option value="m" >Masculino</option>
+                                </select>
+
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="inp_name">Fecha de nacimiento:</label>
+                                <input class="form-control" type="date" id="inp_birthdate" name="birthdate" value="1960-01-01" required></input>
+
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+
+                            <div class="form-group col-md-12">
+                                <label for="slc_line">Línea de investigación:</label>
+                                <select class="form-control" id="slc_line" name="line" required>
+                                    <option value="" selected>Seleccione una opción</option>
+                                    {% for line in lines %}
+                                    <option value={{ line.id }} >{{ line }}</option>
+                                    {% endfor %}
+                                </select>
+
+                            </div>
+
+
+                        </div>
+                        <div class="row">
+
+                            <div class="form-group col-md-12">
+                                <label for="inp_name">Tema de investigación:</label>
+                                <textarea class="form-control"  id="txt_theme" name="theme" placeholder="Tema de investigación" maxlength="200" rows="3" required></textarea>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btn_send_request">Enviar</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </form>
+        </div>
+        <!-- /.modal-dialog -->
+
+    </div>
 </main>
 
 <!--==========================
@@ -520,12 +632,144 @@
 <script src="{% static 'programs/index/lib/owlcarousel/owl.carousel.min.js' %}"></script>
 <script src="{% static 'programs/index/lib/magnific-popup/magnific-popup.min.js' %}"></script>
 <script src="{% static 'programs/index/lib/sticky/sticky.js' %}"></script>
-
+<script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
 <!-- Contact Form JavaScript File -->
 {#<script src="{% static 'programs/index/contactform/contactform.js' %}"></script>#}
 
 <!-- Template Main Javascript File -->
 <script src="{% static 'programs/index/js/main.js' %}"></script>
+<script src="{% static 'programs/plugins/summernote/summernote-bs4.js'  %}"></script>
 
+<script src="{% static 'programs/plugins/summernote/lang/summernote-es-ES.js'  %}"></script>
+
+
+<script>
+    $(document).ready(function (){
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 7000
+        });
+
+        $(document).on('submit',"form[id*='frm_new_comment']", function (e) {
+                e.preventDefault();
+                thesis_id = $(this).attr('data');
+                var data = new FormData($(this).get(0));
+                $('#frm_new_comment_'+thesis_id)[0].reset();
+
+                var url = "thesis/"+thesis_id+"/new/comment";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].uploaded == 1) {
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Comentario guardado exitosamente'
+                            })
+
+                        } else if(json[0].uploaded == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido guardar el comentario. Errores:'+ json[0].errors
+                            })
+
+                        }
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });        
+                
+
+        $('#frm_auto_request').on('submit', function (e) {
+            e.preventDefault();
+            $('#modal_request_enter').modal('hide');
+            var url = "{% url 'programs:ajx_auto_request' program.slug %}";
+
+            $.ajax({
+                url : url,
+                type : "POST", // http method
+                data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                    'name': $('#inp_name').val(),
+                    'surename': $('#inp_surename').val(),
+                    'email': $('#inp_mail').val(),
+                    'phone': $('#inp_phone').val(),
+                    'dni': $('#inp_dni').val(),
+                    'gender': $('#slc_gender').val(),
+                    'birthdate': $('#inp_birthdate').val(),
+                    'planned_end_year': $('#inp_planned_end_year').val(),
+                    'theme': $('#txt_theme').val(),
+                    'line':$('#slc_line').val(),
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+
+                    if (json[0].requested == 1) {
+
+                        Toast.fire({
+                            type: 'success',
+                            title: 'Solicitud enviada exitosamente. Revise el correo electrónico y siga las instrucciones'
+                        })
+
+                    }
+                    else if(json[0].requested == 0){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'No se ha podido enviar la solicitud.'
+                        })
+
+                    }
+                    else if(json[0].requested == 2){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Al parecer usted tiene una solicitud pendiente o ya es usuario del sistema.'
+                        })
+
+                    }
+                    console.log(json); // log the returned json to the console
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Uff, ha ocurrido algo desconocido.'
+                    })
+                }
+            });
+
+
+        });
+        $(document).on('hidden.bs.modal','#modal_request_enter', function () {
+            $('#frm_auto_request')[0].reset();
+        });
+    })
+</script>
 </body>
 </html>
