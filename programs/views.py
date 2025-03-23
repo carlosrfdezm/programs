@@ -4279,6 +4279,34 @@ def confirm_auto_request(request,program_slug, request_id):
                         description = requester.theme,
                     )
                     student_theme.save()
+                
+                # para msc
+                elif program.type == 'msc':
+                    formation_plan = StudentFormationPlan(
+                        mscstudent=student,
+                        elaboration_date=now(),
+                        last_update_date=now(),
+                        planned_end_year=requester.planned_end_year,
+
+                    )
+                    formation_plan.save()
+
+                    new_student = MscStudent(
+                        student=student,
+                        status='solicitante',
+                        category='',
+                        center='',
+
+                    )
+                    new_student.save()
+
+                    student_theme = MscStudentTheme(
+                        msc_student = new_student,
+                        line = InvestigationLine.objects.get(pk=requester.line),
+                        description = requester.theme,
+                    )
+                    student_theme.save()
+
 
                 else:
                     return HttpResponse('Tipo de programa aun por crear')
@@ -4327,7 +4355,7 @@ def confirm_auto_request(request,program_slug, request_id):
 
         utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
 
-
+                        
         if program.type == 'phd':
             new_student = PhdStudent(
                 student=student,
@@ -4347,6 +4375,28 @@ def confirm_auto_request(request,program_slug, request_id):
             new_theme.save()
             messages.success(request, 'La solicitud se ha confirmado, revise el correo provisto por usted en busca de más orientaciones')
             return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+        # para msc
+        elif program.type == 'msc':
+            new_student = MscStudent(
+                student=student,
+                status='solicitante',
+                category='',
+                center='',
+            )
+            new_student.save()
+
+            new_theme = MscStudentTheme(
+                msc_student=new_student,
+                description=requester.theme,
+                line=InvestigationLine.objects.get(pk=requester.line),
+
+            )
+
+            new_theme.save()
+            messages.success(request, 'La solicitud se ha confirmado, revise el correo provisto por usted en busca de más orientaciones')
+            return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+
+
         else:
             return HttpResponse('Tipo de programa aun por crear')
 
@@ -4364,6 +4414,10 @@ def confirm_auto_request(request,program_slug, request_id):
         messages.error(request,
                        'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
         return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+    
+    # para msc
+    
+
 
 def error_offlogin(request, program, error_message):
     context = {
