@@ -22,8 +22,8 @@ from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.forms import forms
-from django.http import HttpResponse, HttpResponseRedirect, Http404, FileResponse
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404, FileResponse
+from django.shortcuts import render, get_object_or_404
 from django.template.defaultfilters import upper
 
 # Create your views here.
@@ -51,8 +51,9 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfgen import canvas
 
 def index(request, program_slug):
+    program = get_object_or_404(Program, slug=program_slug)
     if not request.user.is_authenticated :
-        program = Program.objects.get(slug=program_slug)
+        # program = Program.objects.get(slug=program_slug)
         # faqs = FAQ.objects.filter(program=program)
         context = {
             'program': program,
@@ -169,12 +170,12 @@ def home(request, program_slug):
                 return render(request, 'programs/dip_home.html', context)
 
             else:
-                pass
+                return HttpResponseNotFound("Tipo de programa no soportado") 
         else:
             return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
     except Program.DoesNotExist:
         if program_slug == 'favicon.ico':
-            pass
+            return HttpResponseNotFound()
         else:
             return HttpResponse('El programa no existe: ', program_slug)
 
