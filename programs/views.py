@@ -31,7 +31,7 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.timezone import now
 
-from programas.settings import MEDIA_ROOT, STATIC_ROOT, DIR_COM_EMAIL, MEDIA_URL
+from programas.settings import MEDIA_ROOT, STATIC_ROOT, DIR_COM_EMAIL, MEDIA_URL,NO_REPLY_EMAIL
 from programs.forms import FileUploadForm, AnnouncementForm, PhdStudentThesisForm, PhdThesisCommentForm
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, \
     ProgramMember, ProgramFinishRequirements, InvestigationLine, PhdStudentTheme, \
@@ -4699,6 +4699,14 @@ def ajx_students_massive_msg(request, program_slug ):
 @login_required
 def ajx_student_personal_msg(request, program_slug ):
     program=Program.objects.get(slug=program_slug)
+    if program.programmember_set.all().filter(role='Coordinador').count()>0:
+        sender_email = program.programmember_set.filter(role='Coordinador')[0].user.email
+    elif program.email is not None:
+        sender_email = program.email
+    else:
+        sender_email = NO_REPLY_EMAIL
+    print(sender_email)
+    
     if request.method == 'POST' and request.POST['msg_body'].__len__() <= 4000:
         try:
             if program.type == 'phd':
@@ -4720,7 +4728,7 @@ def ajx_student_personal_msg(request, program_slug ):
                 )
                 sended_message.save()
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
-                          [Student.objects.get(pk=request.POST['student_id']).user.email,'boris_perez@unah.edu.cu'],
+                          [Student.objects.get(pk=request.POST['student_id']).user.email,sender_email],
                           fail_silently=False,html_message=request.POST['msg_body'])
 
             elif program.type == 'msc':
@@ -4742,7 +4750,7 @@ def ajx_student_personal_msg(request, program_slug ):
                 )
                 sended_message.save()
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
-                          [MscStudent.objects.get(pk=request.POST['student_id']).user.email, 'boris_perez@unah.edu.cu'],
+                          [MscStudent.objects.get(pk=request.POST['student_id']).user.email, sender_email],
                           fail_silently=False, html_message=request.POST['msg_body'])
             elif program.type == 'dip':
                 new_message = Message(
@@ -4763,7 +4771,7 @@ def ajx_student_personal_msg(request, program_slug ):
                 )
                 sended_message.save()
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
-                          [DipStudent.objects.get(pk=request.POST['student_id']).user.email, 'boris_perez@unah.edu.cu'],
+                          [DipStudent.objects.get(pk=request.POST['student_id']).user.email, sender_email],
                           fail_silently=False, html_message=request.POST['msg_body'])
 
             return HttpResponse(
