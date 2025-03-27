@@ -4698,6 +4698,18 @@ def ajx_students_massive_msg(request, program_slug ):
 
 @login_required
 def ajx_student_personal_msg(request, program_slug ):
+
+    # ==== [CAMBIOS INICIO] Validaciones adicionales ====
+    if not request.method == 'POST':
+        return JsonResponse({'sended': 0, 'error': 'Método no permitido'}, status=405)
+    
+    if 'student_id' not in request.POST or 'msg_body' not in request.POST or 'msg_subject' not in request.POST:
+        return JsonResponse({'sended': 0, 'error': 'Datos incompletos'}, status=400)
+    # ==== [CAMBIOS FIN] ====
+
+    
+
+
     program=Program.objects.get(slug=program_slug)
     if program.programmember_set.all().filter(role='Coordinador').count()>0:
         sender_email = program.programmember_set.filter(role='Coordinador')[0].user.email
@@ -4709,10 +4721,27 @@ def ajx_student_personal_msg(request, program_slug ):
     
     if request.method == 'POST' and request.POST['msg_body'].__len__() <= 4000:
         try:
+
+            # ==== [CAMBIOS INICIO] Manejo dinámico de modelos ====
+            student_model = {
+                'phd': Student,
+                'msc': MscStudent,
+                'dip': DipStudent
+            }.get(program.type)
+            
+            if not student_model:
+                return JsonResponse({'sended': 0, 'error': 'Tipo de programa no válido'}, status=400)
+                
+            student = student_model.objects.get(pk=request.POST['student_id'])
+            # ==== [CAMBIOS FIN] ====        
+
+            
+
             if program.type == 'phd':
                 new_message = Message(
                     sender=request.user,
-                    phd_student_receiver=Student.objects.get(pk=request.POST['student_id']),
+                    phd_student_receiver=student,
+                    #phd_student_receiver=Student.objects.get(pk=request.POST['student_id']),
                     subject=request.POST['msg_subject'],
                     body=request.POST['msg_body'],
 
@@ -4728,13 +4757,16 @@ def ajx_student_personal_msg(request, program_slug ):
                 )
                 sended_message.save()
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
-                          [Student.objects.get(pk=request.POST['student_id']).user.email,sender_email],
+
+                          [student.user.email, sender_email],  # Más limpio**  
+                          #[Student.objects.get(pk=request.POST['student_id']).user.email,sender_email],
                           fail_silently=False,html_message=request.POST['msg_body'])
 
             elif program.type == 'msc':
                 new_message = Message(
                     sender=request.user,
-                    msc_student_receiver=MscStudent.objects.get(pk=request.POST['student_id']),
+                    msc_student_receiver=student,  # Usamos la variable ya obtenida**
+                    #msc_student_receiver=MscStudent.objects.get(pk=request.POST['student_id']),
                     subject=request.POST['msg_subject'],
                     body=request.POST['msg_body'],
 
@@ -4750,12 +4782,14 @@ def ajx_student_personal_msg(request, program_slug ):
                 )
                 sended_message.save()
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
-                          [MscStudent.objects.get(pk=request.POST['student_id']).user.email, sender_email],
+                          [student.user.email, sender_email],  # Más limpio** 
+                          #[MscStudent.objects.get(pk=request.POST['student_id']).user.email, sender_email],
                           fail_silently=False, html_message=request.POST['msg_body'])
             elif program.type == 'dip':
                 new_message = Message(
                     sender=request.user,
-                    dip_student_receiver=DipStudent.objects.get(pk=request.POST['student_id']),
+                    dip_student_receiver=student,  # Usamos la variable ya obtenida**
+                    #dip_student_receiver=DipStudent.objects.get(pk=request.POST['student_id']),
                     subject=request.POST['msg_subject'],
                     body=request.POST['msg_body'],
 
@@ -4771,23 +4805,30 @@ def ajx_student_personal_msg(request, program_slug ):
                 )
                 sended_message.save()
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
-                          [DipStudent.objects.get(pk=request.POST['student_id']).user.email, sender_email],
+                          [student.user.email, sender_email],  # Más limpio** 
+                          #[DipStudent.objects.get(pk=request.POST['student_id']).user.email, sender_email],
                           fail_silently=False, html_message=request.POST['msg_body'])
 
             return HttpResponse(
                 json.dumps([{'sended': 1}]),
                 content_type="application/json"
             )
-        except:
+        except student_model.DoesNotExist:
+            return JsonResponse({'sended': 0, 'error': 'Estudiante no encontrado'}, status=404)
+        
+        except Exception as e:
+            print(f"Error inesperado: {str(e)}")  # Mejor logging**    
             return HttpResponse(
                 json.dumps([{'sended': 0}]),
                 content_type="application/json"
             )
     elif request.method == 'POST' and request.POST['msg_body'].__len__() > 4000:
-        return HttpResponse(
-            json.dumps([{'sended': 2}]),
-            content_type="application/json"
-        )
+        
+        return JsonResponse({'sended': 2, 'error': 'Mensaje demasiado largo'})  # Más informativo**
+        #return HttpResponse(
+         #   json.dumps([{'sended': 2}]),
+          #  content_type="application/json"
+        #)
     else:
         return HttpResponse(
             json.dumps([{'sended': 0}]),

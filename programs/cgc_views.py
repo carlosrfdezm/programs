@@ -1629,11 +1629,11 @@ def ajx_student_personal_msg(request, program_slug ):
         try:
             if program.type == 'phd':
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
-                          [Student.objects.get(pk=request.POST['student_id']).user.email,'boris_perez@unah.edu.cu'],
+                          [Student.objects.get(pk=request.POST['student_id']).user.email,'cmedina@unah.edu.cu'],
                           fail_silently=False,html_message=request.POST['msg_body'])
             elif program.type == 'msc':
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
-                          [MscStudent.objects.get(pk=request.POST['student_id']).user.email, 'boris_perez@unah.edu.cu'],
+                          [Student.objects.get(pk=request.POST['student_id']).user.email, 'cmedina@unah.edu.cu'],
                           fail_silently=False, html_message=request.POST['msg_body'])
             elif program.type == 'dip':
                 pass
