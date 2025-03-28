@@ -31,7 +31,7 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.timezone import now
 
-from programas.settings import MEDIA_ROOT, STATIC_ROOT, DIR_COM_EMAIL, MEDIA_URL,NO_REPLY_EMAIL
+from programas.settings import MEDIA_ROOT, STATIC_ROOT, DIR_COM_EMAIL, MEDIA_URL, NO_REPLY_EMAIL
 from programs.forms import FileUploadForm, AnnouncementForm, PhdStudentThesisForm, PhdThesisCommentForm
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, \
     ProgramMember, ProgramFinishRequirements, InvestigationLine, PhdStudentTheme, \
@@ -4228,6 +4228,13 @@ def ajx_auto_request(request, program_slug):
 def confirm_auto_request(request,program_slug, request_id):
     program = Program.objects.get(slug=program_slug)
     try:
+
+        try: 
+            edition = ProgramEdition.objects.filter(program=program).latest('init_date')
+        except ProgramEdition.DoesNotExist:
+                messages.error(request, 'No hay una edición activa disponible para este programa')
+                return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+    
         requester = Requester.objects.get(program=program, request_id=request_id)
         try:
             user = User.objects.get(email=requester.email)
@@ -4292,7 +4299,9 @@ def confirm_auto_request(request,program_slug, request_id):
                     formation_plan.save()
 
                     new_student = MscStudent(
-                        student=student,
+                        user=student.user,
+                        program=program, # añadido
+                        edition=edition, # añadido
                         status='solicitante',
                         category='',
                         center='',
@@ -4301,7 +4310,7 @@ def confirm_auto_request(request,program_slug, request_id):
                     new_student.save()
 
                     student_theme = MscStudentTheme(
-                        msc_student = new_student,
+                        student = new_student, # cambio aqui
                         line = InvestigationLine.objects.get(pk=requester.line),
                         description = requester.theme,
                     )
@@ -4378,7 +4387,9 @@ def confirm_auto_request(request,program_slug, request_id):
         # para msc
         elif program.type == 'msc':
             new_student = MscStudent(
-                student=student,
+                user= student.user,
+                program=program,
+                edition=edition,
                 status='solicitante',
                 category='',
                 center='',
@@ -4386,7 +4397,7 @@ def confirm_auto_request(request,program_slug, request_id):
             new_student.save()
 
             new_theme = MscStudentTheme(
-                msc_student=new_student,
+                student=new_student, #cambio aqui
                 description=requester.theme,
                 line=InvestigationLine.objects.get(pk=requester.line),
 
