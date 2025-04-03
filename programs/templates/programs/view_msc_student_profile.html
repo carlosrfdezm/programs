@@ -161,7 +161,7 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="slc_project">Proyecto asociado:</label>
-                                            <input class="form-control" readonly value="{{ student.phdstudent.phdstudenttheme.project }}">
+                                            <input class="form-control" readonly value="{{ student.mscstudent.mscstudenttheme.project }}">
 
                                         </div>
                                     </div>
@@ -172,8 +172,8 @@
                                         </div>
 
                                     </div>
-                                    {% if student.phdstudent.tuthor_set.all %}
-                                        {% for tuthor in student.phdstudent.tuthor_set.all %}
+                                    {% if student.mscstudent.tuthor_set.all %}
+                                        {% for tuthor in student.mscstudent.tuthor_set.all %}
                                             <div class="form-row">
                                                 <div class="form-group col-md-12">
                                                     <input class="form-control" readonly value="{{ tuthor.professor.user.get_full_name }}">
@@ -318,7 +318,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            var tutores = {{ student.phdstudent.tuthor_set.all.count }};
+            var tutores = {{ student.mscstudent.tuthor_set.all.count }};
 
             const Toast = Swal.mixin({
                 toast: true,

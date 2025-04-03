@@ -1595,7 +1595,8 @@ def view_program_member_profile(request, program_slug, member_id):
 def edit_msc_student(request, program_slug, edition_id, student_id):
     program= Program.objects.get(slug=program_slug)
     student = MscStudent.objects.get(pk=student_id)
-    if user_is_program_cs(request.user, program):
+    
+    if user_is_program_cs(request.user, program) or request.user == student.user:
         if request.method == 'POST':
             user=MscStudent.objects.get(pk=student_id).user
             user.first_name=request.POST['student_name']
@@ -1697,7 +1698,7 @@ def edit_msc_student(request, program_slug, edition_id, student_id):
                 'new_init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
                 'new_finish_requirements': ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True),
                 'projects': InvestigationProject.objects.filter(program=program),
-
+                'is_student': request.user == student.user,
             }
             return render(request, 'programs/edit_msc_student.html', context)
     else:
@@ -2010,7 +2011,7 @@ def ajx_usr_exists(request,program_slug):
 @login_required
 def ajx_student_exists(request,program_slug):
     program = Program.objects.get(slug=program_slug)
-
+    
     if request.method=='POST':
         if program.type == 'phd':
 
@@ -4225,206 +4226,231 @@ def ajx_auto_request(request, program_slug):
             content_type="application/json"
         )
 
-def confirm_auto_request(request,program_slug, request_id):
+def confirm_auto_request(request, program_slug, request_id):
     program = Program.objects.get(slug=program_slug)
     try:
-
+        # Identificar edición activa para solicitante MSc y dip
         try: 
             edition = ProgramEdition.objects.filter(program=program).latest('init_date')
         except ProgramEdition.DoesNotExist:
-                messages.error(request, 'No hay una edición activa disponible para este programa')
-                return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+            messages.error(request, 'No hay una edición activa disponible para este programa')
+            return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
     
         requester = Requester.objects.get(program=program, request_id=request_id)
         try:
             user = User.objects.get(email=requester.email)
-
             try:
-                Student.objects.get(user=user, program=program)
+                if program.type == 'phd':
+                    Student.objects.get(user=user, program=program)
+                elif program.type == 'msc':
+                    MscStudent.objects.get(user=user, program=program)
+                elif program.type == 'dip':
+                    DipStudent.objects.get(user=user, program=program)
                 requester.delete()
-                # TODO Devolver template de error en este caso
-                messages.error(request,
-                               'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
+                messages.error(request, 'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
                 return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
-            except Student.DoesNotExist:
+            except (Student.DoesNotExist, MscStudent.DoesNotExist):
+                if program.type == 'phd':
+                    student = Student(
+                        user=user,
+                        program=program,
+                        gender=requester.gender,
+                        dni=requester.dni,
+                        birth_date=requester.birthdate,
+                    )
+                    student.save()
+                    formation_plan = StudentFormationPlan(
+                        phdstudent=student,
+                        elaboration_date=now(),
+                        last_update_date=now(),
+                        planned_end_year=requester.planned_end_year,
+                    )
+                    formation_plan.save()
+                    new_student = PhdStudent(
+                        student=student,
+                        status='solicitante',
+                        category='',
+                        center='',
+                    )
+                    new_student.save()
+                    student_theme = PhdStudentTheme(
+                        phd_student=new_student,
+                        line=InvestigationLine.objects.get(pk=requester.line),
+                        description=requester.theme,
+                    )
+                    student_theme.save()
+                elif program.type == 'msc':
+                    student = MscStudent(
+                        user=user,
+                        program=program,
+                        edition=edition,
+                        gender=requester.gender,
+                        dni=requester.dni,
+                        birth_date=requester.birthdate,
+                        status='solicitante',
+                    )
+                    student.save()
+                    student_theme = MscStudentTheme(
+                        student=student,
+                        line=InvestigationLine.objects.get(pk=requester.line),
+                        description=requester.theme,
+                    )
+                    student_theme.save()
+
+                elif program.type == 'dip':
+                    student = DipStudent(
+                        user=user,
+                        program=program,
+                        edition=edition,
+                        gender=requester.gender,
+                        dni=requester.dni,
+                        birth_date=requester.birthdate,
+                        status='solicitante',
+                    )
+                    student.save()
+                    #student_theme = DipStudentTheme(
+                        #student=student,
+                        #line=InvestigationLine.objects.get(pk=requester.line),
+                        #description=requester.theme,
+                    #)
+                    #student_theme.save()
+
+
+                utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
+
+                for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+                    if program.type == 'phd':
+                        new_student_requirement = StudentFileDocument(
+                            student=student,
+                            program_file_document=requirement,
+                        )
+                    elif program.type == 'msc':
+                        new_student_requirement = StudentFileDocument(
+                            msc_student=student,
+                            program_file_document=requirement,
+                        )
+                    elif program.type == 'dip':
+                        new_student_requirement = StudentFileDocument(
+                            dip_student=student,
+                            program_file_document=requirement,
+                        )
+                    new_student_requirement.save()
+
+                requester.delete()
+                messages.success(request, 'La solicitud se ha confirmado, revise el correo provisto por usted en busca de más orientaciones')
+                if program.type == 'phd':
+                    return HttpResponseRedirect(reverse('programs:phd_index', args=[program_slug]))
+                elif program.type == 'msc':
+                    return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
+                elif program.type == 'dip':
+                    return HttpResponseRedirect(reverse('programs:dip_index', args=[program_slug]))
+        except User.DoesNotExist:
+            passwd = program_slug + str(random.randint(1000000, 9999999))
+            user = User.objects.create_user(
+                requester.email,
+                requester.email,
+                passwd,
+            )
+            user.first_name = requester.first_name
+            user.last_name = requester.last_name
+            user.save()
+
+            if program.type == 'phd':
                 student = Student(
                     user=user,
                     program=program,
                     gender=requester.gender,
                     dni=requester.dni,
                     birth_date=requester.birthdate,
-
                 )
+                student.save()
+                formation_plan = StudentFormationPlan(
+                    phdstudent=student,
+                    elaboration_date=now(),
+                    last_update_date=now(),
+                    planned_end_year=requester.planned_end_year,
+                )
+                formation_plan.save()
+                new_student = PhdStudent(
+                    student=student,
+                    status='solicitante',
+                    category='',
+                    center='',
+                )
+                new_student.save()
+                new_theme = PhdStudentTheme(
+                    phd_student=new_student,
+                    description=requester.theme,
+                    line=InvestigationLine.objects.get(pk=requester.line),
+                )
+                new_theme.save()
+            elif program.type == 'msc':
+                student = MscStudent(
+                    user=user,
+                    program=program,
+                    edition=edition,
+                    gender=requester.gender,
+                    dni=requester.dni,
+                    birth_date=requester.birthdate,
+                    status='solicitante',
+                )
+                student.save()
+                new_theme = MscStudentTheme(
+                    student=student,
+                    description=requester.theme,
+                    line=InvestigationLine.objects.get(pk=requester.line),
+                )
+                new_theme.save()
 
+            elif program.type == 'dip':
+                student = DipStudent(
+                    user=user,
+                    program=program,
+                    edition=edition,
+                    gender=requester.gender,
+                    dni=requester.dni,
+                    birth_date=requester.birthdate,
+                    status='solicitante',
+                )
                 student.save()
 
-                utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
+            utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
 
-
+            for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
                 if program.type == 'phd':
-                    formation_plan = StudentFormationPlan(
-                        phdstudent=student,
-                        elaboration_date=now(),
-                        last_update_date=now(),
-                        planned_end_year=requester.planned_end_year,
-
-                    )
-                    formation_plan.save()
-
-                    new_student = PhdStudent(
-                        student=student,
-                        status='solicitante',
-                        category='',
-                        center='',
-
-                    )
-                    new_student.save()
-
-                    student_theme = PhdStudentTheme(
-                        phd_student = new_student,
-                        line = InvestigationLine.objects.get(pk=requester.line),
-                        description = requester.theme,
-                    )
-                    student_theme.save()
-                
-                # para msc
-                elif program.type == 'msc':
-                    formation_plan = StudentFormationPlan(
-                        mscstudent=student,
-                        elaboration_date=now(),
-                        last_update_date=now(),
-                        planned_end_year=requester.planned_end_year,
-
-                    )
-                    formation_plan.save()
-
-                    new_student = MscStudent(
-                        user=student.user,
-                        program=program, # añadido
-                        edition=edition, # añadido
-                        status='solicitante',
-                        category='',
-                        center='',
-
-                    )
-                    new_student.save()
-
-                    student_theme = MscStudentTheme(
-                        student = new_student, # cambio aqui
-                        line = InvestigationLine.objects.get(pk=requester.line),
-                        description = requester.theme,
-                    )
-                    student_theme.save()
-
-
-                else:
-                    return HttpResponse('Tipo de programa aun por crear')
-
-                for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
-
                     new_student_requirement = StudentFileDocument(
                         student=student,
                         program_file_document=requirement,
                     )
-                    new_student_requirement.save()
-                requester.delete()
-                messages.success(request,
-                                 'La solicitud se ha confirmado, revise el correo provisto por usted en busca de más orientaciones')
-                return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
-        except User.DoesNotExist:
-            passwd = program_slug + str(random.randint(1000000, 9999999))
-            user = User.objects.create_user(
-                requester.email,
-                requester.email,
-                passwd,  # Cambiar despues por contrase;a generada
+                elif program.type == 'msc':
+                    new_student_requirement = StudentFileDocument(
+                        msc_student=student,
+                        program_file_document=requirement,
+                    )
+                
+                elif program.type == 'dip':
+                    new_student_requirement = StudentFileDocument(
+                        msc_student=student,
+                        program_file_document=requirement,
+                    )
+                new_student_requirement.save()
 
-            )
-            user.first_name = requester.first_name
-            user.last_name = requester.last_name
-            user.save()
-
-        student = Student(
-            user=user,
-            program=program,
-            gender=requester.gender,
-            dni=requester.dni,
-            birth_date=requester.birthdate,
-
-        )
-        student.save()
-
-        formation_plan = StudentFormationPlan(
-            phdstudent=student,
-            elaboration_date=now(),
-            last_update_date=now(),
-            planned_end_year=requester.planned_end_year,
-
-        )
-        formation_plan.save()
-
-        utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
-
-                        
-        if program.type == 'phd':
-            new_student = PhdStudent(
-                student=student,
-                status='solicitante',
-                category='',
-                center='',
-            )
-            new_student.save()
-
-            new_theme = PhdStudentTheme(
-                phd_student=new_student,
-                description=requester.theme,
-                line=InvestigationLine.objects.get(pk=requester.line),
-
-            )
-
-            new_theme.save()
+            requester.delete()
             messages.success(request, 'La solicitud se ha confirmado, revise el correo provisto por usted en busca de más orientaciones')
-            return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
-        # para msc
-        elif program.type == 'msc':
-            new_student = MscStudent(
-                user= student.user,
-                program=program,
-                edition=edition,
-                status='solicitante',
-                category='',
-                center='',
-            )
-            new_student.save()
-
-            new_theme = MscStudentTheme(
-                student=new_student, #cambio aqui
-                description=requester.theme,
-                line=InvestigationLine.objects.get(pk=requester.line),
-
-            )
-
-            new_theme.save()
-            messages.success(request, 'La solicitud se ha confirmado, revise el correo provisto por usted en busca de más orientaciones')
-            return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
-
-
-        else:
-            return HttpResponse('Tipo de programa aun por crear')
-
-        for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
-
-            new_student_requirement = StudentFileDocument(
-                student=student,
-                program_file_document=requirement,
-            )
-            new_student_requirement.save()
-
-        requester.delete()
-
+            if program.type == 'phd':
+                return HttpResponseRedirect(reverse('programs:phd_index', args=[program_slug]))
+            elif program.type == 'msc':
+                return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
+            elif program.type == 'dip':
+                return HttpResponseRedirect(reverse('programs:dip_index', args=[program_slug]))
     except Requester.DoesNotExist:
-        messages.error(request,
-                       'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
-        return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+        messages.error(request, 'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
+        if program.type == 'phd':
+            return HttpResponseRedirect(reverse('programs:phd_index', args=[program_slug]))
+        elif program.type == 'msc':
+            return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
+        elif program.type == 'dip':
+            return HttpResponseRedirect(reverse('programs:dip_index', args=[program_slug]))
     
     # para msc
     

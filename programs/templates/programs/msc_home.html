@@ -1,5 +1,10 @@
 {% extends 'programs/base.html' %}
 {% load static %}
+{% load extra_tags %}
+
+{% user_is_program_cs user program as user_is_program_cs %}
+
+
 
 {% block content %}
     <div class="content-header">

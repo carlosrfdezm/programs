@@ -155,10 +155,11 @@
                                             {% endif %}
                                         </td>
                                     {% endif %}
-                                    {% if user_is_program_cs %}
+                                    
                                         <td class="text-center">
                                             <div class="btn-group" role="group">
                                                 <a class="btn btn-primary btn-sm text-white" href="{% url 'programs:view_student_profile' program.slug msc_student.id %}" title="Ver perfil"> <i class="fa fa-user"></i></a>
+                                    {% if user_is_program_cs  %}
                                                 <a class="btn btn-success btn-sm text-white" href="" title="Enviar mensaje" data-toggle="modal" data-target="#modal_msg_student_{{ msc_student.id }}"> <i class="fa fa-envelope"></i></a>
                                                 {% if scope == 'Maestrantes' %}
                                                     <a class="btn btn-success btn-sm text-white" href="{% url 'programs:student_evals' program.slug msc_student.id %}" title="Ver evaluaciones" > <i class="fa fa-user-graduate"></i></a>
