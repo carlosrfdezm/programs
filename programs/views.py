@@ -4254,7 +4254,7 @@ def confirm_auto_request(request, program_slug, request_id):
         except Requester.DoesNotExist:
             messages.error(request, "La solicitud no existe o ya fue procesada")
             if program.type == 'phd':
-                return HttpResponseRedirect(reverse('programs:phd_index', args=[program_slug]))
+                return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
             elif program.type == 'msc':
                 return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
             elif program.type == 'dip':
@@ -4271,7 +4271,7 @@ def confirm_auto_request(request, program_slug, request_id):
                 requester.delete()
                 messages.error(request, 'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
                 if program.type == 'phd':
-                    return HttpResponseRedirect(reverse('programs:phd_index', args=[program_slug]))
+                    return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
                 elif program.type == 'msc':
                     return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
                 elif program.type == 'dip':
@@ -4366,7 +4366,7 @@ def confirm_auto_request(request, program_slug, request_id):
                 requester.delete()
                 messages.success(request, 'La solicitud se ha confirmado, revise el correo provisto por usted en busca de más orientaciones')
                 if program.type == 'phd':
-                    return HttpResponseRedirect(reverse('programs:phd_index', args=[program_slug]))
+                    return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
                 elif program.type == 'msc':
                     return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
                 elif program.type == 'dip':
@@ -4465,7 +4465,7 @@ def confirm_auto_request(request, program_slug, request_id):
             requester.delete()
             messages.success(request, 'La solicitud se ha confirmado, revise el correo provisto por usted en busca de más orientaciones')
             if program.type == 'phd':
-                return HttpResponseRedirect(reverse('programs:phd_index', args=[program_slug]))
+                return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
             elif program.type == 'msc':
                 return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
             elif program.type == 'dip':
@@ -4473,7 +4473,7 @@ def confirm_auto_request(request, program_slug, request_id):
     except Requester.DoesNotExist:
         messages.error(request, 'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
         if program.type == 'phd':
-            return HttpResponseRedirect(reverse('programs:phd_index', args=[program_slug]))
+            return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
         elif program.type == 'msc':
             return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
         elif program.type == 'dip':
