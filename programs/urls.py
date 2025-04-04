@@ -32,11 +32,14 @@ urlpatterns = [
     path('students/<int:student_id>/file/<int:doc_id>/view', views.student_filedoc_view, name='student_filedoc_view'),
 
     #Paths de estudiantes de maestria
+    path('', views.msc_index, name='msc_index'),
     path('msc/<int:edition_id>/students/create', views.create_msc_student, name='create_msc_student'),
     path('msc/<int:edition_id>/students/<int:student_id>/edit', views.edit_msc_student, name='edit_msc_student'),
     path('msc/edition/<int:edition_id>/students/<str:scope>/list', views.msc_edition_students_list, name='msc_edition_students_list'),
     path('msc/students/<str:scope>/list', views.msc_all_students_list, name='msc_all_students_list'),
+    
 
+    path('', views.dip_index, name='dip_index'),
     path('dip/<int:edition_id>/students/create', views.create_dip_student, name='create_dip_student'),
     path('dip/<int:edition_id>/students/<int:student_id>/edit', views.edit_dip_student, name='edit_dip_student'),
     path('dip/edition/<int:edition_id>/students/<str:scope>/list', views.dip_edition_students_list, name='dip_edition_students_list'),

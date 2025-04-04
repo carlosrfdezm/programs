@@ -4228,6 +4228,20 @@ def ajx_auto_request(request, program_slug):
 
 def confirm_auto_request(request, program_slug, request_id):
     program = Program.objects.get(slug=program_slug)
+
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return HttpResponseRedirect(referer)
+
+    if program.type == 'phd':
+        base_url = reverse('programs:phd_index', args=[program_slug])
+    elif program.type == 'msc':
+        base_url = reverse('programs:msc_index', args=[program_slug])
+    elif program.type == 'dip':
+        base_url = reverse('programs:dip_index', args=[program_slug])
+    else:
+        base_url = reverse('programs:index', args=[program_slug])
+
     try:
         # Identificar edición activa para solicitante MSc y dip
         try: 
@@ -4235,8 +4249,16 @@ def confirm_auto_request(request, program_slug, request_id):
         except ProgramEdition.DoesNotExist:
             messages.error(request, 'No hay una edición activa disponible para este programa')
             return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
-    
-        requester = Requester.objects.get(program=program, request_id=request_id)
+        try:
+            requester = Requester.objects.get(program=program, request_id=request_id) 
+        except Requester.DoesNotExist:
+            messages.error(request, "La solicitud no existe o ya fue procesada")
+            if program.type == 'phd':
+                return HttpResponseRedirect(reverse('programs:phd_index', args=[program_slug]))
+            elif program.type == 'msc':
+                return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
+            elif program.type == 'dip':
+                return HttpResponseRedirect(reverse('programs:dip_index', args=[program_slug]))
         try:
             user = User.objects.get(email=requester.email)
             try:
@@ -4248,7 +4270,12 @@ def confirm_auto_request(request, program_slug, request_id):
                     DipStudent.objects.get(user=user, program=program)
                 requester.delete()
                 messages.error(request, 'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
-                return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+                if program.type == 'phd':
+                    return HttpResponseRedirect(reverse('programs:phd_index', args=[program_slug]))
+                elif program.type == 'msc':
+                    return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
+                elif program.type == 'dip':
+                    return HttpResponseRedirect(reverse('programs:dip_index', args=[program_slug]))
             except (Student.DoesNotExist, MscStudent.DoesNotExist):
                 if program.type == 'phd':
                     student = Student(
@@ -7772,6 +7799,30 @@ def ajx_delete_faq(request, program_slug):
             json.dumps([{'deleted': 3}]),
             content_type="application/json"
         )
+    
+def msc_index(request, program_slug=None):
+    """
+    Vista para la página principal de maestrías
+    program_slug: Parámetro que identifica el programa (ej: 'educacion-superior')
+    """
+    context = {
+        'program_slug': program_slug,
+        # Agrega aquí cualquier otro contexto necesario
+    }
+    return render(request, 'msc_index.html', context)
+
+
+def dip_index(request, program_slug=None):
+    """
+    Vista para la página principal de maestrías
+    program_slug: Parámetro que identifica el programa (ej: 'educacion-superior')
+    """
+    context = {
+        'program_slug': program_slug,
+        # Agrega aquí cualquier otro contexto necesario
+    }
+    return render(request, 'dip_index.html', context)
+
 
 
 
