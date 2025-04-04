@@ -4230,12 +4230,13 @@ def confirm_auto_request(request, program_slug, request_id):
     program = Program.objects.get(slug=program_slug)
 
     try:
-        # Identificar edición activa para solicitante MSc y dip
-        try: 
-            edition = ProgramEdition.objects.filter(program=program).latest('init_date')
-        except ProgramEdition.DoesNotExist:
-            messages.error(request, 'No hay una edición activa disponible para este programa')
-            return HttpResponseRedirect(reverse('programs:index', args=[program_slug]))
+        edition = None
+        if program.type in ['msc', 'dip']:
+            try: 
+                edition = ProgramEdition.objects.filter(program=program).latest('init_date')
+            except ProgramEdition.DoesNotExist:
+                messages.error(request, 'No hay una edición activa disponible para este programa')
+                return HttpResponseRedirect(reverse(f'programs:{program.type}_index', args=[program_slug]))
         try:
             requester = Requester.objects.get(program=program, request_id=request_id) 
         except Requester.DoesNotExist:
