@@ -4229,19 +4229,6 @@ def ajx_auto_request(request, program_slug):
 def confirm_auto_request(request, program_slug, request_id):
     program = Program.objects.get(slug=program_slug)
 
-    referer = request.META.get('HTTP_REFERER')
-    if referer:
-        return HttpResponseRedirect(referer)
-
-    if program.type == 'phd':
-        base_url = reverse('programs:phd_index', args=[program_slug])
-    elif program.type == 'msc':
-        base_url = reverse('programs:msc_index', args=[program_slug])
-    elif program.type == 'dip':
-        base_url = reverse('programs:dip_index', args=[program_slug])
-    else:
-        base_url = reverse('programs:index', args=[program_slug])
-
     try:
         # Identificar edición activa para solicitante MSc y dip
         try: 
