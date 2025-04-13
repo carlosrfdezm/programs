@@ -11,6 +11,7 @@ from django.core.mail import send_mail, send_mass_mail
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 from django.urls import reverse
@@ -36,12 +37,19 @@ def cgc_index(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('cgc:cgc_home'))
     else:
-        context={
-            'director': CGC_Member.objects.get(charge='Director'),
-            'members': CGC_Member.objects.all(),
-            'documents': CGCDocument.objects.filter(is_public=True),
-            'programs': Program.objects.filter(type='phd'),
-        }
+        try:
+            context={
+                'director': CGC_Member.objects.get(charge='Director'),
+                'members': CGC_Member.objects.all(),
+                'documents': CGCDocument.objects.filter(is_public=True),
+                'programs': Program.objects.filter(type='phd'),
+            }
+        except ObjectDoesNotExist:
+            context = {
+                'error_message': 'Aún no hay miembros en la CGC. Debe asignar miembros.',
+                'documents': CGCDocument.objects.filter(is_public=True),
+                'programs': Program.objects.filter(type='phd'),
+            }
         return render(request, 'programs/cgc/cgc_index.html', context)
 
 @login_required
