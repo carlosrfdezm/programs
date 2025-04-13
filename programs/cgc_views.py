@@ -28,6 +28,8 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
 from programs.templatetags.extra_tags import init_requirements_accomplished, finish_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
     user_is_cgc_member, user_is_cgc_ps
+from programas.settings import INSTITUTION_FULL_NAME, INSTITUTION_SHORT_NAME, INSTITUTION_ADDRESS, INSTITUTION_EMAIL, \
+    INSTITUTION_PHONE, INSTITUTION_HAS_CGC, INSTITUTION_HAS_POSTG
 
 from docx import Document
 from docx.shared import Inches
@@ -62,6 +64,7 @@ def cgc_home(request):
             'doctorands': PhdStudent.objects.filter(status='doctorando').__len__(),
             'graduated': PhdStudent.objects.filter(status='graduado').__len__(),
             'members': CGC_Member.objects.all().__len__(),
+            'institution_short_name': INSTITUTION_SHORT_NAME,
         }
         return render(request, 'programs/cgc/cgc_home.html', context)
     else:
