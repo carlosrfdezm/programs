@@ -30,7 +30,9 @@ urlpatterns = [
     path('', include('log.urls', namespace='log')),
     path('cgc/', include('programs.cgcurls', namespace='cgc')),
     path('postg/', include('programs.postgurls', namespace='postg')),
+    path('formac/', include('programs.formacurls', namespace='formac')),
     path('<str:program_slug>/', include('programs.urls', namespace='programs')),
+    
 
 ]
 
