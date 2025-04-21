@@ -7,6 +7,7 @@ from django.utils.text import slugify
 from django.utils.timezone import now
 
 from programas import settings
+from programas.settings import INSTITUTION_SHORT_NAME, INSTITUTION_FULL_NAME, INSTITUTION_ADDRESS, INSTITUTION_PHONE
 
 
 def program_directory_path(instance, filename):
@@ -43,6 +44,12 @@ def postg_document_path(instance, filename):
 
     return 'postg/docs/{0}/{1}'.format(instance.year, file_name)
 
+def formation_document_path(instance, filename):
+    file_ext = str(filename.split('.')[filename.split('.').__len__() - 1]).lower()
+    file_name = '{0}_{1}_{2}.{3}'.format(instance.type.capitalize() , instance.year,instance.month, file_ext)
+
+    return 'formation/docs/{0}/{1}'.format(instance.year, file_name)
+
 
 def member_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
@@ -51,6 +58,10 @@ def member_directory_path(instance, filename):
 def postg_member_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/postg/members/<member_id>/<filename>
     return 'postg/members/{0}/{1}'.format(instance.id, filename)
+
+def formation_member_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/postg/members/<member_id>/<filename>
+    return 'formation/members/{0}/{1}'.format(instance.id, filename)
 
 def student_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/imgs/program_<slug>/<filename>
@@ -64,9 +75,14 @@ def student_filedoc_directory_path(instance, filename):
         student = instance.msc_student
     elif program.type == 'dip':
         student = instance.dip_student
+    elif program.type == 'curs':
+        student = instance.curs_student
+    elif program.type == 'coleg':
+        student = instance.coleg_student
 
     # file will be uploaded to MEDIA_ROOT/program_<slug>/students/<student_id>/docs/<filename>
     return 'program_{0}/students/{1}/docs/{2}'.format(program.slug,student.id, filename)
+
 def phd_thesis_directory_path(instance, filename):
     program = instance.phd_student.student.program
     return 'program_{0}/students/{1}/docs/thesis/{2}'.format(program.slug, instance.phd_student.student.id, filename)
@@ -110,11 +126,11 @@ class Program(models.Model):
     full_name=models.CharField(max_length=150, help_text='Nombre completo del programa', verbose_name='Nombre completo')
     short_name=models.CharField(max_length=40, help_text='Nombre corto del programa', verbose_name='Nombre Corto')
     description=models.TextField(max_length=200, help_text='Breve descripcion del programa', verbose_name='Descripcion')
-    type=models.CharField(max_length=20,choices=[('phd','Doctorado'),('msc','Maestría'),('dip','Diplomado')], verbose_name='Tipo')
+    type=models.CharField(max_length=20,choices=[('phd','Doctorado'),('msc','Maestría'),('dip','Diplomado'),('curs', 'Cursos'), ('coleg', 'Colegio')], verbose_name='Tipo')
     branch=models.CharField(max_length=20,default='CP',choices=[('CT','Ciencias Técnicas'),('CE','Ciencias Económicas'),
                                                    ('CNE','Ciencias Naturales y Exactas'),('CA','Ciencias Agrícolas'),
                                                    ('CSH','Ciencias Sociales y Humanísticas'),('CP','Ciencias Pedagógicas'),
-                                                   ('Arte','Ciencias del Arte')], verbose_name='Rama del programa')
+                                                   ('Arte','Ciencias del Arte'),('Otros', 'Otros')], verbose_name='Rama del programa')
     code = models.CharField(max_length=10, null=True, blank=True, verbose_name='Codigo del Programa')
     slug=models.SlugField(max_length=40,help_text='Slug para url',unique=True)
     address = models.TextField(max_length=150, help_text='Dirección de la sede del programa')
@@ -153,7 +169,7 @@ class CGC_Member(models.Model):
     
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     charge = models.CharField(max_length=50,choices=[('Presidente','Presidente'),('Director','Director'),('Secretario','Secretario'),('Miembro','Miembro')], help_text='Cargo', verbose_name='Cargo')
-    institution= models.CharField(max_length=60,default='Universidad Agraria de La Habana')
+    institution= models.CharField(max_length=60,default=INSTITUTION_FULL_NAME)
     priority= models.SmallIntegerField(help_text="Prioridad del Cargo", choices=[(1,'1'),(2,'2'),(3,'3')])
     fb_contact = models.URLField(help_text='URL del contacto de Facebook',default='https://www.facebook.com',  blank=True)
     tw_contact = models.URLField(help_text='URL del contacto de Twitter',default='https://www.twitter.com',  blank=True)
@@ -198,7 +214,7 @@ class ProgramMember(models.Model):
     role = models.CharField(max_length=50,default='Tutor', choices=ROLE_CHOICES)
     country = models.CharField(max_length=70, default='Cuba')
     phone = models.CharField(max_length=50, null=True)
-    institution = models.CharField(max_length=100, default='UNAH')
+    institution = models.CharField(max_length=100, default=INSTITUTION_SHORT_NAME)
     birth_date = models.DateField(default='1960-01-01', help_text='Fecha de nacimiento')
     degree = models.CharField(max_length=100, default='Doctor en Ciencias de...',
                               help_text='Grado cientifico')
@@ -257,7 +273,24 @@ class Student(models.Model):
 
     def __str__(self):
         return self.user.get_full_name()
+    
+class StudentOthers(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20,null=True, blank=True)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    graduate_date = models.DateField(null=True)
+    init_date = models.DateField(null=True)
+    country=models.CharField(max_length=70, default='Cuba')
+    picture=models.ImageField(upload_to=student_directory_path, null=True)
+    gender=models.CharField(max_length=1, default='f')
+    birth_date=models.DateField(default=now)
+    dni=models.CharField(max_length=24, default='12345678901')
 
+    def __str__(self):
+        return self.user.get_full_name()
+
+
+    
 class ProgramEdition(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     order = models.SmallIntegerField(default=1)
@@ -267,6 +300,28 @@ class ProgramEdition(models.Model):
 
     def __str__(self):
         return str(self.order)
+    
+class ColegStudent(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20,null=True, blank=True)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    request_date= models.DateField(default=now)
+    graduate_date = models.DateField(null=True, blank=True)
+    init_date = models.DateField(null=True, blank=True)
+    country=models.CharField(max_length=70, default='Cuba')
+    picture=models.ImageField(upload_to=student_directory_path, null=True, blank=True)
+    gender=models.CharField(max_length=1, default='f')
+    birth_date=models.DateField(default=now)
+    dni=models.CharField(max_length=24, default='12345678901')
+    status = models.CharField(max_length=15,default='solicitante', choices=[('solicitante', 'Solicitante'), ('estudiante', 'Estudiante'),
+                                                                            ('graduado', 'Graduado'), ('denegado', 'Denegado')])
+    edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
+    category = models.CharField(max_length=15, default='interno',
+                                choices=[('interno', 'Interno'), ('externo', 'Externo')])
+    center = models.CharField(max_length=150, default= INSTITUTION_FULL_NAME)
+
+    def __str__(self):
+        return self.user.get_full_name()
 
 
 class MscStudent(models.Model):
@@ -286,7 +341,7 @@ class MscStudent(models.Model):
     edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
     category = models.CharField(max_length=15, default='interno',
                                 choices=[('interno', 'Interno'), ('externo', 'Externo')])
-    center = models.CharField(max_length=150, default='Universidad Agraria de La Habana')
+    center = models.CharField(max_length=150, default= INSTITUTION_FULL_NAME)
 
     def __str__(self):
         return self.user.get_full_name()
@@ -309,7 +364,7 @@ class DipStudent(models.Model):
     faculty = models.CharField(max_length=100, help_text='Nombre de la Facultad a la que pertenece')
     category = models.CharField(max_length=15, default='interno',
                                 choices=[('interno', 'Interno'), ('externo', 'Externo')])
-    center = models.CharField(max_length=150, default='Universidad Agraria de La Habana')
+    center = models.CharField(max_length=150, default= INSTITUTION_FULL_NAME)
 
     def __str__(self):
         return self.user.get_full_name()
@@ -318,10 +373,32 @@ class PhdStudent(models.Model):
     student = models.OneToOneField(Student,on_delete=models.CASCADE)
     status= models.CharField(max_length=15, choices=[('solicitante', 'Solicitante'),('doctorando','Doctorando'), ('graduado', 'Graduado'), ('denegado', 'Denegado'), ('baja', 'Baja')])
     category= models.CharField(max_length=15,default='interno', choices=[('interno', 'Interno'),('externo','Externo')])
-    center = models.CharField(max_length=150, default='Universidad Agraria de La Habana')
+    center = models.CharField(max_length=150, default=INSTITUTION_FULL_NAME)
 
     def __str__(self):
         return self.student.user.username
+
+class CursStudent(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20,null=True, blank=True)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    request_date= models.DateField(default=now)
+    graduate_date = models.DateField(null=True, blank=True)
+    init_date = models.DateField(null=True, blank=True)
+    country=models.CharField(max_length=70, default='Cuba')
+    picture=models.ImageField(upload_to=student_directory_path, null=True, blank=True)
+    gender=models.CharField(max_length=1, default='f')
+    birth_date=models.DateField(default=now)
+    dni=models.CharField(max_length=24, default='12345678901')
+    status = models.CharField(max_length=15,default='solicitante', choices=[('solicitante', 'Solicitante'), ('cursista', 'Cursista'),
+                                                                            ('graduado', 'Graduado'), ('denegado', 'Denegado')])
+    edition = models.ForeignKey(ProgramEdition, on_delete=models.CASCADE)
+    category = models.CharField(max_length=15, default='interno',
+                                choices=[('interno', 'Interno'), ('externo', 'Externo')])
+    center = models.CharField(max_length=150, default= INSTITUTION_FULL_NAME)
+
+    def __str__(self):
+        return self.user.get_full_name()
 
 class InnerAreas(models.Model):
     name = models.CharField(max_length=150, help_text='Areas administrativas para estudiantes internos')
@@ -361,6 +438,8 @@ class ProgramFinishRequirements(models.Model):
 class StudentInitRequirement(models.Model):
     student= models.ForeignKey(Student, null=True, on_delete=models.CASCADE)
     msc_student= models.ForeignKey(MscStudent, null=True, on_delete=models.CASCADE)
+    curs_student = models.ForeignKey(CursStudent, null= True, on_delete=models.CASCADE)
+    colecg_student = models.ForeignKey(ColegStudent, null=True, on_delete=models.CASCADE)
     requirement= models.ForeignKey(ProgramInitRequirements, on_delete=models.CASCADE)
     accomplished = models.BooleanField(default=False, help_text='Verdadero si esta satisfecho, Falso si lo contrario')
 
@@ -368,12 +447,11 @@ class StudentInitRequirement(models.Model):
         return 'Requirement'
 
 
-
-
-
 class StudentFinishRequirement(models.Model):
     student = models.ForeignKey(Student, null=True, on_delete=models.CASCADE)
     msc_student= models.ForeignKey(MscStudent, null=True, on_delete=models.CASCADE)
+    curs_student = models.ForeignKey(CursStudent, null= True, on_delete=models.CASCADE)
+    colecg_student = models.ForeignKey(ColegStudent, null=True, on_delete=models.CASCADE)
     requirement = models.ForeignKey(ProgramFinishRequirements, on_delete=models.CASCADE)
     accomplished = models.BooleanField(default=False, help_text='Verdadero si esta satisfecho, Falso si lo contrario')
 
@@ -463,7 +541,25 @@ class PhdDefenseCourtMember(models.Model):
 
 
 class MscStudentTheme(models.Model):
-    student=models.OneToOneField(MscStudent, on_delete=models.CASCADE)
+    student=models.OneToOneField(MscStudent, null= True, on_delete=models.CASCADE)
+    project=models.ForeignKey(InvestigationProject, null=True, on_delete=models.SET_NULL)
+    line=models.ForeignKey(InvestigationLine, null=True, on_delete=models.SET_NULL)
+    description=models.TextField(max_length=500, null=True)
+
+    def __str__(self):
+        return self.description
+
+class CursStudentTheme(models.Model):
+    student=models.OneToOneField(CursStudent, null= True, on_delete=models.CASCADE)
+    project=models.ForeignKey(InvestigationProject, null=True, on_delete=models.SET_NULL)
+    line=models.ForeignKey(InvestigationLine, null=True, on_delete=models.SET_NULL)
+    description=models.TextField(max_length=500, null=True)
+
+    def __str__(self):
+        return self.description
+    
+class ColegStudentTheme(models.Model):
+    student=models.OneToOneField(ColegStudent, null= True, on_delete=models.CASCADE)
     project=models.ForeignKey(InvestigationProject, null=True, on_delete=models.SET_NULL)
     line=models.ForeignKey(InvestigationLine, null=True, on_delete=models.SET_NULL)
     description=models.TextField(max_length=500, null=True)
@@ -474,6 +570,9 @@ class MscStudentTheme(models.Model):
 class Tuthor(models.Model):
     phd_student=models.ForeignKey(PhdStudent, null=True,on_delete=models.CASCADE)
     msc_student=models.ForeignKey(MscStudent, null=True, on_delete=models.CASCADE)
+    curs_student=models.ForeignKey(CursStudent, null=True, blank=True, on_delete=models.CASCADE)
+    coleg_student=models.ForeignKey(ColegStudent, null=True, blank=True, on_delete=models.CASCADE)
+    
     professor = models.ForeignKey(ProgramMember, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -532,7 +631,9 @@ class CourseProfessor(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.professor.user.get_full_name()
+        if self.professor:
+            return self.professor.user.get_full_name()
+        return "Profesor no asignado"  # Mensaje alternativo
 
 
 
@@ -540,6 +641,8 @@ class CourseEvaluation(models.Model):
     phdstudent=models.ForeignKey(PhdStudent,null=True, on_delete=models.CASCADE)
     mscstudent=models.ForeignKey(MscStudent, null=True, on_delete=models.CASCADE)
     dipstudent=models.ForeignKey(DipStudent, null=True, on_delete=models.CASCADE)
+    colegstudent=models.ForeignKey(ColegStudent, null=True, on_delete=models.CASCADE)
+    cursstudent=models.ForeignKey(CursStudent, null=True, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     value=models.SmallIntegerField()
 
@@ -578,6 +681,17 @@ class PostgMember(models.Model):
 
     def __str__(self):
         return self.user.get_full_name()
+    
+class FormationMember(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    charge=models.CharField(max_length=20, choices=(('Director', 'Director'),('Metodólogo', 'Metodólogo'),('Técnico', 'Técnico')))
+    grade = models.CharField(max_length=100,null=True, blank=True)
+    phone = models.CharField(max_length=20,null=True, blank=True)
+    picture = models.ImageField(help_text='Foto', upload_to=postg_member_directory_path, null=True, blank=True)
+    gender = models.CharField(max_length=1, default='f', choices=[('f', 'Femenino'), ('m', 'Masculino')])
+
+    def __str__(self):
+        return self.user.get_full_name()
 
 class Document(models.Model):
     name = models.CharField(max_length=100, null=False)
@@ -603,8 +717,7 @@ class CGCDocument(models.Model):
 
     def __str__(self):
         return self.name
-
-
+    
 class ProgramDocument(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     year = models.IntegerField(null=False)
@@ -640,6 +753,8 @@ class StudentFileDocument(models.Model):
     student= models.ForeignKey(Student, null=True, on_delete=models.CASCADE)
     msc_student= models.ForeignKey(MscStudent, null=True, on_delete=models.CASCADE)
     dip_student= models.ForeignKey(DipStudent, null=True, on_delete=models.CASCADE)
+    coleg_student= models.ForeignKey(ColegStudent, null=True, on_delete=models.CASCADE)
+    curs_student= models.ForeignKey(CursStudent, null=True, on_delete=models.CASCADE)
     program_file_document= models.ForeignKey(ProgramFileDoc, on_delete=models.CASCADE)
     accomplished = models.BooleanField(default=False, help_text='Verdadero si esta satisfecho, Falso si lo contrario')
     caducity_date = models.DateField(null=True, blank=True)
@@ -654,7 +769,8 @@ class Message(models.Model):
     phd_student_receiver = models.ForeignKey(Student, null=True, on_delete=models.SET_NULL)
     msc_student_receiver = models.ForeignKey(MscStudent, null=True, on_delete=models.SET_NULL)
     dip_student_receiver = models.ForeignKey(DipStudent, null=True, on_delete=models.SET_NULL)
-
+    coleg_student_receiver = models.ForeignKey(ColegStudent, null=True, on_delete=models.SET_NULL)
+    curs_student_receiver = models.ForeignKey(CursStudent, null=True, on_delete=models.SET_NULL)
     date = models.DateField(default=now)
     subject = models.CharField(max_length=250)
     body = models.TextField(max_length=4000)
@@ -669,6 +785,8 @@ class MessageSended(models.Model):
     phd_student_receiver = models.ForeignKey(Student, null=True, on_delete=models.SET_NULL)
     msc_student_receiver = models.ForeignKey(MscStudent, null=True, on_delete=models.SET_NULL)
     dip_student_receiver = models.ForeignKey(DipStudent, null=True, on_delete=models.SET_NULL)
+    coleg_student_receiver = models.ForeignKey(ColegStudent, null=True, on_delete=models.SET_NULL)
+    curs_student_receiver = models.ForeignKey(CursStudent, null=True, on_delete=models.SET_NULL)
     context = models.CharField(max_length=12, null=False, default='personal',choices=[('students', 'Estudiantes'),('profesores', 'Profesores'),('comite', 'Comité'), ('personal', 'Personal')])
     date = models.DateField(default=now)
     subject = models.CharField(max_length=250)

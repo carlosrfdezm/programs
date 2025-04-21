@@ -37,6 +37,20 @@ urlpatterns = [
     path('msc/<int:edition_id>/students/<int:student_id>/edit', views.edit_msc_student, name='edit_msc_student'),
     path('msc/edition/<int:edition_id>/students/<str:scope>/list', views.msc_edition_students_list, name='msc_edition_students_list'),
     path('msc/students/<str:scope>/list', views.msc_all_students_list, name='msc_all_students_list'),
+
+    #Paths de estudiantes de cursos
+    path('', views.curs_index, name='curs_index'),
+    path('curs/<int:edition_id>/students/create', views.create_curs_student, name='create_curs_student'),
+    path('curs/<int:edition_id>/students/<int:student_id>/edit', views.edit_curs_student, name='edit_curs_student'),
+    path('curs/edition/<int:edition_id>/students/<str:scope>/list', views.curs_edition_students_list, name='curs_edition_students_list'),
+    path('curs/students/<str:scope>/list', views.curs_all_students_list, name='curs_all_students_list'),
+
+    #Paths de estudiantes de colegio
+    path('', views.coleg_index, name='coleg_index'),
+    path('coleg/<int:edition_id>/students/create', views.create_coleg_student, name='create_coleg_student'),
+    path('coleg/<int:edition_id>/students/<int:student_id>/edit', views.edit_coleg_student, name='edit_coleg_student'),
+    path('coleg/edition/<int:edition_id>/students/<str:scope>/list', views.coleg_edition_students_list, name='coleg_edition_students_list'),
+    path('coleg/students/<str:scope>/list', views.coleg_all_students_list, name='coleg_all_students_list'),
     
 
     path('', views.dip_index, name='dip_index'),
@@ -111,6 +125,7 @@ urlpatterns = [
     path('ajx/statistics/members/degree', views.ajx_members_by_grade, name='ajx_members_by_grade'),
     path('ajx/statistics/members/age', views.ajx_members_by_age, name='ajx_members_by_age'),
     path('ajx/statistics/next/defenses', views.ajx_next_years_defenses, name='ajx_next_years_defenses'),
+    
 
     path('ajx/messages/members/personal', views.ajx_member_personal_msg, name='ajx_member_personal_msg'),
     path('ajx/messages/members/massive', views.ajx_member_massive_msg, name='ajx_member_massive_msg'),

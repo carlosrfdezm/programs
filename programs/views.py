@@ -39,7 +39,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
     FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message, CGCDocument, \
     ProgramSpeciality, New, MessageSended, Requester, PhdStudentThesis, PhdAnnouncement, PhdThesisComment, \
-    PhdDefenseCourtMember, FAQ
+    PhdDefenseCourtMember, FAQ, CursStudent, ColegStudent, StudentOthers, FormationMember,CursStudentTheme, ColegStudentTheme
 from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
@@ -72,6 +72,10 @@ def index(request, program_slug):
             return render(request, 'programs/msc_index.html', context)
         elif program.type == 'dip':
             return render(request, 'programs/dip_index.html', context)
+        elif program.type == 'curs':
+            return render(request, 'programs/curs_index.html', context)
+        elif program.type == 'coleg':
+            return render(request, 'programs/coleg_index.html', context)
 
     else:
         return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
@@ -168,6 +172,62 @@ def home(request, program_slug):
                         raise Http404('No hay profesor o estudiante de este programa con ese usuario')
 
                 return render(request, 'programs/dip_home.html', context)
+            
+
+            elif program.type == 'coleg':
+                context = {
+                    'program': program,
+                    'requesters': ColegStudent.objects.filter(program=program, status='solicitante').__len__(),
+                    'estudiante': ColegStudent.objects.filter(program=program, status='estudiante').__len__(),
+                    'graduated': ColegStudent.objects.filter(program=program, status='graduado').__len__(),
+                    'last_requesters': ColegStudent.objects.filter(program=program, status='solicitante').order_by(
+                        '-request_date')[:4],
+                    'last_aproved': ColegStudent.objects.filter(program=program, status='estudiante').order_by(
+                        '-init_date')[
+                                    :4],
+                    'last_graduated': ColegStudent.objects.filter(program=program, status='graduado').order_by(
+                        '-graduate_date')[
+                                      :4],
+
+                }
+                try:
+                    context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+                except ProgramMember.DoesNotExist:
+                    try:
+                        context['student'] = ColegStudent.objects.get(user=request.user, program=program)
+                    except ColegStudent.DoesNotExist:
+                        logout(request)
+                        raise Http404('No hay profesor o estudiante de este programa con ese usuario')
+
+                return render(request, 'programs/coleg_home.html', context)
+            
+
+            elif program.type == 'curs':
+                context = {
+                    'program': program,
+                    'requesters': CursStudent.objects.filter(program=program, status='solicitante').__len__(),
+                    'cursistas': CursStudent.objects.filter(program=program, status='cursista').__len__(),
+                    'graduated': CursStudent.objects.filter(program=program, status='graduado').__len__(),
+                    #'last_requesters': CursStudent.objects.filter(program=program, status='solicitante').order_by(
+                    #    '-request_date')[:4],
+                    'last_aproved': CursStudent.objects.filter(program=program, status='cursista').order_by(
+                        '-init_date')[
+                                    :4],
+                    'last_graduated': CursStudent.objects.filter(program=program, status='graduado').order_by(
+                        '-graduate_date')[
+                                      :4],
+
+                }
+                try:
+                    context['member'] = ProgramMember.objects.get(user=request.user, program=program)
+                except ProgramMember.DoesNotExist:
+                    try:
+                        context['student'] = CursStudent.objects.get(user=request.user, program=program)
+                    except CursStudent.DoesNotExist:
+                        logout(request)
+                        raise Http404('No hay profesor o estudiante de este programa con ese usuario')
+
+                return render(request, 'programs/curs_home.html', context)
 
             else:
                 return HttpResponseNotFound("Tipo de programa no soportado") 
@@ -666,7 +726,10 @@ def create_msc_student(request, program_slug, edition_id):
                         gender=request.POST['gender'],
                         dni=request.POST['student_dni'],
                         birth_date=request.POST['student_birth_date'],
-                        country=request.POST['student_country']
+                        country=request.POST['student_country'],
+                        photo=request.POST['student_phone'],
+                        center=request.POST.get['student_center'],
+                        category=request.POST.get['student_category'] 
                     )
                     student.save()
 
@@ -817,6 +880,7 @@ def create_msc_student(request, program_slug, edition_id):
                 'edition': edition,
                 'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
                 'projects': InvestigationProject.objects.filter(program=program),
+                'lines' : InvestigationLine.objects.filter(program=program),
                 'member': ProgramMember.objects.get(user=request.user, program = program)
             }
             if Program.objects.get(slug=program_slug).type == 'msc':
@@ -825,6 +889,377 @@ def create_msc_student(request, program_slug, edition_id):
                 return HttpResponse('El programa no es una maestria')
     else:
         return error_500(request,program, 'Usted no tiene privilegios para agregar estudiantes en este programa')
+
+
+
+# Para estudiantes de Curs
+@login_required
+def create_curs_student(request, program_slug, edition_id):
+    program=Program.objects.get(slug=program_slug)
+    edition = ProgramEdition.objects.get(pk = edition_id)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            try:
+                user = User.objects.get(email=request.POST['student_email'])
+                try:
+                    student = CursStudent.objects.get(user=user, program=program)
+                    return error_500(request, program, 'Estudiante matriculado previamente en el programa')
+                except CursStudent.DoesNotExist:
+                    #Se crea el CursStudent
+
+                    student = CursStudent(
+                        user=user,
+                        edition=edition,
+                        program=program,
+                        gender=request.POST['gender'],
+                        dni=request.POST['student_dni'],
+                        birth_date=request.POST['student_birth_date'],
+                        country=request.POST['student_country']
+                    )
+                    student.save()
+
+                    for i in range(1, int(request.POST['total_tuthors']) + 1):
+                        create_new_tuthor(request, program,
+                                          request.POST['tuthor_name_' + str(i)],
+                                          request.POST['tuthor_lastname_' + str(i)],
+                                          request.POST['tuthor_institution_' + str(i)],
+                                          request.POST['tuthor_email_' + str(i)], student)
+
+                    utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
+
+                    try:
+                        student.picture = request.FILES['picture']
+                        student.save()
+
+                    except:
+                        pass
+
+                    if program.type == 'curs':
+
+                        new_theme = CursStudentTheme(
+                            student=student,
+                            description=request.POST['theme'],
+                        )
+                        try:
+                            new_theme.project = InvestigationProject.objects.get(
+                                pk=request.POST['investigation_project'])
+                            new_theme.line = InvestigationProject.objects.get(
+                                pk=request.POST['investigation_project']).line,
+
+                        except:
+                            pass
+
+                        new_theme.save()
+                    else:
+                        return HttpResponse('Tipo de programa aun por crear')
+
+                    for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+
+                        if 'student_requirement_' + str(requirement.id) in request.POST:
+                            new_student_requirement = StudentFileDocument(
+                                curs_student=student,
+                                program_file_document=requirement,
+                                accomplished=True,
+                            )
+                            if requirement.get_old:
+                                new_student_requirement.caducity_date = request.POST['caducity_date']
+
+                            new_student_requirement.save()
+
+                        else:
+                            new_student_requirement = StudentFileDocument(
+                                msc_student=student,
+                                program_file_document=requirement,
+                                accomplished=False,
+                            )
+                            if requirement.get_old:
+                                new_student_requirement.caducity_date = None
+                            new_student_requirement.save()
+
+                    return HttpResponseRedirect(reverse('programs:create_curs_student', args=[program_slug, edition_id]))
+
+
+            except User.DoesNotExist:
+                passwd = program_slug + str(random.randint(1000000, 9999999))
+                user = User.objects.create_user(
+                    request.POST['student_email'],
+                    request.POST['student_email'],
+                    passwd,  # Cambiar despues por contrase;a generada
+
+                )
+                user.first_name = request.POST['student_name']
+                user.last_name = request.POST['student_surename']
+                user.save()
+
+            student = CursStudent(
+                user=user,
+                edition=edition,
+                program=program,
+                gender=request.POST['gender'],
+                dni=request.POST['student_dni'],
+                birth_date=request.POST['student_birth_date'],
+                country=request.POST['student_country']
+            )
+            student.save()
+
+            for i in range(1, int(request.POST['total_tuthors']) + 1):
+                create_new_tuthor(request, program,
+                                  request.POST['tuthor_name_' + str(i)],
+                                  request.POST['tuthor_lastname_' + str(i)],
+                                  request.POST['tuthor_institution_' + str(i)],
+                                  request.POST['tuthor_email_' + str(i)], student)
+
+            utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+
+            try:
+                student.picture=request.FILES['picture']
+                student.save()
+
+            except:
+                pass
+
+            if program.type=='curs':
+
+                new_theme=CursStudentTheme(
+                    student=student,
+                    description=request.POST['theme'],
+                )
+                try:
+                    new_theme.project=InvestigationProject.objects.get(pk=request.POST['investigation_project'])
+                    new_theme.line=InvestigationProject.objects.get(pk=request.POST['investigation_project']).line,
+
+                except:
+                    pass
+
+                new_theme.save()
+            else:
+                return HttpResponse('Tipo de programa aun por crear')
+
+            for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+
+                if 'student_requirement_' + str(requirement.id) in request.POST:
+                    new_student_requirement = StudentFileDocument(
+                        curs_student=student,
+                        program_file_document=requirement,
+                        accomplished=True,
+                    )
+                    if requirement.get_old:
+                        new_student_requirement.caducity_date = request.POST['caducity_date']
+
+                    new_student_requirement.save()
+
+                else:
+                    new_student_requirement = StudentFileDocument(
+                        curs_student=student,
+                        program_file_document=requirement,
+                        accomplished=False,
+                    )
+                    if requirement.get_old:
+                        new_student_requirement.caducity_date = None
+                    new_student_requirement.save()
+
+            return HttpResponseRedirect(reverse('programs:create_curs_student', args=[program_slug, edition_id]))
+        else:
+            context = {
+                'program': program,
+                'edition': edition,
+                'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'projects': InvestigationProject.objects.filter(program=program),
+                'member': ProgramMember.objects.get(user=request.user, program = program)
+            }
+            if Program.objects.get(slug=program_slug).type == 'curs':
+                return render(request, 'programs/create_curs_student.html', context)
+            else:
+                return HttpResponse('El programa no es una maestria')
+    else:
+        return error_500(request,program, 'Usted no tiene privilegios para agregar estudiantes en este programa')
+
+# Para estudiantes de Colegio
+
+@login_required
+def create_coleg_student(request, program_slug, edition_id):
+    program=Program.objects.get(slug=program_slug)
+    edition = ProgramEdition.objects.get(pk = edition_id)
+    if user_is_program_cs(request.user, program):
+        if request.method == 'POST':
+            try:
+                user = User.objects.get(email=request.POST['student_email'])
+                try:
+                    student = ColegStudent.objects.get(user=user, program=program)
+                    return error_500(request, program, 'Estudiante matriculado previamente en el programa')
+                except ColegStudent.DoesNotExist:
+                    #Se crea el ColegStudent
+
+                    student = ColegStudent(
+                        user=user,
+                        edition=edition,
+                        program=program,
+                        gender=request.POST['gender'],
+                        dni=request.POST['student_dni'],
+                        birth_date=request.POST['student_birth_date'],
+                        country=request.POST['student_country'],
+                        center=request.POST['student_center']
+                    )
+                    student.save()
+
+                    for i in range(1, int(request.POST['total_tuthors']) + 1):
+                        create_new_tuthor(request, program,
+                                          request.POST['tuthor_name_' + str(i)],
+                                          request.POST['tuthor_lastname_' + str(i)],
+                                          request.POST['tuthor_institution_' + str(i)],
+                                          request.POST['tuthor_email_' + str(i)], student)
+
+                    utils_send_email(request, 'wm', program.email, student, '', '', program, '*********')
+
+                    try:
+                        student.picture = request.FILES['picture']
+                        student.save()
+
+                    except:
+                        pass
+
+                    if program.type == 'coleg':
+
+                        new_theme = ColegStudentTheme(
+                            student=student,
+                            description=request.POST['theme'],
+                        )
+                        try:
+                            new_theme.project = InvestigationProject.objects.get(
+                                pk=request.POST['investigation_project'])
+                            new_theme.line = InvestigationProject.objects.get(
+                                pk=request.POST['investigation_project']).line,
+
+                        except:
+                            pass
+
+                        new_theme.save()
+                    else:
+                        return HttpResponse('Tipo de programa aun por crear')
+
+                    for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+
+                        if 'student_requirement_' + str(requirement.id) in request.POST:
+                            new_student_requirement = StudentFileDocument(
+                                coleg_student=student,
+                                program_file_document=requirement,
+                                accomplished=True,
+                            )
+                            if requirement.get_old:
+                                new_student_requirement.caducity_date = request.POST['caducity_date']
+
+                            new_student_requirement.save()
+
+                        else:
+                            new_student_requirement = StudentFileDocument(
+                                coleg_student=student,
+                                program_file_document=requirement,
+                                accomplished=False,
+                            )
+                            if requirement.get_old:
+                                new_student_requirement.caducity_date = None
+                            new_student_requirement.save()
+
+                    return HttpResponseRedirect(reverse('programs:create_coleg_student', args=[program_slug, edition_id]))
+
+
+            except User.DoesNotExist:
+                passwd = program_slug + str(random.randint(1000000, 9999999))
+                user = User.objects.create_user(
+                    request.POST['student_email'],
+                    request.POST['student_email'],
+                    passwd,  # Cambiar despues por contrase;a generada
+
+                )
+                user.first_name = request.POST['student_name']
+                user.last_name = request.POST['student_surename']
+                user.save()
+
+            student = ColegStudent(
+                user=user,
+                edition=edition,
+                program=program,
+                gender=request.POST['gender'],
+                dni=request.POST['student_dni'],
+                birth_date=request.POST['student_birth_date'],
+                country=request.POST['student_country'],
+                center=request.POST['student_center']
+            )
+            student.save()
+
+            for i in range(1, int(request.POST['total_tuthors']) + 1):
+                create_new_tuthor(request, program,
+                                  request.POST['tuthor_name_' + str(i)],
+                                  request.POST['tuthor_lastname_' + str(i)],
+                                  request.POST['tuthor_institution_' + str(i)],
+                                  request.POST['tuthor_email_' + str(i)], student)
+
+            utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+
+            try:
+                student.picture=request.FILES['picture']
+                student.save()
+
+            except:
+                pass
+
+            if program.type=='coleg':
+
+                new_theme=ColegStudentTheme(
+                    student=student,
+                    description=request.POST['theme'],
+                )
+                try:
+                    new_theme.project=InvestigationProject.objects.get(pk=request.POST['investigation_project'])
+                    new_theme.line=InvestigationProject.objects.get(pk=request.POST['investigation_project']).line,
+
+                except:
+                    pass
+
+                new_theme.save()
+            else:
+                return HttpResponse('Tipo de programa aun por crear')
+
+            for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+
+                if 'student_requirement_' + str(requirement.id) in request.POST:
+                    new_student_requirement = StudentFileDocument(
+                        coleg_student=student,
+                        program_file_document=requirement,
+                        accomplished=True,
+                    )
+                    if requirement.get_old:
+                        new_student_requirement.caducity_date = request.POST['caducity_date']
+
+                    new_student_requirement.save()
+
+                else:
+                    new_student_requirement = StudentFileDocument(
+                        coleg_student=student,
+                        program_file_document=requirement,
+                        accomplished=False,
+                    )
+                    if requirement.get_old:
+                        new_student_requirement.caducity_date = None
+                    new_student_requirement.save()
+
+            return HttpResponseRedirect(reverse('programs:create_coleg_student', args=[program_slug, edition_id]))
+        else:
+            context = {
+                'program': program,
+                'edition': edition,
+                'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'projects': InvestigationProject.objects.filter(program=program),
+                'member': ProgramMember.objects.get(user=request.user, program = program)
+                
+            }
+            if Program.objects.get(slug=program_slug).type == 'coleg':
+                return render(request, 'programs/create_coleg_student.html', context)
+            else:
+                return HttpResponse('El programa no es una maestria')
+    else:
+        return error_500(request,program, 'Usted no tiene privilegios para agregar estudiantes en este programa')
+    
 
 @login_required
 def create_dip_student(request, program_slug, edition_id):
@@ -860,7 +1295,7 @@ def create_dip_student(request, program_slug, edition_id):
                     except:
                         pass
 
-                    return HttpResponseRedirect(reverse('programs:create_msc_student', args=[program_slug, edition_id]))
+                    return HttpResponseRedirect(reverse('programs:create_dip_student', args=[program_slug, edition_id]))
 
 
             except User.DoesNotExist:
@@ -1079,6 +1514,66 @@ def students_list(request, program_slug, scope):
                 }
 
             return render(request, 'programs/students_list.html', context)
+        
+        # Para estudiantes de Cursos
+        
+        elif program.type == 'curs':
+            if scope == 'all':
+                context = {
+                    'program': program,
+                    'students': CursStudent.objects.filter(program=program),
+                    'scope': 'all',
+                }
+            elif scope == 'requesters':
+                context = {
+                    'program': program,
+                    'students': CursStudent.objects.filter(program=program, status='solicitante'),
+                    'scope': 'Solicitantes',
+                }
+            elif scope == 'aproved':
+                context = {
+                    'program': program,
+                    'students': CursStudent.objects.filter(program=program, status='cursista'),
+                    'scope': 'Cursistas',
+                }
+            elif scope == 'graduated':
+                context = {
+                    'program': program,
+                    'students': CursStudent.objects.filter(program=program, status='graduado'),
+                    'scope': 'Graduados',
+                }
+
+            return render(request, 'programs/students_list.html', context)
+        # Para estudiantes de colegio
+
+        elif program.type == 'coleg':
+            if scope == 'all':
+                context = {
+                    'program': program,
+                    'students': ColegStudent.objects.filter(program=program),
+                    'scope': 'all',
+                }
+            elif scope == 'requesters':
+                context = {
+                    'program': program,
+                    'students': ColegStudent.objects.filter(program=program, status='solicitante'),
+                    'scope': 'Solicitantes',
+                }
+            elif scope == 'aproved':
+                context = {
+                    'program': program,
+                    'students': ColegStudent.objects.filter(program=program, status='estudiante'),
+                    'scope': 'Estudiantes',
+                }
+            elif scope == 'graduated':
+                context = {
+                    'program': program,
+                    'students': ColegStudent.objects.filter(program=program, status='graduado'),
+                    'scope': 'Graduados',
+                }
+
+            return render(request, 'programs/students_list.html', context)
+
         elif program.type == 'dip':
             return HttpResponse('Aun no se implementa este tipo de programas')
 
@@ -1145,6 +1640,104 @@ def msc_edition_students_list(request, program_slug, edition_id, scope):
     else:
         return error_500(request, program, 'Usted no tiene acceso a esta página')
 
+# Para estudiantes de Cursos
+
+@login_required
+def curs_edition_students_list(request, program_slug, edition_id, scope):
+    program=Program.objects.get(slug=program_slug)
+    edition=ProgramEdition.objects.get(pk=edition_id)
+    if user_is_program_member(request.user, program) or user_is_program_student(request.user,program):
+        if program.type == 'curs':
+            if scope == 'all':
+                context = {
+                    'program': program,
+                    'students': CursStudent.objects.filter(program=program, edition=edition),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'all',
+                }
+            elif scope == 'requesters':
+                context = {
+                    'program': program,
+                    'students': CursStudent.objects.filter(program=program, edition=edition, status='solicitante'),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'Solicitantes',
+                }
+            elif scope == 'aproved':
+                context = {
+                    'program': program,
+                    'students': CursStudent.objects.filter(program=program, edition=edition, status='cursista'),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'Cursista',
+                }
+            elif scope == 'graduated':
+                context = {
+                    'program': program,
+                    'students': CursStudent.objects.filter(program=program, edition=edition, status='graduado'),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'Graduados',
+                }
+
+            try:
+                context['member']= ProgramMember.objects.get(user= request.user, program = program)
+            except ProgramMember.DoesNotExist:
+                pass
+
+            return render(request, 'programs/curs_students_list.html', context)
+        else:
+            return error_500(request, program, 'El programa debe ser una maestria')
+
+    else:
+        return error_500(request, program, 'Usted no tiene acceso a esta página')
+
+# Para estudiantes de Colegio
+
+@login_required
+def coleg_edition_students_list(request, program_slug, edition_id, scope):
+    program=Program.objects.get(slug=program_slug)
+    edition=ProgramEdition.objects.get(pk=edition_id)
+    if user_is_program_member(request.user, program) or user_is_program_student(request.user,program):
+        if program.type == 'coleg':
+            if scope == 'all':
+                context = {
+                    'program': program,
+                    'students': ColegStudent.objects.filter(program=program, edition=edition),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'all',
+                }
+            elif scope == 'requesters':
+                context = {
+                    'program': program,
+                    'students': ColegStudent.objects.filter(program=program, edition=edition, status='solicitante'),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'Solicitantes',
+                }
+            elif scope == 'aproved':
+                context = {
+                    'program': program,
+                    'students': ColegStudent.objects.filter(program=program, edition=edition, status='estudiante'),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'Estudiantes',
+                }
+            elif scope == 'graduated':
+                context = {
+                    'program': program,
+                    'students': ColegStudent.objects.filter(program=program, edition=edition, status='graduado'),
+                    'edition': ProgramEdition.objects.get(pk=edition_id),
+                    'scope': 'Graduados',
+                }
+
+            try:
+                context['member']= ProgramMember.objects.get(user= request.user, program = program)
+            except ProgramMember.DoesNotExist:
+                pass
+
+            return render(request, 'programs/coleg_students_list.html', context)
+        else:
+            return error_500(request, program, 'El programa debe ser una maestria')
+
+    else:
+        return error_500(request, program, 'Usted no tiene acceso a esta página')
+
 @login_required
 def dip_edition_students_list(request, program_slug, edition_id, scope):
     program=Program.objects.get(slug=program_slug)
@@ -1170,7 +1763,7 @@ def dip_edition_students_list(request, program_slug, edition_id, scope):
                     'program': program,
                     'students': DipStudent.objects.filter(program=program, edition=edition, status='diplomante'),
                     'edition': ProgramEdition.objects.get(pk=edition_id),
-                    'scope': 'Maestrantes',
+                    'scope': 'Diplomantes',
                 }
             elif scope == 'graduated':
                 context = {
@@ -1229,6 +1822,106 @@ def msc_all_students_list(request, program_slug, scope):
                     pass
             context['en_scope']=scope
             return render(request, 'programs/msc_students_list.html', context)
+        else:
+            return error_500(request, program, 'El programa debe ser una maestria')
+
+    else:
+        return error_500(request, program, 'Usted no tiene acceso a esta página')
+    
+# Para estudiantes de Cursos
+
+@login_required
+def curs_all_students_list(request, program_slug, scope):
+    program=Program.objects.get(slug=program_slug)
+    if user_is_program_member(request.user, program) or user_is_program_student(request.user,program):
+        if program.type == 'curs':
+            if scope == 'all':
+                context = {
+                    'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
+                    'students': CursStudent.objects.filter(program=program),
+                    'scope': 'all',
+                }
+            elif scope == 'requesters':
+                context = {
+                    'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
+                    'students': CursStudent.objects.filter(program=program, status='solicitante'),
+                    'scope': 'Solicitantes',
+                }
+            elif scope == 'aproved':
+                context = {
+                    'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
+                    'students': CursStudent.objects.filter(program=program, status='cursista'),
+                    'scope': 'Cursista',
+                }
+            elif scope == 'graduated':
+                context = {
+                    'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
+                    'students': CursStudent.objects.filter(program=program, status='graduado'),
+                    'scope': 'Graduados',
+                }
+            try:
+                context['student']=CursStudent.objects.get(user=request.user)
+            except CursStudent.DoesNotExist:
+                try:
+                    context['member']=ProgramMember.objects.get(user=request.user, program=program)
+                except ProgramMember.DoesNotExist:
+                    pass
+            context['en_scope']=scope
+            return render(request, 'programs/curs_students_list.html', context)
+        else:
+            return error_500(request, program, 'El programa debe ser una maestria')
+
+    else:
+        return error_500(request, program, 'Usted no tiene acceso a esta página')
+
+# Para estudiantes de Colegio
+
+@login_required
+def coleg_all_students_list(request, program_slug, scope):
+    program=Program.objects.get(slug=program_slug)
+    if user_is_program_member(request.user, program) or user_is_program_student(request.user,program):
+        if program.type == 'coleg':
+            if scope == 'all':
+                context = {
+                    'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
+                    'students': ColegStudent.objects.filter(program=program),
+                    'scope': 'all',
+                }
+            elif scope == 'requesters':
+                context = {
+                    'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
+                    'students': ColegStudent.objects.filter(program=program, status='solicitante'),
+                    'scope': 'Solicitantes',
+                }
+            elif scope == 'aproved':
+                context = {
+                    'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
+                    'students': ColegStudent.objects.filter(program=program, status='estudiante'),
+                    'scope': 'Estudiantes',
+                }
+            elif scope == 'graduated':
+                context = {
+                    'program': program,
+                    'editions': ProgramEdition.objects.filter(program=program),
+                    'students': ColegStudent.objects.filter(program=program, status='graduado'),
+                    'scope': 'Graduados',
+                }
+            try:
+                context['student']=ColegStudent.objects.get(user=request.user)
+            except ColegStudent.DoesNotExist:
+                try:
+                    context['member']=ProgramMember.objects.get(user=request.user, program=program)
+                except ProgramMember.DoesNotExist:
+                    pass
+            context['en_scope']=scope
+            return render(request, 'programs/coleg_students_list.html', context)
         else:
             return error_500(request, program, 'El programa debe ser una maestria')
 
@@ -1312,7 +2005,10 @@ def members_list(request, program_slug, scope):
             context['student'] = MscStudent.objects.get(user=request.user, program=program)
         elif program.type == 'dip':
             context['student'] = DipStudent.objects.get(user=request.user, program=program)
-
+        elif program.type == 'curs':
+            context['student'] = CursStudent.objects.get(user=request.user, program=program)
+        elif program.type == 'coleg':
+            context['student'] = ColegStudent.objects.get(user=request.user, program=program)
 
     return render(request, 'programs/members_list.html', context)
 
@@ -1566,6 +2262,47 @@ def view_student_profile(request, program_slug, student_id):
             except ProgramMember.DoesNotExist:
                 pass
             return render(request, 'programs/dip_student_profile.html', context)
+        
+        elif program.type == 'coleg':
+            context = {
+                'program': program,
+                'student': ColegStudent.objects.get(pk=student_id),
+                'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'finish_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'projects': InvestigationProject.objects.filter(program=program),
+                'edition': ColegStudent.objects.get(pk=student_id).edition,
+                'inner_areas': InnerAreas.objects.all(),
+                'messages': Message.objects.filter(
+                    Q(coleg_student_receiver=ColegStudent.objects.get(pk=student_id)) | Q(sender=request.user))
+
+            }
+            try:
+                context['member']=ProgramMember.objects.get(user=request.user, program=program)
+            except ProgramMember.DoesNotExist:
+                pass
+            return render(request, 'programs/coleg_student_profile.html', context)
+        
+        elif program.type == 'curs':
+            context = {
+                'program': program,
+                'student': CursStudent.objects.get(pk=student_id),
+                'init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'finish_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'projects': InvestigationProject.objects.filter(program=program),
+                'edition': CursStudent.objects.get(pk=student_id).edition,
+                'inner_areas': InnerAreas.objects.all(),
+                'messages': Message.objects.filter(
+                    Q(curs_student_receiver=CursStudent.objects.get(pk=student_id)) | Q(sender=request.user))
+
+            }
+            try:
+                context['member']=ProgramMember.objects.get(user=request.user, program=program)
+            except ProgramMember.DoesNotExist:
+                pass
+            return render(request, 'programs/curs_student_profile.html', context)
+
+
+
         else:
             return error_500(request, program, 'Tipo de programa no implementado.')
 
@@ -1609,8 +2346,16 @@ def edit_msc_student(request, program_slug, edition_id, student_id):
                 country=request.POST['student_country'],
                 gender=request.POST['gender'],
                 dni=request.POST['student_dni'],
-                birth_date=request.POST['student_birth_date']
-
+                birth_date=request.POST['student_birth_date'],
+                center=request.POST['student_center'],
+                category=request.POST['student_category']
+                
+                        
+                       
+                        
+                        
+                      
+                      
             )
             if 'request_date' in request.POST and not request.POST['request_date'] == '':
                 MscStudent.objects.filter(pk=student_id).update(
@@ -1698,12 +2443,243 @@ def edit_msc_student(request, program_slug, edition_id, student_id):
                 'new_init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
                 'new_finish_requirements': ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True),
                 'projects': InvestigationProject.objects.filter(program=program),
+                'lines': InvestigationLine.objects.filter(program=program),
                 'is_student': request.user == student.user,
             }
             return render(request, 'programs/edit_msc_student.html', context)
     else:
         return error_500(request,program,'Usted no tiene privilegios para editar estudiantes de este programa.')
 
+# PAra estudiantes de Cursos
+
+def edit_curs_student(request, program_slug, edition_id, student_id):
+    program= Program.objects.get(slug=program_slug)
+    student = CursStudent.objects.get(pk=student_id)
+    
+    if user_is_program_cs(request.user, program) or request.user == student.user:
+        if request.method == 'POST':
+            user=CursStudent.objects.get(pk=student_id).user
+            user.first_name=request.POST['student_name']
+            user.last_name=request.POST['student_surename']
+            user.email=request.POST['student_email']
+            user.save()
+
+            CursStudent.objects.filter(pk=student_id).update(
+                phone=request.POST['student_phone'],
+                country=request.POST['student_country'],
+                gender=request.POST['gender'],
+                dni=request.POST['student_dni'],
+                birth_date=request.POST['student_birth_date']
+
+            )
+            if 'request_date' in request.POST and not request.POST['request_date'] == '':
+                CursStudent.objects.filter(pk=student_id).update(
+                    request_date=request.POST['request_date']
+                )
+            if 'init_date' in request.POST and not request.POST['init_date'] == '':
+                CursStudent.objects.filter(pk=student_id).update(
+                    init_date=request.POST['init_date']
+                )
+            if 'graduate_date' in request.POST and not request.POST['graduate_date'] == '':
+                CursStudent.objects.filter(pk=student_id).update(
+                    graduate_date=request.POST['graduate_date']
+                )
+
+            CursStudent.objects.filter(pk=student_id).update(
+                status=request.POST['student_status']
+            )
+
+            student_theme, created = CursStudentTheme.objects.get_or_create(
+                student=CursStudent.objects.get(pk=student_id),
+
+            )
+            student_theme.description = request.POST['theme']
+
+            student_theme.save()
+            try:
+                student_theme.project = InvestigationProject.objects.get(pk=request.POST['investigation_project'])
+                student_theme.line = InvestigationProject.objects.get(pk=request.POST['investigation_project']).line
+                student_theme.save()
+            except:
+                pass
+
+            
+            try:
+                if request.FILES['student_picture']:
+                    student=CursStudent.objects.get(pk=student_id)
+                    student.picture=request.FILES['student_picture']
+                    student.save()
+            except:
+                pass
+
+            for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+                if 'student_new_requirement_' + str(requirement.id) in request.POST:
+                    s_i_r=StudentFileDocument.objects.get(curs_student=CursStudent.objects.get(pk=student_id), program_file_document=requirement)
+                    s_i_r.accomplished=True
+                    if requirement.get_old:
+                        try:
+                            s_i_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
+                        except:
+                            s_i_r.caducity_date = None
+                    s_i_r.save()
+                else:
+                    s_i_r = StudentFileDocument.objects.get(curs_student=CursStudent.objects.get(pk=student_id),
+                                                            program_file_document=requirement)
+
+                    s_i_r.accomplished = False
+                    s_i_r.caducity_date = None
+                    s_i_r.save()
+            if student.status == 'cursista' or student.status == 'graduado':
+                for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+                    if 'student_new_f_requirement_' + str(requirement.id) in request.POST:
+                        s_f_r = StudentFileDocument.objects.get(curs_student=CursStudent.objects.get(pk=student_id),
+                                                                program_file_document=requirement)
+                        if requirement.get_old:
+                            try:
+                                s_f_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
+                            except:
+                                s_f_r.caducity_date = None
+
+                        s_f_r.accomplished=True
+                        s_f_r.save()
+                    else:
+                        s_f_r = StudentFileDocument.objects.get(curs_student=CursStudent.objects.get(pk=student_id),
+                                                                program_file_document=requirement)
+                        s_f_r.caducity_date = None
+                        s_f_r.accomplished = False
+                        s_f_r.save()
+
+            return HttpResponseRedirect(reverse('programs:curs_all_students_list', args=[program_slug,'all']))
+        else:
+            context = {
+                'program': program,
+                'member': ProgramMember.objects.get(user=request.user, program=program),
+                'edition': ProgramEdition.objects.get(pk=edition_id),
+                'curs_student': CursStudent.objects.get(pk=student_id),
+                'new_init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'new_finish_requirements': ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True),
+                'projects': InvestigationProject.objects.filter(program=program),
+                'is_student': request.user == student.user,
+            }
+            return render(request, 'programs/edit_curs_student.html', context)
+    else:
+        return error_500(request,program,'Usted no tiene privilegios para editar estudiantes de este programa.')
+
+
+# Para estudiantes de Colegio
+
+def edit_coleg_student(request, program_slug, edition_id, student_id):
+    program= Program.objects.get(slug=program_slug)
+    student = ColegStudent.objects.get(pk=student_id)
+    
+    if user_is_program_cs(request.user, program) or request.user == student.user:
+        if request.method == 'POST':
+            user=ColegStudent.objects.get(pk=student_id).user
+            user.first_name=request.POST['student_name']
+            user.last_name=request.POST['student_surename']
+            user.email=request.POST['student_email']
+            user.save()
+
+            ColegStudent.objects.filter(pk=student_id).update(
+                phone=request.POST['student_phone'],
+                country=request.POST['student_country'],
+                gender=request.POST['gender'],
+                dni=request.POST['student_dni'],
+                birth_date=request.POST['student_birth_date'],
+                center=request.POST['student_center']
+
+            )
+            if 'request_date' in request.POST and not request.POST['request_date'] == '':
+                ColegStudent.objects.filter(pk=student_id).update(
+                    request_date=request.POST['request_date']
+                )
+            if 'init_date' in request.POST and not request.POST['init_date'] == '':
+                ColegStudent.objects.filter(pk=student_id).update(
+                    init_date=request.POST['init_date']
+                )
+            if 'graduate_date' in request.POST and not request.POST['graduate_date'] == '':
+                ColegStudent.objects.filter(pk=student_id).update(
+                    graduate_date=request.POST['graduate_date']
+                )
+
+            ColegStudent.objects.filter(pk=student_id).update(
+                status=request.POST['student_status']
+            )
+
+            student_theme, created = ColegStudentTheme.objects.get_or_create(
+                student=ColegStudent.objects.get(pk=student_id),
+
+            )
+            student_theme.description = request.POST['theme']
+
+            student_theme.save()
+            try:
+                student_theme.project = InvestigationProject.objects.get(pk=request.POST['investigation_project'])
+                student_theme.line = InvestigationProject.objects.get(pk=request.POST['investigation_project']).line
+                student_theme.save()
+            except:
+                pass
+
+            try:
+                if request.FILES['student_picture']:
+                    student=ColegStudent.objects.get(pk=student_id)
+                    student.picture=request.FILES['student_picture']
+                    student.save()
+            except:
+                pass
+
+            for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+                if 'student_new_requirement_' + str(requirement.id) in request.POST:
+                    s_i_r=StudentFileDocument.objects.get(coleg_student=ColegStudent.objects.get(pk=student_id), program_file_document=requirement)
+                    s_i_r.accomplished=True
+                    if requirement.get_old:
+                        try:
+                            s_i_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
+                        except:
+                            s_i_r.caducity_date = None
+                    s_i_r.save()
+                else:
+                    s_i_r = StudentFileDocument.objects.get(coleg_student=ColegStudent.objects.get(pk=student_id),
+                                                            program_file_document=requirement)
+
+                    s_i_r.accomplished = False
+                    s_i_r.caducity_date = None
+                    s_i_r.save()
+            if student.status == 'estudiante' or student.status == 'graduado':
+                for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+                    if 'student_new_f_requirement_' + str(requirement.id) in request.POST:
+                        s_f_r = StudentFileDocument.objects.get(coleg_student=ColegStudent.objects.get(pk=student_id),
+                                                                program_file_document=requirement)
+                        if requirement.get_old:
+                            try:
+                                s_f_r.caducity_date = request.POST['doc_caducity_date_' + str(requirement.id)]
+                            except:
+                                s_f_r.caducity_date = None
+
+                        s_f_r.accomplished=True
+                        s_f_r.save()
+                    else:
+                        s_f_r = StudentFileDocument.objects.get(coleg_student=ColegStudent.objects.get(pk=student_id),
+                                                                program_file_document=requirement)
+                        s_f_r.caducity_date = None
+                        s_f_r.accomplished = False
+                        s_f_r.save()
+
+            return HttpResponseRedirect(reverse('programs:coleg_all_students_list', args=[program_slug,'all']))
+        else:
+            context = {
+                'program': program,
+                'member': ProgramMember.objects.get(user=request.user, program=program),
+                'edition': ProgramEdition.objects.get(pk=edition_id),
+                'coleg_student': ColegStudent.objects.get(pk=student_id),
+                'new_init_requirements': ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True),
+                'new_finish_requirements': ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True),
+                'projects': InvestigationProject.objects.filter(program=program),
+                'is_student': request.user == student.user,
+            }
+            return render(request, 'programs/edit_coleg_student.html', context)
+    else:
+        return error_500(request,program,'Usted no tiene privilegios para editar estudiantes de este programa.')
 
 
 @login_required
@@ -1803,6 +2779,10 @@ def error_500(request, program, error_message):
             context['student'] = MscStudent.objects.get(user=request.user, program=program)
         elif program.type == 'dip':
             context['student'] = DipStudent.objects.get(user=request.user, program=program)
+        elif program.type == 'curs':
+            context['student'] = CursStudent.objects.get(user=request.user, program=program)
+        elif program.type == 'coleg':
+            context['student'] = ColegStudent.objects.get(user=request.user, program=program)
 
     return render(request,'programs/error_500.html', context)
 
@@ -2044,6 +3024,28 @@ def ajx_student_exists(request,program_slug):
                 )
 
             except DipStudent.DoesNotExist:
+                pass
+        
+        elif program.type == 'curs':
+            try:
+                student = CursStudent.objects.get(user__username=request.POST['email'],program=program)
+                return HttpResponse(
+                    json.dumps([{'exists': 1}]),
+                    content_type="application/json"
+                )
+
+            except CursStudent.DoesNotExist:
+                pass
+
+        elif program.type == 'coleg':
+            try:
+                student = ColegStudent.objects.get(user__username=request.POST['email'],program=program)
+                return HttpResponse(
+                    json.dumps([{'exists': 1}]),
+                    content_type="application/json"
+                )
+
+            except ColegStudent.DoesNotExist:
                 pass
     else:
         return HttpResponse(
@@ -2328,7 +3330,11 @@ def ajx_delete_student(request, program_slug):
             student_id=request.POST['student_id']
             if program.type == 'phd':
                 try:
-                    Student.objects.get(pk=student_id).delete()
+                    student = Student.objects.get(pk=student_id)
+                    user_id = student.user.id if student.user else None
+                    student.delete()
+                    if user_id:
+                        User.objects.filter(id=user_id).delete()
                     return HttpResponse(
                         json.dumps([{'deleted': 1}]),
                         content_type="application/json"
@@ -2340,7 +3346,11 @@ def ajx_delete_student(request, program_slug):
                     )
             elif program.type == 'msc':
                 try:
-                    MscStudent.objects.get(pk=student_id).delete()
+                    student = MscStudent.objects.get(pk=student_id)
+                    user_id = student.user.id if student.user else None
+                    student.delete()
+                    if user_id:
+                        User.objects.filter(id=user_id).delete()
                     return HttpResponse(
                         json.dumps([{'deleted': 1}]),
                         content_type="application/json"
@@ -2352,7 +3362,45 @@ def ajx_delete_student(request, program_slug):
                     )
             elif program.type == 'dip':
                 try:
-                    DipStudent.objects.get(pk=student_id).delete()
+                    student = DipStudent.objects.get(pk=student_id)
+                    user_id = student.user.id if student.user else None
+                    student.delete()
+                    if user_id:
+                        User.objects.filter(id=user_id).delete()
+                    return HttpResponse(
+                        json.dumps([{'deleted': 1}]),
+                        content_type="application/json"
+                    )
+                except:
+                    return HttpResponse(
+                        json.dumps([{'deleted': 0}]),
+                        content_type="application/json"
+                    )
+                
+            elif program.type == 'curs':
+                try:
+                    student = CursStudent.objects.get(pk=student_id)
+                    user_id = student.user.id if student.user else None
+                    student.delete()
+                    if user_id:
+                        User.objects.filter(id=user_id).delete()
+                    return HttpResponse(
+                        json.dumps([{'deleted': 1}]),
+                        content_type="application/json"
+                    )
+                except:
+                    return HttpResponse(
+                        json.dumps([{'deleted': 0}]),
+                        content_type="application/json"
+                    )
+                
+            elif program.type == 'coleg':
+                try:
+                    student = ColegStudent.objects.get(pk=student_id)
+                    user_id = student.user.id if student.user else None
+                    student.delete()
+                    if user_id:
+                        User.objects.filter(id=user_id).delete()
                     return HttpResponse(
                         json.dumps([{'deleted': 1}]),
                         content_type="application/json"
@@ -2469,6 +3517,10 @@ def ajx_create_tuthor(request, program_slug, student_id):
         student = PhdStudent.objects.get(student=Student.objects.get(pk=student_id, program=program))
     elif program.type == 'msc':
         student = MscStudent.objects.get(pk=student_id, program=program)
+    elif program.type == 'curs':
+        student = CursStudent.objects.get(pk=student_id, program=program)
+    elif program.type == 'coleg':
+        student = ColegStudent.objects.get(pk=student_id, program=program)
 
     if user_is_program_cs(request.user,program ):
         if request.method=='POST':
@@ -2591,7 +3643,15 @@ def ajx_update_filedoc(request, program_slug):
     elif  program.type == 'dip':
         student = DipStudent.objects.get(pk=request.POST['student_id'])
         filedoc = StudentFileDocument.objects.get(dip_student=student, program_file_document= ProgramFileDoc.objects.get(pk=request.POST['doc_id']))
+    
+    elif  program.type == 'curs':
+        student = CursStudent.objects.get(pk=request.POST['student_id'])
+        filedoc = StudentFileDocument.objects.get(curs_student=student, program_file_document= ProgramFileDoc.objects.get(pk=request.POST['doc_id']))
 
+    elif  program.type == 'coleg':
+        student = ColegStudent.objects.get(pk=request.POST['student_id'])
+        filedoc = StudentFileDocument.objects.get(coleg_student=student, program_file_document= ProgramFileDoc.objects.get(pk=request.POST['doc_id']))
+    
     if request.method == 'POST':
         if student.user == request.user or user_is_program_cs(request.user, program):
             try:
@@ -2647,6 +3707,14 @@ def ajx_upgrade_filedoc(request, program_slug):
     elif  program.type == 'dip':
         student = DipStudent.objects.get(pk=request.POST['student_id'])
         filedoc = StudentFileDocument.objects.get(dip_student=student, program_file_document= ProgramFileDoc.objects.get(pk=request.POST['doc_id']))
+
+    elif  program.type == 'curs':
+        student = CursStudent.objects.get(pk=request.POST['student_id'])
+        filedoc = StudentFileDocument.objects.get(curs_student=student, program_file_document= ProgramFileDoc.objects.get(pk=request.POST['doc_id']))
+
+    elif  program.type == 'coleg':
+        student = ColegStudent.objects.get(pk=request.POST['student_id'])
+        filedoc = StudentFileDocument.objects.get(coleg_student=student, program_file_document= ProgramFileDoc.objects.get(pk=request.POST['doc_id']))
 
     if request.method == 'POST':
         if student.user == request.user or user_is_program_cs(request.user, program):
@@ -3054,6 +4122,16 @@ def ajx_delete_filedoc(request, program_slug):
         student = DipStudent.objects.get(pk=request.POST['student_id'])
         filedoc = StudentFileDocument.objects.get(dip_student=student, program_file_document=ProgramFileDoc.objects.get(
             pk=request.POST['doc_id']))
+    
+    elif program.type == 'curs':
+        student = CursStudent.objects.get(pk=request.POST['student_id'])
+        filedoc = StudentFileDocument.objects.get(curs_student=student, program_file_document=ProgramFileDoc.objects.get(
+            pk=request.POST['doc_id']))
+    
+    elif program.type == 'coleg':
+        student = ColegStudent.objects.get(pk=request.POST['student_id'])
+        filedoc = StudentFileDocument.objects.get(coleg_student=student, program_file_document=ProgramFileDoc.objects.get(
+            pk=request.POST['doc_id']))
 
     if request.method == 'POST':
         if student.user == request.user or user_is_program_cs(request.user, program):
@@ -3352,6 +4430,16 @@ def ajx_mark_message_readed(request, program_slug):
             receiver_user = message.dip_student_receiver.user
         except:
             receiver_user = message.program_receiver.user
+    elif program.type == 'curs':
+        try:
+            receiver_user = message.curs_student_receiver.user
+        except:
+            receiver_user = message.program_receiver.user
+    elif program.type == 'coleg':
+        try:
+            receiver_user = message.coleg_student_receiver.user
+        except:
+            receiver_user = message.program_receiver.user
 
     if request.user == receiver_user or request.user == message.sender:
         if request.method=='POST':
@@ -3400,6 +4488,17 @@ def ajx_delete_message(request, program_slug):
         except:
             receiver_user = message.program_receiver.user
 
+    elif program.type == 'curs':
+        try:
+            receiver_user = message.curs_student_receiver.user
+        except:
+            receiver_user = message.program_receiver.user
+    elif program.type == 'coleg':
+        try:
+            receiver_user = message.coleg_student_receiver.user
+        except:
+            receiver_user = message.program_receiver.user
+
     if request.user == receiver_user:
         if request.method=='POST':
             try:
@@ -3410,6 +4509,10 @@ def ajx_delete_message(request, program_slug):
                     messages_count = Message.objects.filter(msc_student_receiver__user=receiver_user).__len__()
                 elif program.type == 'dip':
                     messages_count = Message.objects.filter(dip_student_receiver__user=receiver_user).__len__()
+                elif program.type == 'curs':
+                    messages_count = Message.objects.filter(curs_student_receiver__user=receiver_user).__len__()
+                elif program.type == 'coleg':
+                    messages_count = Message.objects.filter(coleg_student_receiver__user=receiver_user).__len__()
                 return HttpResponse(
                     json.dumps([{'deleted': 1,'messages_count': messages_count}]),
                     content_type="application/json"
@@ -3603,6 +4706,17 @@ def ajx_this_year_requests(request, program_slug):
                                                     request_date__month=i).__len__())
             data_2.append(
                 DipStudent.objects.filter(program=program, init_date__year=now().year, init_date__month=i).__len__())
+        elif program.type == 'curs':
+            data_1.append(CursStudent.objects.filter(program=program, request_date__year=now().year,
+                                                    request_date__month=i).__len__())
+            data_2.append(
+                CursStudent.objects.filter(program=program, init_date__year=now().year, init_date__month=i).__len__())
+
+        elif program.type == 'coleg':
+            data_1.append(ColegStudent.objects.filter(program=program, request_date__year=now().year,
+                                                    request_date__month=i).__len__())
+            data_2.append(
+                ColegStudent.objects.filter(program=program, init_date__year=now().year, init_date__month=i).__len__())
 
     data.append(data_1)
     data.append(data_2)
@@ -3649,6 +4763,18 @@ def ajx_by_year_requests(request, program_slug):
                                                         request_date__month=i).__len__())
                 data_2.append(
                     DipStudent.objects.filter(program=program, init_date__year=year, init_date__month=i).__len__())
+                
+            elif program.type == 'curs':
+                data_1.append(CursStudent.objects.filter(program=program, request_date__year=year,
+                                                        request_date__month=i).__len__())
+                data_2.append(
+                    CursStudent.objects.filter(program=program, init_date__year=year, init_date__month=i).__len__())
+                
+            elif program.type == 'coleg':
+                data_1.append(ColegStudent.objects.filter(program=program, request_date__year=year,
+                                                        request_date__month=i).__len__())
+                data_2.append(
+                    ColegStudent.objects.filter(program=program, init_date__year=year, init_date__month=i).__len__())
     else:
         for i in range(1, now().month + 1):
             labels.append(meses[i])
@@ -3667,6 +4793,18 @@ def ajx_by_year_requests(request, program_slug):
                                                         request_date__month=i).__len__())
                 data_2.append(
                     DipStudent.objects.filter(program=program, init_date__year=year, init_date__month=i).__len__())
+                
+            elif program.type == 'curs':
+                data_1.append(CursStudent.objects.filter(program=program, request_date__year=year,
+                                                        request_date__month=i).__len__())
+                data_2.append(
+                    CursStudent.objects.filter(program=program, init_date__year=year, init_date__month=i).__len__())
+                
+            elif program.type == 'coleg':
+                data_1.append(ColegStudent.objects.filter(program=program, request_date__year=year,
+                                                        request_date__month=i).__len__())
+                data_2.append(
+                    ColegStudent.objects.filter(program=program, init_date__year=year, init_date__month=i).__len__())
 
     data.append(data_1)
     data.append(data_2)
@@ -3708,6 +4846,22 @@ def ajx_students_by_country(request, program_slug):
 
         for country in countries:
             data.append(DipStudent.objects.filter(program=program,country=country).__len__())
+    
+    if program.type == 'curs':
+        for student in CursStudent.objects.filter(program=program):
+            if not student.country in countries:
+                countries.append(student.country)
+
+        for country in countries:
+            data.append(CursStudent.objects.filter(program=program,country=country).__len__())
+    
+    if program.type == 'coleg':
+        for student in ColegStudent.objects.filter(program=program):
+            if not student.country in countries:
+                countries.append(student.country)
+
+        for country in countries:
+            data.append(ColegStudent.objects.filter(program=program,country=country).__len__())
 
     response_data.append(countries)
     response_data.append(data)
@@ -3732,6 +4886,10 @@ def ajx_students_by_edition(request, program_slug):
             data.append(MscStudent.objects.filter(Q(status='maestrante')|Q(status='graduado'), program=program, edition=edition).__len__())
         elif program.type == 'dip':
             data.append(DipStudent.objects.filter(Q(status='diplomante')|Q(status='graduado'), program=program, edition=edition).__len__())
+        elif program.type == 'curs':
+            data.append(CursStudent.objects.filter(Q(status='cursista')|Q(status='graduado'), program=program, edition=edition).__len__())
+        elif program.type == 'coleg':
+            data.append(ColegStudent.objects.filter(Q(status='estudiante')|Q(status='graduado'), program=program, edition=edition).__len__())
 
 
 
@@ -3762,6 +4920,12 @@ def ajx_graduated_by_edition(request, program_slug):
         elif program.type == 'dip':
             data.append(
                 DipStudent.objects.filter(program=program, edition=edition, status='graduado').__len__())
+        elif program.type == 'curs':
+            data.append(
+                CursStudent.objects.filter(program=program, edition=edition, status='graduado').__len__())
+        elif program.type == 'coleg':
+            data.append(
+                ColegStudent.objects.filter(program=program, edition=edition, status='graduado').__len__())
 
     response_data.append(labels)
     response_data.append(data)
@@ -3794,6 +4958,12 @@ def ajx_last_years_requests(request, program_slug):
         elif program.type == 'dip':
             data_1.append(DipStudent.objects.filter(Q(status='solicitante')| Q(status='diplomante') | Q(status='graduado'),program=program,request_date__year=i).__len__())
             data_2.append(DipStudent.objects.filter(Q(status='diplomante') | Q(status='graduado'),program=program,init_date__year=i).__len__())
+        elif program.type == 'curs':
+            data_1.append(CursStudent.objects.filter(Q(status='solicitante')| Q(status='cursista') | Q(status='graduado'),program=program,request_date__year=i).__len__())
+            data_2.append(CursStudent.objects.filter(Q(status='cursista') | Q(status='graduado'),program=program,init_date__year=i).__len__())
+        elif program.type == 'coleg':
+            data_1.append(ColegStudent.objects.filter(Q(status='solicitante')| Q(status='estudiante') | Q(status='graduado'),program=program,request_date__year=i).__len__())
+            data_2.append(ColegStudent.objects.filter(Q(status='estudiante') | Q(status='graduado'),program=program,init_date__year=i).__len__())
 
     data.append(data_1)
     data.append(data_2)
@@ -3866,6 +5036,7 @@ def ajx_students_by_line(request, program_slug, scope):
                 data.append(MscStudentTheme.objects.filter(line=line, student__status ='maestrante').__len__())
             elif scope == 'graduated':
                 data.append(MscStudentTheme.objects.filter(line=line, student__status ='graduado').__len__())
+        
 
 
 
@@ -3905,6 +5076,20 @@ def ajx_students_by_age(request, program_slug):
         data.append(DipStudent.objects.filter(program=program, birth_date__year__gte=now().year - 50,
                                               birth_date__year__lt=now().year - 40).__len__())
         data.append(DipStudent.objects.filter(program=program, birth_date__year__lte=now().year - 50).__len__())
+    elif program.type == 'curs':
+        data.append(CursStudent.objects.filter(program=program, birth_date__year__gte=now().year - 30).__len__())
+        data.append(CursStudent.objects.filter(program=program, birth_date__year__gte=now().year - 40,
+                                              birth_date__year__lt=now().year - 30).__len__())
+        data.append(CursStudent.objects.filter(program=program, birth_date__year__gte=now().year - 50,
+                                              birth_date__year__lt=now().year - 40).__len__())
+        data.append(CursStudent.objects.filter(program=program, birth_date__year__lte=now().year - 50).__len__())
+    elif program.type == 'coleg':
+        data.append(ColegStudent.objects.filter(program=program, birth_date__year__gte=now().year - 30).__len__())
+        data.append(ColegStudent.objects.filter(program=program, birth_date__year__gte=now().year - 40,
+                                              birth_date__year__lt=now().year - 30).__len__())
+        data.append(ColegStudent.objects.filter(program=program, birth_date__year__gte=now().year - 50,
+                                              birth_date__year__lt=now().year - 40).__len__())
+        data.append(ColegStudent.objects.filter(program=program, birth_date__year__lte=now().year - 50).__len__())
 
 
     response_data.append(labels)
@@ -4138,6 +5323,30 @@ def ajx_all_massive_msg(request, program_slug ):
                     )
                     new_message.save()
 
+            elif program.type == 'curs':
+                for student in CursStudent.objects.filter(program=program):
+                    email_list.append(student.user.email)
+                    new_message = Message(
+                        sender=request.user,
+                        curs_student_receiver=student,
+                        subject=request.POST['msg_subject'],
+                        body=request.POST['msg_body'],
+
+                    )
+                    new_message.save()
+
+            elif program.type == 'coleg':
+                for student in ColegStudent.objects.filter(program=program):
+                    email_list.append(student.user.email)
+                    new_message = Message(
+                        sender=request.user,
+                        coleg_student_receiver=student,
+                        subject=request.POST['msg_subject'],
+                        body=request.POST['msg_body'],
+
+                    )
+                    new_message.save()    
+
             if email_list.__len__()<=20:
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
                           email_list, fail_silently=False, html_message=request.POST['msg_body'])
@@ -4349,6 +5558,18 @@ def confirm_auto_request(request, program_slug, request_id):
                             dip_student=student,
                             program_file_document=requirement,
                         )
+                    
+                    elif program.type == 'curs':
+                        new_student_requirement = StudentFileDocument(
+                            curs_student=student,
+                            program_file_document=requirement,
+                        )
+
+                    elif program.type == 'coleg':
+                        new_student_requirement = StudentFileDocument(
+                            coleg_student=student,
+                            program_file_document=requirement,
+                        )
                     new_student_requirement.save()
 
                 requester.delete()
@@ -4359,6 +5580,10 @@ def confirm_auto_request(request, program_slug, request_id):
                     return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
                 elif program.type == 'dip':
                     return HttpResponseRedirect(reverse('programs:dip_index', args=[program_slug]))
+                elif program.type == 'curs':
+                    return HttpResponseRedirect(reverse('programs:curs_index', args=[program_slug]))
+                elif program.type == 'coleg':
+                    return HttpResponseRedirect(reverse('programs:coleg_index', args=[program_slug]))
         except User.DoesNotExist:
             passwd = program_slug + str(random.randint(1000000, 9999999))
             user = User.objects.create_user(
@@ -4428,6 +5653,48 @@ def confirm_auto_request(request, program_slug, request_id):
                     status='solicitante',
                 )
                 student.save()
+                new_theme = DipStudentTheme(
+                    student=student,
+                    description=requester.theme,
+                    line=InvestigationLine.objects.get(pk=requester.line),
+                )
+                new_theme.save()
+            
+            elif program.type == 'curs':
+                student = CursStudent(
+                    user=user,
+                    program=program,
+                    edition=edition,
+                    gender=requester.gender,
+                    dni=requester.dni,
+                    birth_date=requester.birthdate,
+                    status='solicitante',
+                )
+                student.save()
+                new_theme = CursStudentTheme(
+                    student=student,
+                    description=requester.theme,
+                    line=InvestigationLine.objects.get(pk=requester.line),
+                )
+                new_theme.save()
+
+            elif program.type == 'coleg':
+                student = ColegStudent(
+                    user=user,
+                    program=program,
+                    edition=edition,
+                    gender=requester.gender,
+                    dni=requester.dni,
+                    birth_date=requester.birthdate,
+                    status='solicitante',
+                )
+                student.save()
+                new_theme = ColegStudentTheme(
+                    student=student,
+                    description=requester.theme,
+                    line=InvestigationLine.objects.get(pk=requester.line),
+                )
+                new_theme.save()
 
             utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
 
@@ -4442,10 +5709,19 @@ def confirm_auto_request(request, program_slug, request_id):
                         msc_student=student,
                         program_file_document=requirement,
                     )
-                
                 elif program.type == 'dip':
                     new_student_requirement = StudentFileDocument(
-                        msc_student=student,
+                        dip_student=student,
+                        program_file_document=requirement,
+                    )
+                elif program.type == 'curs':
+                    new_student_requirement = StudentFileDocument(
+                        curs_student=student,
+                        program_file_document=requirement,
+                    )
+                elif program.type == 'coleg':
+                    new_student_requirement = StudentFileDocument(
+                        coleg_student=student,
                         program_file_document=requirement,
                     )
                 new_student_requirement.save()
@@ -4458,6 +5734,10 @@ def confirm_auto_request(request, program_slug, request_id):
                 return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
             elif program.type == 'dip':
                 return HttpResponseRedirect(reverse('programs:dip_index', args=[program_slug]))
+            elif program.type == 'curs':
+                return HttpResponseRedirect(reverse('programs:curs_index', args=[program_slug]))
+            elif program.type == 'coleg':
+                return HttpResponseRedirect(reverse('programs:coleg_index', args=[program_slug]))
     except Requester.DoesNotExist:
         messages.error(request, 'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
         if program.type == 'phd':
@@ -4466,6 +5746,10 @@ def confirm_auto_request(request, program_slug, request_id):
             return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
         elif program.type == 'dip':
             return HttpResponseRedirect(reverse('programs:dip_index', args=[program_slug]))
+        elif program.type == 'curs':
+            return HttpResponseRedirect(reverse('programs:curs_index', args=[program_slug]))
+        elif program.type == 'coleg':
+            return HttpResponseRedirect(reverse('programs:coleg_index', args=[program_slug]))
     
     # para msc
     
@@ -4501,6 +5785,12 @@ def ajx_everybody_massive_msg(request, program_slug ):
                         email_list.append(student.user.email)
                 elif program.type == 'dip':
                     for student in DipStudent.objects.filter(program=program):
+                        email_list.append(student.user.email)
+                elif program.type == 'curs':
+                    for student in CursStudent.objects.filter(program=program):
+                        email_list.append(student.user.email)
+                elif program.type == 'coleg':
+                    for student in ColegStudent.objects.filter(program=program):
                         email_list.append(student.user.email)
 
             if email_list.__len__()<=10:
@@ -4699,6 +5989,103 @@ def ajx_students_massive_msg(request, program_slug ):
                         )
                         new_message.save()
 
+
+            elif program.type == 'curs':
+                if request.POST['msg_scope'] == 'requesters':
+                    for student in CursStudent.objects.filter(program=program, status='solicitante'):
+                        email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            curs_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
+                elif request.POST['msg_scope'] == 'aproved':
+                    for student in CursStudent.objects.filter(program=program, status='cursista'):
+                        email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            curs_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
+
+                elif request.POST['msg_scope'] == 'graduated':
+                    for student in CursStudent.objects.filter(program=program, status='graduado'):
+                        email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            curs_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
+
+                elif request.POST['msg_scope'] == 'all':
+                    for student in CursStudent.objects.filter(program=program):
+                        email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            curs_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
+
+            elif program.type == 'coleg':
+                if request.POST['msg_scope'] == 'requesters':
+                    for student in ColegStudent.objects.filter(program=program, status='solicitante'):
+                        email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            coleg_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
+                elif request.POST['msg_scope'] == 'aproved':
+                    for student in ColegStudent.objects.filter(program=program, status='estudiante'):
+                        email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            coleg_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
+
+                elif request.POST['msg_scope'] == 'graduated':
+                    for student in ColegStudent.objects.filter(program=program, status='graduado'):
+                        email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            coleg_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
+
+                elif request.POST['msg_scope'] == 'all':
+                    for student in ColegStudent.objects.filter(program=program):
+                        email_list.append(student.user.email)
+                        new_message = Message(
+                            sender=request.user,
+                            coleg_student_receiver=student,
+                            subject=request.POST['msg_subject'],
+                            body=request.POST['msg_body'],
+
+                        )
+                        new_message.save()
+
             if email_list.__len__()<=20:
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
                           email_list, fail_silently=False, html_message=request.POST['msg_body'])
@@ -4778,7 +6165,9 @@ def ajx_student_personal_msg(request, program_slug ):
             student_model = {
                 'phd': Student,
                 'msc': MscStudent,
-                'dip': DipStudent
+                'dip': DipStudent,
+                'curs': CursStudent,
+                'coleg': ColegStudent,
             }.get(program.type)
             
             if not student_model:
@@ -4860,6 +6249,55 @@ def ajx_student_personal_msg(request, program_slug ):
                           [student.user.email, sender_email],  # Más limpio** 
                           #[DipStudent.objects.get(pk=request.POST['student_id']).user.email, sender_email],
                           fail_silently=False, html_message=request.POST['msg_body'])
+            
+            elif program.type == 'curs':
+                new_message = Message(
+                    sender=request.user,
+                    msc_student_receiver=student,  # Usamos la variable ya obtenida**
+                    #curs_student_receiver=CursStudent.objects.get(pk=request.POST['student_id']),
+                    subject=request.POST['msg_subject'],
+                    body=request.POST['msg_body'],
+
+                )
+                new_message.save()
+                sended_message = MessageSended(
+                    sender=request.user,
+                    context='personal',
+                    curs_student_receiver=CursStudent.objects.get(pk=request.POST['student_id']),
+                    subject=request.POST['msg_subject'],
+                    body=request.POST['msg_body'],
+
+                )
+                sended_message.save()
+                send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
+                          [student.user.email, sender_email],  # Más limpio** 
+                          #[CursStudent.objects.get(pk=request.POST['student_id']).user.email, sender_email],
+                          fail_silently=False, html_message=request.POST['msg_body'])
+                
+            elif program.type == 'coleg':
+                new_message = Message(
+                    sender=request.user,
+                    coleg_student_receiver=student,  # Usamos la variable ya obtenida**
+                    #coleg_student_receiver=ColegStudent.objects.get(pk=request.POST['student_id']),
+                    subject=request.POST['msg_subject'],
+                    body=request.POST['msg_body'],
+
+                )
+                new_message.save()
+                sended_message = MessageSended(
+                    sender=request.user,
+                    context='personal',
+                    coleg_student_receiver=ColegStudent.objects.get(pk=request.POST['student_id']),
+                    subject=request.POST['msg_subject'],
+                    body=request.POST['msg_body'],
+
+                )
+                sended_message.save()
+                send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
+                          [student.user.email, sender_email],  # Más limpio** 
+                          #[ColegStudent.objects.get(pk=request.POST['student_id']).user.email, sender_email],
+                          fail_silently=False, html_message=request.POST['msg_body'])
+
 
             return HttpResponse(
                 json.dumps([{'sended': 1}]),
@@ -4936,7 +6374,25 @@ def ajx_students_by_state(request, program_slug):
         data.append(DipStudent.objects.filter(program=program, status='graduado').__len__())
         data.append(DipStudent.objects.filter(program=program, status='solicitante').__len__())
         data.append(DipStudent.objects.filter(program=program, status='diplomante').__len__())
-
+        
+        response_data.append(labels)
+        response_data.append(data)
+    
+    elif program.type == 'curs':
+        labels = ['Graduados', 'Solicitantes', 'Cursistas']
+        data.append(CursStudent.objects.filter(program=program, status='graduado').__len__())
+        data.append(CursStudent.objects.filter(program=program, status='solicitante').__len__())
+        data.append(CursStudent.objects.filter(program=program, status='cursista').__len__())
+        
+        response_data.append(labels)
+        response_data.append(data)
+    
+    elif program.type == 'coleg':
+        labels = ['Estudiantes', 'Graduados', 'Solicitantes']
+        data.append(ColegStudent.objects.filter(program=program, status='graduado').__len__())
+        data.append(ColegStudent.objects.filter(program=program, status='estudiante').__len__())
+        data.append(ColegStudent.objects.filter(program=program, status='solicitante').__len__())
+        
         response_data.append(labels)
         response_data.append(data)
 
@@ -4972,6 +6428,22 @@ def ajx_students_by_line_donut(request, program_slug):
         data.append(DipStudent.objects.filter(program=program, status='graduado').__len__())
         data.append(DipStudent.objects.filter(program=program, status='solicitante').__len__())
         data.append(DipStudent.objects.filter(program=program, status='diplomante').__len__())
+
+        response_data.append(labels)
+        response_data.append(data)
+    elif program.type == 'curs':
+        labels = ['Graduados', 'Solicitantes', 'Cursistas']
+        data.append(CursStudent.objects.filter(program=program, status='graduado').__len__())
+        data.append(CursStudent.objects.filter(program=program, status='solicitante').__len__())
+        data.append(CursStudent.objects.filter(program=program, status='cursista').__len__())
+    
+        response_data.append(labels)
+        response_data.append(data)        
+    elif program.type == 'coleg':
+        labels = ['Estudiantes', 'Graduados', 'Suspensos']
+        data.append(ColegStudent.objects.filter(program=program, status='graduado').__len__())
+        data.append(ColegStudent.objects.filter(program=program, status='estudiante').__len__())
+        data.append(ColegStudent.objects.filter(program=program, status='suspenso').__len__())
 
         response_data.append(labels)
         response_data.append(data)
@@ -5020,6 +6492,12 @@ def ajx_students_by_sex(request, program_slug):
     elif program.type == 'dip':
         response_data.append(DipStudent.objects.filter(program=program, gender='f').__len__())
         response_data.append(DipStudent.objects.filter(program=program, gender='m').__len__())
+    elif program.type == 'curs':
+        response_data.append(CursStudent.objects.filter(program=program, gender='f').__len__())
+        response_data.append(CursStudent.objects.filter(program=program, gender='m').__len__())
+    elif program.type == 'coleg':
+        response_data.append(ColegStudent.objects.filter(program=program, gender='f').__len__())
+        response_data.append(ColegStudent.objects.filter(program=program, gender='m').__len__())
 
     return HttpResponse(
         json.dumps(response_data),
@@ -5041,6 +6519,12 @@ def ajx_students_by_category(request, program_slug):
     elif program.type == 'dip':
         response_data.append(DipStudent.objects.filter(program=program, category='interno').__len__())
         response_data.append(DipStudent.objects.filter(program=program, category='externo').__len__())
+    elif program.type == 'curs':
+        response_data.append(CursStudent.objects.filter(program=program, category='interno').__len__())
+        response_data.append(CursStudent.objects.filter(program=program, category='externo').__len__())
+    elif program.type == 'coleg':
+        response_data.append(ColegStudent.objects.filter(program=program, category='interno').__len__())
+        response_data.append(ColegStudent.objects.filter(program=program, category='externo').__len__())
 
     return HttpResponse(
         json.dumps(response_data),
@@ -5080,6 +6564,10 @@ def program_student_picture(request, program_slug, student_id):
         filename = MscStudent.objects.get(pk=student_id).picture.url
     elif program.type == 'dip':
         filename = DipStudent.objects.get(pk=student_id).picture.url
+    elif program.type == 'curs':
+        filename = CursStudent.objects.get(pk=student_id).picture.url
+    elif program.type == 'coleg':
+        filename = ColegStudent.objects.get(pk=student_id).picture.url
 
     if fs.exists(filename):
         with fs.open(filename) as img:
@@ -5163,7 +6651,18 @@ def editions_list(request, program_slug):
             context['student']=DipStudent.objects.get(user=request.user)
         except DipStudent.DoesNotExist:
             pass
+    elif program.type == 'coleg':
+        try:
+            context['student']=ColegStudent.objects.get(user=request.user)
+        except ColegStudent.DoesNotExist:
+            pass
 
+    elif program.type == 'curs':
+        try:
+            context['student']=CursStudent.objects.get(user=request.user)
+        except CursStudent.DoesNotExist:
+            pass
+            
 
     return render(request, 'programs/editions_list.html', context)
 
@@ -5171,7 +6670,7 @@ def editions_list(request, program_slug):
 def edit_program_edition(request, program_slug, edition_id):
     program = Program.objects.get(slug=program_slug)
     if user_is_program_cs(request.user, program):
-        if program.type == 'msc' or program.type == 'dip':
+        if program.type == 'msc' or program.type == 'dip' or program.type == 'curs' or program.type =='coleg':
             if request.method == 'POST':
                 ProgramEdition.objects.filter(pk=edition_id).update(
                     init_date = request.POST['init_date'],
@@ -5330,6 +6829,10 @@ def autoedit_student_profile(request, program_slug, student_id):
         student = MscStudent.objects.get(pk=student_id)
     elif program.type == 'dip':
         student = DipStudent.objects.get(pk=student_id)
+    elif program.type == 'curs':
+        student = CursStudent.objects.get(pk=student_id)
+    elif program.type == 'coleg':
+        student = ColegStudent.objects.get(pk=student_id)
 
     if request.user == student.user:
         if request.method == 'POST':
@@ -5618,6 +7121,14 @@ def student_filedoc_view(request, program_slug,student_id, doc_id):
     elif program.type == 'dip':
         student = DipStudent.objects.get(pk=student_id)
         document = StudentFileDocument.objects.get(dip_student=student,
+                                                   program_file_document=ProgramFileDoc.objects.get(pk=doc_id))
+    elif program.type == 'curs':
+        student = CursStudent.objects.get(pk=student_id)
+        document = StudentFileDocument.objects.get(curs_student=student,
+                                                   program_file_document=ProgramFileDoc.objects.get(pk=doc_id))
+    elif program.type == 'coleg':
+        student = ColegStudent.objects.get(pk=student_id)
+        document = StudentFileDocument.objects.get(coleg_student=student,
                                                    program_file_document=ProgramFileDoc.objects.get(pk=doc_id))
 
 
@@ -6091,25 +7602,25 @@ def docx_program_report(request, program_slug):
 
                 row_cells = table.add_row().cells
                 row_cells[0].text = str(
-                    DipStudent.objects.filter(program=program, status='Solicitante').__len__())
+                    DipStudent.objects.filter(program=program, status='solicitante').__len__())
                 row_cells[1].text = str(
-                    DipStudent.objects.filter(program=program, status='Diplomante').__len__())
+                    DipStudent.objects.filter(program=program, status='diplomante').__len__())
                 row_cells[2].text = str(
-                    DipStudent.objects.filter(program=program, status='Graduado').__len__())
+                    DipStudent.objects.filter(program=program, status='graduado').__len__())
                 row_cells[3].text = str(
                     DipStudent.objects.filter(program=program).__len__())
             else:
                 document.add_heading('No hay estudiantes registrados en el programa', level=5)
 
             document.add_heading('Solicitantes de ingreso', level=3)
-            if DipStudent.objects.filter(program=program, status='Solicitante'):
+            if DipStudent.objects.filter(program=program, status='solicitante'):
                 table = document.add_table(rows=1, cols=2)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y Apellidos'
                 hdr_cells[1].text = 'Fecha de solicitud'
 
 
-                for student in DipStudent.objects.filter(program=program, status='Solicitante'):
+                for student in DipStudent.objects.filter(program=program, status='solicitante'):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(student.user.get_full_name())
                     row_cells[1].text = str(student.request_date)
@@ -6118,7 +7629,7 @@ def docx_program_report(request, program_slug):
                 document.add_heading('No hay solicitantes registrados en el programa', level=5)
 
             document.add_heading('Graduados', level=3)
-            if DipStudent.objects.filter(program=program, status='Graduado'):
+            if DipStudent.objects.filter(program=program, status='graduado'):
                 table = document.add_table(rows=1, cols=4)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
@@ -6126,7 +7637,7 @@ def docx_program_report(request, program_slug):
                 hdr_cells[2].text = 'Fecha de egreso'
                 hdr_cells[3].text = 'Edición'
 
-                for student in DipStudent.objects.filter(program=program, status='Graduado'):
+                for student in DipStudent.objects.filter(program=program, status='graduado'):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(student.user.get_full_name())
                     row_cells[1].text = str(student.init_date)
@@ -6137,14 +7648,14 @@ def docx_program_report(request, program_slug):
                 document.add_heading('No hay graduados registrados en el programa', level=5)
 
             document.add_heading('Diplomantes', level=3)
-            if DipStudent.objects.filter(program=program, status='Diplomante'):
+            if DipStudent.objects.filter(program=program, status='diplomante'):
                 table = document.add_table(rows=1, cols=3)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = 'Nombre y apellidos'
                 hdr_cells[1].text = 'Fecha de ingreso'
                 hdr_cells[2].text = 'Edición'
 
-                for student in DipStudent.objects.filter(program=program, status='Diplomante'):
+                for student in DipStudent.objects.filter(program=program, status='diplomante'):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(student.user.get_full_name())
                     row_cells[1].text = str(student.init_date)
@@ -6152,6 +7663,156 @@ def docx_program_report(request, program_slug):
 
             else:
                 document.add_heading('No hay diplomantes registrados en el programa', level=5)
+        elif program.type == 'curs':
+            if CursStudent.objects.filter(program=program):
+                document.add_heading('Estudiantes por estado', level=3)
+                table = document.add_table(rows=1, cols=4)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Solicitantes'
+                hdr_cells[1].text = 'Cursistas'
+                hdr_cells[2].text = 'Graduados'
+                hdr_cells[3].text = 'Total'
+
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(
+                    CursStudent.objects.filter(program=program, status='solicitante').__len__())
+                row_cells[1].text = str(
+                    CursStudent.objects.filter(program=program, status='cursista').__len__())
+                row_cells[2].text = str(
+                    CursStudent.objects.filter(program=program, status='graduado').__len__())
+                row_cells[3].text = str(
+                    CursStudent.objects.filter(program=program).__len__())
+            else:
+                document.add_heading('No hay estudiantes registrados en el programa', level=5)
+
+            document.add_heading('Solicitantes de ingreso', level=3)
+            if CursStudent.objects.filter(program=program, status='solicitante'):
+                table = document.add_table(rows=1, cols=2)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y Apellidos'
+                hdr_cells[1].text = 'Fecha de solicitud'
+
+
+                for student in CursStudent.objects.filter(program=program, status='solicitante'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.request_date)
+
+            else:
+                document.add_heading('No hay solicitantes registrados en el programa', level=5)
+
+            document.add_heading('Graduados', level=3)
+            if CursStudent.objects.filter(program=program, status='graduado'):
+                table = document.add_table(rows=1, cols=4)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Fecha de ingreso'
+                hdr_cells[2].text = 'Fecha de egreso'
+                hdr_cells[3].text = 'Edición'
+
+                for student in CursStudent.objects.filter(program=program, status='graduado'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.init_date)
+                    row_cells[2].text = str(student.graduate_date)
+                    row_cells[3].text = str(student.edition.order)
+
+            else:
+                document.add_heading('No hay graduados registrados en el programa', level=5)
+
+            document.add_heading('Cursistas', level=3)
+            if CursStudent.objects.filter(program=program, status='cursista'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Fecha de ingreso'
+                hdr_cells[2].text = 'Edición'
+
+                for student in CursStudent.objects.filter(program=program, status='cursista'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.init_date)
+                    row_cells[2].text = str(student.edition.order)
+
+            else:
+                document.add_heading('No hay cursistas registrados en el programa', level=5)
+
+        elif program.type == 'coleg':
+            if ColegStudent.objects.filter(program=program):
+                document.add_heading('Estudiantes por estado', level=3)
+                table = document.add_table(rows=1, cols=4)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Solicitantes'
+                hdr_cells[1].text = 'Estudiantes'
+                hdr_cells[2].text = 'Graduados'
+                hdr_cells[3].text = 'Total'
+
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(ColegStudent.objects.filter(program=program, status='solicitante').__len__())
+                row_cells[1].text = str(ColegStudent.objects.filter(program=program, status='estudiante').__len__())
+                row_cells[2].text = str(ColegStudent.objects.filter(program=program, status='graduado').__len__())
+                row_cells[3].text = str(ColegStudent.objects.filter(program=program).__len__())
+            else:
+                document.add_heading('No hay estudiantes registrados en el programa', level=5)
+
+            document.add_heading('Solicitantes de ingreso', level=3)
+            if ColegStudent.objects.filter(program=program, status='solicitante'):
+                table = document.add_table(rows=1, cols=3)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y Apellidos'
+                hdr_cells[1].text = 'Fecha de solicitud'
+                hdr_cells[2].text = 'Centro de procedencia'
+
+
+                for student in ColegStudent.objects.filter(program=program, status='solicitante'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.request_date)
+                    row_cells[2].text= str(student.center)
+
+            else:
+                document.add_heading('No hay solicitantes registrados en el programa', level=5)
+
+            document.add_heading('Graduados', level=3)
+            if ColegStudent.objects.filter(program=program, status='graduado'):
+                table = document.add_table(rows=1, cols=5)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Fecha de ingreso'
+                hdr_cells[2].text = 'Fecha de egreso'
+                hdr_cells[3].text = 'Edición'
+                hdr_cells[4].text = 'Centro de procedencia'
+
+                for student in ColegStudent.objects.filter(program=program, status='graduado'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.init_date)
+                    row_cells[2].text = str(student.graduate_date)
+                    row_cells[3].text = str(student.edition.order)
+                    row_cells[4].text= str(student.center)
+
+            else:
+                document.add_heading('No hay graduados registrados en el programa', level=5)
+
+            document.add_heading('Estudiantes', level=3)
+            if ColegStudent.objects.filter(program=program, status='estudiante'):
+                table = document.add_table(rows=1, cols=4)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre y apellidos'
+                hdr_cells[1].text = 'Fecha de ingreso'
+                hdr_cells[2].text = 'Edición'
+                hdr_cells[3].text = 'Centro de procedencia'
+
+                for student in ColegStudent.objects.filter(program=program, status='estudiante'):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(student.user.get_full_name())
+                    row_cells[1].text = str(student.init_date)
+                    row_cells[2].text = str(student.edition.order)
+                    row_cells[3].text= str(student.center)
+
+
+            else:
+                document.add_heading('No hay estudiantes registrados en el programa', level=5)
 
         document.add_heading('Claustro', level=3)
         document.add_heading('Generales', level=4)
@@ -6362,7 +8023,7 @@ def print_edition_courses_registers(request, program_slug, edition_id):
     program = Program.objects.get(slug=program_slug)
     edition = ProgramEdition.objects.get(pk=edition_id)
     if user_is_program_cs(request.user, program):
-        if program.type == 'msc' or program.type == 'dip':
+        if program.type == 'msc' or program.type == 'dip' or program.type == 'curs' or program.type == 'coleg':
 
             document = Document()
 
@@ -6399,6 +8060,34 @@ def print_edition_courses_registers(request, program_slug, edition_id):
                             row_cells[0].text = str(student.user.last_name)+','+student.user.first_name
                             try:
                                 row_cells[1].text = str(CourseEvaluation.objects.get(course=course, dipstudent=student))
+                            except CourseEvaluation.DoesNotExist:
+                                row_cells[1].text = '   '
+                            row_cells[2].text = '   '
+                    else:
+                        document.add_heading('No hay estudiantes en esta edición', level=5)
+
+                elif program.type == 'curs':
+                    if CursStudent.objects.filter(Q(status='cursista')|Q(status='Graduado'),edition=edition):
+
+                        for student in CursStudent.objects.filter(Q(status='cursista')|Q(status='Graduado'), edition=edition).order_by('user__last_name'):
+                            row_cells = table.add_row().cells
+                            row_cells[0].text = str(student.user.last_name)+','+student.user.first_name
+                            try:
+                                row_cells[1].text = str(CourseEvaluation.objects.get(course=course, cursstudent=student))
+                            except CourseEvaluation.DoesNotExist:
+                                row_cells[1].text = '   '
+                            row_cells[2].text = '   '
+                    else:
+                        document.add_heading('No hay estudiantes en esta edición', level=5)
+
+                elif program.type == 'coleg':
+                    if ColegStudent.objects.filter(Q(status='Estudiante')|Q(status='Graduado'),edition=edition):
+
+                        for student in ColegStudent.objects.filter(Q(status='Estudiante')|Q(status='Graduado'), edition=edition).order_by('user__last_name'):
+                            row_cells = table.add_row().cells
+                            row_cells[0].text = str(student.user.last_name)+','+student.user.first_name
+                            try:
+                                row_cells[1].text = str(CourseEvaluation.objects.get(course=course, colegstudent=student))
                             except CourseEvaluation.DoesNotExist:
                                 row_cells[1].text = '   '
                             row_cells[2].text = '   '
@@ -6443,7 +8132,7 @@ def print_course_register(request, program_slug, course_id):
     course = Course.objects.get(pk=course_id)
 
     if user_is_program_cs(request.user, program):
-        if program.type == 'msc' or program.type == 'dip':
+        if program.type == 'msc' or program.type == 'dip' or program.type == 'curs' or program.type == 'coleg':
             edition = course.edition
 
             document = Document()
@@ -6481,6 +8170,35 @@ def print_course_register(request, program_slug, course_id):
                         row_cells[0].text = str(student.user.last_name) + ',' + student.user.first_name
                         try:
                             row_cells[1].text = str(CourseEvaluation.objects.get(course=course, dipstudent=student))
+                        except CourseEvaluation.DoesNotExist:
+                            row_cells[1].text = '   '
+                        row_cells[2].text = '   '
+                else:
+                    document.add_heading('No hay estudiantes en esta edición', level=5)
+            elif program.type == 'curs':
+                if CursStudent.objects.filter(Q(status='cursista') | Q(status='Graduado'), edition=edition):
+
+                    for student in CursStudent.objects.filter(Q(status='cursista') | Q(status='Graduado'),
+                                                             edition=edition).order_by('user__last_name'):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.last_name) + ',' + student.user.first_name
+                        try:
+                            row_cells[1].text = str(CourseEvaluation.objects.get(course=course, cursstudent=student))
+                        except CourseEvaluation.DoesNotExist:
+                            row_cells[1].text = '   '
+                        row_cells[2].text = '   '
+                else:
+                    document.add_heading('No hay estudiantes en esta edición', level=5)
+            
+            elif program.type == 'coleg':
+                if ColegStudent.objects.filter(Q(status='estudiante') | Q(status='Graduado'), edition=edition):
+
+                    for student in ColegStudent.objects.filter(Q(status='estudiante') | Q(status='Graduado'),
+                                                             edition=edition).order_by('user__last_name'):
+                        row_cells = table.add_row().cells
+                        row_cells[0].text = str(student.user.last_name) + ',' + student.user.first_name
+                        try:
+                            row_cells[1].text = str(CourseEvaluation.objects.get(course=course, colegstudent=student))
                         except CourseEvaluation.DoesNotExist:
                             row_cells[1].text = '   '
                         row_cells[2].text = '   '
@@ -6532,6 +8250,14 @@ def print_student_evals(request, program_slug, student_id):
         student=DipStudent.objects.get(pk=student_id)
         student_name=student.user.get_full_name()
 
+    elif program.type == 'curs':
+        student=CursStudent.objects.get(pk=student_id)
+        student_name=student.user.get_full_name()
+    
+    elif program.type == 'coleg':
+        student=ColegStudent.objects.get(pk=student_id)
+        student_name=student.user.get_full_name()
+
 
     if user_is_program_cs(request.user, program):
         document = Document()
@@ -6575,6 +8301,34 @@ def print_student_evals(request, program_slug, student_id):
                 hdr_cells[1].text = 'Evaluación'
 
                 for evaluation in CourseEvaluation.objects.filter(dipstudent=student, course__program=program, course__edition=student.edition):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(evaluation.course.name)
+                    row_cells[1].text = str(evaluation.value)
+            else:
+                document.add_heading('No tiene evaluaciones', level=5)
+
+        elif program.type == 'curs':
+            if CourseEvaluation.objects.filter(cursstudent=student, course__program=program, course__edition=student.edition):
+                table = document.add_table(rows=1, cols=2)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre del curso'
+                hdr_cells[1].text = 'Evaluación'
+
+                for evaluation in CourseEvaluation.objects.filter(cursstudent=student, course__program=program, course__edition=student.edition):
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(evaluation.course.name)
+                    row_cells[1].text = str(evaluation.value)
+            else:
+                document.add_heading('No tiene evaluaciones', level=5)
+
+        elif program.type == 'coleg':
+            if CourseEvaluation.objects.filter(colegstudent=student, course__program=program, course__edition=student.edition):
+                table = document.add_table(rows=1, cols=2)
+                hdr_cells = table.rows[0].cells
+                hdr_cells[0].text = 'Nombre del curso'
+                hdr_cells[1].text = 'Evaluación'
+
+                for evaluation in CourseEvaluation.objects.filter(colegstudent=student, course__program=program, course__edition=student.edition):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(evaluation.course.name)
                     row_cells[1].text = str(evaluation.value)
@@ -6885,6 +8639,16 @@ def evaluate_student(request, program_slug, student_id):
                     evaluation.dipstudent = DipStudent.objects.get(pk=student_id)
                 except DipStudent.DoesNotExist:
                     return error_500(request, program, 'No existe el estudiante de diplomado a evaluar.')
+            elif program.type == 'curs':
+                try:
+                    evaluation.cursstudent = CursStudent.objects.get(pk=student_id)
+                except CursStudent.DoesNotExist:
+                    return error_500(request, program, 'No existe el estudiante de curso a evaluar.')
+            elif program.type == 'coleg':
+                try:
+                    evaluation.colegstudent = ColegStudent.objects.get(pk=student_id)
+                except DipStudent.DoesNotExist:
+                    return error_500(request, program, 'No existe el estudiante de colegio a evaluar.')
             evaluation.save()
 
             return  HttpResponseRedirect(reverse('programs:evaluate_student', args=[program_slug, student_id]))
@@ -6895,6 +8659,10 @@ def evaluate_student(request, program_slug, student_id):
                 student = MscStudent.objects.get(pk=student_id)
             elif program.type == 'dip':
                 student = DipStudent.objects.get(pk=student_id)
+            elif program.type == 'curs':
+                student = CursStudent.objects.get(pk=student_id)
+            elif program.type == 'coleg':
+                student = ColegStudent.objects.get(pk=student_id)
 
             pending_courses=[]
 
@@ -6914,6 +8682,18 @@ def evaluate_student(request, program_slug, student_id):
                 for course in Course.objects.filter(program=program, edition=student.edition):
                     try:
                         evaluation=CourseEvaluation.objects.get(course=course, dipstudent=student)
+                    except CourseEvaluation.DoesNotExist:
+                        pending_courses.append(course)
+            elif program.type == 'curs':
+                for course in Course.objects.filter(program=program, edition=student.edition):
+                    try:
+                        evaluation=CourseEvaluation.objects.get(course=course, cursstudent=student)
+                    except CourseEvaluation.DoesNotExist:
+                        pending_courses.append(course)
+            elif program.type == 'coleg':
+                for course in Course.objects.filter(program=program, edition=student.edition):
+                    try:
+                        evaluation=CourseEvaluation.objects.get(course=course, colegstudent=student)
                     except CourseEvaluation.DoesNotExist:
                         pending_courses.append(course)
 
@@ -6961,6 +8741,31 @@ def student_evals(request, program_slug, student_id):
                 'program': program,
                 'student': DipStudent.objects.get(pk=student_id),
                 'evals': DipStudent.objects.get(pk=student_id).courseevaluation_set.all(),
+            }
+            if user_is_program_member(request.user, program):
+                context['member']=ProgramMember.objects.get(user=request.user, program=program)
+            return render(request, 'programs/student_evals.html', context)
+        else:
+            return error_500(request, program, 'Usted no puede ver las evaluaciones de estudiantes')
+    elif program.type == 'curs':
+        if user_is_program_member(request.user, program) or CursStudent.objects.get(pk=student_id).user == request.user:
+            context={
+                'program': program,
+                'student': CursStudent.objects.get(pk=student_id),
+                'evals': CursStudent.objects.get(pk=student_id).courseevaluation_set.all(),
+            }
+            if user_is_program_member(request.user, program):
+                context['member']=ProgramMember.objects.get(user=request.user, program=program)
+            return render(request, 'programs/student_evals.html', context)
+        else:
+            return error_500(request, program, 'Usted no puede ver las evaluaciones de estudiantes')
+    
+    elif program.type == 'coleg':
+        if user_is_program_member(request.user, program) or ColegStudent.objects.get(pk=student_id).user == request.user:
+            context={
+                'program': program,
+                'student': ColegStudent.objects.get(pk=student_id),
+                'evals': ColegStudent.objects.get(pk=student_id).courseevaluation_set.all(),
             }
             if user_is_program_member(request.user, program):
                 context['member']=ProgramMember.objects.get(user=request.user, program=program)
@@ -7102,7 +8907,10 @@ def news_list(request, program_slug):
             context['student'] = MscStudent.objects.get(user=request.user, program=program)
         elif program.type == 'dip':
             context['student'] = DipStudent.objects.get(user=request.user, program=program)
-
+        elif program.type == 'curs':
+            context['student'] = CursStudent.objects.get(user=request.user, program=program)
+        elif program.type == 'coleg':
+            context['student'] = ColegStudent.objects.get(user=request.user, program=program)
     return render(request, 'programs/news_list.html', context)
 
 @login_required
@@ -7122,6 +8930,10 @@ def read_new(request, program_slug, new_id):
                 context['student'] = MscStudent.objects.get(user=request.user, program=program)
             elif program.type == 'dip':
                 context['student'] = DipStudent.objects.get(user=request.user, program=program)
+            elif program.type == 'curs':
+                context['student'] = CursStudent.objects.get(user=request.user, program=program)
+            elif program.type == 'coleg':
+                context['student'] = ColegStudent.objects.get(user=request.user, program=program)
 
         return render(request, 'programs/read_new.html',context)
 
@@ -7603,6 +9415,429 @@ def export_csv_students(request, program_slug, scope):
                 return error_500(request, program,
                                  "No se reconoce el contexto " + scope)
 
+        elif program.type == 'coleg':
+            if scope == "all":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Todos.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP, COLEG",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in ColegStudent.objects.filter(program=program).order_by('request_date'):
+                    try:
+                        options = [str(i), student.dni, student.user.first_name,
+                                   student.user.last_name.split(" ")[0],
+                                   student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                                   "MES", str(student.country)[:2],
+                                   "Colegio",
+                                   program,
+                                   program.code,
+                                   program.branch, "N",
+                                   "N"]
+                        if student.status == 'graduado':
+                            options.append('S')
+                        else:
+                            options.append('N')
+                        writer.writerow(options)
+                    except:
+                        options = [str(i), student.dni, student.user.first_name,
+                                   student.user.last_name.split(" ")[0],
+                                   '------', str(student.gender).upper(),
+                                   "MES", str(student.country)[:2],
+                                   "Colegio",
+                                   program,
+                                   program.code,
+                                   program.branch, "N",
+                                   "N"]
+                        if student.status == 'graduado':
+                            options.append('S')
+                        else:
+                            options.append('N')
+                        writer.writerow(options)
+                    i += 1
+                return response
+            elif scope == "requesters":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Todos.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ['', 'Listado de Solicitantes, Doctorandos, Graduados y Rechazados en ' + program.short_name])
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in ColegStudent.objects.filter(program=program, status = 'solicitante').order_by('request_date'):
+                    try:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Colegio",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             "-------", str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Colegio",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    i += 1
+                return response
+
+            elif scope == "aproved":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="EstudiantesColegio.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP, COLEG",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in ColegStudent.objects.filter(program=program, status = 'estudiante').order_by('init_date'):
+                    try:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Colegio",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             "-------", str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Colegio",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    i += 1
+                return response
+
+            elif scope == "graduated":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Graduados.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP, COLEG",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in ColegStudent.objects.filter(program=program, status = 'graduado').order_by('graduate_date'):
+                    try:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Colegio",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "S"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             "-------", str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Colegio",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "S"])
+                    i += 1
+                return response
+
+            elif scope == "denied":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Denegados.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP, COLEG",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+
+                i = 1
+                for student in ColegStudent.objects.filter(program=program, status = 'denegado').order_by('request_date'):
+                    try:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Colegio",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             "-------", str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Colegio",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    i += 1
+
+                return response
+
+            else:
+                return error_500(request, program,
+                                 "No se reconoce el contexto " + scope)
+            
+        
+        elif program.type == 'curs':
+            if scope == "all":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Todos.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP, COLEG, CURS",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in CursStudent.objects.filter(program=program).order_by('request_date'):
+                    try:
+                        options = [str(i), student.dni, student.user.first_name,
+                                   student.user.last_name.split(" ")[0],
+                                   student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                                   "MES", str(student.country)[:2],
+                                   "Curso",
+                                   program,
+                                   program.code,
+                                   program.branch, "N",
+                                   "N"]
+                        if student.status == 'graduado':
+                            options.append('S')
+                        else:
+                            options.append('N')
+                        writer.writerow(options)
+                    except:
+                        options = [str(i), student.dni, student.user.first_name,
+                                   student.user.last_name.split(" ")[0],
+                                   '------', str(student.gender).upper(),
+                                   "MES", str(student.country)[:2],
+                                   "Colegio",
+                                   program,
+                                   program.code,
+                                   program.branch, "N",
+                                   "N"]
+                        if student.status == 'graduado':
+                            options.append('S')
+                        else:
+                            options.append('N')
+                        writer.writerow(options)
+                    i += 1
+                return response
+            elif scope == "requesters":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Todos.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ['', 'Listado de Solicitantes, Doctorandos, Graduados y Rechazados en ' + program.short_name])
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in CursStudent.objects.filter(program=program, status = 'solicitante').order_by('request_date'):
+                    try:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Colegio",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             "-------", str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Curso",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    i += 1
+                return response
+
+            elif scope == "aproved":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="EstudiantesColegio.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP, COLEG, CURS",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in CursStudent.objects.filter(program=program, status = 'estudiante').order_by('init_date'):
+                    try:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Colegio",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             "-------", str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Curso",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    i += 1
+                return response
+
+            elif scope == "graduated":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Graduados.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP, COLEG, CURS",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+                i = 1
+                for student in CursStudent.objects.filter(program=program, status = 'graduado').order_by('graduate_date'):
+                    try:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Curso",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "S"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             "-------", str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Curso",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "S"])
+                    i += 1
+                return response
+
+            elif scope == "denied":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="Denegados.csv"'
+                writer = csv.writer(response)
+                writer.writerow(
+                    ["Consecutivo", "Carné de Identidad", "Nombres", "Apellido 1", "Apellido 2", "Sexo: F o M",
+                     "Sigla del Organismo", "Sigla del País: según Codificador de Países",
+                     "Forma de Posgrado: DrC, MSc, EPG, DIP, COLEG, CURS",
+                     "Nombre del Programa",
+                     "Código del Programa: según Codificador de Maestrías y Especialidades de Posgrado",
+                     "Rama del Programa: CT, CNE, CBM, CA, CE, CSH, CP, CCF, ARTE", "Ejecutado en CUM: S o N",
+                     "Ejecutado en otro País: S o N", "Graduado: S o N"])
+
+                i = 1
+                for student in CursStudent.objects.filter(program=program, status = 'denegado').order_by('request_date'):
+                    try:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             student.user.last_name.split(" ")[1], str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Colegio",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    except:
+                        writer.writerow(
+                            [str(i), student.dni, student.user.first_name,
+                             student.user.last_name.split(" ")[0],
+                             "-------", str(student.gender).upper(),
+                             "MES", str(student.country)[:2],
+                             "Curso",
+                             program,
+                             program.code,
+                             program.branch, "N",
+                             "N", "N"])
+                    i += 1
+
+                return response
+
+            else:
+                return error_500(request, program,
+                                 "No se reconoce el contexto " + scope)
+
 
 
     else:
@@ -7711,6 +9946,10 @@ def faq_list(request, program_slug):
             context['student'] = MscStudent.objects.get(user=request.user, program=program)
         elif program.type == 'dip':
             context['student'] = DipStudent.objects.get(user=request.user, program=program)
+        elif program.type == 'curs':
+            context['student'] = CursStudent.objects.get(user=request.user, program=program)
+        elif program.type == 'coleg':
+            context['student'] = ColegStudent.objects.get(user=request.user, program=program)
 
     return render(request, 'programs/faq_list.html', context)
 
@@ -7731,6 +9970,12 @@ def read_faq(request, program_slug, faq_id):
                 context['student'] = MscStudent.objects.get(user=request.user, program=program)
             elif program.type == 'dip':
                 context['student'] = DipStudent.objects.get(user=request.user, program=program)
+            elif program.type == 'curs':
+                context['student'] = CursStudent.objects.get(user=request.user, program=program)
+            elif program.type == 'coleg':
+                context['student'] = ColegStudent.objects.get(user=request.user, program=program)
+
+
 
         return render(request, 'programs/read_faq.html',context)
 
@@ -7799,6 +10044,28 @@ def msc_index(request, program_slug=None):
     }
     return render(request, 'msc_index.html', context)
 
+def curs_index(request, program_slug=None):
+    """
+    Vista para la página principal de cursos
+    program_slug: Parámetro que identifica el programa (ej: 'educacion-superior')
+    """
+    context = {
+        'program_slug': program_slug,
+        # Agrega aquí cualquier otro contexto necesario
+    }
+    return render(request, 'curs_index.html', context)
+
+def coleg_index(request, program_slug=None):
+    """
+    Vista para la página principal de colegio
+    program_slug: Parámetro que identifica el programa (ej: 'educacion-superior')
+    """
+    context = {
+        'program_slug': program_slug,
+        # Agrega aquí cualquier otro contexto necesario
+    }
+    return render(request, 'coleg_index.html', context)
+
 
 def dip_index(request, program_slug=None):
     """
@@ -7811,6 +10078,38 @@ def dip_index(request, program_slug=None):
     }
     return render(request, 'dip_index.html', context)
 
+# En programs/views.py o formac_views.py (depende de tu estructura)
 
+@login_required
+def ajx_students_by_center(request, program_slug):
+    """
+    Vista AJAX para estadísticas de estudiantes por centro
+    """
+    from django.db.models import Count
+    from django.http import JsonResponse
+    from django.shortcuts import get_object_or_404
+    from .models import Program, CursStudent  # Ajusta según tus modelos
+    
+    program = get_object_or_404(Program, slug=program_slug)
+    
+    # Agrupa estudiantes por centro
+    centers = CursStudent.objects.filter(
+        program=program
+    ).values('center').annotate(
+        total=Count('id')
+    ).order_by('-total')
+    
+    # Prepara los datos para el gráfico
+    labels = []
+    data = []
+    
+    for center in centers:
+        labels.append(center['center'] if center['center'] else 'No especificado')
+        data.append(center['total'])
+    
+    return JsonResponse({
+        'labels': labels,
+        'data': data
+    })
 
 
