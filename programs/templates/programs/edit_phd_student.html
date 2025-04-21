@@ -1409,7 +1409,7 @@
 
             });
 
-             $(document).on('submit',"form[id*='frm_upload_thesis']", function (e) {
+            $(document).on('submit',"form[id*='frm_upload_thesis']", function (e) {
                 e.preventDefault();
                 var data = new FormData($(this).get(0));
                 $('#frm_upload_thesis')[0].reset();

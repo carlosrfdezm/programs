@@ -1,0 +1,265 @@
+{% extends 'programs/formac/formac_base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'programs/plugins/toastr/toastr.min.css' %}">
+{% endblock %}
+
+{% block formac_content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-9">
+                    <h1>Editar miembro de la Dir. de Formación</h1>
+                </div>
+                <div class="col-sm-3">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'formac:formac_home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Editar miembro</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Editar miembro</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        {% if pmember %}
+                            <form role="form" method="post" enctype="multipart/form-data" action="{% url 'formac:edit_formac_member' pmember.id %}">
+                                {% csrf_token %}
+                                <div class="card-body">
+                                    <div class="form-row">
+                                        <div class="col-md-1">
+                                            {% if pmember.picture %}
+                                                <img src="{% url 'formac:formac_member_picture' pmember.id %}" style="max-height: 100px">
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-2">
+                                            <label for="inp_name">Nombre(s):</label>
+                                            <input type="text" class="form-control" id="inp_name" name="name" placeholder="Nombre(s)" value="{{  pmember.user.first_name }}" required>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="inp_name">Apellidos:</label>
+                                            <input type="text" class="form-control" id="inp_surename" name="surename" placeholder="Apellidos" value="{{  pmember.user.last_name }}" required>
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label for="slc_gender">Género:</label>
+                                            <select class="form-control" id="slc_gender" name="gender" required>
+                                                <option value="" >Seleccione una opción</option>
+                                                <option value="f" {% if pmember.gender == 'f' %}selected{% endif %} >Femenino</option>
+                                                <option value="m" {% if pmember.gender == 'm' %}selected{% endif %}>Masculino</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label for="slc_role">Rol:</label>
+                                            <select class="form-control" id="slc_role" name="charge" required>
+                                                <option value="" >Seleccione una opción</option>
+                                                <option value="Metodólogo" {% if pmember.charge == 'Metodólogo' %}selected{% endif %}  title="Metodólogo de la Dir de Formación" >Metodólogo</option>
+                                                <option value="Técnico" {% if pmember.charge == 'Técnico' %}selected{% endif %} title="Técnico de la Dir de Formación">Técnico</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="inp_grade">Grado científico:</label>
+                                            <input type="text" class="form-control" id="inp_grade"  name="grade" value="{{ pmember.grade }}" placeholder="Ej.:Doctor en Ciencias de la Educación" >
+                                        </div>
+
+                                        <div class="form-group col-md-4">
+                                            <label for="inp_email">Email:</label>
+                                            <input type="email" class="form-control" id="inp_email"   name="email" value="{{ pmember.user.email }}" placeholder="Email" required>
+
+                                        </div>
+
+
+                                        <div class="form-group col-md-4">
+                                            <label for="inp_phone">Teléfono:</label>
+                                            <input type="text" class="form-control" id="inp_phone"  name="phone" value="{{  pmember.phone }}" placeholder="Teléfono" >
+                                        </div>
+
+
+                                    </div>
+
+
+                                    <div class="form-row align-items-baseline">
+
+                                        <div class="form-group col-md-10">
+                                            <label for="exampleInputFile">Foto: </label>
+                                            <input type="file" class="form-control-file" id="exampleInputFile" name="picture" accept="image/*">
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                                <!-- /.card-body -->
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                    </div>
+                    <!-- /.card -->
+
+
+
+                    <!-- /.card -->
+
+                    <!-- Input addon -->
+                    <!-- /.card -->
+                    <!-- Horizontal Form -->
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+
+{#<!-- bs-custom-file-input -->#}
+{#<script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>#}
+{#<!-- AdminLTE App -->#}
+{#<script src="../../dist/js/adminlte.min.js"></script>#}
+{#<!-- AdminLTE for demo purposes -->#}
+{#<script src="../../dist/js/demo.js"></script>#}
+{% block extra_scripts %}
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+            {#bsCustomFileInput.init();#}
+
+            $(document).on('keyup','#inp_email', function () {
+                var email = $(this).val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'formac:ajx_formac_usr_exists' %}";
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'email':email,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].exists == 1) {
+
+                                Toast.fire({
+                                    type: 'warning',
+                                    title: 'Ya hay un usuario con ese correo, quiza ya es miembro de otro programa o de la CGC.'
+                                })
+
+                            } else if(json[0].exists == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Este correo está en uso por un miembro de la Direccion. Chequee la lista de miembros.'
+                                });
+                                $('#inp_email').val('');
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+
+                }
+
+
+
+
+            });
+            $(document).on('change','#exampleInputFile', function () {
+                var fileUpload = this;
+                var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
+                if (regex.test(fileUpload.value.toLowerCase())) {
+                    if (typeof (fileUpload.files) != "undefined") {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(fileUpload.files[0]);
+                        reader.onload = function (e) {
+                            var image = new Image();
+                            image.src = e.target.result;
+                            image.onload = function () {
+                                var height = this.height;
+                                var width = this.width;
+                                if (height < 400 || width < 400) {
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada es muy pequeña, debe tener al menos 400px x 400 px'
+                                    });
+                                    $('#exampleInputFile').val('');
+                                    return false;
+                                }else
+                                if(height != width ){
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada debe ser cuadrada y de dimensión 400px, o superior.'
+                                    });
+                                    $('#exampleInputFile').val('');
+                                    return false;
+                                }
+                            };
+                        }
+                    } else {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Este navegador no soporta HTML5, debe actualizarlo.'
+                        });
+                        return false;
+                    }
+                } else {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Por favor seleccione una imagen.'
+                    });
+                    return false;
+                }
+            });
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

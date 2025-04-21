@@ -1,0 +1,426 @@
+{% extends 'programs/formac/formac_base.html' %}
+{% load static %}
+
+{% block formac_content %}
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">Dirección de Formación</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item active"><a href="">Dashboard</a></li>
+                        {#              <li class="breadcrumb-item active">{{ program}}</li>#}
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Info boxes -->
+            <div class="row">
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-graduation-cap"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text"><a href="{% url 'formac:programs' 'curs' %}" title="Cursos">Cursos</a></span>
+                            <span class="info-box-number">{{ curs_programs }}
+                </span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="info-box mb-4">
+                        <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
+
+
+                        <div class="info-box-content">
+                            <span class="info-box-text"><a href="{% url 'formac:programs' 'coleg' %}" title="Colegio">Colegio</a></span>
+                            <span class="info-box-number">{{ coleg_programs}}</span>
+                        </div>
+
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+
+                <!-- fix for small devices only -->
+                
+                <!-- /.col -->
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text"><a href="{% url 'formac:members' %}" title="Miembros de la Dirección de Formación">Miembros</a></span>
+                            <span class="info-box-number">{{ formac_members }}</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                        Estudiantes x Cursos
+                                    </h5>
+
+                            <div class="card-tools">
+                                {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                                {#                                    <i class="fas fa-minus"></i>#}
+                                {#                                </button>#}
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" role="menu">#}
+                                {#                                        <a href="#" class="dropdown-item">Action</a>#}
+                                {#                                        <a href="#" class="dropdown-item">Another action</a>#}
+                                {#                                        <a href="#" class="dropdown-item">Something else here</a>#}
+                                {#                                        <a class="dropdown-divider"></a>#}
+                                {#                                        <a href="#" class="dropdown-item">Separated link</a>#}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-14">
+
+
+
+                                    <div class="chart" id="div_requestChart">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="requestChart" height="280" style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Estudiantes x Colegio</h5>
+
+                            <div class="card-tools">
+                                {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                                {#                                    <i class="fas fa-minus"></i>#}
+                                {#                                </button>#}
+                                {#                                <div class="btn-group">#}
+                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
+                                {#                                        <i class="fas fa-wrench"></i>#}
+                                {#                                    </button>#}
+                                {#                                    <div class="dropdown-menu dropdown-menu-right" role="menu">#}
+                                {#                                        <a href="#" class="dropdown-item">Action</a>#}
+                                {#                                        <a href="#" class="dropdown-item">Another action</a>#}
+                                {#                                        <a href="#" class="dropdown-item">Something else here</a>#}
+                                {#                                        <a class="dropdown-divider"></a>#}
+                                {#                                        <a href="#" class="dropdown-item">Separated link</a>#}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
+                                {#                    <i class="fas fa-times"></i>#}
+                                {#                  </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+
+
+                                    <div class="chart" id="div_mscChart">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="mscChart" height="280" style="height: 230px;"></canvas>
+                                    </div>
+                                    <!-- /.chart-responsive -->
+                                </div>
+                                <!-- /.col -->
+
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+                
+                <!-- /.col -->
+            </div>
+
+            <!-- /.row -->
+
+            <!-- Main row -->
+            <!-- /.row -->
+        </div><!--/. container-fluid -->
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        $(document).ready(function () {
+            var div_court='<div class="jumbotron" style="height: 205px;">'+
+                '<h3 class="text-center"><i class="text-warning fas fa-exclamation-triangle"></i> No hay datos disponibles. </h3>'+
+                '</div>';
+
+            $.ajax({
+                url : "{% url 'formac:ajx_formac_curs_students_by_program' %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json[1].length;i++){
+
+                        total = total + json[1][i];
+
+                    }
+
+
+
+                    if(total>0){
+                        var areaChartData = {
+                            labels:json[0],
+                            datasets: [
+                                {
+                                    label               : 'Cursistas',
+                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    borderColor         : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    pointRadius          : 2,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[1],
+                                },
+
+
+                            ]
+                        };
+
+                        var areaChartOptions = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: false
+                            },
+                            scales: {
+                                xAxes: [{
+                                    gridLines : {
+                                        display : false,
+                                    }
+                                }],
+                                yAxes: [{
+
+                                    gridLines : {
+                                        display : false,
+                                    },
+
+                                }]
+                            }
+                        };
+                        var areaChartCanvas=$('#requestChart');
+                        var areaChart       = new Chart(areaChartCanvas, {
+                            type: 'bar',
+                            data: areaChartData,
+                            options: areaChartOptions
+                        });
+                        console.log(json);
+                    }
+
+                    else {
+
+                        $('#div_requestChart').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+            $.ajax({
+                url : "{% url 'formac:ajx_formac_coleg_students_by_program' %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json[1].length;i++){
+
+                        total = total + json[1][i];
+
+                    }
+
+
+
+                    if(total>0){
+                        var areaChartData = {
+                            labels:json[0],
+                            datasets: [
+                                {
+                                    label               : 'Estudiantes',
+                                    backgroundColor     : ['rgba(139,255,116,0.67)','rgba(44,56,255,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    borderColor         : ['rgba(139,255,116,0.67)','rgba(44,56,255,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    pointRadius          : 2,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[1],
+                                },
+
+
+                            ]
+                        };
+
+                        var areaChartOptions = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: false
+                            },
+                            scales: {
+                                xAxes: [{
+                                    gridLines : {
+                                        display : false,
+                                    }
+                                }],
+                                yAxes: [{
+
+                                    gridLines : {
+                                        display : false,
+                                    },
+
+                                }]
+                            }
+                        };
+                        var areaChartCanvas=$('#mscChart');
+                        var areaChart       = new Chart(areaChartCanvas, {
+                            type: 'bar',
+                            data: areaChartData,
+                            options: areaChartOptions
+                        });
+                        console.log(json);
+                    }
+
+                    else {
+
+                        $('#div_mscChart').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+            
+
+            $.ajax({
+                url : "{% url 'cgc:ajx_students_by_state' %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json[1].length;i++){
+                        total = total+json[1][i];
+                    }
+                    if(total>0){
+                        var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
+                        var donutData        = {
+                            labels: json[0],
+                            datasets: [
+                                {
+                                    data: json[1],
+                                    backgroundColor : ['#f56954', '#00a65a', '#0000ff'],
+                                }
+                            ]
+                        };
+                        var donutOptions     = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: false,
+                            },
+
+                        };
+                        //Create pie or douhnut chart
+                        // You can switch between pie and douhnut using the method below.
+                        var donutChart = new Chart(donutChartCanvas, {
+                            type: 'doughnut',
+                            data: donutData,
+                            options: donutOptions
+                        });
+                    }
+                    else {
+                        $('#div_donutChart').replaceWith(div_court);
+                        $('#div_legend').remove();
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+
+
+
+
+
+        });
+    </script>
+{% endblock %}

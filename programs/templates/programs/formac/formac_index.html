@@ -1,0 +1,455 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ program.full_name }}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicons -->
+    <link href="{% static 'programs/index/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'programs/index/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+
+    <!-- Bootstrap CSS File -->
+    <link href="{% static 'programs/index/lib/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Libraries CSS Files -->
+    <link href="{% static 'programs/index/lib/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/magnific-popup/magnific-popup.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+
+    <!-- Main Stylesheet File -->
+    <link href="{% static 'programs/index/css/style.css' %}" rel="stylesheet">
+
+    <!-- =======================================================
+      Theme Name: Reveal
+      Theme URL: https://bootstrapmade.com/reveal-bootstrap-corporate-template/
+      Author: BootstrapMade.com
+      License: https://bootstrapmade.com/license/
+    ======================================================= -->
+</head>
+
+<body id="body">
+
+<!--==========================
+  Top Bar
+============================-->
+<section id="topbar" class="d-none d-lg-block">
+    <div class="container clearfix">
+        <div class="contact-info float-left">
+            <i class="fa fa-envelope-o"></i> <a href="mailto:{{ director.user.email }}">{{ director.user.email }}</a>
+            <i class="fa fa-phone"></i> {{ program.phone }}
+        </div>
+        <div class="social-links float-right">
+            <a href="{{ program.tw_contact}}" class="twitter"><i class="fa fa-twitter"></i></a>
+            <a href="{{ program.fb_contact}}" class="facebook"><i class="fa fa-facebook"></i></a>
+            <a href="{% url 'log:index' %}" class="facebook" title="Ir al inicio del sitio"><i class="fa fa-home"></i></a>
+        </div>
+    </div>
+</section>
+
+<!--==========================
+  Header
+============================-->
+<header id="header">
+    <div class="container">
+
+        <div id="logo" class="pull-left">
+            <h1><a href="#body" class="scrollto">Dirección de Formación</a></h1>
+            <!-- Uncomment below if you prefer to use an image logo -->
+            <!-- <a href="#body"><img src="{% static 'programs/index/img/logo.png' %}" alt="" title="" /></a>-->
+        </div>
+
+        <nav id="nav-menu-container">
+            <ul class="nav-menu">
+                <li class="menu-active"><a href="#body">Home</a></li>
+                <li><a href="#about">Programas</a></li>
+
+                {#                <li><a href="#portfolio">Portfolio</a></li>#}
+                <li><a href="#team">Miembros</a></li>
+                {#                <li class="menu-has-children"><a href="">Drop Down</a>#}
+                {#                    <ul>#}
+                {#                        <li><a href="#">Drop Down 1</a></li>#}
+                {#                        <li><a href="#">Drop Down 3</a></li>#}
+                {#                        <li><a href="#">Drop Down 4</a></li>#}
+                {#                        <li><a href="#">Drop Down 5</a></li>#}
+                {#                    </ul>#}
+                {#                </li>#}
+                {% if public_docs %}
+                    <li><a href="#services">Documentos</a></li>
+                {% else %}
+                    <li><a href="#services">Ayuda</a></li>
+                {% endif %}
+                <li><a href="#contact">Login</a></li>
+
+            </ul>
+        </nav><!-- #nav-menu-container -->
+    </div>
+</header><!-- #header -->
+
+<!--==========================
+  Intro Section
+============================-->
+<section id="intro">
+
+    <div class="intro-content">
+        <h2>{{ program }}</h2>
+        <div>
+            <a href="#contact" class="btn-get-started scrollto">Iniciar sesion</a>
+            <a href="#team" class="btn-projects scrollto">Miembros</a>
+        </div>
+    </div>
+
+    <div id="intro-carousel" class="owl-carousel" >
+        {% if program.programbackgrounds_set.all.count > 0 %}
+            {% for background in program.programbackgrounds_set.all %}
+                <div class="item" style="background-image: url({% url 'programs:program_background' program.slug background.id %});"></div>
+            {% endfor %}
+        {% else %}
+            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/1.jpg' %});"></div>
+            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/2.jpg' %});"></div>
+            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/3.jpg' %});"></div>
+            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/4.jpg' %});"></div>
+            <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/5.jpg' %});"></div>
+        {% endif %}
+    </div>
+
+</section><!-- #intro -->
+
+<main id="main">
+
+    <!--==========================
+      About Section
+    ============================-->
+    <section id="about" class="wow fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 about-img">
+                    <img src="{% static 'programs/index/img/about-img.jpg' %}" alt="">
+                </div>
+
+                <div class="col-lg-6 content">
+                    {% if lines %}
+                        <h2>El posgrado en Cuba</h2>
+                        <h3>La educación de posgrado, como nivel más alto del sistema de educación,
+                            garantiza la superación permanente de los graduados universitarios.</h3>
+
+                        <h3>Algunos principios de la educación de posgrado son:</h3>
+
+                        <ul>
+                            <li><i class="ion-android-checkmark-circle"></i> La participación de los estudiantes en el desarrollo social a través de procesos
+                                continuos de creación, difusión, transferencia, adaptación y aplicación de
+                                conocimientos;</li>
+                            <li><i class="ion-android-checkmark-circle"></i> el favorecimiento al acceso a las fronteras nacionales e internacionales más
+                                avanzadas de los conocimientos;</li>
+                            <li><i class="ion-android-checkmark-circle"></i> la promoción del desarrollo sostenible de la sociedad mediante la formación de los
+                                profesionales en estrecho vínculo con la práctica, como una fuerza social
+                                transformadora.</li>
+                        </ul>
+                    {% elif programs %}
+                        <h2>Programas</h2>
+
+                        <ul>
+                            {% for program in programs %}
+                                <li><i class="ion-android-checkmark-circle"></i> {{ program }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </section><!-- #about -->
+    <!-- ============================-->
+    <section id="call-to-action" class="wow fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center text-lg-left">
+                    <h3 class="cta-title">Resolucion 140-2019 (MES)</h3>
+                    <p class="cta-text"> Los profesionales que aspiran a matricular cualquier forma de educación de
+                        posgrado deben ser graduados de alguna institución de la red nacional de educación
+                        superior o de otra institución, cuyos títulos sean reconocidos en el país; así como cumplir
+                        todos los requisitos de ingreso que se establezcan en el programa correspondiente.</p>
+                </div>
+                {#                <div class="col-lg-3 cta-btn-container text-center">#}
+                {#                    <a class="cta-btn align-middle" href="#">Call To Action</a>#}
+                {#                </div>#}
+            </div>
+
+        </div>
+    </section><!-- #call-to-action -->
+
+
+    <section id="team" class="wow fadeInUp">
+        <div class="container">
+            <div class="section-header">
+                <h2>Miembros</h2>
+            </div>
+
+            <div class="row">
+                {% for member in members %}
+                    <div class="col-lg-3 col-md-6">
+                        <div class="member">
+                            <div class="pic" >{% if member.picture %}<img src="{% url 'formac:formac_member_picture' member.id %}" style="height: 200px; width: 200px" alt="">{% elif member.gender == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% elif member.gender == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% endif %}</div>
+                            <div class="details">
+                                <h6 class="text-bold">{{member|truncatewords:3}}</h6>
+                                <span title="{{ member.charge }}">{{ member.charge|truncatewords:3 }}</span>
+                                <div class="social">
+                                    <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
+                                    <a href="{{ member.fb_contact }}"><i class="fa fa-facebook"></i></a>
+                                    <a href="{{ member.ln_contact }}"><i class="fa fa-linkedin"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </section><!-- #team -->
+
+    <section id="call-to-action" class="wow fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center text-lg-left">
+                    <h3 class="cta-title">Resolucion 140-2019 (MES)</h3>
+                    <p class="cta-text"> La educación de posgrado para su implementación se estructura en:
+                        superación profesional, formación académica de posgrado y doctorado, de estas se
+                        derivan varias formas organizativas que se diferencian por su objetivo y diseño curricular.
+
+                        .</p>
+                </div>
+
+            </div>
+
+        </div>
+    </section><!-- #call-to-action -->
+
+    <!--==========================
+      Services Section
+    ============================-->
+    {% if public_docs %}
+        <section id="services">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Documentos de consulta</h2>
+                    <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+                </div>
+
+                {% for doc in public_docs %}
+
+                    <div class="row">
+                        <div class="col-md-10 offset-1">
+                            <p title="{{ doc.description }}">{{ doc.description|truncatewords:15 }}</p>
+                        </div>
+                        <div class="col-md-1">
+                            <a href="{% url 'formac:view_public_document' doc.id %}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
+                        </div>
+
+                    </div>
+                {% endfor %}
+
+            </div>
+        </section><!-- #services -->
+    {% else %}
+        <section id="services">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Preguntas frecuentes</h2>
+                    <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-6">
+                        <div class="box wow fadeInLeft">
+                            <div class="icon"><i class="fa fa-bar-chart"></i></div>
+                            <h4 class="title"><a href="">Sobre la solicitud de matrícula</a></h4>
+                            <p class="description">La solicitud de ingreso se realiza por escrito al Coordinador del Programa, y debe estar acompañada de una foto carnet (2 cm x 2cm),la Carta de Autorización del Jefe Inmediato y el Aval del Jefe de Proyecto al cual se vinculará el resultado de la investigación.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="box wow fadeInRight">
+                            <div class="icon"><i class="fa fa-ticket"></i></div>
+                            <h4 class="title"><a href="">Sobre el Ingreso</a></h4>
+                            <p class="description">Una vez el Comité Académico haya valorado los documentos presentados presentados, y haya entrevistado al solicitante, siempre que se cumplan los requisitos de ingreso determina el ingreso del solicitante al programa de la maestría.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="box wow fadeInLeft" data-wow-delay="0.2s">
+                            <div class="icon"><i class="fa fa-copy"></i></div>
+                            <h4 class="title"><a href="">Sobre los cursos</a></h4>
+                            <p class="description">Los cursos se desarrollarán con la frecuencia determinada por el Comité Académico, y con la calidad que requiere un programa académico. Finalizando siempre con una evaluación de rigor y  la  asignación de los créditos correspondientes.
+                                .</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="box wow fadeInRight" data-wow-delay="0.2s">
+                            <div class="icon"><i class="fa fa-graduation-cap"></i></div>
+                            <h4 class="title"><a href="">Sobre la defensa de la tesis.</a></h4>
+                            <p class="description">La defensa de la tesis se realiza una vez el estudiante haya vencido los cursos, las publicaciones, los eventos requeridos por el programa y el sistema de talleres del mismo; a solicitud de los tutores y el aspirante, el comité académico convoca al tribunal pertinente.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section><!-- #services -->
+
+    {% endif %}
+
+
+
+    <!--==========================
+      Call To Action Section
+    ============================-->
+    <section id="call-to-action" class="wow fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center text-lg-left">
+                    <h3 class="cta-title">Resolucion 140-2019 (MES)</h3>
+                    <p class="cta-text"> El diplomado, como una de las formas organizativas principales de la superación
+                        profesional, está dirigido a especializar, actualizar, profundizar y ampliar la formación profesional alcanzada o para contribuir a lograr determinados desempeños profesionales específicos o la reorientación de los ya alcanzados.</p>
+                </div>
+
+            </div>
+
+        </div>
+    </section><!-- #call-to-action -->
+
+    <!--==========================
+      Our Team Section
+    ============================-->
+
+    <!--==========================
+      Contact Section
+    ============================-->
+    <section id="contact" class="wow fadeInUp">
+        <div class="container">
+            <div class="section-header">
+                <h2>Login</h2>
+                <p>Por favor introduzca el usuario y la contraseña de este sitio en las casillas correspondientes.</p>
+            </div>
+
+            <div class="container">
+                <div class="form">
+                    <div id="sendmessage">Your message has been sent. Thank you!</div>
+                    <div id="errormessage"></div>
+                    <form action="{% url 'log:formac_login' %}" method="post" role="form" class="contactForm">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <input type="email" name="username" class="form-control" id="name" placeholder="Correo electrónico" data-rule="minlen:6" data-msg="Por favor, introduzca al menos 4 caracteres." />
+                                <div class="validation"></div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="password" class="form-control" name="password" id="email" placeholder="Contraseña" data-rule="password" data-msg="Por favor introduzca una contraseña válida." />
+                                <div class="validation"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="text-center">
+
+                            <button type="submit">Entrar</button><br>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="text-center">
+                    <a class="text-primary" href="{% url 'reset_password' %}">Recuperar contraseña</a>
+                </div>
+
+            </div>
+
+
+            <div class="row contact-info">
+
+                <div class="col-md-4">
+                    <div class="contact-address">
+                        <i class="ion-ios-location-outline"></i>
+                        <h3>Direccion</h3>
+                        <address>{{ program.address }}</address>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="contact-phone">
+                        <i class="ion-ios-telephone-outline"></i>
+                        <h3>Telefono</h3>
+                        <p><a href="tel:{{program.phone}}">{{ program.phone}}</a></p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="contact-email">
+                        <i class="ion-ios-email-outline"></i>
+                        <h3>Email</h3>
+                        <p><a href="mailto:{{program.email}}">{{program.email}}</a></p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+    </section><!-- #contact -->
+
+</main>
+
+<!--==========================
+  Footer
+============================-->
+<footer id="footer">
+    <div class="container">
+        <div class="copyright">
+            &copy; Copyright <strong>LATED</strong>. Todos los derechos reservados
+        </div>
+        <div class="credits">
+            <!--
+              All the links in the footer should remain intact.
+              You can delete the links only if you purchased the pro version.
+              Licensing information: https://bootstrapmade.com/license/
+              Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=Reveal
+            -->
+            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        </div>
+    </div>
+</footer><!-- #footer -->
+
+<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+<!-- JavaScript Libraries -->
+<script src="{% static 'programs/index/lib/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/jquery/jquery-migrate.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/easing/easing.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/superfish/hoverIntent.js' %}"></script>
+<script src="{% static 'programs/index/lib/superfish/superfish.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/wow/wow.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/magnific-popup/magnific-popup.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/sticky/sticky.js' %}"></script>
+
+<!-- Contact Form JavaScript File -->
+{#<script src="{% static 'programs/index/contactform/contactform.js' %}"></script>#}
+
+<!-- Template Main Javascript File -->
+<script src="{% static 'programs/index/js/main.js' %}"></script>
+
+</body>
+</html>

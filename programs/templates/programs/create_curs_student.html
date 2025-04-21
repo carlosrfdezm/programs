@@ -1,0 +1,463 @@
+{% extends 'programs/base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'programs/plugins/toastr/toastr.min.css' %}">
+    <link rel="stylesheet" href="{% static 'programs/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+
+{% endblock %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-9">
+                    <h1>Agregar estudiante</h1>
+                </div>
+                <div class="col-sm-3">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Crear estudiante</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Estudiante</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'programs:create_curs_student' program.slug edition.id %}">
+                            {% csrf_token %}
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        <label for="inp_name">Nombre(s):</label>
+                                        <input type="text" class="form-control" id="inp_name" name="student_name" placeholder="Nombre(s)" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="inp_name">Apellidos:</label>
+                                        <input type="text" class="form-control" id="inp_surename" name="student_surename" placeholder="Apellidos" required>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="inp_dni">DNI:</label>
+                                        <input type="text" class="form-control" id="inp_dni" name="student_dni" placeholder="DNI o pasaporte" maxlength="24" required>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="slc_gender">Género:</label>
+                                        <select class="form-control" id="slc_gender" name="gender" required>
+                                            <option value="" >Seleccione una opción</option>
+                                            <option value="f"  >Femenino</option>
+                                            <option value="m" >Masculino</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-3">
+                                        <label for="inp_birth_date">Fecha de nacimiento:</label>
+                                        <input type="date" class="form-control" id="inp_birth_date"  name="student_birth_date" placeholder="Fecha de nacimiento" max="{% max_year_birth_date %}-01-01" required>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="inp_email">Email:</label>
+                                        <input type="email" class="form-control" id="inp_email"  name="student_email" placeholder="Email" required>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="inp_phone">Teléfono:</label>
+                                        <input type="text" class="form-control" id="inp_phone"  name="student_phone" placeholder="Teléfono" >
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="slc_country">País:</label>
+                                        <select class="form-control" id="slc_country" name="student_country" required>
+                                            {% country_list as country_list%}
+                                            {% for country in country_list %}
+                                                <option value="{{ country }}" {% if country == 'Cuba' %}selected{% endif %}>{{ country }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h4><strong>Tema de investigación:</strong></h4>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="txt_theme">Tema:</label>
+                                        <textarea class="form-control" id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="5"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="slc_project">Proyecto asociado:</label>
+                                        <select class="form-control" id="slc_project" name="investigation_project" >
+                                            <option value="" >Seleccione una opción</option>
+
+                                            {% for project in projects %}
+                                                <option value="{{ project.id }}" >{{ project|truncatewords:10 }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <h4><strong>Tutores:</strong></h4>
+                                <div class="form-row align-items-center pb-2" id="div_tuthor_1">
+                                    <div class="col-md-2">
+                                        <input type="email" class="form-control" id="inp_tuthor_email_1" data="1" name="tuthor_email_1" placeholder="Email del tutor" ></input>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" class="form-control" readonly id="inp_tuthor_name_1" name="tuthor_name_1" placeholder="Nombre(s) del tutor" ></input>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly id="inp_tuthor_lastname_1" name="tuthor_lastname_1" placeholder="Apellidos del tutor" ></input>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly id="inp_tuthor_institution_1" name="tuthor_institution_1" placeholder="Institución del tutor" ></input>
+                                    </div>
+                                    <div class="col-md-2 pl-4 ">
+                                        <button type="button" class="text-white btn btn-sm btn-warning" id="btn_add_tuthor" title="Agregar tutor"><i class="fa fa-plus"></i> </button>
+                                    </div>
+
+
+                                </div>
+                                <hr>
+                                <h4><strong>Requisitos de ingreso:</strong></h4>
+                                <div class="row">
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th class="text-center">Resp.</th>
+                                            <th >Nombre del documento</th>
+                                            <th class="text-center">Listo</th>
+                                            <th class="text-center">Caduca</th>
+
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for doc in init_requirements %}
+                                            <!-- Post -->
+                                            <tr>
+                                                <td class="text-center">
+                                                    {% if doc.type == 'student' %}
+                                                        <i class="text-success fa fa-user" title="Elaborado por el estudiante"></i>
+                                                    {% elif doc.type == 'program' %}
+                                                        <i class="text-primary fa fa-user-graduate" title="Elaborado por el Comite del programa"></i>
+                                                    {% elif doc.type == 'comission' %}
+                                                        <i class="text-warning fa fa-graduation-cap" title="Elaborado por la Comision de Grados de la Institucion"></i>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {{ doc }}
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="icheck-primary d-inline">
+                                                        <input type="checkbox" id="inp_student_new_requirement_{{ doc.id }}" data="{{ doc.id }}" name="student_requirement_{{ doc.id }}"  value="False" >
+                                                        <label for="inp_student_new_requirement_{{ doc.id }}">
+                                                        </label>
+                                                    </div>
+
+                                                </td>
+                                                <td class="text-center">
+                                                    {% if doc.get_old %}
+
+                                                        <input type="date" class="form-control col-md-6 col-sm-6 offset-4" id="inp_doc_caducity_date_{{ doc.id }}" name="doc_caducity_date_{{ doc.id }}"  readonly >
+                                                    {% else %}
+                                                        --------
+                                                    {% endif  %}
+                                                </td>
+                                            </tr>
+
+                                            <!-- /.post -->
+                                        {% endfor %}
+
+                                        </tbody>
+
+
+                                    </table>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="exampleInputFile">Foto:</label>
+                                        <input type="file" class="form-control-file" id="exampleInputFile" name="picture" accept="image/*">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                            <input type="hidden" id="inp_total_tuthors" name="total_tuthors" value="1">
+                        </form>
+                    </div>
+                    <!-- /.card -->
+
+
+
+                    <!-- /.card -->
+
+                    <!-- Input addon -->
+                    <!-- /.card -->
+                    <!-- Horizontal Form -->
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+<!-- jQuery -->
+<script src="../../plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- bs-custom-file-input -->
+<script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="../../dist/js/demo.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        bsCustomFileInput.init();
+    });
+</script>
+{% block extra_scripts %}
+
+    <script src="{% static 'programs/plugins/toastr/toastr.min.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var total_tuthors=1;
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+            {#bsCustomFileInput.init();#}
+
+
+            $(document).on('keyup','#inp_email', function () {
+                var email = $(this).val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_student_exists' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'email':$('#inp_email').val(),
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].exists == 1) {
+
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Ya hay un estudiante de este programa con ese correo.'
+                                })
+
+                            } else if(json[0].exists == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Uff, ha ocurrido un error desconocido'
+                                })
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                };
+
+
+
+            });
+            $(document).on('keyup', "input[name*='tuthor_email']", function () {
+                var index = $(this).attr('data');
+                var email = $(this).val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'tuthor_email':email,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0] == 1) {
+
+                                $('#inp_tuthor_name_'+index).attr('readonly','readonly');
+                                $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
+                                $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
+                                $('#inp_tuthor_name_'+index).val(json[1][0]);
+                                $('#inp_tuthor_lastname_'+index).val(json[1][1]);
+                                $('#inp_tuthor_institution_'+index).val(json[1][2]);
+
+                            } else if(json[0] == 0){
+
+                                $('#inp_tuthor_name_'+index).removeAttr('readonly');
+                                $('#inp_tuthor_lastname_'+index).removeAttr('readonly');
+                                $('#inp_tuthor_institution_'+index).removeAttr('readonly');
+
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                }
+                else{
+                    $('#inp_tuthor_name_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
+                    $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
+
+                }
+            });
+            $(document).on('click','#btn_add_tuthor', function () {
+                var old_tuthors = total_tuthors;
+                total_tuthors = total_tuthors+ 1;
+
+
+                $('#inp_total_tuthors').val(total_tuthors);
+                var new_tuthor_div = '<div class="form-row align-items-center pb-2" id="div_tuthor_'+total_tuthors+'">\n' +
+                    '                                    <div class="col-md-2">\n' +
+                    '                                        <input type="email" class="form-control" id="inp_tuthor_email_'+total_tuthors+'" data="'+total_tuthors+'" name="tuthor_email_'+total_tuthors+'" placeholder="Email del tutor" >\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-2">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_name_'+total_tuthors+'" name="tuthor_name_'+total_tuthors+'" placeholder="Nombre(s) del tutor" >\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-3">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_lastname_'+total_tuthors+'" name="tuthor_lastname_'+total_tuthors+'" placeholder="Apellidos del tutor" >\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-3">\n' +
+                    '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_institution_'+total_tuthors+'" name="tuthor_institution_'+total_tuthors+'" placeholder="Institución del tutor" >\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-md-2 pl-4 " id="div_rm_tuthor_'+total_tuthors+'">\n' +
+                    '                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+total_tuthors+'" data="'+total_tuthors+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' +
+                    '                                    </div>\n' +
+                    '\n' +
+                    '\n' +
+                    '                                </div>'
+
+                $('#btn_rm_tuthor_'+old_tuthors).remove();
+                $(new_tuthor_div).insertAfter($('#div_tuthor_'+old_tuthors))
+            });
+            $(document).on('click',"button[id*='btn_rm_tuthor']",function () {
+                var current_index = $(this).attr('data');
+
+                var div_selector = '#div_tuthor_'+ current_index;
+                $(div_selector).remove();
+
+                total_tuthors = total_tuthors -1;
+
+                $('#inp_total_tuthors').val(total_tuthors);
+                $('#div_rm_tuthor_'+total_tuthors).append(
+                    '<button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+total_tuthors+'" ' +
+                    'data="'+total_tuthors+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' )
+
+            });
+
+
+            $(document).on('change','#exampleInputFile', function () {
+                var fileUpload = this;
+                var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
+                if (regex.test(fileUpload.value.toLowerCase())) {
+                    if (typeof (fileUpload.files) != "undefined") {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(fileUpload.files[0]);
+                        reader.onload = function (e) {
+                            var image = new Image();
+                            image.src = e.target.result;
+                            image.onload = function () {
+                                var height = this.height;
+                                var width = this.width;
+                                if (height < 200 || width < 200) {
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada es muy pequeña, debe tener al menos 400px x 400 px'
+                                    });
+                                    $('#exampleInputFile').val('');
+                                    return false;
+                                }else
+                                if(height != width ){
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada debe ser cuadrada y de dimensión 200px, o superior.'
+                                    });
+                                    $('#exampleInputFile').val('');
+                                    return false;
+                                }
+                            };
+                        }
+                    } else {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Este navegador no soporta HTML5, debe actualizarlo.'
+                        });
+                        return false;
+                    }
+                } else {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Por favor seleccione una imagen.'
+                    });
+                    return false;
+                }
+            });
+
+        });
+    </script>
+{% endblock %}
+

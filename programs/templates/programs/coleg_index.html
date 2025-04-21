@@ -1,0 +1,778 @@
+{% load static %}
+{% load extra_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ program.full_name }}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicons -->
+    <link href="{% static 'programs/index/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'programs/index/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+
+    <!-- Bootstrap CSS File -->
+    <link href="{% static 'programs/index/lib/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Libraries CSS Files -->
+    <link href="{% static 'programs/index/lib/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/magnific-popup/magnific-popup.css' %}" rel="stylesheet">
+    <link href="{% static 'programs/index/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'programs/plugins/summernote/summernote-bs4.css'  %}">
+    
+    <!-- Main Stylesheet File -->
+    <link href="{% static 'programs/index/css/style.css' %}" rel="stylesheet">
+
+    <!-- =======================================================
+      Theme Name: Reveal
+      Theme URL: https://bootstrapmade.com/reveal-bootstrap-corporate-template/
+      Author: BootstrapMade.com
+      License: https://bootstrapmade.com/license/
+    ======================================================= -->
+</head>
+
+<body id="body">
+
+<!--==========================
+  Top Bar
+============================-->
+<section id="topbar" class="d-none d-lg-block">
+    <div class="container clearfix">
+        <div class="contact-info float-left">
+            <i class="fa fa-envelope-o"></i> <a href="mailto:{{ program.email }}">{{ program.email }}</a>
+            <i class="fa fa-phone"></i> {{ program.phone }}
+        </div>
+        <div class="social-links float-right">
+            <a href="{{ program.tw_contact}}" class="twitter"><i class="fa fa-twitter"></i></a>
+            <a href="{{ program.fb_contact}}" class="facebook"><i class="fa fa-facebook"></i></a>
+            <a href="{% url 'log:index' %}" class="facebook" title="Ir al inicio del sitio"><i class="fa fa-home"></i></a>
+        </div>
+    </div>
+</section>
+
+<!--==========================
+  Header
+============================-->
+<header id="header">
+    <div class="container">
+
+        <div id="logo" class="pull-left">
+            <h1><a href="#body" class="scrollto">COLEGIO UNIVERSITARIO</a></h1>
+            <!-- Uncomment below if you prefer to use an image logo -->
+            <!-- <a href="#body"><img src="{% static 'programs/index/img/logo.png' %}" alt="" title="" /></a>-->
+        </div>
+
+        <nav id="nav-menu-container">
+            <ul class="nav-menu">
+                <li class="menu-active"><a href="#body">Home</a></li>
+                <li><a href="#about">{% if not lines %}Acerca de{% else %}Líneas{% endif %}</a></li>
+
+                {#                <li><a href="#portfolio">Portfolio</a></li>#}
+                <li><a href="#team">Claustro</a></li>
+                {#                <li class="menu-has-children"><a href="">Drop Down</a>#}
+                {#                    <ul>#}
+                    {#                        <li><a href="#">Drop Down 1</a></li>#}
+                    {#                        <li><a href="#">Drop Down 3</a></li>#}
+                    {#                        <li><a href="#">Drop Down 4</a></li>#}
+                    {#                        <li><a href="#">Drop Down 5</a></li>#}
+                    {#                    </ul>#}
+                {#                </li>#}
+                {% if public_docs %}
+                <li><a href="#services">Documentos</a></li>
+                {% else %}
+                <li><a href="#services">Ayuda</a></li>
+
+                {% endif %}
+                {% if news %}
+                <li><a href="#news">Noticias</a></li>
+                {% endif %}
+                <li><a href="#contact">Login</a></li>
+
+            </ul>
+        </nav><!-- #nav-menu-container -->
+    </div>
+</header><!-- #header -->
+
+<!--==========================
+  Intro Section
+============================-->
+<section id="intro">
+
+    <div class="intro-content">
+        <h2>{{ program }}</h2>
+        <div>
+            {% if program.self_request %}
+            <a href="" data-toggle="modal" data-target="#modal_request_enter" class="btn-projects scrollto">Solicitar ingreso</a>
+            {% endif %}
+            <a href="#contact" class="btn-get-started scrollto">Iniciar sesion</a>
+            <a href="#team" class="btn-projects scrollto">Claustro</a>
+        </div>
+    </div>
+
+    <div id="intro-carousel" class="owl-carousel" >
+        {% if program.programbackgrounds_set.all.count > 0 %}
+        {% for background in program.programbackgrounds_set.all %}
+        <div class="item" style="background-image: url({% url 'programs:program_background' program.slug background.id %});"></div>
+        {% endfor %}
+        {% else %}
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/1.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/2.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/3.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/4.jpg' %});"></div>
+        <div class="item" style="background-image: url({% static 'programs/index/img/intro-carousel/5.jpg' %});"></div>
+        {% endif %}
+    </div>
+
+</section><!-- #intro -->
+
+<main id="main">
+
+    <!--==========================
+      About Section
+    ============================-->
+    <section id="about" class="wow fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 about-img">
+                    <img src="{% static 'programs/index/img/about-img.jpg' %}" alt="">
+                </div>
+
+                <div class="col-lg-6 content">
+                    {% if not lines %}
+                    <h2>El posgrado en Cuba</h2>
+                    <h3>La educación de posgrado, como nivel más alto del sistema de educación,
+                        garantiza la superación permanente de los graduados universitarios.</h3>
+
+                    <h3>Algunos principios de la educación de posgrado son:</h3>
+
+                    <ul>
+                        <li><i class="ion-android-checkmark-circle"></i> La participación de los estudiantes en el desarrollo social a través de procesos
+                            continuos de creación, difusión, transferencia, adaptación y aplicación de
+                            conocimientos;</li>
+                        <li><i class="ion-android-checkmark-circle"></i> el favorecimiento al acceso a las fronteras nacionales e internacionales más
+                            avanzadas de los conocimientos;</li>
+                        <li><i class="ion-android-checkmark-circle"></i> la promoción del desarrollo sostenible de la sociedad mediante la formación de los
+                            profesionales en estrecho vínculo con la práctica, como una fuerza social
+                            transformadora.</li>
+                    </ul>
+                    {% else %}
+                    <h2>Líneas de investigación</h2>
+
+                    <ul>
+                        {% for line in lines %}
+                        <li><i class="ion-android-checkmark-circle"></i> {{ line.name }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </section><!-- #about -->
+    <!-- ============================-->
+    <section id="call-to-action" class="wow fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center text-lg-left">
+                    <h3 class="cta-title">Resolucion 140-2019 (MES)</h3>
+                    <p class="cta-text"> Los profesionales que aspiran a matricular cualquier forma de educación de
+                        posgrado deben ser graduados de alguna institución de la red nacional de educación
+                        superior o de otra institución, cuyos títulos sean reconocidos en el país; así como cumplir
+                        todos los requisitos de ingreso que se establezcan en el programa correspondiente.</p>
+                </div>
+                {#                <div class="col-lg-3 cta-btn-container text-center">#}
+                {#                    <a class="cta-btn align-middle" href="#">Call To Action</a>#}
+                {#                </div>#}
+            </div>
+
+        </div>
+    </section><!-- #call-to-action -->
+
+
+    <section id="team" class="wow fadeInUp">
+        <div class="container">
+            <div class="section-header">
+                <h2>Claustro</h2>
+            </div>
+
+            <div class="row">
+                {% for member in program.programmember_set.all %}
+                <div class="col-lg-3 col-md-6">
+                    <div class="member">
+                        <div class="pic" >{% if member.picture %}<img src="{% url 'programs:program_member_picture' program.slug member.id %}" style="height: 220px; width: 100%" alt="">{% elif member.sex == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="">{% elif member.sex == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="">{% endif %}</div>
+                        <div class="details">
+                            <h6 class="text-bold">{{member|truncatewords:3}}</h6>
+                            <span title="{{ member.degree }}">{{ member.degree|truncatewords:3 }}</span>
+
+                            <span>{{ member.role }}</span>
+                            <div class="social">
+                                <a href="{{ member.tw_contact }}"><i class="fa fa-twitter"></i></a>
+                                <a href="{{ member.fb_contact }}"><i class="fa fa-facebook"></i></a>
+                                <a href="{{ member.ln_contact }}"><i class="fa fa-linkedin"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </section><!-- #team -->
+
+    <section id="call-to-action" class="wow fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center text-lg-left">
+                    <h3 class="cta-title">Resolucion 140-2019 (MES)</h3>
+                    <p class="cta-text"> La educación de posgrado para su implementación se estructura en:
+                        superación profesional, formación académica de posgrado y doctorado, de estas se
+                        derivan varias formas organizativas que se diferencian por su objetivo y diseño curricular.
+
+                        .</p>
+                </div>
+
+            </div>
+
+        </div>
+    </section><!-- #call-to-action -->
+
+    <!--==========================
+      Services Section
+    ============================-->
+    {% if public_docs %}
+    <section id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Documentos de consulta</h2>
+                <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+            </div>
+
+            {% for doc in public_docs %}
+            {% if forloop.counter == public_docs.count %}
+            <div class="row">
+                <div class="col-md-10 offset-1">
+                    <p title="{{ doc.description }}">{{ doc.description|truncatewords:15 }}</p>
+                </div>
+                <div class="col-md-1">
+                    <a href="{% url 'programs:public_program_doc_view' program.slug doc.id %}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
+                </div>
+
+            </div>
+            {% endif %}
+            {% endfor %}
+
+        </div>
+    </section>
+   {% endif %}
+    
+    <section id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Preguntas frecuentes</h2>
+                <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+            </div>
+
+            <div class="row">
+    {% if faqs %}
+            {% for faq in faqs %}
+                <div class="col-lg-6">
+                    <div class="box wow fadeInLeft">
+                        <div class="icon"><i class=" fa fa-question-circle"></i></div>
+                        <h4 class="title"><a href="">{{faq.title}}</a></h4>
+                        <p class="description text-justify">{% autoescape off %}{{faq.content}}{% endautoescape %}</p>
+                    </div>
+                </div>
+            {% endfor %}
+            {% else %}
+               <div class="col-lg-6">
+                    <div class="box wow fadeInLeft">
+                        <div class="icon"><i class="fa fa-bar-chart"></i></div>
+                        <h4 class="title"><a href="">Sobre la solicitud de matrícula</a></h4>
+                        <p class="description text-justify">La solicitud de ingreso se realiza por escrito al Coordinador del Programa, y entregar una foto carnet (2 cm x 2cm),la Carta de Autorización del Jefe Inmediato y el Aval del Jefe de Proyecto al cual se vinculará el resultado de la investigación.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="box wow fadeInRight">
+                        <div class="icon"><i class="fa fa-ticket"></i></div>
+                        <h4 class="title"><a href="">Sobre el Ingreso</a></h4>
+                        <p class="description text-justify">Una vez el Comité Académico haya valorado los documentos presentados presentados, y haya entrevistado al solicitante, siempre que se cumplan los requisitos de ingreso determina el ingreso del solicitante al programa de la maestría.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="box wow fadeInLeft" data-wow-delay="0.2s">
+                        <div class="icon"><i class="fa fa-copy"></i></div>
+                        <h4 class="title"><a href="">Sobre los cursos</a></h4>
+                        <p class="description text-justify">Los cursos se desarrollarán con la frecuencia determinada por el Comité Académico, y con la calidad que requiere un programa académico. Finalizando siempre con una evaluación de rigor y  la  asignación de los créditos correspondientes.
+                            .</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="box wow fadeInRight" data-wow-delay="0.2s">
+                        <div class="icon"><i class="fa fa-graduation-cap"></i></div>
+                        <h4 class="title"><a href="">Sobre la defensa de la tesis.</a></h4>
+                        <p class="description text-justify">La defensa de la tesis se realiza una vez el estudiante haya vencido los cursos, las publicaciones, los eventos requeridos por el programa y el sistema de talleres del mismo; a solicitud de los tutores y el aspirante, el comité académico convoca al tribunal pertinente.</p>
+                    </div>
+                </div>
+        
+            </div>
+
+
+        </div>
+    {% endif %}
+    </section><!-- #services -->
+
+    <!--==========================
+      News Section
+    ============================-->
+    {% if news %}
+    <section id="call-to-action" class="wow fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center text-lg-left">
+                    <h3 class="cta-title">Resolucion 140-2019 (MES)</h3>
+                    <p class="cta-text"> El claustro de un programa de maestría o de especialidad de posgrado
+                        posee un alto nivel académico y amplia experiencia profesional en el área del
+                        conocimiento del programa, avalados por un grado científico, especialista de segundo y
+                        tercer grado, el título de Máster o Especialista de Posgrado; las categorías docentes de
+                        Profesor Titular, Profesor Auxiliar o las categorías científicas de Investigador Titular o
+                        Investigador Auxiliar.
+
+                        .</p>
+                </div>
+
+            </div>
+
+        </div>
+    </section><!-- #call-to-action -->
+
+    <section id="news">
+        <div class="container pt-4">
+            <div class="section-header">
+                <h2>Noticias</h2>
+            </div>
+
+            {% for new in news %}
+
+            <div class="row pt-2">
+                <div class="alert alert-warning align-items-baseline col-md-12">
+                    <h4 class="text-center" title="{{ new.title }}">{{ new.title }}</h4>
+                </div>
+
+            </div>
+            <div class="row pb-3 align-items-stretch">
+                <div class="col-md-10 offset-1">
+                    <span class="small pb-3">{{ new.date|date:'d-m-Y' }}</span>
+
+                    <p class="text-justify">
+                        {% autoescape off %}
+                        {{ new.body }}
+                        {% endautoescape %}
+                    </p>
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+    </section>
+
+    {% endif %}
+
+
+    <!--==========================
+      Call To Action Section
+    ============================-->
+    <section id="call-to-action" class="wow fadeInUp">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center text-lg-left">
+                    <h3 class="cta-title">Resolucion 140-2019 (MES)</h3>
+                    <p class="cta-text"> Constituyen formas organizativas de la formación académica: la maestría, la
+                        especialidad de posgrado y el doctorado; las normativas específicas para el doctorado se
+                        regulan en la legislación del Sistema Nacional de Grados Científicos.</p>
+                </div>
+
+            </div>
+
+        </div>
+    </section><!-- #call-to-action -->
+
+    <!--==========================
+      Our Team Section
+    ============================-->
+
+    <!--==========================
+      Contact Section
+    ============================-->
+    <section id="contact" class="wow fadeInUp">
+        <div class="container">
+            <div class="section-header">
+                <h2>Login</h2>
+                <p>Por favor introduzca el usuario y la contraseña de este sitio en las casillas correspondientes.</p>
+            </div>
+
+            <div class="container">
+                <div class="form">
+                    <div id="sendmessage">Your message has been sent. Thank you!</div>
+                    <div id="errormessage"></div>
+                    <form action="{% url 'log:my_login' %}" method="post" role="form" class="contactForm">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <input type="email" name="username" class="form-control" id="name" placeholder="Correo electrónico" data-rule="minlen:6" data-msg="Por favor, introduzca al menos 4 caracteres." />
+                                <div class="validation"></div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="password" class="form-control" name="password" id="email" placeholder="Contraseña" data-rule="password" data-msg="Por favor introduzca una contraseña válida." />
+                                <div class="validation"></div>
+                                <input type="hidden" name="program_slug" value="{{ program.slug }}">
+                            </div>
+                        </div>
+
+
+                        <div class="text-center">
+
+                            <button type="submit">Entrar</button><br>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="text-center">
+                    <a class="text-primary" href="{% url 'reset_password' %}">Recuperar contraseña</a>
+                </div>
+
+            </div>
+
+
+            <div class="row contact-info">
+
+                <div class="col-md-4">
+                    <div class="contact-address">
+                        <i class="ion-ios-location-outline"></i>
+                        <h3>Direccion</h3>
+                        <address>{{ program.address }}</address>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="contact-phone">
+                        <i class="ion-ios-telephone-outline"></i>
+                        <h3>Telefono</h3>
+                        <p><a href="tel:{{program.phone}}">{{ program.phone}}</a></p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="contact-email">
+                        <i class="ion-ios-email-outline"></i>
+                        <h3>Email</h3>
+                        <p><a href="mailto:{{program.email}}">{{program.email}}</a></p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+    </section><!-- #contact -->
+
+
+    <div class="modal fade" id="modal_request_enter">
+        <div class="modal-dialog modal-lg">
+            <form class="form" id="frm_auto_request" method="post">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Solicitar ingreso</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <div class="form-group col-md-4">
+                                <label for="inp_name">Nombre:</label>
+                                <input class="form-control" id="inp_name" type="text" name="name" placeholder="Nombre(s)" maxlength="100" required></input>
+
+                            </div>
+                            <div class="form-group col-md-8">
+                                <label for="inp_surename">Apellidos:</label>
+                                <input class="form-control" type="text" id="inp_surename" name="surename" placeholder="Apellidos" maxlength="100" required></input>
+
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                            <div class="form-group col-md-4">
+                                <label for="inp_mail">Correo:</label>
+                                <input class="form-control" type="email" id="inp_mail" name="email" placeholder="Correo electrónico" maxlength="100" required></input>
+
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="inp_phone">Teléfono:</label>
+                                <input class="form-control" type="tel" id="inp_phone" name="phone" placeholder="Teléfono de contacto" maxlength="100" required></input>
+
+                            </div>
+                            <div class="form-group col-md-4">
+                                
+                                <label for="inp_planned_end_year">Año de defensa:</label>
+                                <input class="form-control" type="number" id="inp_planned_end_year" name="planned_end_year" placeholder="Año de defensa previsto" min="{{ current_year }}" max="{{ five_years_ahead }}" required></input>
+
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="inp_dni">ID o Pasaporte:</label>
+                                <input class="form-control" type="text" id="inp_dni" name="dni" placeholder="Número de ID o pasaporte" maxlength="100" required></input>
+
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="slc_gender">Género:</label>
+                                <select class="form-control" id="slc_gender" name="gender" required>
+                                    <option value="" selected>Seleccione una opción</option>
+                                    <option value="f" >Femenino</option>
+                                    <option value="m" >Masculino</option>
+                                </select>
+
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="inp_name">Fecha de nacimiento:</label>
+                                <input class="form-control" type="date" id="inp_birthdate" name="birthdate" value="1960-01-01" required></input>
+
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+
+                            <div class="form-group col-md-12">
+                                <label for="slc_line">Línea de investigación:</label>
+                                <select class="form-control" id="slc_line" name="line" required>
+                                    <option value="" selected>Seleccione una opción</option>
+                                    {% for line in lines %}
+                                    <option value={{ line.id }} >{{ line }}</option>
+                                    {% endfor %}
+                                </select>
+
+                            </div>
+
+
+                        </div>
+                        <div class="row">
+
+                            <div class="form-group col-md-12">
+                                <label for="inp_name">Tema de investigación:</label>
+                                <textarea class="form-control"  id="txt_theme" name="theme" placeholder="Tema de investigación" maxlength="200" rows="3" required></textarea>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btn_send_request">Enviar</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </form>
+        </div>
+        <!-- /.modal-dialog -->
+
+    </div>
+</main>
+
+<!--==========================
+  Footer
+============================-->
+<footer id="footer">
+    <div class="container">
+        <div class="copyright">
+            &copy; Copyright <strong>LATED</strong>. Todos los derechos reservados
+        </div>
+        <div class="credits">
+            <!--
+              All the links in the footer should remain intact.
+              You can delete the links only if you purchased the pro version.
+              Licensing information: https://bootstrapmade.com/license/
+              Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=Reveal
+            -->
+            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        </div>
+    </div>
+</footer><!-- #footer -->
+
+<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+<!-- JavaScript Libraries -->
+<script src="{% static 'programs/index/lib/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/jquery/jquery-migrate.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/easing/easing.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/superfish/hoverIntent.js' %}"></script>
+<script src="{% static 'programs/index/lib/superfish/superfish.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/wow/wow.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/magnific-popup/magnific-popup.min.js' %}"></script>
+<script src="{% static 'programs/index/lib/sticky/sticky.js' %}"></script>
+<script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+<!-- Contact Form JavaScript File -->
+{#<script src="{% static 'programs/index/contactform/contactform.js' %}"></script>#}
+
+<!-- Template Main Javascript File -->
+<script src="{% static 'programs/index/js/main.js' %}"></script>
+<script src="{% static 'programs/plugins/summernote/summernote-bs4.js'  %}"></script>
+
+<script src="{% static 'programs/plugins/summernote/lang/summernote-es-ES.js'  %}"></script>
+
+
+<script>
+    $(document).ready(function (){
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 7000
+        });
+
+        $(document).on('submit',"form[id*='frm_new_comment']", function (e) {
+                e.preventDefault();
+                thesis_id = $(this).attr('data');
+                var data = new FormData($(this).get(0));
+                $('#frm_new_comment_'+thesis_id)[0].reset();
+
+                var url = "thesis/"+thesis_id+"/new/comment";
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : data, // data sent with the post request
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].uploaded == 1) {
+                            $('.modal').modal('hide');
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Comentario guardado exitosamente'
+                            })
+
+                        } else if(json[0].uploaded == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido guardar el comentario. Errores:'+ json[0].errors
+                            })
+
+                        }
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });        
+                
+
+        $('#frm_auto_request').on('submit', function (e) {
+            e.preventDefault();
+            $('#modal_request_enter').modal('hide');
+            var url = "{% url 'programs:ajx_auto_request' program.slug %}";
+
+            $.ajax({
+                url : url,
+                type : "POST", // http method
+                data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                    'name': $('#inp_name').val(),
+                    'surename': $('#inp_surename').val(),
+                    'email': $('#inp_mail').val(),
+                    'phone': $('#inp_phone').val(),
+                    'dni': $('#inp_dni').val(),
+                    'gender': $('#slc_gender').val(),
+                    'birthdate': $('#inp_birthdate').val(),
+                    'planned_end_year': $('#inp_planned_end_year').val(),
+                    'theme': $('#txt_theme').val(),
+                    'line':$('#slc_line').val(),
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+
+                    if (json[0].requested == 1) {
+
+                        Toast.fire({
+                            type: 'success',
+                            title: 'Solicitud enviada exitosamente. Revise el correo electrónico y siga las instrucciones'
+                        })
+
+                    }
+                    else if(json[0].requested == 0){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'No se ha podido enviar la solicitud.'
+                        })
+
+                    }
+                    else if(json[0].requested == 2){
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Al parecer usted tiene una solicitud pendiente o ya es usuario del sistema.'
+                        })
+
+                    }
+                    console.log(json); // log the returned json to the console
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Uff, ha ocurrido algo desconocido.'
+                    })
+                }
+            });
+
+
+        });
+        $(document).on('hidden.bs.modal','#modal_request_enter', function () {
+            $('#frm_auto_request')[0].reset();
+        });
+    })
+</script>
+</body>
+</html>
