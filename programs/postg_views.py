@@ -1109,7 +1109,7 @@ def docx_postg_report(request, scope):
 
 
                 document.add_heading('Solicitantes de ' + str(program.full_name), level=3)
-                if Student.objects.filter(program=program, phdstudent__status='graduado', request_date__year=now().year):
+                if Student.objects.filter(program=program, phdstudent__status='solicitante', request_date__year=now().year):
                     table = document.add_table(rows=1, cols=3)
                     hdr_cells = table.rows[0].cells
                     hdr_cells[0].text = 'Nombre y apellidos'
@@ -1278,7 +1278,7 @@ def docx_postg_report(request, scope):
 
                 for program in Program.objects.filter(type='phd'):
                     for coordinator in ProgramMember.objects.filter(program=program, role='Coordinador'):
-                        coordinators = coordinators + ',' + coordinator.user.get_full_name
+                        coordinators = coordinators + ',' + coordinator.user.get_full_name()
 
                     row_cells = table.add_row().cells
                     row_cells[0].text = program.full_name
@@ -1655,7 +1655,7 @@ def docx_postg_report(request, scope):
                             row_cells[1].text = 'No declarada'
 
                         row_cells[2].text = str(student.init_date)
-                        row_cells[3].text = str(student.phdstudent.category).capitalize()
+                        row_cells[3].text = str(student.mscstudent.category).capitalize()
                 else:
                     document.add_heading('No se registran nuevos ingresos al programa este año', level=3)
 
@@ -1672,7 +1672,7 @@ def docx_postg_report(request, scope):
                         row_cells = table.add_row().cells
                         row_cells[0].text = str(student.user.get_full_name())
                         row_cells[1].text = str(student.request_date)
-                        row_cells[2].text = str(student.phdstudent.category).capitalize()
+                        row_cells[2].text = str(student.mscstudent.category).capitalize()
 
 
                 else:
@@ -1691,7 +1691,7 @@ def docx_postg_report(request, scope):
                         row_cells = table.add_row().cells
                         row_cells[0].text = str(student.user.get_full_name())
                         row_cells[1].text = str(student.graduate_date.year)
-                        row_cells[2].text = str(student.phdstudent.category).capitalize()
+                        row_cells[2].text = str(student.mscstudent.category).capitalize()
 
 
                 else:

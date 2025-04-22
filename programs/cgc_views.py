@@ -46,6 +46,7 @@ def cgc_index(request):
                 'documents': CGCDocument.objects.filter(is_public=True),
                 'programs': Program.objects.filter(type='phd'),
             }
+
         except ObjectDoesNotExist:
             context = {
                 'error_message': 'Aún no hay miembros en la CGC. Debe asignar miembros.',
