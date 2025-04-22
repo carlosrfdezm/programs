@@ -22,7 +22,7 @@ from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.forms import forms
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404, FileResponse
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404, FileResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.template.defaultfilters import upper
 
