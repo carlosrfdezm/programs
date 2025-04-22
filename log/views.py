@@ -11,10 +11,10 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 from programas.settings import INSTITUTION_FULL_NAME, INSTITUTION_SHORT_NAME, INSTITUTION_ADDRESS, INSTITUTION_EMAIL, \
-    INSTITUTION_PHONE, INSTITUTION_HAS_CGC, INSTITUTION_HAS_POSTG
+    INSTITUTION_PHONE, INSTITUTION_HAS_CGC, INSTITUTION_HAS_POSTG, INSTITUTION_HAS_FORMAC
 from programs.apps import ProgramsConfig
 from programs.models import Program, ProgramMember, CGC_Member, Student, MscStudent, PhdStudent, DipStudent, \
-    PostgMember, PhdAnnouncement
+    PostgMember, PhdAnnouncement, FormationMember, CursStudent, ColegStudent
 
 
 def index(request):
@@ -28,6 +28,8 @@ def index(request):
         'institution_phone': INSTITUTION_PHONE,
         'institution_has_cgc': INSTITUTION_HAS_CGC,
         'institution_has_postg': INSTITUTION_HAS_POSTG,
+        'institution_has_formac': INSTITUTION_HAS_FORMAC,
+
         'next_phd_announcements': PhdAnnouncement.objects.filter(date__gte = now())
     }
     if request.user.is_authenticated:
@@ -69,6 +71,23 @@ def postg_login(request):
             return HttpResponseRedirect(reverse('postg:postg_home'))
 
         except PostgMember.DoesNotExist:
+            return HttpResponse('Pagina de error de acceso postg')
+        
+def formac_login(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(request, username=username, password=password)
+
+    if user is None:
+        return HttpResponseRedirect(reverse('log:index'))
+    elif user is not None:
+        try:
+            formac_member=FormationMember.objects.get(user=user)
+            login(request,user)
+
+            return HttpResponseRedirect(reverse('formac:formac_home'))
+
+        except FormationMember.DoesNotExist:
             return HttpResponse('Pagina de error de acceso postg')
 
 
