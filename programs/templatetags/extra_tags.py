@@ -11,7 +11,7 @@ from datetime import date, timedelta,datetime
 
 from programs.models import ProgramInitRequirements, StudentInitRequirement, ProgramMember, StudentFinishRequirement, \
     ProgramFinishRequirements, CGC_Member, PhdStudent, PhdStudentTheme, InvestigationProject, Student, \
-    StudentFormationPlan, MscStudent, DipStudent, StudentFileDocument, ProgramFileDoc, PhdAnnouncement
+    StudentFormationPlan, MscStudent, DipStudent, StudentFileDocument, ProgramFileDoc, PhdAnnouncement, CursStudent, ColegStudent
 
 register = template.Library()
 
@@ -66,8 +66,17 @@ def init_requirements_accomplished(student, program):
                 accomplished = False
     elif program.type == 'dip':
         for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
-            student_requirement, created = StudentFileDocument.objects.get_or_create(msc_student=student,
-                                                                                     program_file_document=requirement)
+            student_requirement, created = StudentFileDocument.objects.get_or_create(dip_student=student, program_file_document=requirement)
+            if not student_requirement.accomplished:
+                accomplished = False
+    elif program.type == 'curs':
+        for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+            student_requirement, created = StudentFileDocument.objects.get_or_create(curs_student=student, program_file_document=requirement)
+            if not student_requirement.accomplished:
+                accomplished = False
+    elif program.type == 'coleg':
+        for requirement in ProgramFileDoc.objects.filter(program=program, is_init_requirenment=True):
+            student_requirement, created = StudentFileDocument.objects.get_or_create(coleg_student=student, program_file_document=requirement)
             if not student_requirement.accomplished:
                 accomplished = False
 
@@ -110,7 +119,21 @@ def finish_requirements_accomplished(student, program):
                 accomplished = False
     elif program.type == 'dip':
         for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
-            student_requirement, created = StudentFileDocument.objects.get_or_create(msc_student=student,
+            student_requirement, created = StudentFileDocument.objects.get_or_create(dip_student=student,
+                                                                                     program_file_document=requirement)
+            if not student_requirement.accomplished:
+                accomplished = False
+
+    elif program.type == 'curs':
+        for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+            student_requirement, created = StudentFileDocument.objects.get_or_create(curs_student=student,
+                                                                                     program_file_document=requirement)
+            if not student_requirement.accomplished:
+                accomplished = False
+    
+    elif program.type == 'coleg':
+        for requirement in ProgramFileDoc.objects.filter(program=program, is_finish_requirenment=True):
+            student_requirement, created = StudentFileDocument.objects.get_or_create(coleg_student=student,
                                                                                      program_file_document=requirement)
             if not student_requirement.accomplished:
                 accomplished = False
@@ -125,6 +148,12 @@ def student_init_requirement_accomplished(student, program_requirement):
         student_requirement, created=StudentInitRequirement.objects.get_or_create(student=student, requirement=program_requirement)
     elif program_requirement.program.type == 'msc':
         student_requirement, created=StudentInitRequirement.objects.get_or_create(msc_student=student, requirement=program_requirement)
+    elif program_requirement.program.type == 'dip':
+        student_requirement, created=StudentInitRequirement.objects.get_or_create(dip_student=student, requirement=program_requirement)
+    elif program_requirement.program.type == 'curs':
+        student_requirement, created=StudentInitRequirement.objects.get_or_create(curs_student=student, requirement=program_requirement)
+    elif program_requirement.program.type == 'coleg':
+        student_requirement, created=StudentInitRequirement.objects.get_or_create(coleg_student=student, requirement=program_requirement)
 
     if student_requirement.accomplished:
         return True
@@ -140,6 +169,10 @@ def student_doc_caducity_date(student, program_document):
             return StudentFileDocument.objects.get(msc_student=student, program_file_document=program_document).caducity_date
         elif program_document.program.type == 'dip':
             return StudentFileDocument.objects.get(dip_student=student, program_file_document=program_document).caducity_date
+        elif program_document.program.type == 'curs':
+            return StudentFileDocument.objects.get(curs_student=student, program_file_document=program_document).caducity_date
+        elif program_document.program.type == 'coleg':
+            return StudentFileDocument.objects.get(coleg_student=student, program_file_document=program_document).caducity_date
     else:
         return None
 
@@ -182,11 +215,37 @@ def student_doc_has_file(student, program_requirement):
             student_doc.save()
 
             return False
+    
+    elif program.type == 'curs':
+        try:
+            student_doc = StudentFileDocument.objects.get(curs_student=student, program_file_document=program_requirement)
+        except StudentFileDocument.DoesNotExist:
+            student_doc = StudentFileDocument(
+                curs_student=student,
+                program_file_document=program_requirement,
+            )
+            student_doc.save()
+
+            return False
+    
+    elif program.type == 'coleg':
+        try:
+            student_doc = StudentFileDocument.objects.get(coleg_student=student, program_file_document=program_requirement)
+        except StudentFileDocument.DoesNotExist:
+            student_doc = StudentFileDocument(
+                coleg_student=student,
+                program_file_document=program_requirement,
+            )
+            student_doc.save()
+
+            return False
 
     if student_doc.file:
         return True
     else:
         return False
+    
+       
 
 
 @register.simple_tag
@@ -197,7 +256,10 @@ def student_requirement_accomplished(student, program_requirement):
         student_requirement, created=StudentFileDocument.objects.get_or_create(msc_student=student, program_file_document=program_requirement)
     elif program_requirement.program.type == 'dip':
         student_requirement, created=StudentFileDocument.objects.get_or_create(dip_student=student, program_file_document=program_requirement)
-
+    elif program_requirement.program.type == 'curs':
+        student_requirement, created=StudentFileDocument.objects.get_or_create(curs_student=student, program_file_document=program_requirement)
+    elif program_requirement.program.type == 'coleg':
+        student_requirement, created=StudentFileDocument.objects.get_or_create(coleg_student=student, program_file_document=program_requirement)
     if student_requirement.accomplished:
         return True
     else:
@@ -209,8 +271,13 @@ def student_finish_requirement_accomplished(student, program_requirement):
     if program_requirement.program.type == 'phd':
         student_requirement, created=StudentFinishRequirement.objects.get_or_create(student=student, requirement=program_requirement)
     elif program_requirement.program.type == 'msc':
-        student_requirement, created = StudentFinishRequirement.objects.get_or_create(msc_student=student,
-                                                                                      requirement=program_requirement)
+        student_requirement, created = StudentFinishRequirement.objects.get_or_create(msc_student=student,requirement=program_requirement)
+    elif program_requirement.program.type == 'dip':
+        student_requirement, created = StudentFinishRequirement.objects.get_or_create(dip_student=student,requirement=program_requirement)
+    elif program_requirement.program.type == 'curs':
+        student_requirement, created = StudentFinishRequirement.objects.get_or_create(curs_student=student,requirement=program_requirement)
+    elif program_requirement.program.type == 'coleg':
+        student_requirement, created = StudentFinishRequirement.objects.get_or_create(coleg_student=student,requirement=program_requirement)
 
     if student_requirement.accomplished:
         return True
@@ -251,7 +318,19 @@ def student_has_init_requirement_pending(student, program):
         for requirement in StudentFileDocument.objects.filter(msc_student=student, program_file_document__is_init_requirenment=True):
             if not requirement.accomplished:
                 has_pending=True
-
+    
+    elif program.type == 'dip':
+        for requirement in StudentFileDocument.objects.filter(dip_student=student, program_file_document__is_init_requirenment=True):
+            if not requirement.accomplished:
+                has_pending=True
+    elif program.type == 'curs':
+        for requirement in StudentFileDocument.objects.filter(curs_student=student, program_file_document__is_init_requirenment=True):
+            if not requirement.accomplished:
+                has_pending=True
+    elif program.type == 'coleg':
+        for requirement in StudentFileDocument.objects.filter(coleg_student=student, program_file_document__is_init_requirenment=True):
+            if not requirement.accomplished:
+                has_pending=True
     return has_pending
 
 
@@ -281,6 +360,10 @@ def sender_program_student(sender, program):
         return  MscStudent.objects.get(user=sender, program=program)
     elif program.type == 'dip':
         return  DipStudent.objects.get(user=sender, program=program)
+    elif program.type == 'curs':
+        return  CursStudent.objects.get(user=sender, program=program)
+    elif program.type == 'coleg':
+        return  ColegStudent.objects.get(user=sender, program=program)
 
 @register.simple_tag
 def user_is_program_member(user, program):
@@ -310,6 +393,19 @@ def user_is_program_student(user, program):
             return True
         except:
             return False
+        
+    elif program.type == 'curs':
+        try:
+            student=CursStudent.objects.get(user=user, program=program)
+            return True
+        except:
+            return False
+    elif program.type == 'coleg':
+        try:
+            student=ColegStudent.objects.get(user=user, program=program)
+            return True
+        except:
+            return False
 
 
 @register.simple_tag
@@ -317,6 +413,19 @@ def user_is_cgc_ps(user):
     try:
         member=CGC_Member.objects.get(user=user)
         if member.charge == 'Presidente' or member.charge == 'Secretario':
+            return True
+        else:
+            return False
+
+    except:
+        return False
+    
+
+@register.simple_tag
+def user_is_formac_ps(user):
+    try:
+        member=CGC_Member.objects.get(user=user)
+        if member.charge == 'Director' or member.charge == 'Metodólogo':
             return True
         else:
             return False
@@ -370,6 +479,10 @@ def program_requesters(program):
         return MscStudent.objects.filter(status='solicitante', program=program).__len__()
     elif program.type == 'dip':
         return DipStudent.objects.filter(status='solicitante', program=program).__len__()
+    elif program.type == 'curs':
+        return CursStudent.objects.filter(status='solicitante', program=program).__len__()
+    elif program.type == 'coleg':
+        return ColegStudent.objects.filter(status='solicitante', program=program).__len__()
     else:
         return 'Error'
 
@@ -381,6 +494,10 @@ def program_aproved(program):
         return MscStudent.objects.filter(status='maestrante', program=program).__len__()
     elif program.type == 'dip':
         return DipStudent.objects.filter(status='diplomante', program=program).__len__()
+    elif program.type == 'curs':
+        return CursStudent.objects.filter(status='cursista', program=program).__len__()
+    elif program.type == 'coleg':
+        return ColegStudent.objects.filter(status='estudiante', program=program).__len__()
     else:
         return 'Error'
 
@@ -392,6 +509,10 @@ def program_graduated(program):
         return MscStudent.objects.filter(status='graduado', program=program).__len__()
     elif program.type == 'dip':
         return DipStudent.objects.filter(status='graduado', program=program).__len__()
+    elif program.type == 'curs':
+        return CursStudent.objects.filter(status='graduado', program=program).__len__()
+    elif program.type == 'coleg':
+        return ColegStudent.objects.filter(status='graduado', program=program).__len__()
     else:
         return 'Error'
 
