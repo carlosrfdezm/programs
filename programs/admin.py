@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 from programs.models import InvestigationLine, Student, MscStudent, Tuthor, StudentFormationPlan, InnerAreas, \
-    PhdStudent, DipStudent, PostgMember, ProgramSpeciality, New, Requester
-from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember, ProgramFileDoc, ProgramEdition, FAQ
+    PhdStudent, DipStudent, PostgMember, ProgramSpeciality, New, Requester, CursStudent, ColegStudent, StudentOthers
+from .models import Program, CGC_Member, ProgramFinishRequirements, ProgramInitRequirements, ProgramBackgrounds, ProgramMember, ProgramFileDoc, ProgramEdition, FAQ, FormationMember
 
 # Register your models here.
 
@@ -31,6 +31,11 @@ class CGC_MemberAdmin(admin.ModelAdmin):
 
 admin.site.register(CGC_Member, CGC_MemberAdmin)
 
+class FormationMemberAdmin(admin.ModelAdmin):
+    list_display= ('user', 'charge')
+
+admin.site.register(FormationMember, FormationMemberAdmin)
+
 class ProgramMemberAdmin(admin.ModelAdmin):
     list_display = ['user','program','role','weight']
 
@@ -38,6 +43,14 @@ admin.site.register(ProgramMember, ProgramMemberAdmin)
 
 class PhdStudentAdmin(admin.ModelAdmin):
     list_display = ('student','status', 'category')
+
+class CursStudentAdmin(admin.ModelAdmin):
+    list_display=('user', 'status', 'category')
+
+class ColegStudentAdmin(admin.ModelAdmin):
+    list_display=('user', 'status')
+
+admin.site.register(ColegStudent, ColegStudentAdmin)
 
 class NewAdmin(admin.ModelAdmin):
     list_display = ['program','date', 'title', ]
@@ -50,6 +63,10 @@ admin.site.register(New, NewAdmin)
 admin.site.register(ProgramEdition, ProgramEditionAdmin)
 
 admin.site.register(PhdStudent, PhdStudentAdmin)
+
+admin.site.register(CursStudent, CursStudentAdmin)
+
+
 
 admin.site.register(InvestigationLine)
 
