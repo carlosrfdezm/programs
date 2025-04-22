@@ -2,7 +2,7 @@ import random
 
 from django.contrib.auth.models import User
 
-from programs.models import ProgramMember, Student, CGC_Member, Tuthor, MscStudent, DipStudent
+from programs.models import ProgramMember, Student, CGC_Member, Tuthor, MscStudent, DipStudent, CursStudent, ColegStudent
 from django.core.mail import send_mail
 from django.template import loader
 
@@ -68,7 +68,20 @@ def user_is_program_student(user, program):
             return True
         except:
             return False
-
+    elif program.type == 'curs':
+        try:
+            student=CursStudent.objects.get(user=user, program=program)
+            return True
+        except:
+            return False
+        
+    elif program.type == 'coleg':
+        try:
+            student=ColegStudent.objects.get(user=user, program=program)
+            return True
+        except:
+            return False
+        
 #Los mensajes pueden ser de tipo wm (welcome_message), nc (new court), o custom (enviado por otro miembro)
 def utils_send_email(request, type, sender_email, member, subject, body, program, psw):
     if type == 'wm':
@@ -115,6 +128,9 @@ def request_send_email(request, type, requester, program):
 
 def create_new_tuthor(request, program, first_name,last_name,institution, email,student):
     success=[]
+    if not email:
+        email = f"{first_name.lower()}.{last_name.lower()}@notprovided.com"
+
     try:
         user = User.objects.get(username=email)
         try:
@@ -131,6 +147,24 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
             elif program.type == 'msc':
                 new_tuthor = Tuthor(
                     msc_student=student,
+                    professor=member,
+                )
+                new_tuthor.save()
+                success.append(True)
+                success.append(new_tuthor.id)
+                return success
+            elif program.type == 'curs':
+                new_tuthor = Tuthor(
+                    curs_student=student,
+                    professor=member,
+                )
+                new_tuthor.save()
+                success.append(True)
+                success.append(new_tuthor.id)
+                return success
+            elif program.type == 'coleg':
+                new_tuthor = Tuthor(
+                    coleg_student=student,
                     professor=member,
                 )
                 new_tuthor.save()
@@ -158,6 +192,25 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
             elif program.type == 'msc':
                 new_tuthor = Tuthor(
                     msc_student=student,
+                    professor=new_member,
+                )
+                new_tuthor.save()
+                success.append(True)
+                success.append(new_tuthor.id)
+                return success
+            
+            elif program.type == 'curs':
+                new_tuthor = Tuthor(
+                    curs_student=student,
+                    professor=new_member,
+                )
+                new_tuthor.save()
+                success.append(True)
+                success.append(new_tuthor.id)
+                return success
+            elif program.type == 'coleg':
+                new_tuthor = Tuthor(
+                    coleg_student=student,
                     professor=new_member,
                 )
                 new_tuthor.save()
@@ -199,6 +252,28 @@ def create_new_tuthor(request, program, first_name,last_name,institution, email,
         elif program.type == 'msc':
             new_tuthor = Tuthor(
                 msc_student=student,
+                professor=new_member,
+            )
+            new_tuthor.save()
+            utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+            success.append(True)
+            success.append(new_tuthor.id)
+            return success
+        
+        elif program.type == 'curs':
+            new_tuthor = Tuthor(
+                curs_student=student,
+                professor=new_member,
+            )
+            new_tuthor.save()
+            utils_send_email(request, 'wm', program.email, student, '', '', program, passwd)
+            success.append(True)
+            success.append(new_tuthor.id)
+            return success
+        
+        elif program.type == 'coleg':
+            new_tuthor = Tuthor(
+                coleg_student=student,
                 professor=new_member,
             )
             new_tuthor.save()
