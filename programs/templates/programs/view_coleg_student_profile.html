@@ -110,30 +110,11 @@
                                             <input class="form-control" readonly value="{{ student.category|capfirst }}">
 
                                         </div>
-                                        {% if student.category == 'externo' %}
-                                            <div class="form-group col-md-6" id="div_workcenter">
-                                                <label for="inp_center" id="lbl_inp_center">Centro de Trabajo:</label>
-                                                <input class="form-control" type="text" id="inp_center" required name="student_center" readonly placeholder="Centro de trabajo del estudiante" value="{{ student.center }}">
-
-                                            </div>
-                                        {% elif student.category == 'interno' %}
-                                            <div class="form-group col-md-6" id="div_workcenter">
-                                                <label for="slc_center" id="lbl_slc_center">Área administrativa:</label>
-                                                <input class="form-control" type="text" id="inp_center" required name="student_center" readonly placeholder="Centro de trabajo del estudiante" value="{{ student.center }}">
-
-
-                                            </div>
-                                        {% endif %}
+                                        
                                     </div>
                                     <div class="form-row">
 
-
-
-
-                                        <div class="form-group col-md-4">
-                                            <label for="inp_request_date">Fecha de solicitud: </label>
-                                            <input type="date" readonly class="form-control" id="inp_request_date" name="request_date" value="{{ student.request_date|date:'Y-m-d' }}" required>
-                                        </div>
+                                              
 
 
 
@@ -150,47 +131,7 @@
 
                                     </div>
                                     <hr>
-                                    <h4><strong>Tema de investigación:</strong></h4>
-
-                                    <div class="form-row">
-                                        <div class="form-group col-md-12">
-                                            <label for="txt_theme">Tema:</label>
-                                            <textarea class="form-control" readonly id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2">{{ student.mscstudenttheme }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-12">
-                                            <label for="slc_project">Proyecto asociado:</label>
-                                            <input class="form-control" readonly value="{{ student.mscstudent.mscstudenttheme.project }}">
-
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="form-row">
-                                        <div class="col-md-12">
-                                            <h4><strong>Tutores:</strong></h4>
-                                        </div>
-
-                                    </div>
-                                    {% if student.mscstudent.tuthor_set.all %}
-                                        {% for tuthor in student.mscstudent.tuthor_set.all %}
-                                            <div class="form-row">
-                                                <div class="form-group col-md-12">
-                                                    <input class="form-control" readonly value="{{ tuthor.professor.user.get_full_name }}">
-                                                </div>
-                                            </div>
-
-                                        {% endfor %}
-                                    {% else %}
-                                        <div class="alert alert-warning col-md-10 offset-1" id="div_no_tuthors">
-                                            <h4 class="text-center"><i class="text-white fa fa-exclamation-triangle"></i> Este estudiante no tiene tutores asignados</h4>
-                                        </div>
-                                    {% endif %}
-
-                                    <section id="div_new_tuthors">
-
-                                    </section>
-                                    <hr>
+                                    
                                     <h5><strong>Requisitos de ingreso</strong></h5>
                                     <div class="row">
                                         <div class="col-md-12">
@@ -252,49 +193,7 @@
             </div><!-- /.container-fluid -->
         </section>
 
-        <div class="modal fade" id="modal_add_tuthor">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Agregar nuevo tutor a {{ student }}</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form id="frm_add_tuthor" method="post">
-                        <div class="modal-body alert alert-success">
-
-                            <div class="form-row align-items-center pb-2" id="div_tuthor_1">
-                                <div class="col-md-2">
-                                    <input type="email" class="form-control" id="inp_tuthor_email" data="1" name="tuthor_email" placeholder="Email del tutor" required></input>
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" readonly  id="inp_tuthor_name" name="tuthor_name" placeholder="Nombre(s) del tutor" required></input>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" readonly  id="inp_tuthor_lastname" name="tuthor_lastname" placeholder="Apellidos del tutor" required></input>
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" readonly  id="inp_tuthor_institution" name="tuthor_institution" placeholder="Institución del tutor" required></input>
-                                </div>
-
-
-
-                            </div>
-
-
-
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success" id="btn_msg_member_{{ member.id }}">Enviar</button>
-                        </div>
-                    </form>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
+        
     {% endif %}
     <!-- /.content -->
 {% endblock %}
@@ -318,18 +217,19 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            var tutores = {{ student.mscstudent.tuthor_set.all.count }};
+            var tutores = {{ student.colegstudent.tuthor_set.all.count }};
 
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
                 timer: 7000
-            });
-            {#bsCustomFileInput.init();#}
-
-
-            $(document).on('keyup','#inp_email', function () {
+        });
+        {#bsCustomFileInput.init();#}
+         
+        
+        
+        $(document).on('keyup','#inp_email', function () {
                 var email = $('#inp_email').val();
                 var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
                 if(emailReg.test( email ) && email != ''){
@@ -387,65 +287,7 @@
 
 
             });
-            $(document).on('keyup', '#inp_tuthor_email', function () {
-                var index = $(this).attr('data');
-                var email = $(this).val();
-                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-                if(emailReg.test( email ) && email != ''){
-                    var url = "{% url 'programs:ajx_program_member_tuthor' program.slug %}"
-                    $.ajax({
-                        url : url,
-                        type : "POST", // http method
-                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                            'tuthor_email':email,
-                        }, // data sent with the post request
-
-                        // handle a successful response
-                        success : function(json) {
-
-                            if (json[0] == 1) {
-
-                                $('#inp_tuthor_name').attr('readonly','readonly');
-                                $('#inp_tuthor_lastname').attr('readonly','readonly');
-                                $('#inp_tuthor_institution').attr('readonly','readonly');
-                                $('#inp_tuthor_name').val(json[1][0]);
-                                $('#inp_tuthor_lastname').val(json[1][1]);
-                                $('#inp_tuthor_institution').val(json[1][2]);
-
-                            } else if(json[0] == 0){
-
-                                $('#inp_tuthor_name').removeAttr('readonly');
-                                $('#inp_tuthor_lastname').removeAttr('readonly');
-                                $('#inp_tuthor_institution').removeAttr('readonly');
-
-
-                            }
-                            console.log(json); // log the returned json to the console
-                            console.log("success"); // another sanity check
-
-
-
-
-                            {#$('#div_by_workshop').removeClass('hidden')#}
-
-                        },
-
-                        // handle a non-successful response
-                        error : function(xhr,errmsg,err) {
-                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                        }
-                    });
-                }
-                else{
-                    $('#inp_tuthor_name_'+index).attr('readonly','readonly');
-                    $('#inp_tuthor_lastname_'+index).attr('readonly','readonly');
-                    $('#inp_tuthor_institution_'+index).attr('readonly','readonly');
-
-                }
-            });
-
+                        
             $(document).on('change','#exampleInputFile', function () {
                 var fileUpload = this;
                 var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
@@ -503,7 +345,7 @@
                 if(mm<10){mm='0'+mm}
                 today = yyyy+'-'+mm+'-'+dd;
 
-                if($(this).val()=='maestrante'){
+                if($(this).val()=='estudiante'){
                     $('#inp_init_date').val(today);
                 }
                 if($(this).val()=='graduado'){
@@ -579,99 +421,7 @@
                 $(div_selector).remove();
 
             });
-            $('#frm_add_tuthor').on('submit', function (e) {
-                e.preventDefault();
-                var url = "{% url 'programs:ajx_create_tuthor' program.slug student.id%}";
-
-
-
-                $.ajax({
-                    url : url,
-                    type : "POST", // http method
-                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                        'tuthor_name':$('#inp_tuthor_name').val(),
-                        'tuthor_email':$('#inp_tuthor_email').val(),
-                        'tuthor_lastname':$('#inp_tuthor_lastname').val(),
-                        'tuthor_institution':$('#inp_tuthor_institution').val(),
-                    }, // data sent with the post request
-
-                    // handle a successful response
-                    success : function(json) {
-
-
-
-                        $('#frm_add_tuthor')[0].reset();
-
-                        if (json[0].created == 1) {
-                            tutores = tutores +1;
-
-                            Toast.fire({
-                                type: 'success',
-                                title: 'Tutor agregado exitosamente'
-                            })
-
-                            var new_tuthor_div = '<div class="form-row align-items-center pb-2" id="div_tuthor_'+json[0].id+'">\n' +
-                                '                                    <div class="col-md-2">\n' +
-                                '                                        <input type="email" class="form-control" readonly id="inp_tuthor_email_'+json[0].id+'" data="'+json[0].id+'" name="tuthor_email_'+json[0].id+'" placeholder="Email del tutor" value="'+json[0].email +'"  required="">\n' +
-                                '                                    </div>\n' +
-                                '                                    <div class="col-md-2">\n' +
-                                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_name_'+json[0].id+'" name="tuthor_name_'+json[0].id+'" placeholder="Nombre(s) del tutor" value="'+json[0].name +'" required="">\n' +
-                                '                                    </div>\n' +
-                                '                                    <div class="col-md-3">\n' +
-                                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_lastname_'+json[0].id+'" name="tuthor_lastname_'+json[0].id+'" placeholder="Apellidos del tutor" value="'+json[0].lastname +'" required="">\n' +
-                                '                                    </div>\n' +
-                                '                                    <div class="col-md-4">\n' +
-                                '                                        <input type="text" class="form-control" readonly="" id="inp_tuthor_institution_'+json[0].id+'" name="tuthor_institution_'+json[0].id+'" placeholder="Institución del tutor" value="'+json[0].institution +'" required="">\n' +
-                                '                                    </div>\n' +
-                                '                                    <div class="col-md-1 pl-4 " id="div_rm_tuthor_'+json[0].id+'">\n' +
-                                '                                        <button type="button" class="text-white btn btn-sm btn-danger" id="btn_rm_tuthor_'+json[0].id+'" data="'+json[0].id+'" title="Eliminar tutor"><i class="fa fa-minus"></i> </button>' +
-                                '                                    </div>\n' +
-                                '\n' +
-                                '\n' +
-                                '                                </div>';
-                            $('#div_no_tuthors').remove();
-                            $('#div_new_tuthors').append(new_tuthor_div);
-
-
-                        } else if(json[0].deleted == 0){
-                            Toast.fire({
-                                type: 'error',
-                                title: 'No se ha podido agregar al tutor indicado.'
-                            })
-
-                        }
-                        else if(json[0].deleted == 2){
-                            Toast.fire({
-                                type: 'error',
-                                title: 'Usted no puede agregar tutores.'
-                            })
-
-                        }
-                        cons
-                        console.log(json); // log the returned json to the console
-                        console.log("success"); // another sanity check
-
-
-
-
-                        $('#div_by_workshop').removeClass('hidden')
-
-                    },
-
-                    // handle a non-successful response
-                    error : function(xhr,errmsg,err) {
-                        Toast.fire({
-                            type: 'error',
-                            title: 'Uff, ha ocurrido algo desconocido.'
-                        });
-                        $('#frm_add_tuthor')[0].reset();
-                    }
-                });
-
-                $('#modal_add_tuthor').modal('hide');
-
-
-            });
+            
             $(document).on('change','#slc_category',function () {
                 if($(this).val()=='interno'){
                     $('#div_workcenter').replaceWith('<div class="form-group col-md-6" id="div_workcenter">\n' +

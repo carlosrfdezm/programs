@@ -1,7 +1,7 @@
-{% extends 'programs/base.html' %}
+{% extends 'programs/formac/formac_base.html' %}
 {% load static %}
 
-{% block content %}
+{% block formac_content %}
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -10,7 +10,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-3">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item active"><a href="">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="{% url 'formac:formac_home' %}">Dashboard</a></li>
                         <li class="breadcrumb-item active">Estadísticas</li>
                     </ol>
                 </div><!-- /.col -->
@@ -127,64 +127,20 @@
 
             <div class="row">
                 <div class="col-md-6 col-sm-6">
+                        
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title"><strong>Estudiantes por Línea de investigación</strong></h5>
-
-                            <div class="card-tools">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                                        <i class="fas fa-wrench"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">
-                                        <a class="dropdown-item stat" id="a_sbl_requesters" >Solicitantes</a>
-                                        {% if program.type == 'phd' %}
-                                            <a class="dropdown-item stat" id="a_sbl_aproved" >Doctorandos</a>
-                                        {% elif program.type == 'msc' %}
-                                            <a class="dropdown-item stat" id="a_sbl_aproved" >Maestrantes</a>
-                                        {% endif %}
-                                        <a class="dropdown-item stat" id="a_sbl_graduated" >Graduados</a>
-
-                                    </div>
-                                </div>
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                {#                                <div class="btn-group">#}
-                                {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
-                                {#                                        <i class="fas fa-wrench"></i>#}
-                                {#                                    </button>#}
-                                {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
-                                {##}
-                                {#                                    </div>#}
-                                {#                                </div>#}
-                                {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
-                                {#                    <i class="fas fa-times"></i>#}
-                                {#                  </button>#}
-                            </div>
+                            <h5 class="card-title"><strong>Estudiantes por centro de procedencia</strong></h5>
                         </div>
-                        <!-- /.card-header -->
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12 col-sm-12">
-
-
-                                    <div class="chart" id="div_requestChartLines">
-                                        <!-- Sales Chart Canvas -->
-                                        <canvas id="requestChartLines"  style="height: 230px;"></canvas>
-                                    </div>
-                                    <!-- /.chart-responsive -->
-                                </div>
-                                <!-- /.col -->
-
-                                <!-- /.col -->
+                            <div class="chart" id="div_ChartCenters">
+                                <canvas id="studentsByCenterChart" height="155" style="height: 200px;"></canvas>
                             </div>
-                            <!-- /.row -->
                         </div>
-
-
                     </div>
-                    <!-- /.card -->
+                
+                            
+                
                 </div>
                 <div class="col-md-6 col-sm-6">
                     <div class="card">
@@ -234,11 +190,12 @@
 
                 <!-- /.col -->
             </div>
+            {% if program.type == 'coleg' or program.type == 'curs' %}
             <div class="row">
-                <div class="col-md-8 col-sm-8">
+                <div class="col-md-6 col-sm-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title"><strong>Estudiantes por países</strong></h5>
+                            <h5 class="card-title"><strong>Estudiantes por ediciones</strong></h5>
 
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -262,9 +219,10 @@
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
 
-                                    <div class="chart" id="div_StudentsChartCountry">
+
+                                    <div class="chart" id="div_barChartEditionStudents">
                                         <!-- Sales Chart Canvas -->
-                                        <canvas id="requestChartCountry" height="280" style="height: 230px;"></canvas>
+                                        <canvas id="barChartEditionStudents"  style="height: 230px;"></canvas>
                                     </div>
                                     <!-- /.chart-responsive -->
                                 </div>
@@ -279,10 +237,10 @@
                     </div>
                     <!-- /.card -->
                 </div>
-                <div class="col-md-4 col-sm-4">
+                <div class="col-md-6 col-sm-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title"><strong>Estudiantes por categoría</strong></h5>
+                            <h5 class="card-title"><strong>Graduados por ediciones</strong></h5>
 
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -306,13 +264,9 @@
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
 
-
-                                    <div class="chart-responsive" id="div_ChartCategory">
-                                        <canvas id="donutChartCategory"  height="209px"></canvas>
-                                    </div>
-                                    <div class="mt-4 text-center small">
-
-
+                                    <div class="chart" id="div_barChartEditionsGraduated">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="barChartEditionsGraduated" height="280" style="height: 230px;"></canvas>
                                     </div>
                                     <!-- /.chart-responsive -->
                                 </div>
@@ -327,106 +281,10 @@
                     </div>
                     <!-- /.card -->
                 </div>
-
 
 
                 <!-- /.col -->
             </div>
-            {% if program.type == 'msc' or program.type == 'dip' or program.type == 'curs' or program.type == 'coleg' %}
-                <div class="row">
-                    <div class="col-md-6 col-sm-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title"><strong>Estudiantes por ediciones</strong></h5>
-
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    {#                                <div class="btn-group">#}
-                                    {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
-                                    {#                                        <i class="fas fa-wrench"></i>#}
-                                    {#                                    </button>#}
-                                    {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
-                                    {##}
-                                    {#                                    </div>#}
-                                    {#                                </div>#}
-                                    {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
-                                    {#                    <i class="fas fa-times"></i>#}
-                                    {#                  </button>#}
-                                </div>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12 col-sm-12">
-
-
-                                        <div class="chart" id="div_barChartEditionStudents">
-                                            <!-- Sales Chart Canvas -->
-                                            <canvas id="barChartEditionStudents"  style="height: 230px;"></canvas>
-                                        </div>
-                                        <!-- /.chart-responsive -->
-                                    </div>
-                                    <!-- /.col -->
-
-                                    <!-- /.col -->
-                                </div>
-                                <!-- /.row -->
-                            </div>
-
-
-                        </div>
-                        <!-- /.card -->
-                    </div>
-                    <div class="col-md-6 col-sm-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title"><strong>Graduados por ediciones</strong></h5>
-
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    {#                                <div class="btn-group">#}
-                                    {#                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">#}
-                                    {#                                        <i class="fas fa-wrench"></i>#}
-                                    {#                                    </button>#}
-                                    {#                                    <div class="dropdown-menu dropdown-menu-right" id="div_st_1" role="menu">#}
-                                    {##}
-                                    {#                                    </div>#}
-                                    {#                                </div>#}
-                                    {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
-                                    {#                    <i class="fas fa-times"></i>#}
-                                    {#                  </button>#}
-                                </div>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12 col-sm-12">
-
-                                        <div class="chart" id="div_barChartEditionsGraduated">
-                                            <!-- Sales Chart Canvas -->
-                                            <canvas id="barChartEditionsGraduated" height="280" style="height: 230px;"></canvas>
-                                        </div>
-                                        <!-- /.chart-responsive -->
-                                    </div>
-                                    <!-- /.col -->
-
-                                    <!-- /.col -->
-                                </div>
-                                <!-- /.row -->
-                            </div>
-
-
-                        </div>
-                        <!-- /.card -->
-                    </div>
-
-
-                    <!-- /.col -->
-                </div>
             {% endif %}
             <div class="row">
                 <div class="col-md-4 col-sm-4">
@@ -477,7 +335,7 @@
                 <div class="col-md-8 col-sm-8">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title"><strong>Profesores por rango etario</strong></h5>
+                            <h5 class="card-title"><strong>Profesores por rango etario </strong></h5>
 
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -524,7 +382,6 @@
             </div>
 
 
-
             <!-- /.row -->
 
             <!-- Main row -->
@@ -537,12 +394,12 @@
 {% block extra_scripts %}
     <script>
         $(document).ready(function () {
-            var div_court='<div class="jumbotron" id="requestChartLines" style="height: 205px;">'+
+            var div_court='<div class="jumbotron" style="height: 205px;">'+
                 '<h3 class="text-center"><i class="text-warning fas fa-exclamation-triangle"></i> No hay datos disponibles. </h3>'+
                 '</div>';
 
             $.ajax({
-                url : "{% url 'programs:ajx_last_years_requests' program.slug %}", // the endpoint
+                url : "{% url 'formac:ajx_formac_program_last_years_requests' program.slug %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -632,348 +489,73 @@
                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                 }
             });
+            // Gráfico de estudiantes por centro
             $.ajax({
-                url : "{% url 'programs:ajx_students_by_line' program.slug 'all' %}", // the endpoint
-                type : "GET", // http method
-                data : {
-                }, // data sent with the post request
-
-                // handle a successful response
-                success : function(json) {
-                    var total = 0;
-                    for(var i=0;i<json[1].length;i++){
-
-                        total = total + json[1][i];
-
-                    }
-                    if(total>0){
-
-                        var barChartData = {
-                            labels  : json[0],
-                            datasets: [
-                                {
-                                    label               : 'Estudiantes vinculados',
-                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
-                                    borderColor         : 'rgba(11,15,255,0.8)',
-                                    pointRadius          : 2,
-                                    pointColor          : '#3b8bba',
-                                    pointStrokeColor    : 'rgba(60,141,188,1)',
-                                    pointHighlightFill  : '#fff',
-                                    pointHighlightStroke: 'rgba(60,141,188,1)',
-                                    data                : json[1],
-                                },
-
-
-                            ]
-                        };
-
-                        var barChartOptions = {
-                            maintainAspectRatio : false,
-                            responsive : true,
-                            legend: {
-                                display: false
-                            },
-                            scales: {
-                                xAxes: [{
-                                    gridLines : {
-                                        display : false,
-                                    }
-                                }],
-                                yAxes: [{
-
-                                    gridLines : {
-                                        display : false,
-                                    },
-
+                url: "{% url 'formac:ajx_students_by_center' program.slug %}",
+                type: "GET",
+                success: function(json) {
+                    if(json.total > 0){
+                        var ctx = document.getElementById('studentsByCenterChart').getContext('2d');
+                        var chart = new Chart(ctx, {
+                            type: 'bar', // Puedes cambiar a 'pie' o 'doughnut' si prefieres
+                            data: {
+                                labels: json.labels,
+                                datasets: [{
+                                    label: 'Estudiantes',
+                                    data: json.data,
+                                    backgroundColor: [
+                                        'rgba(54, 162, 235, 0.6)',
+                                        'rgba(255, 99, 132, 0.6)',
+                                        'rgba(75, 192, 192, 0.6)',
+                                        'rgba(255, 206, 86, 0.6)',
+                                        'rgba(153, 102, 255, 0.6)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 99, 132, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(153, 102, 255, 1)'
+                                    ],
+                                    borderWidth: 1
                                 }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                var label = context.label || '';
+                                                var value = context.raw || 0;
+                                                var percentage = Math.round((value / json.total) * 100);
+                                                return label + ': ' + value + ' (' + percentage + '%)';
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
                             }
-                        };
-                        var barChartCanvas=$('#requestChartLines');
-                        var barChart       = new Chart(barChartCanvas, {
-                            type: 'bar',
-                            data: barChartData,
-                            options: barChartOptions
                         });
-                        console.log(json);
+                    } else {
+                        $('#div_ChartCenters').html('<div class="alert alert-info">No hay datos disponibles</div>');
                     }
-
-                    else {
-                        $('#div_requestChartLines').replaceWith(div_court);
-
-                    }
-
                 },
-
-                // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                error: function(xhr, errmsg, err) {
+                    $('#div_ChartCenters').html('<div class="alert alert-danger">Error al cargar los datos</div>');
+                    console.log(xhr.status + ": " + xhr.responseText);
                 }
             });
-            $('#a_sbl_requesters').click(function (){
-
-                $.ajax({
-                    url : "{% url 'programs:ajx_students_by_line' program.slug 'requesters' %}", // the endpoint
-                    type : "GET", // http method
-                    data : {
-                    }, // data sent with the post request
-
-                    // handle a successful response
-                    success : function(json) {
-                        var total = 0;
-                        for(var i=0;i<json[1].length;i++){
-
-                            total = total + json[1][i];
-
-                        }
-                        if(total>0){
-
-                            var barChartData = {
-                                labels  : json[0],
-                                datasets: [
-                                    {
-                                        label               : 'Solicitantes vinculados',
-                                        backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
-                                        borderColor         : 'rgba(11,15,255,0.8)',
-                                        pointRadius          : 2,
-                                        pointColor          : '#3b8bba',
-                                        pointStrokeColor    : 'rgba(60,141,188,1)',
-                                        pointHighlightFill  : '#fff',
-                                        pointHighlightStroke: 'rgba(60,141,188,1)',
-                                        data                : json[1],
-                                    },
-
-
-                                ]
-                            };
-
-                            var barChartOptions = {
-                                maintainAspectRatio : false,
-                                responsive : true,
-                                legend: {
-                                    display: false
-                                },
-                                scales: {
-                                    xAxes: [{
-                                        gridLines : {
-                                            display : false,
-                                        }
-                                    }],
-                                    yAxes: [{
-
-                                        gridLines : {
-                                            display : false,
-                                        },
-
-                                    }]
-                                }
-                            };
-                            $('#requestChartLines').replaceWith('<canvas id="requestChartLines"  style="height: 230px;"></canvas>');
-                            var barChartCanvas=$('#requestChartLines');
-                            var barChart       = new Chart(barChartCanvas, {
-                                type: 'bar',
-                                data: barChartData,
-                                options: barChartOptions
-                            });
-                            console.log(json);
-                        }
-
-                        else {
-                            $('#div_requestChartLines').replaceWith(div_court);
-
-                        }
-
-                    },
-
-                    // handle a non-successful response
-                    error : function(xhr,errmsg,err) {
-                        $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                            " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                    }
-                });
-            });
-            $('#a_sbl_aproved').click(function (){
-
-                $.ajax({
-                    url : "{% url 'programs:ajx_students_by_line' program.slug 'aproved' %}", // the endpoint
-                    type : "GET", // http method
-                    data : {
-                    }, // data sent with the post request
-
-                    // handle a successful response
-                    success : function(json) {
-                        var total = 0;
-                        for(var i=0;i<json[1].length;i++){
-
-                            total = total + json[1][i];
-
-                        }
-                        if(total>0){
-
-                            var barChartData = {
-                                labels  : json[0],
-                                datasets: [
-                                    {
-                                        {% if program.type == 'phd' %}
-                                            label               : 'Doctorandos vinculados',
-                                        {% elif program.type == 'msc' %}
-                                            label               : 'Maestrantes vinculados',
-                                        {% elif program.type == 'curs' %}
-                                            label               : 'Cursistas vinculados',
-                                        {% elif program.type == 'coleg' %}
-                                            label               : 'Colegio vinculados',
-
-                                        {% endif %}
-                                        backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
-                                        borderColor         : 'rgba(11,15,255,0.8)',
-                                        pointRadius          : 2,
-                                        pointColor          : '#3b8bba',
-                                        pointStrokeColor    : 'rgba(60,141,188,1)',
-                                        pointHighlightFill  : '#fff',
-                                        pointHighlightStroke: 'rgba(60,141,188,1)',
-                                        data                : json[1],
-                                    },
-
-
-                                ]
-                            };
-
-                            var barChartOptions = {
-                                maintainAspectRatio : false,
-                                responsive : true,
-                                legend: {
-                                    display: false
-                                },
-                                scales: {
-                                    xAxes: [{
-                                        gridLines : {
-                                            display : false,
-                                        }
-                                    }],
-                                    yAxes: [{
-
-                                        gridLines : {
-                                            display : false,
-                                        },
-
-                                    }]
-                                }
-                            };
-                            $('#requestChartLines').replaceWith('<canvas id="requestChartLines"  style="height: 230px;"></canvas>');
-
-                            var barChartCanvas=$('#requestChartLines');
-                            var barChart       = new Chart(barChartCanvas, {
-                                type: 'bar',
-                                data: barChartData,
-                                options: barChartOptions
-                            });
-                            console.log(json);
-                        }
-
-                        else {
-                            $('#div_requestChartLines').replaceWith(div_court);
-
-                        }
-
-                    },
-
-                    // handle a non-successful response
-                    error : function(xhr,errmsg,err) {
-                        $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                            " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                    }
-                });
-            });
-            $('#a_sbl_graduated').click(function (){
-
-                $.ajax({
-                    url : "{% url 'programs:ajx_students_by_line' program.slug 'graduated' %}", // the endpoint
-                    type : "GET", // http method
-                    data : {
-                    }, // data sent with the post request
-
-                    // handle a successful response
-                    success : function(json) {
-                        var total = 0;
-                        for(var i=0;i<json[1].length;i++){
-
-                            total = total + json[1][i];
-
-                        }
-                        if(total>0){
-
-                            var barChartData = {
-                                labels  : json[0],
-                                datasets: [
-                                    {
-
-                                        label               : 'Graduados vinculados',
-                                        backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
-                                        borderColor         : 'rgba(11,15,255,0.8)',
-                                        pointRadius          : 2,
-                                        pointColor          : '#3b8bba',
-                                        pointStrokeColor    : 'rgba(60,141,188,1)',
-                                        pointHighlightFill  : '#fff',
-                                        pointHighlightStroke: 'rgba(60,141,188,1)',
-                                        data                : json[1],
-                                    },
-
-
-                                ]
-                            };
-
-                            var barChartOptions = {
-                                maintainAspectRatio : false,
-                                responsive : true,
-                                legend: {
-                                    display: false
-                                },
-                                scales: {
-                                    xAxes: [{
-                                        gridLines : {
-                                            display : false,
-                                        }
-                                    }],
-                                    yAxes: [{
-
-                                        gridLines : {
-                                            display : false,
-                                        },
-
-                                    }]
-                                }
-                            };
-                            $('#requestChartLines').replaceWith('<canvas id="requestChartLines"  style="height: 230px;"></canvas>');
-
-                            var barChartCanvas=$('#requestChartLines');
-                            var barChart       = new Chart(barChartCanvas, {
-                                type: 'bar',
-                                data: barChartData,
-                                options: barChartOptions
-                            });
-                            console.log(json);
-                        }
-
-                        else {
-                            $('#div_requestChartLines').replaceWith(div_court);
-
-                        }
-
-                    },
-
-                    // handle a non-successful response
-                    error : function(xhr,errmsg,err) {
-                        $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                            " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                    }
-                });
-            });
+            
             $.ajax({
-                url : "{% url 'programs:ajx_students_by_edition' program.slug %}", // the endpoint
+                url : "{% url 'formac:ajx_formac_program_students_by_edition' program.slug %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -1052,7 +634,7 @@
                 }
             });
             $.ajax({
-                url : "{% url 'programs:ajx_graduated_by_edition' program.slug %}", // the endpoint
+                url : "{% url 'formac:ajx_formac_program_graduated_by_edition' program.slug %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -1130,9 +712,8 @@
                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                 }
             });
-
             $.ajax({
-                url : "{% url 'programs:ajx_students_by_age' program.slug %}", // the endpoint
+                url : "{% url 'formac:ajx_formac_program_students_by_age' program.slug %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -1210,90 +791,8 @@
                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                 }
             });
-
-
-
             $.ajax({
-                url : "{% url 'programs:ajx_students_by_country' program.slug %}", // the endpoint
-                type : "GET", // http method
-                data : {
-                }, // data sent with the post request
-
-                // handle a successful response
-                success : function(json) {
-                    var total = 0;
-                    for(var i=0;i<json[1].length;i++){
-
-                        total = total + json[1][i];
-
-                    }
-                    if(total>0){
-
-                        var barChartData = {
-                            labels  : json[0],
-                            datasets: [
-                                {
-                                    label               : 'Estudiantes del país',
-                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
-                                    borderColor         : 'rgba(11,15,255,0.8)',
-                                    pointRadius          : 2,
-                                    pointColor          : '#3b8bba',
-                                    pointStrokeColor    : 'rgba(60,141,188,1)',
-                                    pointHighlightFill  : '#fff',
-                                    pointHighlightStroke: 'rgba(60,141,188,1)',
-                                    data                : json[1],
-                                },
-
-
-                            ]
-                        };
-
-                        var barChartOptions = {
-                            maintainAspectRatio : false,
-                            responsive : true,
-                            legend: {
-                                display: false
-                            },
-                            scales: {
-                                xAxes: [{
-                                    gridLines : {
-                                        display : false,
-                                    }
-                                }],
-                                yAxes: [{
-
-                                    gridLines : {
-                                        display : false,
-                                    },
-
-                                }]
-                            }
-                        };
-                        var barChartCanvas=$('#requestChartCountry');
-                        var barChart       = new Chart(barChartCanvas, {
-                            type: 'bar',
-                            data: barChartData,
-                            options: barChartOptions
-                        });
-                        console.log(json);
-                    }
-
-                    else {
-                        $('#div_StudentsChartCountry').replaceWith(div_court);
-
-                    }
-
-                },
-
-                // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                }
-            });
-            $.ajax({
-                url : "{% url 'programs:ajx_members_by_age' program.slug %}", // the endpoint
+                url : "{% url 'cgc:ajx_program_members_by_age' program.slug %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -1373,7 +872,7 @@
             });
 
             $.ajax({
-                url : "{% url 'programs:ajx_students_by_sex' program.slug %}", // the endpoint
+                url : "{% url 'formac:ajx_formac_program_students_by_gender' program.slug %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -1428,62 +927,7 @@
                 }
             });
             $.ajax({
-                url : "{% url 'programs:ajx_students_by_category' program.slug %}", // the endpoint
-                type : "GET", // http method
-                data : {
-                }, // data sent with the post request
-
-                // handle a successful response
-                success : function(json) {
-                    var total = 0;
-                    for(var i=0;i<json.length;i++){
-                        total = total+json[i];
-                    }
-                    if(total>0){
-                        var donutChartCanvas = $('#donutChartCategory').get(0).getContext('2d')
-                        var donutData        = {
-                            labels: [
-                                'Internos', 'Externos'
-                            ],
-                            datasets: [
-                                {
-                                    data: json,
-                                    backgroundColor : ['#00a65a','#f56954'],
-                                }
-                            ]
-                        };
-                        var donutOptions     = {
-                            maintainAspectRatio : false,
-                            responsive : true,
-                            legend: {
-                                display: true,
-                            },
-
-                        };
-                        //Create pie or douhnut chart
-                        // You can switch between pie and douhnut using the method below.
-                        var donutChart = new Chart(donutChartCanvas, {
-                            type: 'doughnut',
-                            data: donutData,
-                            options: donutOptions
-                        });
-                    }
-                    else {
-                        $('#div_ChartCategory').replaceWith(div_court);
-
-                    }
-
-                },
-
-                // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                }
-            });
-            $.ajax({
-                url : "{% url 'programs:ajx_members_by_grade' program.slug %}", // the endpoint
+                url : "{% url 'formac:ajx_formac_program_members_by_grade' program.slug %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -1537,12 +981,11 @@
             });
 
             $(document).on('click', 'a.dropdown-item', function () {
-                var year = $(this).attr('data');
                 $.ajax({
-                    url : "{% url 'programs:ajx_by_year_requests' program.slug %}", // the endpoint
+                    url : "{% url 'formac:ajx_formac_program_by_years_requests' program.slug %}", // the endpoint
                     type : "POST", // http method
                     data : { 'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                        'year':year
+                        'year':$(this).attr('data')
                     }, // data sent with the post request
 
                     // handle a successful response
@@ -1554,11 +997,6 @@
 
                         }
                         if(total>0){
-                            var div_chart = '<div class="chart" id="div_ChartLastYears">\n' +
-                                '                                        <!-- Sales Chart Canvas -->\n' +
-                                '                                        <canvas id="requestChartLastYears" height="280" style="height: 230px;"></canvas>\n' +
-                                '                                    </div>';
-                            $('#div_ChartLastYears').replaceWith(div_chart);
 
                             var areaChartData = {
                                 labels  : json[0],
@@ -1621,10 +1059,8 @@
                         }
 
                         else {
-                            var div_court = '<div class="jumbotron" id="div_ChartLastYears" style="height: 198px;">'+
-                                '<h3 class="text-center"><i class="text-warning fas fa-exclamation-triangle"></i> No hay datos disponibles para el año '+ year + '.</h3>'+
-                                '</div>';
-                            $('#div_ChartLastYears').replaceWith(div_court);
+                            var div_court='<div id="div_pie" class="card-body"><div class="alert alert-warning"><h5 class="text-center">No hay datos disponibles.</h5></div></div>'
+                            $('#div_pie').replaceWith(div_court);
 
                         }
 
@@ -1637,14 +1073,14 @@
                         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                     }
                 });
-            })
-
-
-
-
-
-
-
+            });
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
         });
     </script>
 {% endblock %}

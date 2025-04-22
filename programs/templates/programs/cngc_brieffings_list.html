@@ -1,0 +1,283 @@
+{% extends 'programs/cgc/cgc_base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+
+{% block extra_css %}
+    <!-- Ionicons -->
+    {# <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' %}"> #}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
+{% endblock %}
+
+{% block cgc_content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Actas de la CNGC</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'cgc:cgc_home'  %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Actas</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+
+                <!-- /.card -->
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Actas {% if year %} Año {{ year }} {% endif %} </h3>
+
+                        <div class="card-tools">
+                            {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
+                            {#                                    <i class="fas fa-minus"></i>#}
+                            {#                                </button>#}
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fas fa-wrench"></i>
+                                </button>
+
+                                <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                {% for year in years %}
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <a href="{% url 'cgc:cngc_year_brieffings' year %}" class="dropdown-item text-left" title="Ver actas del {{ year }}">Año {{ year }} </a>
+
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <a href="{% url 'programs:cngc_by_year_brief_zip_download' year %}" class="text-center text-sm" title="Descargar actas del {{ year }}"><i class="fa fa-download"></i> </a>
+
+                                            </div>
+
+                                        </div>
+                                    {% endfor %}
+                                    <a href="{% url 'cgc:cngc_brieffings' %}" class="dropdown-item text-left" title="Ver todas las actas">Ver todas</a>
+                                    <a href="{% url 'cgc:cngc_brief_zip_download' %}" class="dropdown-item text-left" title="Descargar todas las actas">Descargar todas</a>
+
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example1" class="table table-striped">
+                            <thead>
+                            {% user_is_cgc_ps user as user_is_program_cs %}
+                            {% if year %}
+                                <tr>
+                                    <th>Mes</th>
+                                    <th> </th>
+
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <th>Año</th>
+                                    <th>Mes</th>
+                                    <th> </th>
+
+                                </tr>
+                            {% endif %}
+                            </thead>
+                            <tbody>
+                            {% for brief in brieffings %}
+
+                                <tr id="tr_brief_{{ brief.id }}">
+                                    {% if not year %}
+                                        <td>{{ brief.year }}</td>
+                                    {% endif %}
+                                    <td>{{ brief.month }}</td>
+                                    <td class="text-right">
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-success" type="button" title="Ver acta" onclick="window.open('{% url "cgc:cngc_brief_view" brief.id %}');"><i class="fa fa-book-reader"></i> </button>
+                                            {% if user_is_program_cs %}
+                                                <a class="btn btn-sm btn-warning" href="{% url 'cgc:edit_cngc_brief' brief.id %}" title="Editar acta"><i class="fa fa-edit"></i> </a>
+                                                <button class="btn btn-sm btn-danger" type="button" data-toggle="modal" data-target="#modal_rm_brieffing_{{ brief.id }}" title="Eliminar acta"><i class="fa fa-eraser"></i> </button>
+                                            {% endif %}
+
+                                        </div>
+
+                                    </td>
+
+
+
+                                </tr>
+                                <div class="modal fade" id="modal_rm_brieffing_{{ brief.id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Eliminar acta de la CGC-UNAH</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <p class="text-center">¿Seguro que desea eliminar el acta de {{ brief.month }} de {{  brief.year }}?<br>Esto no se puede deshacer&hellip;</p>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-danger" data="{{ brief.id }}" data-dismiss="modal" id="btn_rm_brief_{{ brief.id }}">Eliminar</button>
+                                            </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+
+
+                            {% endfor %}
+
+
+
+
+                            </tbody>
+                            <tfoot>
+                            {#                            <tr>#}
+                            {#                                <th>Nombre y apellidos</th>#}
+                            {#                                <th>Fecha solicitud</th>#}
+                            {#                                <th>Estado</th>#}
+                            {#                                <th class="text-center">Requisitos</th>#}
+                            {#                                <th></th>#}
+                            {#                            </tr>#}
+                            </tfoot>
+                        </table>
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+        <!-- /.col -->
+        </div>
+        {% csrf_token %}
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+    </div>
+{% endblock %}
+{% block extra_scripts %}
+    <!-- jQuery -->
+    <!-- Bootstrap 4 -->
+    <!-- DataTables -->
+    <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
+
+
+
+    <!-- AdminLTE App -->
+    {#    <script src="{% static 'programs/dist/js/adminlte.min.js' %}"></script>#}
+    <!-- AdminLTE for demo purposes -->
+    {#    <script src="{% static 'programs/dist/js/demo.js' %}"></script>#}
+    <!-- page script -->
+    <script>
+
+        $(document).ready(function () {
+            var myTable = $("#example1").DataTable({
+
+                language: {
+                    url: '{% static "programs/plugins/datatables/Spanish.json" %}'
+                }});
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+            $('[data-toggle="popover"]').popover();
+
+            $(document).on('click',"button[id*='btn_rm_brief']",function () {
+                var brief_id = $(this).attr('data');
+                var tr_selector = '#tr_brief_'+ brief_id;
+
+                var url = "{% url 'cgc:ajx_delete_cngc_brieffing' %}";
+
+                $('#modal_rm_brieffing_'+brief_id).modal('hide');
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'brief_id':brief_id,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+                            var row = myTable.row( $(tr_selector) );
+                            row.remove().draw();
+                            {#$(tr_selector).remove();#}
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Acta eliminada exitósamente'
+                            });
+
+                        }
+                        else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el acta seleccionada.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede eliminar actas de la CGC.'
+                            })
+
+                        }
+                        cons
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+
+            });
+
+
+
+        })
+    </script>
+{% endblock %}
+</body>
+</html>

@@ -1,4 +1,4 @@
-{% extends 'programs/base.html' %}
+{% extends 'programs/formac/formac_base.html' %}
 {% load static %}
 {% load extra_tags %}
 
@@ -10,22 +10,20 @@
     <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
-    <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
-
 {% endblock %}
 
-{% block content %}
+{% block formac_content %}
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-9">
-                    <h1>{% if program.type == 'phd' %}Componentes evaluativos de {{ program }}{%  else %} Cursos de la {{ edition }} edición de {{ program }}{% endif %} </h1>
+                    <h1>Miembros de la  Dirección de Formación</h1>
                 </div>
                 <div class="col-sm-3">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{% url 'programs:home' program.slug %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">{% if program.type == 'phd' %}Componentes evaluativos{% else  %}Cursos {% endif %}</li>
+                        <li class="breadcrumb-item"><a href="{% url 'formac:formac_home'  %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Miembros</li>
                     </ol>
                 </div>
             </div>
@@ -41,70 +39,48 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">{% if program.type == 'phd'%}Componentes{% else %}Cursos{% endif %}</h3>
-                        <div class="card-tools">
-                            {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
-                            {#                                    <i class="fas fa-minus"></i>#}
-                            {#                                </button>#}
-                            {% if program.type != 'phd' %}
-                                <div class="btn-group">
-                                    <a type="button" class="btn btn-tool " href="{% url 'programs:print_edition_courses_registers' program.slug edition.id %}" title="Descargar todas las actas." >
-                                        <i class="fa fa-print"></i>
-                                    </a>
-
-                                </div>
-                            {% endif %}
-                            {#                  <button type="button" class="btn btn-tool" data-card-widget="remove">#}
-                            {#                    <i class="fas fa-times"></i>#}
-                            {#                  </button>#}
-                        </div>
+                        <h3 class="card-title">Miembros </h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <table id="example1" class="table table-bordered table-striped">
                             <thead>
-                            {% user_is_program_cs user program as user_is_program_cs %}
+                            {% user_is_formac_ps user as user_is_formac_cs %}
 
                             <tr>
-                                <th>Nombre</th>
-                                <th class="text-center">Descripción</th>
-                                {% if program.type != 'phd' %}
-                                    <th class="text-center">Profesores</th>
+                                <th>Nombre y apellidos</th>
+                                <th>Cargo</th>
+                                {% if member.charge == 'Director' %}
+                                <th></th>
                                 {% endif %}
 
-                                {% if user_is_program_cs %}
-                                    <th></th>
-                                {% endif %}
+
                             </tr>
                             </thead>
                             <tbody>
-                            {% for component in components %}
-                                <tr id="tr_component_{{ component.id }}">
-                                    <td><p>{{ component.name|truncatewords:10 }}</p> </td>
-                                    <td><p class="text-justify">{{ component.description|truncatewords:10 }}</p> </td>
-                                    {% if program.type != 'phd' %}
-                                        <td class="text-left">{{ component.courseprofessor_set.all|unordered_list }}</td>
-                                    {% endif %}
+                            {% for pmember in members %}
 
-
-                                    {% if user_is_program_cs %}
+                                <tr id="tr_pmember_{{pmember.id }}">
+                                    <td>{{ pmember.user.last_name|upper }}, {{pmember.user.first_name }}</td>
+                                    <td>{{ pmember.charge }}</td>
+                                    {% if member.charge == 'Director' %}
                                         <td class="text-center">
-                                            <div class="btn-group" role="group">
-                                                {% if not program.type == 'phd' %}
-                                                    <a class="btn btn-primary btn-sm text-white " href="{% url 'programs:print_course_register' program.slug component.id %}" title="Descargar acta." ><i class="fa fa-print"></i></a>
-                                                {% endif %}
-                                                <a class="btn btn-warning btn-sm text-white" href="{% url 'programs:edit_program_course' program.slug component.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
-                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_component_{{ component.id }}"><i class="fa fa-eraser"></i></a>
+                                            <div class="btn-group">
+
+                                                <a class="btn btn-sm btn-warning" href="{% url 'formac:edit_formac_member' pmember.id %}" title="Editar acta"><i class="fa fa-edit"></i> </a>
+                                                <button class="btn btn-sm btn-danger {% if pmember.user == user %}disabled{% endif %}" type="button" data-toggle="modal" data-target="#modal_rm_member_{{ pmember.id }}" title="Eliminar miembro"><i class="fa fa-eraser"></i> </button>
+
 
                                             </div>
                                         </td>
                                     {% endif %}
                                 </tr>
-                                <div class="modal fade" id="modal_rm_component_{{ component.id }}">
+
+                                <div class="modal fade" id="modal_rm_member_{{ pmember.id }}">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h4 class="modal-title">Eliminar componente</h4>
+                                                <h4 class="modal-title">Eliminar miembro</h4>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -116,14 +92,14 @@
 
                                                     </div>
                                                     <div class="col-md-10">
-                                                        <p class="text-center">¿Seguro que desea eliminar este componente evaluativo:<br><strong>{{ component|truncatewords:5 }}</strong>?<br>Esto no se puede deshacer&hellip;</p>
+                                                        <p class="text-center">¿Seguro que desea eliminar a {{ pmember }}?<br>Esto no se puede deshacer&hellip;</p>
                                                     </div>
                                                 </div>
 
                                             </div>
                                             <div class="modal-footer justify-content-between">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_component_{{ component.id }}">Eliminar</button>
+                                                <button type="button" class="btn btn-danger " data-dismiss="modal" data="{{  pmember.id }}" id="btn_rm_member_{{ pmember.id }}">Eliminar</button>
                                             </div>
                                         </div>
                                         <!-- /.modal-content -->
@@ -132,9 +108,6 @@
                                 </div>
 
                             {% endfor %}
-
-
-
 
                             </tbody>
                             <tfoot>
@@ -146,7 +119,9 @@
                             {#                                <th></th>#}
                             {#                            </tr>#}
                             </tfoot>
+                            {% csrf_token %}
                         </table>
+
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -158,16 +133,29 @@
         <!-- /.row -->
     </section>
     <!-- /.content -->
+    </div>
 {% endblock %}
 {% block extra_scripts %}
     <!-- jQuery -->
-    <script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+    <!-- Bootstrap 4 -->
     <!-- DataTables -->
     <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
     <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
+
+
+
+    <!-- AdminLTE App -->
+    {#    <script src="{% static 'programs/dist/js/adminlte.min.js' %}"></script>#}
+    <!-- AdminLTE for demo purposes -->
+    {#    <script src="{% static 'programs/dist/js/demo.js' %}"></script>#}
     <!-- page script -->
     <script>
+
         $(document).ready(function () {
+            var myTable = $("#example1").DataTable({
+                language: {
+                    url: '{% static "programs/plugins/datatables/Spanish.json" %}'
+                }});
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -175,52 +163,44 @@
                 timer: 7000
             });
 
-            var myTable= $("#example1").DataTable({
-                language: {
-                    url: '{% static "programs/plugins/datatables/Spanish.json" %}'
-                }});
+            {% for pmember in members %}
+                $('#btn_rm_member_{{ pmember.id }}').click(function () {
 
+                    var member_id={{ pmember.id }};
+                    var url = "{% url 'formac:ajx_delete_member' %}";
 
-
-
-            {% for component in components %}
-                $('#btn_rm_component_{{ component.id }}').click(function () {
-                    var component_id={{ component.id }};
-                    var url = "{% url 'programs:ajx_delete_course' program.slug %}";
-
-                    {#$('#modal_rm_line_{{ line.id }}').modal('hide');#}
+                    $('#modal_rm_member_{{ pmember.id }}').modal('hide');
 
                     $.ajax({
                         url : url,
                         type : "POST", // http method
                         data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
-                            'component_id':component_id,
+                            'member_id':member_id,
                         }, // data sent with the post request
 
                         // handle a successful response
                         success : function(json) {
 
                             if (json[0].deleted == 1) {
-
-                                var row = myTable.row( $('#tr_component_{{ component.id }}') );
+                                var row = myTable.row( $('#tr_pmember_{{ pmember.id }}') );
                                 row.remove().draw();
 
                                 Toast.fire({
                                     type: 'success',
-                                    title: 'Componente eliminado exitosamente'
-                                });
+                                    title: 'Miembro eliminado exitósamente'
+                                })
 
                             } else if(json[0].deleted == 0){
                                 Toast.fire({
                                     type: 'error',
-                                    title: 'No se ha podido eliminar el componente seleccionado.'
+                                    title: 'No se ha podido eliminar al trabajador seleccionado.'
                                 })
 
                             }
                             else if(json[0].deleted == 2){
                                 Toast.fire({
                                     type: 'error',
-                                    title: 'Usted no puede eliminar el componente seleccionado.'
+                                    title: 'Usted no tiene privilegios para eliminar miembros de la Dir. de Formación.'
                                 })
 
                             }
@@ -230,7 +210,7 @@
 
 
 
-                            {#$('#div_by_workshop').removeClass('hidden')#}
+                            $('#div_by_workshop').removeClass('hidden')
 
                         },
 
@@ -246,6 +226,9 @@
                 });
             {% endfor %}
 
-        });
+
+        })
     </script>
 {% endblock %}
+</body>
+</html>

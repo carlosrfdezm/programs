@@ -1,14 +1,19 @@
-{% extends 'programs/cgc/cgc_base.html' %}
+{% extends 'programs/base.html' %}
 {% load static %}
+{% load extra_tags %}
 
-{% block cgc_content %}
+{% user_is_program_cs user program as user_is_program_cs %}
+
+
+
+{% block content %}
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">CGC-{{institution_short_name}} </h1>
+                <div class="col-sm-9">
+                    <h1 class="m-0 text-dark">{{ program.full_name }}</h1>
                 </div><!-- /.col -->
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item active"><a href="">Dashboard</a></li>
                         {#              <li class="breadcrumb-item active">{{ program}}</li>#}
@@ -29,7 +34,9 @@
                         <span class="info-box-icon bg-info elevation-1"><i class="fas fa-check"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text"><a href="{% url 'cgc:students_list' 'requesters' %}" title="Solicitantes de ingreso a los programas doctorales">Solicitantes</a></span>
+
+                                <span class="info-box-text"><a href="{% url 'programs:curs_all_students_list' program.slug 'requesters' %}">Solicitantes</a></span>
+
                             <span class="info-box-number">
                   {{ requesters }}
                 </span>
@@ -45,8 +52,8 @@
 
 
                             <div class="info-box-content">
-                                <span class="info-box-text"><a href="{% url 'cgc:students_list' 'aproved' %}" title="Estudiantes ingresados a los programas doctorales">Doctorandos</a></span>
-                                <span class="info-box-number">{{ doctorands }}</span>
+                                <span class="info-box-text"><a href="{% url 'programs:curs_all_students_list' program.slug 'aproved' %}">Cursistas</a></span>
+                                <span class="info-box-number">{{ cursistas }}</span>
                             </div>
 
                         <!-- /.info-box-content -->
@@ -63,7 +70,7 @@
                         <span class="info-box-icon bg-success elevation-1"><i class="fas fa-graduation-cap"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text"><a href="{% url 'cgc:students_list' 'graduated' %}" title="Graduados de los programas doctorales">Graduados</a></span>
+                                <span class="info-box-text"><a href="{% url 'programs:curs_all_students_list' program.slug 'graduated' %}">Graduados</a></span>
                             <span class="info-box-number">{{ graduated }}</span>
                         </div>
                         <!-- /.info-box-content -->
@@ -76,8 +83,8 @@
                         <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text"><a href="{% url 'cgc:programs_members_list' 'all' %}" title="Miembros de la CGC-UNAH-Complejo">Miembros</a></span>
-                            <span class="info-box-number">{{ members }}</span>
+                            <span class="info-box-text"><a href="{% url 'programs:members_list' program.slug 'all' %}">Miembros</a></span>
+                            <span class="info-box-number">{{program.programmember_set.all.count}}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
@@ -119,7 +126,7 @@
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
                                     <p class="text-center">
-                                        <strong>Ingresos vs Graduaciones</strong>
+                                        <strong>Solicitudes de ingreso vs Ingresos</strong>
                                     </p>
 
 
@@ -199,7 +206,229 @@
 
                 <!-- /.col -->
             </div>
+            <div class="row">
+                <div class="col-md-4">
 
+                    <!-- USERS LIST -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Últimos solicitantes</h3>
+
+                            <div class="card-tools">
+                                <span class="badge badge-info">Total: {{ requesters }} solicitante{{ requesters|pluralize }}</span>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                                </button>
+                                {#                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>#}
+                                {#                      </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body p-0">
+                            {% if last_requesters.count > 0 %}
+                                <ul class="users-list clearfix">
+                                    {% for requester in last_requesters %}
+                                        <li>
+                                            {% if requester.picture %}
+                                                <img src="{% url 'programs:program_student_picture' program.slug requester.id %}" alt="User Image">
+                                            {% else %}
+                                                <i class="text-info fa fa-user fa-5x" style="margin-top: 6px" ></i>
+                                            {% endif %}
+                                            <a class="users-list-name" href="{% url 'programs:edit_curs_student' program.slug requester.edition.id requester.id %}">{{ requester.user.first_name }}</a>
+                                            <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
+                                        </li>
+                                    {% endfor %}
+
+                                </ul>
+
+                            {% else %}
+                                <ul class="users-list clearfix">
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user1-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Alexander Pierce</a>
+                                        <span class="users-list-date">Today</span>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Norman</a>
+                                        <span class="users-list-date">Yesterday</span>
+                                    </li>
+
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user4-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Nora</a>
+                                        <span class="users-list-date">15 Jan</span>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user3-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Nadia</a>
+                                        <span class="users-list-date">15 Jan</span>
+                                    </li>
+                                </ul>
+                            {% endif %}
+                            <!-- /.users-list -->
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer text-center">
+
+                                <a href="{% url 'programs:curs_all_students_list' program.slug 'requesters' %}">Ver todos los solicitantes</a>
+
+                        </div>
+                        <!-- /.card-footer -->
+                    </div>
+                    <!--/.card -->
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <!-- USERS LIST -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Últimos ingresos</h3>
+
+                            <div class="card-tools">
+
+
+                                    <span class="badge badge-danger">Total: {{ masters }} maestrante{{ masters|pluralize }}</span>
+
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                                </button>
+                                {#                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>#}
+                                {#                      </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body p-0">
+                            {% if last_aproved.count > 0 %}
+                                <ul class="users-list clearfix">
+                                    {% for requester in last_aproved %}
+
+                                            <li>
+                                                {% if requester.picture %}
+                                                    <img src="{% url 'programs:program_student_picture' program.slug requester.id %}" alt="User Image">
+                                                {% else %}
+                                                    <i class="text-danger fa fa-user fa-5x" style="margin-top: 6px" ></i>
+                                                {% endif %}
+                                                <a class="users-list-name" href="{% url 'programs:edit_curs_student' program.slug requester.edition.id requester.id  %}">{{ requester.user.first_name }}</a>
+                                                <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
+                                            </li>
+
+
+                                    {% endfor %}
+
+                                </ul>
+
+                            {% else %}
+                                <ul class="users-list clearfix">
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user1-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Alexander Pierce</a>
+                                        <span class="users-list-date">Today</span>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Norman</a>
+                                        <span class="users-list-date">Yesterday</span>
+                                    </li>
+
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user4-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Nora</a>
+                                        <span class="users-list-date">15 Jan</span>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user3-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Nadia</a>
+                                        <span class="users-list-date">15 Jan</span>
+                                    </li>
+                                </ul>
+                            {% endif %}
+                            <!-- /.users-list -->
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer text-center">
+                            <a href="{% url 'programs:curs_all_students_list' program.slug 'aproved' %}">
+
+                                    Ver todos los cursistas
+
+                            </a>
+                        </div>
+                        <!-- /.card-footer -->
+                    </div>
+                    <!--/.card -->
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <!-- USERS LIST -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Últimos graduados</h3>
+
+                            <div class="card-tools">
+                                <span class="badge badge-success">Total: {{ graduated }} graduado{{ graduated|pluralize }}</span>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                                </button>
+                                {#                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>#}
+                                {#                      </button>#}
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body p-0">
+                            {% if last_graduated.count > 0 %}
+                                <ul class="users-list clearfix">
+                                    {% for requester in last_graduated %}
+                                        <li>
+                                            {% if requester.picture %}
+                                                <img src="{% url 'programs:program_student_picture' program.slug requester.id %}" alt="User Image">
+                                            {% else %}
+                                                <i class="text-success fa fa-user fa-5x" style="margin-top: 6px"></i>
+                                            {% endif %}
+                                            <a class="users-list-name" href="{% url 'programs:edit_curs_student' program.slug requester.edition.id requester.id %}">{{ requester.user.first_name}}</a>
+                                            <span class="users-list-date">{{ requester.request_date|date:'Y-m-d'}}</span>
+                                        </li>
+                                    {% endfor %}
+
+                                </ul>
+
+                            {% else %}
+                                <ul class="users-list clearfix">
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user1-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Alexander Pierce</a>
+                                        <span class="users-list-date">Today</span>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Norman</a>
+                                        <span class="users-list-date">Yesterday</span>
+                                    </li>
+
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user4-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Nora</a>
+                                        <span class="users-list-date">15 Jan</span>
+                                    </li>
+                                    <li>
+                                        <img src="{% static 'programs/dist/img/user3-128x128.jpg' %}" alt="User Image">
+                                        <a class="users-list-name" href="#">Nadia</a>
+                                        <span class="users-list-date">15 Jan</span>
+                                    </li>
+                                </ul>
+                            {% endif %}
+                            <!-- /.users-list -->
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer text-center">
+                            <a href="{% url 'programs:students_list' program.slug 'graduated' %}">Ver todos los graduados</a>
+                        </div>
+                        <!-- /.card-footer -->
+                    </div>
+                    <!--/.card -->
+
+                </div>
+            </div>
             <!-- /.row -->
 
             <!-- Main row -->
@@ -216,7 +445,7 @@
                 '</div>';
 
             $.ajax({
-                url : "{% url 'cgc:ajx_last_years_requests_vs_graduated' %}", // the endpoint
+                url : "{% url 'programs:ajx_this_year_requests' program.slug %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -234,7 +463,7 @@
                             labels  : json[0],
                             datasets: [
                                 {
-                                    label               : 'Ingresos',
+                                    label               : 'Solicitudes de ingreso',
                                     backgroundColor     : 'rgba(55,66,255,0.6)',
                                     borderColor         : 'rgba(11,15,255,0.8)',
                                     pointRadius          : 2,
@@ -245,7 +474,7 @@
                                     data                : json[1][0],
                                 },
                                 {
-                                    label               : 'Graduaciones',
+                                    label               : 'Ingresos',
                                     backgroundColor     : 'rgba(2,255,0,0.9)',
                                     borderColor         : 'rgba(20,188,18,0.8)',
                                     pointRadius          : 2,
@@ -306,7 +535,7 @@
             });
 
             $.ajax({
-                url : "{% url 'cgc:ajx_students_by_state' %}", // the endpoint
+                url : "{% url 'programs:ajx_students_by_state' program.slug %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request

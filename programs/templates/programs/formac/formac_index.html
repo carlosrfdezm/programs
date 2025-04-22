@@ -47,7 +47,7 @@
     <div class="container clearfix">
         <div class="contact-info float-left">
             <i class="fa fa-envelope-o"></i> <a href="mailto:{{ director.user.email }}">{{ director.user.email }}</a>
-            <i class="fa fa-phone"></i> {{ director.phone }}
+            <i class="fa fa-phone"></i> {{ program.phone }}
         </div>
         <div class="social-links float-right">
             <a href="{{ program.tw_contact}}" class="twitter"><i class="fa fa-twitter"></i></a>
@@ -64,7 +64,7 @@
     <div class="container">
 
         <div id="logo" class="pull-left">
-            <h1><a href="#body" class="scrollto">Comisión de Grados Científicos</a></h1>
+            <h1><a href="#body" class="scrollto">Dirección de Formación</a></h1>
             <!-- Uncomment below if you prefer to use an image logo -->
             <!-- <a href="#body"><img src="{% static 'programs/index/img/logo.png' %}" alt="" title="" /></a>-->
         </div>
@@ -199,7 +199,7 @@
                 {% for member in members %}
                     <div class="col-lg-3 col-md-6">
                         <div class="member">
-                            <div class="pic" >{% if member.picture %}<img src="{{ member.picture.url }}" style="height: 200px; width: 200px" alt="">{% elif member.gender == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% elif member.gender == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% endif %}</div>
+                            <div class="pic" >{% if member.picture %}<img src="{% url 'formac:formac_member_picture' member.id %}" style="height: 200px; width: 200px" alt="">{% elif member.gender == 'f' %}<img src="{% static 'programs/dist/img/user7-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% elif member.gender == 'm' %}<img src="{% static 'programs/dist/img/user8-128x128.jpg' %}" alt="" style="width: 200px; height: 200px">{% endif %}</div>
                             <div class="details">
                                 <h6 class="text-bold">{{member|truncatewords:3}}</h6>
                                 <span title="{{ member.charge }}">{{ member.charge|truncatewords:3 }}</span>
@@ -212,8 +212,6 @@
                         </div>
                     </div>
                 {% endfor %}
-
-                
 
             </div>
 
@@ -255,7 +253,7 @@
                             <p title="{{ doc.description }}">{{ doc.description|truncatewords:15 }}</p>
                         </div>
                         <div class="col-md-1">
-                            <a href="{% url 'postg:view_public_document' doc.id %}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
+                            <a href="{% url 'formac:view_public_document' doc.id %}" class="btn btn-sm btn-success"><i class="fa fa-download"></i> </a>
                         </div>
 
                     </div>
@@ -350,7 +348,7 @@
                 <div class="form">
                     <div id="sendmessage">Your message has been sent. Thank you!</div>
                     <div id="errormessage"></div>
-                    <form action="{% url 'log:cgc_login' %}" method="post" role="form" class="contactForm">
+                    <form action="{% url 'log:formac_login' %}" method="post" role="form" class="contactForm">
                         {% csrf_token %}
                         <div class="form-row">
                             <div class="form-group col-md-6">

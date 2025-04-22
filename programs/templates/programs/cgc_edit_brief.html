@@ -1,0 +1,173 @@
+{% extends 'programs/cgc/cgc_base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block cgc_content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Modificar acta de {{ brieffing.month }} del {{ brieffing.year }}</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'cgc:cgc_home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Editar acta</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Acta</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'cgc:edit_cgc_brief' brieffing.id %}">
+                            {% csrf_token %}
+                            <div class="card-body">
+                                <div class="form-row align-items-center">
+                                    <div class="form-group col-md-4">
+                                        <label for="slc_years">Año:</label>
+                                        <select class="form-control" id="slc_years" name="year" required>
+                                            <option value="" >Seleccione una opción</option>
+                                            {% for year in years %}
+                                                <option value="{{ year }}" {% if brieffing.year == year %}selected{% endif %}>{{ year }}</option>
+
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+
+                                        <label for="slc_months">Mes:</label>
+                                        <select class="form-control" id="slc_months" name="month" required>
+                                            <option value="" >Seleccione una opción</option>
+                                            {% for month in months %}
+                                                <option value="{{ month }}" {% if brieffing.month == month %}selected{% endif %}>{{ month }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-md-4">
+                                        <label for="exampleInputFile">Acta:<a class="text-sm text-primary" title="Click para ver o descargar acta." onclick="window.open('{% url 'cgc:cgc_brief_view' brieffing.id %}')"> {{ brieffing.brief.name|truncatechars:50 }}</a></label>
+                                        <input type="file" class="form-control-file" id="exampleInputFile" name="brief" accept=".doc, .docx, .odt, .pdf" >
+
+                                    </div>
+
+                                </div>
+
+
+
+
+                            </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
+
+
+
+                    <!-- /.card -->
+
+                    <!-- Input addon -->
+                    <!-- /.card -->
+                    <!-- Horizontal Form -->
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+{% block extra_scripts %}
+    <!-- jQuery -->
+    <script src="../../plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- bs-custom-file-input -->
+    <script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="../../dist/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="../../dist/js/demo.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var today = new Date();
+
+            var mm = today.getMonth(); //January is 0!
+            var yyyy = today.getFullYear();
+            var meses =[ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre", "Noviembre", "Diciembre" ];
+
+            {#for(var i = 0; i<= mm;i++){#}
+            {#    if(i==mm){#}
+            {#        var option = '<option value="'+meses[i]+'"selected >'+meses[i]+'</option>';#}
+            {#    }#}
+            {#    else{#}
+            {#        var option = '<option value="'+meses[i]+'" >'+meses[i]+'</option>';#}
+            {##}
+            {#    }#}
+            {##}
+            {#    $('#slc_months').append(option);#}
+            {##}
+            {##}
+            {#}#}
+
+
+
+            $('#slc_years').change(function () {
+
+                $('#slc_months option').remove();
+                $('#slc_months').append('<option value="" selected>Seleccione una opción</option>');
+
+                if($(this).val()== yyyy){
+                    for(var i = 0; i<= mm;i++){
+                        if(i==mm){
+                            var option = '<option value="'+meses[i]+'"selected >'+meses[i]+'</option>';
+                        }
+                        else{
+                            var option = '<option value="'+meses[i]+'" >'+meses[i]+'</option>';
+
+                        }
+
+                        $('#slc_months').append(option);
+
+
+                    }
+
+                }
+                else {
+                    for(var i = 0; i< meses.length; i++){
+
+                        var option = '<option value="'+meses[i]+'">'+meses[i]+'</option>';
+                        $('#slc_months').append(option);
+
+                    }
+                }
+
+            });
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,686 @@
+{% extends 'programs/cgc/cgc_base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block cgc_content %}
+    {% if member %}
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Perfil</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{% url 'cgc:cgc_home'  %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Perfil de usuario</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+
+                        <!-- Profile Image -->
+                        <div class="card card-primary card-outline">
+                            <div class="card-body box-profile">
+                                <div class="text-center">
+                                    {% if member.picture %}
+                                        <img class="profile-user-img img-fluid img-circle"
+                                             src="{{ member.picture.url }}"
+                                             alt="User profile picture">
+                                    {% elif member.sex == 'm' %}
+                                        <img class="profile-user-img img-fluid img-circle" src="{% static 'programs/dist/img/avatar5.png' %}" alt="">
+                                    {% elif member.sex == 'f' %}
+                                        <img class="profile-user-img img-fluid img-circle" src="{% static 'programs/dist/img/avatar3.png' %}" alt="">
+                                    {% endif %}
+                                </div>
+
+                                <h3 class="profile-username text-center">{{ member }}</h3>
+
+                                <p class="text-muted text-center">{{ member.charge|capfirst }}</p>
+                                {% if user == member.user %}
+                                    <ul class="list-group list-group-unbordered mb-3" id="ul_edit_profile" data="0">
+                                        <li class="list-group-item text-center" id="li_edit_profile">
+                                            <button type="button" class="btn btn-sm btn-warning text-center" title="Editar datos personales" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>
+                                        </li>
+
+                                    </ul>
+                                {% endif %}
+
+
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+
+                        <!-- About Me Box -->
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Sobre mi</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <strong><i class="fas fa-book mr-1"></i> Grado</strong>
+
+                                <p class="text-muted">
+                                    {{ member.degree }}
+                                </p>
+
+                                <hr>
+
+                                <strong><i class="fas fa-user-friends mr-1"></i> Centro</strong>
+
+                                <p class="text-muted">
+                                    {{ member.institution }}
+                                </p>
+
+
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-header p-2">
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item"><a class="nav-link active" id="a_tab_personal" href="#personal" data-toggle="tab">Datos personales</a></li>
+                                    
+                                </ul>
+                            </div><!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="tab-content">
+                                   
+                                    <!-- /.tab-pane -->
+                                    <div class="active tab-pane" id="personal">
+                                        <form class="form-horizontal" id="frm_personal_data" enctype="multipart/form-data" action="{% url 'programs:autoedit_member_profile' %}"  method="post">
+                                            {% csrf_token %}
+                                            <div class="form-group row">
+                                                <label for="inp_name" class="col-sm-2 col-form-label">Nombre</label>
+                                                <div class="col-sm-3">
+                                                    <input type="text" class="form-control" id="inp_name" name="prof_name" placeholder="Name" readonly value="{{ member.user.first_name }}">
+                                                </div>
+                                                <label for="inp_lastname" class="col-sm-2 col-form-label">Apellidos</label>
+                                                <div class="col-sm-5">
+                                                    <input type="text" class="form-control" id="inp_lastname" name="prof_lastname" placeholder="Name" readonly value="{{ member.user.last_name }}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="inp_email" class="col-sm-2 col-form-label">Email</label>
+                                                <div class="col-sm-10">
+                                                    <input type="email" class="form-control" id="inp_email" readonly name="prof_email" value="{{ member.user.email }}" placeholder="Email">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="inp_birthdate" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
+                                                <div class="col-sm-3">
+                                                    <input class="form-control" type="date" id="inp_birthdate" name="prof_bdate" readonly value="{{ member.birth_date|date:'Y-m-d' }}">
+                                                </div>
+                                                <label for="inp_degree" class="col-sm-2 col-form-label">Grado</label>
+                                                <div class="col-sm-5">
+                                                    <input id="inp_degree" class="form-control" type="text" name="prof_degree" readonly value="{{ member.degree|capfirst }}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="inp_center" class="col-sm-2 col-form-label">Centro</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="inp_center" name="prof_inst" readonly value="{{ member.institution }}" placeholder="Name">
+                                                </div>
+                                            </div>
+
+                                            <div class=" row">
+                                                <label for="inp_phone" class="col-sm-2 col-form-label">Teléfono</label>
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control" id="inp_phone" name="prof_phone" readonly value="{{ member.phone }}" placeholder="Teléfono">
+                                                </div>
+                                                <label for="slc_gender" class="col-sm-2 col-form-label">Género</label>
+                                                <div class="col-sm-4">
+
+                                                    <select  class="form-control disabled" id="slc_gender" name="prof_gender"  disabled data="{{ member.gender }}">
+                                                        <option value="">Elige una opción</option>
+                                                        <option value="f" {% if member.gender == 'f' %} selected {% endif %}>Femenino</option>
+                                                        <option value="m" {% if member.gender == 'm' %} selected {% endif %}>Masculino</option>
+                                                        </select>
+                                                </div>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                    
+                                    <!-- /.tab-pane -->
+                                </div>
+                                <!-- /.tab-content -->
+                            </div><!-- /.card-body -->
+                        </div>
+                        <!-- /.nav-tabs-custom -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+            {% csrf_token %}
+        </section>
+
+    {% else %}
+    <div class="alert">No member </div>
+    {% endif %}
+    <!-- /.content -->
+{% endblock %}
+<!-- jQuery -->
+{% block extra_scripts %}
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var prof_name = '';
+            var prof_surename = '';
+            var prof_mail ='';
+            var prof_bdate = '';
+            var prof_degree = '';
+            var prof_inst = '';
+            var prof_phone = '';
+            var prof_gender = '';
+            var m_slc_prof_gender = '<select class="form-control disabled" id="slc_gender" name="prof_gender" >\n' +
+                '                                                    <option value="">Seleccione una opción</option>\n' +
+                '                                                    <option  value="f" >Femenino</option>\n' +
+                '                                                    <option selected value="m" >Masculino</option>\n' +
+                '                                                </select>';
+            var f_slc_prof_gender = '<select class="form-control disabled" id="slc_gender" name="prof_gender" >\n' +
+                '                                                    <option value="">Seleccione una opción</option>\n' +
+                '                                                    <option selected value="f" >Femenino</option>\n' +
+                '                                                    <option value="m" >Masculino</option>\n' +
+                '                                                </select>';
+            var inp_prof_gender = '<input type="text" class="form-control" id="inp_gender" name="prof_gender" readonly="readonly"'+
+
+                'value="" placeholder="Genero">\n'
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+            {#bsCustomFileInput.init();#}
+            $(document).on('keyup','#inp_email', function () {
+                var email = $('#inp_email').val();
+                var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+                if(emailReg.test( email ) && email != ''){
+                    var url = "{% url 'cgc:ajx_usr_exists' %}"
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'email':email,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json[0].exists == 1) {
+
+                                Toast.fire({
+                                    type: 'warning',
+                                    title: 'Ya hay un usuario con ese correo, quiza ya es miembro de otro programa'
+                                })
+
+                            } else if(json[0].exists == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'Este correo esta en uso por un miembro del programa'
+                                });
+                                $('#btn_save').addClass('disabled');
+                                $('#btn_save').attr('disabled', 'disabled');
+
+                            }
+                            else{
+                                $('#btn_save').removeClass('disabled');
+                                $('#btn_save').removeAttr('disabled');
+
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        }
+                    });
+                };
+
+
+            });
+            $(document).on('change','#inp_picture', function () {
+                var fileUpload = this;
+                var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
+                if (regex.test(fileUpload.value.toLowerCase())) {
+                    if (typeof (fileUpload.files) != "undefined") {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(fileUpload.files[0]);
+                        reader.onload = function (e) {
+                            var image = new Image();
+                            image.src = e.target.result;
+                            image.onload = function () {
+                                var height = this.height;
+                                var width = this.width;
+                                if (height < 400 || width < 400) {
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'La imagen seleccionada es muy pequeña, debe tener dimensiones superiores a 400 px.'
+                                    });
+                                    $('#inp_picture').val('');
+                                    return false;
+                                }else
+                                if(math.abs(height - width)>10 ){
+                                    Toast.fire({
+                                        type: 'error',
+                                        title: 'Diferencia entre el lado y el ancho de la imagen no debe superar los 10px.'
+                                    });
+                                    $('#inp_picture').val('');
+                                    return false;
+                                }
+                            };
+                        }
+                    } else {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Este navegador no soporta HTML5, debe actualizarlo.'
+                        });
+                        return false;
+                    }
+                } else {
+                    Toast.fire({
+                        type: 'error',
+                        title: 'Por favor seleccione una imagen.'
+                    });
+                    return false;
+                }
+            });
+
+            $(document).on('click',"button[id='btn_edit_profile']", function () {
+
+
+                if($(this).attr('data')=='0'){
+                    prof_name = $('#inp_name').val();
+                    prof_surename = $('#inp_lastname').val();
+                    prof_mail = $('#inp_email').val();
+                    prof_bdate = $('#inp_birthdate').val();
+                    prof_degree = $('#inp_degree').val();
+                    prof_inst = $('#inp_institution').val();
+                    prof_phone = $('#inp_phone').val();
+                    prof_gender = $('#slc_gender').val();
+                    $("input[id^='inp_']").removeAttr('readonly');
+                    {#$('#btn_edit_profile').replaceWith('<button type="button" class="btn btn-sm btn-default text-center" title="Ver perfil" id="btn_view_profile"><i class="fa fa-eye"></i> </button>\n')#}
+                    $('#btn_edit_profile').removeClass('btn-warning');
+                    $('#btn_edit_profile').addClass('btn-default');
+                    $('#btn_edit_profile').attr('data','1');
+                    $('#btn_edit_profile').attr('title','Cancelar edición');
+                    $('#slc_gender').removeAttr('disabled')
+                    
+
+                    {% comment %} if($('#slc_gender').attr('data')=='f'){
+                        $('#slc_gender').replaceWith(f_slc_prof_gender);
+                        prof_gender = 'f';
+
+                    }
+                    else if($('#slc_gender').attr('data')=='m'){
+                        $('#slc_gender').replaceWith(m_slc_prof_gender);
+                        prof_gender='m';
+
+                    } {% endcomment %}
+
+                    $('#frm_personal_data').append('<div class="form-group row pt-3" id="div_prof_picture">\n' +
+                        '                                                <label for="inp_picture" class="col-sm-2 col-form-label">Foto de perfil:</label>\n' +
+                        '                                                <div class="col-sm-10">\n' +
+                        '                                                    <input type="file" class="" id="inp_picture" name="prof_picture" placeholder="Foto de perfil">\n' +
+                        '                                                </div>\n' +
+                        '                                            </div>'+
+                        '<div class="form-group row pt-3" id="div_btn_save">\n' +
+                        '                        <div class="offset-sm-5 col-sm-7">\n' +
+                        '                          <button type="submit" class="btn btn-primary">Guardar</button>\n' +
+                        '                        </div>\n' +
+                        '                      </div>')
+
+                }
+                else if($(this).attr('data')=='1'){
+                    $('#inp_name').val(prof_name);
+                    $('#inp_lastname').val( prof_surename);
+                    $('#inp_email').val(prof_mail);
+                    $('#inp_birthdate').val(prof_bdate);
+                    $('#inp_degree').val(prof_degree);
+                    $('#inp_institution').val(prof_inst);
+                    $('#inp_phone').val(prof_phone);
+                    $("input[id^='inp_']").attr('readonly','readonly');
+                    $('#btn_edit_profile').addClass('btn-warning');
+                    $('#btn_edit_profile').removeClass('btn-default');
+                    $('#btn_edit_profile').attr('title','Editar datos personales');
+                    $('#btn_edit_profile').attr('data','0');
+                    $('#slc_gender').attr('disanled','disabled');
+                    
+                    $('#div_btn_save').remove();
+                    $('#div_prof_picture').remove();
+
+                }
+
+            });
+            $('#a_tab_students').click(function (){
+                $('#ul_edit_profile').attr('data', '1');
+                if($('#btn_edit_profile').attr('data')=='1'){
+                    $('#inp_name').val(prof_name);
+                    $('#inp_lastname').val( prof_surename);
+                    $('#inp_email').val(prof_mail);
+                    $('#inp_birthdate').val(prof_bdate);
+                    $('#inp_degree').val(prof_degree);
+                    $('#inp_institution').val(prof_inst);
+                    $('#inp_phone').val(prof_phone);
+                    $('#slc_gender').replaceWith(inp_prof_gender);
+                    if(prof_gender=='f'){
+                        $('#inp_gender').val('Femenino');
+                        $('#inp_gender').attr('data','f');
+
+                    }
+                    else if(prof_gender=='m'){
+                        $('#inp_gender').val('Masculino');
+                        $('#inp_gender').attr('data','m');
+
+
+                    }
+                    $('#div_btn_save').remove();
+                    $('#div_prof_picture').remove();
+
+                    $("input[id^='inp_']").attr('readonly','readonly');
+
+
+                }
+                $('#li_edit_profile').remove();
+
+            });
+            $('#a_tab_messages').click(function (){
+                if($('#btn_edit_profile').attr('data')=='1'){
+                    $('#inp_name').val(prof_name);
+                    $('#inp_lastname').val( prof_surename);
+                    $('#inp_email').val(prof_mail);
+                    $('#inp_birthdate').val(prof_bdate);
+                    $('#inp_degree').val(prof_degree);
+                    $('#inp_institution').val(prof_inst);
+                    $('#inp_phone').val(prof_phone);
+                    $('#inp_gender').val(prof_gender);
+                    $('#slc_gender').replaceWith(inp_prof_gender);
+                    if(prof_gender=='f'){
+                        $('#inp_gender').val('Femenino');
+                        $('#inp_gender').attr('data','f');
+
+                    }
+                    else if(prof_gender=='m'){
+                        $('#inp_gender').val('Masculino');
+                        $('#inp_gender').attr('data','m');
+
+
+                    }
+                    $('#div_btn_save').remove();
+                    $('#div_prof_picture').remove();
+
+
+                    $("input[id^='inp_']").attr('readonly','readonly');
+
+                }
+                $('#li_edit_profile').remove();
+                $('#ul_edit_profile').attr('data', '1');
+            });
+            {% if user == member.user %}
+                $('#a_tab_personal').click(function (){
+                    if($('#ul_edit_profile').attr('data')=='0'){}
+                    else if($('#ul_edit_profile').attr('data')=='1') {
+                        $('#ul_edit_profile').append('<li class="list-group-item text-center" id="li_edit_profile">\n' +
+                            '                <button type="button" class="btn btn-sm btn-warning text-center" title="Editar perfil" id="btn_edit_profile" data="0"><i class="fa fa-edit"></i> </button>\n' +
+                            '            </li>');
+                    }
+
+                });
+            {% endif %}
+
+            {% comment %} $(document).on('click',"a[id*='a_read_message_']",function (e) {
+                e.preventDefault();
+
+                var current_index = $(this).attr('data');
+                var url = "{% url 'programs:ajx_mark_message_readed' program.slug %}";
+
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'message_id':current_index,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].readed == 1) {
+
+                            $('#modal_read_message_'+current_index).modal('show');
+                            $('#a_read_message_'+current_index).replaceWith('<a href="#" id="a_remove_message_'+current_index+'" data="'+current_index+'" class="link-black text-sm mr-2"><i class="fas fa-eraser mr-1"></i> Eliminar</a>\n')
+                            $('#p_message_body_'+current_index).removeClass('text-bold')
+                            $('#i_msg_'+current_index).removeClass('fa-envelope')
+                            $('#i_msg_'+current_index).addClass('fa-envelope-open')
+
+
+
+                        } else if(json[0].readed == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido mostrar el mensaje.'
+                            })
+
+                        }
+                        else if(json[0].readed == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido mostrar el mensaje: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].readed == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido mostrar el mensaje: El usuario no es el receptor del mensaje'
+                            })
+
+                        }
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        $('#div_by_workshop').removeClass('hidden')
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+            });
+            $(document).on('click',"a[id*='a_remove_message_']",function (e) {
+                e.preventDefault();
+                var current_index = $(this).attr('data');
+                $('#modal_rm_message_'+current_index).modal('show');
+
+
+            });
+            $(document).on('submit',"form[id*='frm_remove_message_']", function (e) {
+                e.preventDefault();
+
+                var current_index = $(this).attr('data');
+                var url = "{% url 'programs:ajx_delete_message' program.slug %}";
+
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'message_id':current_index,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+                            if(json[0].messages_count > 0){
+                                $('#div_msg_'+current_index).remove();
+                            }
+                            else{
+                                $('#div_msg_'+current_index).replaceWith('<div class="alert alert-warning text-center"><h4>Usted no tiene mensaje alguno</h4></div>');
+
+
+                            }
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Mensaje eliminado exitosamente.'
+                            })
+
+
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el mensaje.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el mensaje: el metodo no es POST.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 3){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar el mensaje: Usted no es el receptor del mismo.'
+                            })
+
+                        }
+                        $('#modal_rm_message_'+current_index).modal('hide');
+
+
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+
+
+            });
+
+            $(document).on('click',"button[id*='btn_rm_tuthor']",function () {
+                var tuthor_id = $(this).attr('data');
+                var div_selector = '#div_tuthor_'+ tuthor_id;
+                var url = "{% url 'programs:ajx_delete_tuthor' program.slug %}";
+
+                $('#modal_rm_tuthor_{{ tuthor.id }}').modal('hide');
+
+                $.ajax({
+                    url : url,
+                    type : "POST", // http method
+                    data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                        'tuthor_id':tuthor_id,
+                    }, // data sent with the post request
+
+                    // handle a successful response
+                    success : function(json) {
+
+                        if (json[0].deleted == 1) {
+                            tutores = tutores-1
+
+                            $(div_selector).remove();
+
+                            Toast.fire({
+                                type: 'success',
+                                title: 'Tutor eliminado exitósamente'
+                            });
+                            if (tutores == 0){
+                                $('#div_new_tuthors').append('<div class="alert alert-warning col-md-10 offset-1" id="div_no_tuthors">\n' +
+                                    '                                        <h4 class="text-center"><i class="text-white fa fa-exclamation-triangle"></i> Este estudiante no tiene tutores asignados</h4>\n' +
+                                    '                                        </div>')
+                            }
+
+                        } else if(json[0].deleted == 0){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'No se ha podido eliminar al tutor seleccionado.'
+                            })
+
+                        }
+                        else if(json[0].deleted == 2){
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Usted no puede eliminar al tutor seleccionado.'
+                            })
+
+                        }
+                        cons
+                        console.log(json); // log the returned json to the console
+                        console.log("success"); // another sanity check
+
+
+
+
+                        $('#div_by_workshop').removeClass('hidden')
+
+                    },
+
+                    // handle a non-successful response
+                    error : function(xhr,errmsg,err) {
+                        Toast.fire({
+                            type: 'error',
+                            title: 'Uff, ha ocurrido algo desconocido.'
+                        })
+                    }
+                });
+                $(div_selector).remove();
+
+            }); {% endcomment %}
+
+
+
+        });
+    </script>
+{% endblock %}
+

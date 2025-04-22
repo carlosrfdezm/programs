@@ -155,13 +155,13 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="txt_theme">Tema:</label>
-                                            <textarea class="form-control" readonly id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2">{{ student.mscstudenttheme }}</textarea>
+                                            <textarea class="form-control" readonly id="txt_theme" name="theme" placeholder="Tema de investigacion" maxlength="500" rows="2">{{ student.cursstudenttheme }}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="slc_project">Proyecto asociado:</label>
-                                            <input class="form-control" readonly value="{{ student.mscstudent.mscstudenttheme.project }}">
+                                            <input class="form-control" readonly value="{{ student.cursstudent.cursstudenttheme.project }}">
 
                                         </div>
                                     </div>
@@ -172,8 +172,8 @@
                                         </div>
 
                                     </div>
-                                    {% if student.mscstudent.tuthor_set.all %}
-                                        {% for tuthor in student.mscstudent.tuthor_set.all %}
+                                    {% if student.cursstudent.tuthor_set.all %}
+                                        {% for tuthor in student.cursstudent.tuthor_set.all %}
                                             <div class="form-row">
                                                 <div class="form-group col-md-12">
                                                     <input class="form-control" readonly value="{{ tuthor.professor.user.get_full_name }}">
@@ -318,7 +318,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            var tutores = {{ student.mscstudent.tuthor_set.all.count }};
+            var tutores = {{ student.cursstudent.tuthor_set.all.count }};
 
             const Toast = Swal.mixin({
                 toast: true,
@@ -503,7 +503,7 @@
                 if(mm<10){mm='0'+mm}
                 today = yyyy+'-'+mm+'-'+dd;
 
-                if($(this).val()=='maestrante'){
+                if($(this).val()=='doctorando'){
                     $('#inp_init_date').val(today);
                 }
                 if($(this).val()=='graduado'){

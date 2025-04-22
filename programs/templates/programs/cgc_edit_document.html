@@ -1,0 +1,210 @@
+{% extends 'programs/postg/postg_base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block cgc_content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Editar documento</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'postg:postg_home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Editar documento</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Documento</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form role="form" method="post" enctype="multipart/form-data" action="">
+                            {% csrf_token %}
+                            <div class="card-body">
+                                <div class="form-row align-items-center">
+                                    <div class="form-group col-md-2 col-sm-2">
+                                        <label for="slc_years">Año:</label>
+                                        <select class="form-control" id="slc_years" name="year" required>
+                                            <option value="" selected>Seleccione una opción</option>
+                                            {% for year in years %}
+                                                <option value="{{ year }}" {% if document.year == year %}selected{% endif %}>{{ year }}</option>
+
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2 col-sm-2">
+
+                                        <label for="slc_months">Mes:</label>
+                                        <select class="form-control" id="slc_months" name="month" required>
+                                            <option value="" selected>Seleccione una opción</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-3 col-sm-3">
+
+                                        <label for="slc_type">Tipo de documento:</label>
+                                        <select class="form-control" id="slc_type" name="type" required>
+                                            <option value="" selected>Seleccione una opción</option>
+                                            <option value="acta" {% if document.type == 'acta' %}selected{% endif %} >Acta</option>
+                                            <option value="informe" {% if document.type == 'informe' %}selected{% endif %} >Informe</option>
+                                            <option value="resolucion" {% if document.type == 'resolucion' %}selected{% endif %} >Resolución</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-3 col-sm-3">
+
+                                        <label for="slc_level">Nivel del documento:</label>
+                                        <select class="form-control" id="slc_level" name="level" required>
+                                            <option value="" selected>Seleccione una opción</option>
+                                            <option {% if document.level == 'cgc' %} selected {% endif %} value="cgc" >Comisión de Grados Insitucional</option>
+                                            <option {% if document.level == 'cngc' %} selected {% endif %} value="cngc" >Comisión Nacional de Grados Ctfcos</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label for="chk_public">Contexto:</label>
+                                        <div id="chk_public" class="checkbox">
+                                            <label>
+                                                <input type="checkbox" {% if document.is_public %} checked {% endif %} name="is_public"> Es público?
+                                            </label>
+                                        </div>
+                                    </div>
+
+
+
+
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-12">
+                                        <textarea class="form-control" id="txt_doc_description" name="description" rows="3" maxlength="300" placeholder="Descripción del documento." required>{{ document.description }}</textarea>
+
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="exampleInputFile">Archivo:</label>
+                                        <input type="file" class="form-control-file" id="exampleInputFile" name="doc" accept=".doc, .docx, .odt, .pdf"      >
+                                        <a href="{% url 'postg:view_document' document.id %}" class="text-sm">Ver documento actual</a>
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
+
+
+
+                    <!-- /.card -->
+
+                    <!-- Input addon -->
+                    <!-- /.card -->
+                    <!-- Horizontal Form -->
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+{% block extra_scripts %}
+    <!-- jQuery -->
+    <script src="../../plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- bs-custom-file-input -->
+    <script src="../../plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="../../dist/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="../../dist/js/demo.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var today = new Date();
+
+            var mm = today.getMonth(); //January is 0!
+            var yyyy = today.getFullYear();
+            var meses =[ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre","Octubre", "Noviembre", "Diciembre" ];
+
+            for(var i = 0; i<= mm; i++){
+
+                if(meses[i]=='{{ document.month }}'){
+                    var option = '<option value="'+meses[i]+'"selected >'+meses[i]+'</option>';
+                }
+                else{
+                    var option = '<option value="'+meses[i]+'" >'+meses[i]+'</option>';
+
+                }
+
+                $('#slc_months').append(option);
+
+
+            };
+
+
+            $('#slc_years').change(function () {
+
+                $('#slc_months option').remove();
+                $('#slc_months').append('<option value="" selected>Seleccione una opción</option>');
+
+                if($(this).val()== yyyy){
+                    for(var i = 0; i<= mm;i++){
+                        if(i==mm){
+                            var option = '<option value="'+meses[i]+'" >'+meses[i]+'</option>';
+                        }
+                        else{
+                            var option = '<option value="'+meses[i]+'" >'+meses[i]+'</option>';
+
+                        }
+
+                        $('#slc_months').append(option);
+
+
+                    }
+
+                }
+                else {
+                    for(var i = 0; i< meses.length; i++){
+
+                        var option = '<option value="'+meses[i]+'">'+meses[i]+'</option>';
+                        $('#slc_months').append(option);
+
+                    }
+                }
+
+            });
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

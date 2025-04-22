@@ -1,12 +1,12 @@
-{% extends 'programs/cgc/cgc_base.html' %}
+{% extends 'programs/formac/formac_base.html' %}
 {% load static %}
 
-{% block cgc_content %}
+{% block formac_content %}
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">CGC-{{institution_short_name}} </h1>
+                    <h1 class="m-0 text-dark">Dirección de Formación</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -24,14 +24,13 @@
         <div class="container-fluid">
             <!-- Info boxes -->
             <div class="row">
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="info-box">
-                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-check"></i></span>
+                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-graduation-cap"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text"><a href="{% url 'cgc:students_list' 'requesters' %}" title="Solicitantes de ingreso a los programas doctorales">Solicitantes</a></span>
-                            <span class="info-box-number">
-                  {{ requesters }}
+                            <span class="info-box-text"><a href="{% url 'formac:programs' 'curs' %}" title="Cursos">Cursos</a></span>
+                            <span class="info-box-number">{{ curs_programs }}
                 </span>
                         </div>
                         <!-- /.info-box-content -->
@@ -39,15 +38,15 @@
                     <!-- /.info-box -->
                 </div>
                 <!-- /.col -->
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="info-box mb-3">
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="info-box mb-4">
                         <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
 
 
-                            <div class="info-box-content">
-                                <span class="info-box-text"><a href="{% url 'cgc:students_list' 'aproved' %}" title="Estudiantes ingresados a los programas doctorales">Doctorandos</a></span>
-                                <span class="info-box-number">{{ doctorands }}</span>
-                            </div>
+                        <div class="info-box-content">
+                            <span class="info-box-text"><a href="{% url 'formac:programs' 'coleg' %}" title="Colegio">Colegio</a></span>
+                            <span class="info-box-number">{{ coleg_programs}}</span>
+                        </div>
 
                         <!-- /.info-box-content -->
                     </div>
@@ -56,28 +55,15 @@
                 <!-- /.col -->
 
                 <!-- fix for small devices only -->
-                <div class="clearfix hidden-md-up"></div>
-
-                <div class="col-12 col-sm-6 col-md-3">
-                    <div class="info-box mb-3">
-                        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-graduation-cap"></i></span>
-
-                        <div class="info-box-content">
-                            <span class="info-box-text"><a href="{% url 'cgc:students_list' 'graduated' %}" title="Graduados de los programas doctorales">Graduados</a></span>
-                            <span class="info-box-number">{{ graduated }}</span>
-                        </div>
-                        <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
-                </div>
+                
                 <!-- /.col -->
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="info-box mb-3">
                         <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text"><a href="{% url 'cgc:programs_members_list' 'all' %}" title="Miembros de la CGC-UNAH-Complejo">Miembros</a></span>
-                            <span class="info-box-number">{{ members }}</span>
+                            <span class="info-box-text"><a href="{% url 'formac:members' %}" title="Miembros de la Dirección de Formación">Miembros</a></span>
+                            <span class="info-box-number">{{ formac_members }}</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
@@ -88,10 +74,12 @@
             <!-- /.row -->
 
             <div class="row">
-                <div class="col-md-8 col-sm-8">
+                <div class="col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">Resumen estadístico</h5>
+                            <h5 class="card-title">
+                                        Estudiantes x Cursos
+                                    </h5>
 
                             <div class="card-tools">
                                 {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
@@ -117,10 +105,8 @@
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-12 col-sm-12">
-                                    <p class="text-center">
-                                        <strong>Ingresos vs Graduaciones</strong>
-                                    </p>
+                                <div class="col-md-12 col-sm-14">
+
 
 
                                     <div class="chart" id="div_requestChart">
@@ -140,10 +126,12 @@
                     </div>
                     <!-- /.card -->
                 </div>
-                <div class="col-md-4 col-sm-4">
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">Resumen estadístico</h5>
+                            <h5 class="card-title">Estudiantes x Colegio</h5>
 
                             <div class="card-tools">
                                 {#                                <button type="button" class="btn btn-tool" data-card-widget="collapse">#}
@@ -169,23 +157,17 @@
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div class="row">
-                                <!-- /.col -->
                                 <div class="col-md-12 col-sm-12">
-                                    <p class="text-center">
-                                        <strong>Estudiantes por estado</strong>
-                                    </p>
 
-                                    <div class="chart-responsive" id="div_donutChart">
-                                        <canvas id="donutChart" height="187"></canvas>
-                                    </div>
-                                    <div class="mt-4 text-center small" id="div_legend">
-                                    <span class="mr-2">
-                                      <i class="fas fa-exclamation-triangle text-warning"></i> Mueva el cursor sobre las lineas
-                                    </span>
 
+                                    <div class="chart" id="div_mscChart">
+                                        <!-- Sales Chart Canvas -->
+                                        <canvas id="mscChart" height="280" style="height: 230px;"></canvas>
                                     </div>
-                                    <!-- /.progress-group -->
+                                    <!-- /.chart-responsive -->
                                 </div>
+                                <!-- /.col -->
+
                                 <!-- /.col -->
                             </div>
                             <!-- /.row -->
@@ -195,8 +177,7 @@
                     </div>
                     <!-- /.card -->
                 </div>
-
-
+                
                 <!-- /.col -->
             </div>
 
@@ -216,7 +197,7 @@
                 '</div>';
 
             $.ajax({
-                url : "{% url 'cgc:ajx_last_years_requests_vs_graduated' %}", // the endpoint
+                url : "{% url 'formac:ajx_formac_curs_students_by_program' %}", // the endpoint
                 type : "GET", // http method
                 data : {
                 }, // data sent with the post request
@@ -224,37 +205,30 @@
                 // handle a successful response
                 success : function(json) {
                     var total = 0;
-                    for(var i=0;i<json[1][0].length;i++){
+                    for(var i=0;i<json[1].length;i++){
 
-                        total = total + json[1][0][i]+json[1][1][i];
+                        total = total + json[1][i];
 
                     }
+
+
+
                     if(total>0){
                         var areaChartData = {
-                            labels  : json[0],
+                            labels:json[0],
                             datasets: [
                                 {
-                                    label               : 'Ingresos',
-                                    backgroundColor     : 'rgba(55,66,255,0.6)',
-                                    borderColor         : 'rgba(11,15,255,0.8)',
+                                    label               : 'Cursistas',
+                                    backgroundColor     : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    borderColor         : ['rgba(44,56,255,0.67)','rgba(139,255,116,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
                                     pointRadius          : 2,
                                     pointColor          : '#3b8bba',
                                     pointStrokeColor    : 'rgba(60,141,188,1)',
                                     pointHighlightFill  : '#fff',
                                     pointHighlightStroke: 'rgba(60,141,188,1)',
-                                    data                : json[1][0],
+                                    data                : json[1],
                                 },
-                                {
-                                    label               : 'Graduaciones',
-                                    backgroundColor     : 'rgba(2,255,0,0.9)',
-                                    borderColor         : 'rgba(20,188,18,0.8)',
-                                    pointRadius          : 2,
-                                    pointColor          : '#153bba',
-                                    pointStrokeColor    : 'rgba(60,141,188,1)',
-                                    pointHighlightFill  : '#fff',
-                                    pointHighlightStroke: 'rgba(60,141,188,1)',
-                                    data                : json[1][1],
-                                },
+
 
                             ]
                         };
@@ -282,7 +256,7 @@
                         };
                         var areaChartCanvas=$('#requestChart');
                         var areaChart       = new Chart(areaChartCanvas, {
-                            type: 'line',
+                            type: 'bar',
                             data: areaChartData,
                             options: areaChartOptions
                         });
@@ -304,6 +278,89 @@
                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                 }
             });
+            $.ajax({
+                url : "{% url 'formac:ajx_formac_coleg_students_by_program' %}", // the endpoint
+                type : "GET", // http method
+                data : {
+                }, // data sent with the post request
+
+                // handle a successful response
+                success : function(json) {
+                    var total = 0;
+                    for(var i=0;i<json[1].length;i++){
+
+                        total = total + json[1][i];
+
+                    }
+
+
+
+                    if(total>0){
+                        var areaChartData = {
+                            labels:json[0],
+                            datasets: [
+                                {
+                                    label               : 'Estudiantes',
+                                    backgroundColor     : ['rgba(139,255,116,0.67)','rgba(44,56,255,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    borderColor         : ['rgba(139,255,116,0.67)','rgba(44,56,255,0.67)','rgba(255,163,27,0.67)','rgba(255,36,36,0.67)','rgba(255,36,36,0.67)'],
+                                    pointRadius          : 2,
+                                    pointColor          : '#3b8bba',
+                                    pointStrokeColor    : 'rgba(60,141,188,1)',
+                                    pointHighlightFill  : '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data                : json[1],
+                                },
+
+
+                            ]
+                        };
+
+                        var areaChartOptions = {
+                            maintainAspectRatio : false,
+                            responsive : true,
+                            legend: {
+                                display: false
+                            },
+                            scales: {
+                                xAxes: [{
+                                    gridLines : {
+                                        display : false,
+                                    }
+                                }],
+                                yAxes: [{
+
+                                    gridLines : {
+                                        display : false,
+                                    },
+
+                                }]
+                            }
+                        };
+                        var areaChartCanvas=$('#mscChart');
+                        var areaChart       = new Chart(areaChartCanvas, {
+                            type: 'bar',
+                            data: areaChartData,
+                            options: areaChartOptions
+                        });
+                        console.log(json);
+                    }
+
+                    else {
+
+                        $('#div_mscChart').replaceWith(div_court);
+
+                    }
+
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+            
 
             $.ajax({
                 url : "{% url 'cgc:ajx_students_by_state' %}", // the endpoint
