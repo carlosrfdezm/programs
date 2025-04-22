@@ -10,6 +10,7 @@ urlpatterns = [
     path('login', views.mylogin, name='my_login'),
     path('cgclogin', views.cgc_login, name='cgc_login'),
     path('postglogin', views.postg_login, name='postg_login'),
+    path('formaclogin', views.formac_login, name= 'formac_login'),
     path('cgclogout', views.cgc_logout, name='cgc_logout'),
     path('<str:program_slug>/logout', views.mylogout, name='my_logout'),
     path('cgc/member/<int:member_id>/pic', views.cgc_member_picture, name='cgc_member_picture'),
