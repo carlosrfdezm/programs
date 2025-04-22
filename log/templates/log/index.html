@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Programas Académicos, UNAH</title>
+    <title>Programas Académicos, UH</title>
     <meta content="" name="descriptison">
     <meta content="" name="keywords">
 
@@ -63,7 +63,10 @@
                 {% if  institution_has_postg %}
                 <li><a href="{% url 'postg:postg_index' %}" title="Acceso de la dirección de Postgrado">Dirección de Posgrado</a></li>
                 {% endif %}
-
+                {% if  institution_has_formac %}
+                <li><a href="{% url 'formac:formac_index' %}" title="Acceso de la dirección de Formación">Dirección de Formación</a></li>
+                {% endif %}
+                
 
             </ul>
         </nav><!-- .main-nav -->
@@ -176,7 +179,29 @@
                         <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
                         <p class="description">{{ program.description }}</p>
                     </div>
+                                        
+                    {% elif program.type == 'coleg' %}
+
+                    <div class="box" style="height: 165px">
+                        <div class="icon"><i class="{{ program.icon }}" style="color: #0b0fff;"></i></div>
+                        <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
+                        <p class="description">{{ program.description }}</p>
+                    </div>
+
+                    {% elif program.type == 'curs' %}
+
+                    <div class="box" style="height: 165px">
+                        <div class="icon"><i class="{{ program.icon }}" style="color: #0b0fff;"></i></div>
+                        <h4 class="title"><a href="{% url 'programs:index' program.slug %}">{{ program.short_name}}</a></h4>
+                        <p class="description">{{ program.description }}</p>
+                    </div>
+
+
+
                     {% endif %}
+
+                    
+                    
                 </div>
 
                 {% endfor %}
