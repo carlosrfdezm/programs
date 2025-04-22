@@ -39,7 +39,7 @@ from programs.models import Program, ProgramInitRequirements, PhdStudent, Studen
     ProgramBrief, CGCBrief, CNGCBrief, Course, CourseEvaluation, CourseProfessor, StudentFormationPlan, \
     FormationPlanActivities, InnerAreas, ProgramDocument, ProgramFileDoc, StudentFileDocument, Message, CGCDocument, \
     ProgramSpeciality, New, MessageSended, Requester, PhdStudentThesis, PhdAnnouncement, PhdThesisComment, \
-    PhdDefenseCourtMember, FAQ, CursStudent, ColegStudent, StudentOthers, FormationMember,CursStudentTheme, ColegStudentTheme
+    PhdDefenseCourtMember, FAQ, CursStudent, ColegStudent, StudentOthers, FormationMember,CursStudentTheme, ColegStudentTheme, DipStudentTheme
 from programs.templatetags.extra_tags import finish_requirements_accomplished, \
     init_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
