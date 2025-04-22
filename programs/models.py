@@ -548,6 +548,15 @@ class MscStudentTheme(models.Model):
 
     def __str__(self):
         return self.description
+    
+class DipStudentTheme(models.Model):
+    student=models.OneToOneField(MscStudent, null= True, on_delete=models.CASCADE)
+    project=models.ForeignKey(InvestigationProject, null=True, on_delete=models.SET_NULL)
+    line=models.ForeignKey(InvestigationLine, null=True, on_delete=models.SET_NULL)
+    description=models.TextField(max_length=500, null=True)
+
+    def __str__(self):
+        return self.description
 
 class CursStudentTheme(models.Model):
     student=models.OneToOneField(CursStudent, null= True, on_delete=models.CASCADE)
