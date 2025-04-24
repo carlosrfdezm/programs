@@ -10088,12 +10088,18 @@ def ajx_students_by_center(request, program_slug):
     from django.db.models import Count
     from django.http import JsonResponse
     from django.shortcuts import get_object_or_404
-    from .models import Program, CursStudent  # Ajusta según tus modelos
+    from .models import Program, CursStudent, ColegStudent  # Ajusta según tus modelos
     
     program = get_object_or_404(Program, slug=program_slug)
     
     # Agrupa estudiantes por centro
     centers = CursStudent.objects.filter(
+        program=program
+    ).values('center').annotate(
+        total=Count('id')
+    ).order_by('-total')
+
+    centers = ColegStudent.objects.filter(
         program=program
     ).values('center').annotate(
         total=Count('id')

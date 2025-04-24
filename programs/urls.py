@@ -3,6 +3,8 @@ from django.urls import path
 
 from . import views
 from . import cgc_views as cgc_views
+from .formac_views import ajx_students_by_center, program_statistics
+
 
 app_name = 'programs'
 
@@ -51,8 +53,7 @@ urlpatterns = [
     path('coleg/<int:edition_id>/students/<int:student_id>/edit', views.edit_coleg_student, name='edit_coleg_student'),
     path('coleg/edition/<int:edition_id>/students/<str:scope>/list', views.coleg_edition_students_list, name='coleg_edition_students_list'),
     path('coleg/students/<str:scope>/list', views.coleg_all_students_list, name='coleg_all_students_list'),
-    
-
+   
     path('', views.dip_index, name='dip_index'),
     path('dip/<int:edition_id>/students/create', views.create_dip_student, name='create_dip_student'),
     path('dip/<int:edition_id>/students/<int:student_id>/edit', views.edit_dip_student, name='edit_dip_student'),
@@ -109,6 +110,7 @@ urlpatterns = [
     path('ajx/line/projects', views.ajx_line_projects, name='ajx_line_projects'),
     path('ajx/edition/delete', views.ajx_delete_program_edition, name='ajx_delete_program_edition'),
     path('ajx/project/delete', views.ajx_delete_project, name='ajx_delete_project'),
+    
 
     path('ajx/statistics/thisyear/requests', views.ajx_this_year_requests, name='ajx_this_year_requests'),
     path('ajx/statistics/byyear/requests', views.ajx_by_year_requests, name='ajx_by_year_requests'),
@@ -126,7 +128,7 @@ urlpatterns = [
     path('ajx/statistics/members/age', views.ajx_members_by_age, name='ajx_members_by_age'),
     path('ajx/statistics/next/defenses', views.ajx_next_years_defenses, name='ajx_next_years_defenses'),
     
-
+   
     path('ajx/messages/members/personal', views.ajx_member_personal_msg, name='ajx_member_personal_msg'),
     path('ajx/messages/members/massive', views.ajx_member_massive_msg, name='ajx_member_massive_msg'),
     path('ajx/messages/massive/all', views.ajx_all_massive_msg, name='ajx_all_massive_msg'),
@@ -157,6 +159,7 @@ urlpatterns = [
     path('ajx/requirenment/delete', views.ajx_delete_r, name='ajx_delete_r'),
     path('ajx/requirenment/data', views.ajx_r_data, name='ajx_r_data'),
     path('ajx/requirenment/edit', views.ajx_edit_requirenment, name='ajx_edit_requirenment'),
+   
 
 
     path('statistics', views.program_statistics, name='program_statistics'),
@@ -204,7 +207,9 @@ urlpatterns = [
 
     path('evidences/download', views.download_evidences , name='download_evidences'),
 
-
+    path('<str:program_slug>/statistics/', program_statistics, name='program_statistics'),
+    path('ajax/stats/students-by-center/<slug:program_slug>/', ajx_students_by_center, name='ajx_students_by_center'),
+    
 
     # path('login', views.mylogin, name='my_login'),
     # path('logout/<str:court_slug>/', views.mylogout, name='my_logout'),
