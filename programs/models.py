@@ -692,6 +692,7 @@ class PostgMember(models.Model):
         return self.user.get_full_name()
     
 class FormationMember(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True, blank=True)
     user=models.ForeignKey(User, on_delete=models.CASCADE)
     charge=models.CharField(max_length=20, choices=(('Director', 'Director'),('Metodólogo', 'Metodólogo'),('Técnico', 'Técnico')))
     grade = models.CharField(max_length=100,null=True, blank=True)
