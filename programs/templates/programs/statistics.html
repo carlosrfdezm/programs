@@ -126,8 +126,30 @@
             </div>
 
             <div class="row">
+                {% if program.type == 'coleg' %}
                 <div class="col-md-6 col-sm-6">
+                                           
                     <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title"><strong>Estudiantes por centro de procedencia</strong></h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart" id="div_ChartCenters">
+                                <canvas id="studentsByCenterChart" height="155" style="height: 200px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                
+                      
+                
+                </div>
+                {% endif %}
+                
+                
+                <div class="col-md-6 col-sm-6">
+                    {% if program.type == 'msc' or program.type == 'pdh' %}
+                    <div class="card">
+                        
                         <div class="card-header">
                             <h5 class="card-title"><strong>Estudiantes por Línea de investigación</strong></h5>
 
@@ -163,6 +185,7 @@
                                 {#                  </button>#}
                             </div>
                         </div>
+                        
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div class="row">
@@ -184,9 +207,11 @@
 
 
                     </div>
+                    {% endif %}
                     <!-- /.card -->
                 </div>
                 <div class="col-md-6 col-sm-6">
+                    {% if program.type == 'msc' or program.type == 'pdh' %}
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title"><strong>Estudiantes por rango etario</strong></h5>
@@ -208,6 +233,7 @@
                                 {#                  </button>#}
                             </div>
                         </div>
+                        
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div class="row">
@@ -228,6 +254,7 @@
 
 
                     </div>
+                    {% endif %}
                     <!-- /.card -->
                 </div>
 
@@ -630,6 +657,69 @@
                     $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
                         " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+            $.ajax({
+                url: "{% url 'formac:ajx_students_by_center' program.slug %}",
+                type: "GET",
+                success: function(json) {
+                    if(json.total > 0){
+                        var ctx = document.getElementById('studentsByCenterChart').getContext('2d');
+                        var chart = new Chart(ctx, {
+                            type: 'bar', // Puedes cambiar a 'pie' o 'doughnut' si prefieres
+                            data: {
+                                labels: json.labels,
+                                datasets: [{
+                                    label: 'Estudiantes',
+                                    data: json.data,
+                                    backgroundColor: [
+                                        'rgba(54, 162, 235, 0.6)',
+                                        'rgba(255, 99, 132, 0.6)',
+                                        'rgba(75, 192, 192, 0.6)',
+                                        'rgba(255, 206, 86, 0.6)',
+                                        'rgba(153, 102, 255, 0.6)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 99, 132, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(153, 102, 255, 1)'
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                var label = context.label || '';
+                                                var value = context.raw || 0;
+                                                var percentage = Math.round((value / json.total) * 100);
+                                                return label + ': ' + value + ' (' + percentage + '%)';
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        $('#div_ChartCenters').html('<div class="alert alert-info">No hay datos disponibles</div>');
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    $('#div_ChartCenters').html('<div class="alert alert-danger">Error al cargar los datos</div>');
+                    console.log(xhr.status + ": " + xhr.responseText);
                 }
             });
             $.ajax({

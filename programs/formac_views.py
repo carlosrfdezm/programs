@@ -1490,7 +1490,7 @@ def ajx_students_by_center(request, program_slug):
     from django.db.models import Count
     from django.http import JsonResponse
     from django.shortcuts import get_object_or_404
-    from .models import Program, CursStudent
+    from .models import Program, CursStudent, ColegStudent
     
     program = get_object_or_404(Program, slug=program_slug)
     
