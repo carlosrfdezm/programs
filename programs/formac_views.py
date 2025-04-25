@@ -1149,7 +1149,7 @@ def docx_formac_report(request, scope):
 
             
         elif scope == 'last_year':
-            docname = 'Reporte_Formación_' + str(now().year - 1) + '.docx'
+            docname = 'Reporte_Formacion_' + str(now().year - 1) + '.docx'
             document.add_heading('Resumen de los programas de formación', level=1)
             document.add_heading('Año '+ str(now().year-1), level=2)
             document.add_heading('Programas de formación', level=2)
@@ -1309,7 +1309,7 @@ def docx_formac_report(request, scope):
             document.add_heading('Resumen de los programas de formación', level=1)
             document.add_heading('Período '+ str(now().year-6) + '-' + str(now().year-1), level=2)
             document.add_heading('Programas de Formación', level=2)
-            docname = 'Reporte_Fromación_' + str(now().year-6) + '-' + str(now().year-1) +  '.docx'
+            docname = 'Reporte_Formacion_' + str(now().year-6) + '-' + str(now().year-1) +  '.docx'
 
             document.add_heading('Programas de Formación', level=2)
 
