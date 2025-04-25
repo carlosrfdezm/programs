@@ -1001,7 +1001,7 @@ def docx_formac_report(request, scope):
         document = Document()
         docname = ''
         if scope == 'current_year':
-            docname = 'Reporte_Formación_' + str(now().year) + '.docx'
+            docname = 'Reporte_Formacion_' + str(now().year) + '.docx'
 
             document.add_heading('Resumen de los cursos', level=1)
             document.add_heading('Año '+ str(now().year), level=2)
