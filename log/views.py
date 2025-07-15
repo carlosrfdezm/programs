@@ -88,7 +88,7 @@ def formac_login(request):
             return HttpResponseRedirect(reverse('formac:formac_home'))
 
         except FormationMember.DoesNotExist:
-            return HttpResponse('Pagina de error de acceso postg')
+            return HttpResponse('Pagina de error de acceso formac')
 
 
 def mylogin(request):
