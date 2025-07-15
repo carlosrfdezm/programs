@@ -12,6 +12,7 @@ body {
   background: #fff;
   color: #444;
   font-family: "Open Sans", sans-serif;
+  padding-top: 100px;
 }
 
 a {
@@ -118,9 +119,10 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.5s;
   z-index: 997;
   transition: all 0.5s;
-  padding: 5px 0;
+  padding: 25px 0;
   background: #fff;
   box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.3);
+  position: fixed;
 }
 
 #header.header-scrolled, #header.header-pages {
@@ -142,7 +144,7 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1;
   font-weight: 400;
   letter-spacing: 3px;
-  text-transform: uppercase;
+  text-transform: left;
 }
 
 @media (max-width: 991px) {
