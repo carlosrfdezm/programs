@@ -173,10 +173,10 @@ h1, h2, h3, h4, h5, h6 {
 # Navigation Menu
 --------------------------------------------------------------*/
 /* Desktop Navigation */
-.main-nav {
+/*.main-nav {*/
   /* Drop Down */
   /* Deep Drop Down */
-}
+/*}*/
 
 .main-nav, .main-nav * {
   margin: 0;
