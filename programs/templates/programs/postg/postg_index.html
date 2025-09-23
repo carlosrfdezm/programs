@@ -173,6 +173,49 @@
 
         </div>
     </section><!-- #about -->
+
+    <section id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Programas de Formación</h2>
+                
+            </div>
+
+            <div class="row">
+                {% for program in programs %}
+                <div class="col-md-6 col-lg-5 {% cycle 'offset-lg-1 wow' 'wow' %} bounceInUp" data-wow-duration="1.4s">
+                    {% if program.type == 'phd' %}
+                    <div class="box" style="height: 165px">
+                        <div class="icon"><i class="{{ program.icon }}" style="color: #0b0fff;"></i></div>
+                        <h4 class="title"><a href="/{{ program.slug }}">{{ program.full_name}}</a></h4>
+                        <p class="description">{{ program.description }}</p>
+                    </div>
+                    {% elif program.type == 'msc' %}
+                    <div class="box" style="height: 165px">
+                        <div class="icon"><i class="{{ program.icon }}" style="color: #14bc12;"></i></div>
+                        <h4 class="title"><a href="/{{ program.slug }}">{{ program.full_name}}</a></h4>
+                        <p class="description">{{ program.description }}</p>
+                    </div>
+                    {% elif program.type == 'dip' %}
+                    <div class="box" style="height: 165px">
+                        <div class="icon"><i class="{{ program.icon }}" style="color: #14bc12;"></i></div>
+                        <h4 class="title"><a href="/{{ program.slug }}">{{ program.full_name}}</a></h4>
+                        <p class="description">{{ program.description }}</p>
+                    </div>
+
+                    {% endif %}
+                </div>
+                {% endfor %}
+                {% resetcycle %}
+            </div>
+        </div>
+    </section><!-- #programs -->
+
+
+
+
+
+
     <!-- ============================-->
     <section id="call-to-action" class="wow fadeInUp">
         <div class="container">
