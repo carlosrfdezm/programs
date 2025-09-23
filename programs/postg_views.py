@@ -35,7 +35,7 @@ def index(request):
 
     context={
         'members':PostgMember.objects.all(),
-        'programs': Program.objects.all().order_by('-type'),
+        'programs': Program.objects.filter(type__in=['phd','msc','dip']).order_by('-type'),
         'public_docs': PostgDoc.objects.filter(is_public=True),
     }
     try:

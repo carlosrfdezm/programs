@@ -35,7 +35,7 @@ def index(request):
 
     context={
         'members':FormationMember.objects.all(),
-        'programs': Program.objects.all().order_by('-type'),
+        'programs': Program.objects.filter(type__in=['curs','coleg']).order_by('-type'),
         'public_docs': FormacDoc.objects.filter(is_public=True),
     }
     try:
