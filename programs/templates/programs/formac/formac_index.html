@@ -160,7 +160,11 @@
 
                         <ul>
                             {% for programs in programs  %}
-                                <li><i class="ion-android-checkmark-circle"></i> {{ programs}}</li>
+                                <li>
+                                    <i class="ion-android-checkmark-circle"></i>
+                                    <a href="/{{ programs.slug }}">{{ programs.full_name }}</a>
+                                
+                                </li>
                             {% endfor %}
                         </ul>
                     {% endif %}
