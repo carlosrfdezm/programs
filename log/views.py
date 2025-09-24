@@ -146,6 +146,30 @@ def mylogin(request):
                     }
                     return render(request, 'log/login_error.html', context)
 
+            elif program.type == 'curs':
+                try:
+                    student = CursStudent.objects.get(user=user, program=program)
+                    login(request, user)
+                    return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
+                except CursStudent.DoesNotExist:
+                    context = {
+                        'error_message': 'Usted no es profesor ni estudiante de este diplomado',
+                        'program': program,
+                    }
+                    return render(request, 'log/login_error.html', context)
+
+            elif program.type == 'coleg':
+                try:
+                    student = ColegStudent.objects.get(user=user, program=program)
+                    login(request, user)
+                    return HttpResponseRedirect(reverse('programs:home', args=[program_slug]))
+                except ColegStudent.DoesNotExist:
+                    context = {
+                        'error_message': 'Usted no es profesor ni estudiante de este diplomado',
+                        'program': program,
+                    }                    
+                    return render(request, 'log/login_error.html', context)
+
     # TODO si hay error de usuario y contrase;a que redireccione al index del tribunal con un error  especifico
 
 def mylogout(request, program_slug):

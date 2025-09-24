@@ -5440,7 +5440,7 @@ def confirm_auto_request(request, program_slug, request_id):
 
     try:
         edition = None
-        if program.type in ['msc', 'dip']:
+        if program.type in ['msc', 'dip', 'curs', 'coleg']:
             try: 
                 edition = ProgramEdition.objects.filter(program=program).latest('init_date')
             except ProgramEdition.DoesNotExist:
@@ -5456,6 +5456,10 @@ def confirm_auto_request(request, program_slug, request_id):
                 return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
             elif program.type == 'dip':
                 return HttpResponseRedirect(reverse('programs:dip_index', args=[program_slug]))
+            elif program.type == 'curs':
+                return HttpResponseRedirect(reverse('programs:curs_index', args=[program_slug]))
+            elif program.type == 'coleg':
+                return HttpResponseRedirect(reverse('programs:coleg_index', args=[program_slug]))
         try:
             user = User.objects.get(email=requester.email)
             try:
@@ -5465,6 +5469,10 @@ def confirm_auto_request(request, program_slug, request_id):
                     MscStudent.objects.get(user=user, program=program)
                 elif program.type == 'dip':
                     DipStudent.objects.get(user=user, program=program)
+                elif program.type == 'curs':
+                    CursStudent.objects.get(user=user, program=program)
+                elif program.type == 'coleg':
+                    ColegStudent.objects.get(user=user, program=program)
                 requester.delete()
                 messages.error(request, 'Ha habido un error, quizá usted ya haya confirmado su solicitud de ingreso')
                 if program.type == 'phd':
@@ -5473,7 +5481,11 @@ def confirm_auto_request(request, program_slug, request_id):
                     return HttpResponseRedirect(reverse('programs:msc_index', args=[program_slug]))
                 elif program.type == 'dip':
                     return HttpResponseRedirect(reverse('programs:dip_index', args=[program_slug]))
-            except (Student.DoesNotExist, MscStudent.DoesNotExist):
+                elif program.type == 'curs':
+                    return HttpResponseRedirect(reverse('programs:curs_index', args=[program_slug]))
+                elif program.type == 'coleg':
+                    return HttpResponseRedirect(reverse('programs:coleg_index', args=[program_slug]))
+            except (Student.DoesNotExist, MscStudent.DoesNotExist, CursStudent.DoesNotExist, ColegStudent.DoesNotExist):
                 if program.type == 'phd':
                     student = Student(
                         user=user,
@@ -5533,6 +5545,40 @@ def confirm_auto_request(request, program_slug, request_id):
                     )
                     student.save()
                     #student_theme = DipStudentTheme(
+                        #student=student,
+                        #line=InvestigationLine.objects.get(pk=requester.line),
+                        #description=requester.theme,
+                    #)
+                    #student_theme.save()
+                elif program.type == 'curs':
+                    student = CursStudent(
+                        user=user,
+                        program=program,
+                        edition=edition,
+                        gender=requester.gender,
+                        dni=requester.dni,
+                        birth_date=requester.birthdate,
+                        status='solicitante',
+                    )
+                    student.save()
+                    #student_theme = CursStudentTheme(
+                        #student=student,
+                        #line=InvestigationLine.objects.get(pk=requester.line),
+                        #description=requester.theme,
+                    #)
+                    #student_theme.save()
+                elif program.type == 'coleg':
+                    student = ColegStudent(
+                        user=user,
+                        program=program,
+                        edition=edition,
+                        gender=requester.gender,
+                        dni=requester.dni,
+                        birth_date=requester.birthdate,
+                        status='solicitante',
+                    )
+                    student.save()
+                    #student_theme = ColegStudentTheme(
                         #student=student,
                         #line=InvestigationLine.objects.get(pk=requester.line),
                         #description=requester.theme,
