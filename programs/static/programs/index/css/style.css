@@ -664,7 +664,6 @@ body.mobile-nav-active #mobile-nav-toggle {
   
   #services .box p {
     margin-left: 80px;
-    -webkit-line-clamp: 2;
   }
   
   #services .box .icon i {
