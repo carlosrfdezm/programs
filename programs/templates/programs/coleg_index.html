@@ -530,10 +530,16 @@
                                 <input class="form-control" type="tel" id="inp_phone" name="phone" placeholder="Teléfono de contacto" maxlength="100" required></input>
 
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-4" style=" display: none;">
                                 
                                 <label for="inp_planned_end_year">Año de defensa:</label>
-                                <input class="form-control" type="number" id="inp_planned_end_year" name="planned_end_year" placeholder="Año de defensa previsto" min="{{ current_year }}" max="{{ five_years_ahead }}" required></input>
+                                <input type="hidden" class="form-control" 
+                                        id="inp_planned_end_year" 
+                                        name="planned_end_year" 
+                                        value="{{ current_year }}"
+                                        placeholder="Año de defensa previsto" 
+                                        min="{{ current_year }}" 
+                                        max="{{ five_years_ahead }}">
 
                             </div>
 
@@ -564,25 +570,17 @@
                         <div class="row">
 
 
-                            <div class="form-group col-md-12">
-                                <label for="slc_line">Línea de investigación:</label>
-                                <select class="form-control" id="slc_line" name="line" required>
-                                    <option value="" selected>Seleccione una opción</option>
-                                    {% for line in lines %}
-                                    <option value={{ line.id }} >{{ line }}</option>
-                                    {% endfor %}
-                                </select>
-
+                            <div style="display: none;">
+                                <input type="hidden" id="inp_line" name="line" 
+                                    value="{% if lines %}{{ lines.0.id }}{% else %}1{% endif %}">
                             </div>
 
 
                         </div>
                         <div class="row">
 
-                            <div class="form-group col-md-12">
-                                <label for="inp_name">Tema de investigación:</label>
-                                <textarea class="form-control"  id="txt_theme" name="theme" placeholder="Tema de investigación" maxlength="200" rows="3" required></textarea>
-
+                           <div style="display: none;">
+                                <input type="hidden" id="inp_theme" name="theme" value="Por definir">
                             </div>
 
 
@@ -713,6 +711,20 @@
             $('#modal_request_enter').modal('hide');
             var url = "{% url 'programs:ajx_auto_request' program.slug %}";
 
+            if (!$('#inp_planned_end_year').val()) {
+            $('#inp_planned_end_year').val(new Date().getFullYear());
+            }
+            if (!$('#inp_theme').val()) {
+            $('#inp_theme').val('Por definir');
+            }
+            if (!$('#inp_line').val()) {
+            // Asignar el primer valor de lines si existe
+            $('#inp_line').val('{% if lines %}{{ lines.0.id }}{% else %}1{% endif %}');
+            }
+
+            $('#modal_request_enter').modal('hide');
+            var url = "{% url 'programs:ajx_auto_request' program.slug %}";
+
             $.ajax({
                 url : url,
                 type : "POST", // http method
@@ -725,8 +737,8 @@
                     'gender': $('#slc_gender').val(),
                     'birthdate': $('#inp_birthdate').val(),
                     'planned_end_year': $('#inp_planned_end_year').val(),
-                    'theme': $('#txt_theme').val(),
-                    'line':$('#slc_line').val(),
+                    'theme': $('#inp_theme').val(),
+                    'line':$('#inp_line').val(),
                 }, // data sent with the post request
 
                 // handle a successful response
