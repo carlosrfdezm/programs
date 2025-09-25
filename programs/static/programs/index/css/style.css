@@ -597,6 +597,9 @@ body.mobile-nav-active #mobile-nav-toggle {
   box-shadow: 10px 10px 15px rgba(73, 78, 92, 0.1);
   background: #fff;
   transition: 0.4s;
+  height: auto;
+  min-height: 165px;
+  overflow: hidden;
 }
 
 #services .box:hover {
@@ -631,6 +634,9 @@ body.mobile-nav-active #mobile-nav-toggle {
   font-weight: 700;
   margin-bottom: 15px;
   font-size: 22px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #services .box h4 a {
@@ -642,6 +648,29 @@ body.mobile-nav-active #mobile-nav-toggle {
   margin-left: 100px;
   margin-bottom: 0;
   line-height: 24px;
+  
+}
+
+@media (max-width: 768px) {
+  #services .box {
+    padding: 20px;
+    min-height: 140px;
+  }
+  
+  #services .box h4 {
+    font-size: 18px;
+    margin-left: 80px;
+  }
+  
+  #services .box p {
+    margin-left: 80px;
+    -webkit-line-clamp: 2;
+  }
+  
+  #services .box .icon i {
+    font-size: 48px;
+    margin-top: 24px;
+  }
 }
 
 /* Clients Section
