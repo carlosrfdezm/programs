@@ -1571,7 +1571,7 @@ def ajx_cgc_students_massive_msg(request ):
     if user_is_cgc_ps(request.user):
         if request.method == 'POST' and request.POST['msg_body'].__len__() <= 500:
             try:
-                email_list = ['boris_perez@unah.edu.cu']
+                email_list = ['programas@rect.uh.cu']
 
                 if request.POST['msg_scope'] == 'requesters':
                     for student in Student.objects.filter(status='solicitante'):
@@ -1641,11 +1641,11 @@ def ajx_student_personal_msg(request, program_slug ):
         try:
             if program.type == 'phd':
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'],request.user.email,
-                          [Student.objects.get(pk=request.POST['student_id']).user.email,'cmedina@unah.edu.cu'],
+                          [Student.objects.get(pk=request.POST['student_id']).user.email,'programas@rect.uh.cu'],
                           fail_silently=False,html_message=request.POST['msg_body'])
             elif program.type == 'msc':
                 send_mail(request.POST['msg_subject'], request.POST['msg_body'], request.user.email,
-                          [Student.objects.get(pk=request.POST['student_id']).user.email, 'cmedina@unah.edu.cu'],
+                          [Student.objects.get(pk=request.POST['student_id']).user.email, 'programas@rect.uh.cu'],
                           fail_silently=False, html_message=request.POST['msg_body'])
             elif program.type == 'dip':
                 pass
@@ -1969,7 +1969,7 @@ def cgc_statistics(request):
 def cgc_brief_zip_download(request):
 
     brief_list = CGCBrief.objects.all()
-    zipname = "Actas-de-CGC-UNAH-Complejo"
+    zipname = "Actas-de-CGC-UH"
 
     if brief_list.count() > 0:
         # Files (local path) to put in the .zip
