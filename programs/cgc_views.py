@@ -10,7 +10,7 @@ from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail, send_mass_mail
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
@@ -24,7 +24,7 @@ from programas.settings import MEDIA_URL, MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, CGC_Member, \
-    CGCBrief, CNGCBrief, CGCDocument, PhdStudentThesis
+    CGCBrief, CNGCBrief, CGCDocument, PhdStudentThesis, FAQ
 from programs.templatetags.extra_tags import init_requirements_accomplished, finish_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
     user_is_cgc_member, user_is_cgc_ps
@@ -45,6 +45,7 @@ def cgc_index(request):
                 'members': CGC_Member.objects.all(),
                 'documents': CGCDocument.objects.filter(is_public=True),
                 'programs': Program.objects.filter(type='phd'),
+                'faqs': FAQ.objects.filter(title__icontains='[cgc]').order_by('-date')[:5],
             }
 
         except ObjectDoesNotExist:
@@ -2605,4 +2606,85 @@ def download_thesis(request):
         
         return HttpResponse('Ha ocurrido una excepción:{0}'.format(str(e)))
 
+# Preguntas
+@login_required
+def create_faq(request):
+    try:
+        cgc_member = CGC_Member.objects.get(user=request.user)
+        
+    except CGC_Member.DoesNotExist:
+        return error_500(request, None, 'Usted no está vinculado a ningún programa de formación.')
+
+    if request.method == 'POST':
+        faq = FAQ(
+            # program=program, 
+            title='[cgc]'+ request.POST.get('faq.title', '').strip(),
+            content=request.POST.get('faq_content', '').strip()
+        )
+        if 'img_faq' in request.FILES:
+            faq.img = request.FILES['img_faq']
+        faq.save()
+        return redirect(reverse('cgc:faq_list'))
+
+    context = {
+        
+        'member': cgc_member
+    }
+    return render(request, 'programs/cgc/create_faq.html', context)
+@login_required
+def faq_list(request):
+    faqs = FAQ.objects.filter(title__icontains='[cgc]')
+    context={'faqs': faqs}
+            
+    return render(request, 'programs/cgc/faq_list.html', context)
+
+@login_required
+def read_faq(request, faq_id):
+
+        context={
+            'faq': FAQ.objects.get(pk=faq_id)
+        }       
+        return render(request, 'programs/cgc/read_faq.html', context)    
+
+
+@login_required
+def edit_faq(request, faq_id):
+    try:
+        cgc_member = CGC_Member.objects.get(user=request.user)
+        
+    except CGC_Member.DoesNotExist:
+        return error_500(request, None, 'Usted no está vinculado a ningún programa de formación.')
+    faq = FAQ.objects.get(pk=faq_id)
+    if request.method == 'POST':
+        faq.title = request.POST['faq.title']
+        faq.content = request.POST['faq.content']
+        try:
+            faq.img = request.FILES['img_faq']
+        except:
+            pass
+        faq.save()
+        return HttpResponseRedirect(reverse('cgc:read_faq', args=[faq_id]))
+    else:
+        context={
+            'member': cgc_member,
+            'faq':faq,
+            
+        }
+        return render(request, 'programs/cgc/edit_faq.html', context)
+    
+    
+@login_required
+def ajx_delete_faq(request, faq_id):
+    if request.method == 'POST':
+        faq_id = request.POST.get('faq_id', '').strip()
+        if not faq_id.isdigit():
+            return JsonResponse({'deleted': 0})
+
+        try:
+            FAQ.objects.get(pk=faq_id).delete()
+            return JsonResponse({'deleted': 1})
+        except FAQ.DoesNotExist:
+            return JsonResponse({'deleted': 0})
+    else:
+        return JsonResponse({'deleted': 2})
 

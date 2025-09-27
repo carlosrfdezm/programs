@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 
 from . import views
@@ -49,5 +49,13 @@ urlpatterns = [
     path('<str:program_slug>/statistics/', program_statistics, name='program_statistics'),
     path('ajax/stats/students-by-center/<slug:program_slug>/', ajx_students_by_center, name='ajx_students_by_center'),
     # ... otras URLs específicas de formac ...
+
+    path('faq/<int:faq_id>/read', views.read_faq, name='read_faq'),
+    path('faq/<int:faq_id>/edit', views.edit_faq, name='edit_faq'),
+    path('faq/create', views.create_faq, name='create_faq'),
+    path('faq/list', views.faq_list, name='faq_list'),
+
+    path('faq/delete/<int:faq_id>/', views.ajx_delete_faq, name='ajx_delete_faq'),
+    #path('formac/', include(('programs.formacurls', 'formac'), namespace='formac')),
 
 ]

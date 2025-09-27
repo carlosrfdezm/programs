@@ -10,8 +10,8 @@ from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail, send_mass_mail
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.urls import reverse
@@ -23,7 +23,7 @@ from programas.settings import MEDIA_URL, MEDIA_ROOT
 from programs.models import Program, PhdStudent, Student, \
     FormationMember, InvestigationLine, PhdStudentTheme, CursStudentTheme, ColegStudentTheme, ProgramMember, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, CursStudent, ColegStudent, \
-    PostgMember, StudentFormationPlan, FormationMember, CursStudent, ColegStudent
+    PostgMember, StudentFormationPlan, FormationMember, CursStudent, ColegStudent, FAQ, New
 from programs.models import Document as FormacDoc
 
 
@@ -37,6 +37,8 @@ def index(request):
         'members':FormationMember.objects.all(),
         'programs': Program.objects.filter(type__in=['curs','coleg']).order_by('-type'),
         'public_docs': FormacDoc.objects.filter(is_public=True),
+        'news': New.objects.all().order_by('-date')[:5],
+        'faqs': FAQ.objects.filter(title__icontains='[formac]').order_by('-date')[:5],
     }
     try:
         director = FormationMember.objects.get(charge='Director')
@@ -1518,3 +1520,88 @@ def ajx_students_by_center(request, program_slug):
         'data': data,
         'total': sum(data)
     })
+
+
+# Preguntas
+@login_required
+def create_faq(request):
+    try:
+        formac_member = FormationMember.objects.get(user=request.user)
+        
+    except FormationMember.DoesNotExist:
+        return error_500(request, None, 'Usted no está vinculado a ningún programa de formación.')
+
+    if request.method == 'POST':
+        faq = FAQ(
+            # program=program, 
+            title='[formac]'+ request.POST.get('faq.title', '').strip(),
+            content=request.POST.get('faq_content', '').strip()
+        )
+        if 'img_faq' in request.FILES:
+            faq.img = request.FILES['img_faq']
+        faq.save()
+        return redirect(reverse('formac:faq_list'))
+
+    context = {
+        
+        'member': formac_member
+    }
+    return render(request, 'programs/formac/create_faq.html', context)
+@login_required
+def faq_list(request):
+    faqs = FAQ.objects.filter(title__icontains='[formac]')
+    context={'faqs': faqs}
+            
+    return render(request, 'programs/formac/faq_list.html', context)
+
+@login_required
+def read_faq(request, faq_id):
+
+        context={
+            'faq': FAQ.objects.get(pk=faq_id)
+        }       
+        return render(request, 'programs/formac/read_faq.html', context)    
+
+
+@login_required
+def edit_faq(request, faq_id):
+    try:
+        formac_member = FormationMember.objects.get(user=request.user)
+        
+    except FormationMember.DoesNotExist:
+        return error_500(request, None, 'Usted no está vinculado a ningún programa de formación.')
+    faq = FAQ.objects.get(pk=faq_id)
+    if request.method == 'POST':
+        faq.title = request.POST['faq.title']
+        faq.content = request.POST['faq.content']
+        try:
+            faq.img = request.FILES['img_faq']
+        except:
+            pass
+        faq.save()
+        return HttpResponseRedirect(reverse('formac:read_faq', args=[faq_id]))
+    else:
+        context={
+            'member': formac_member,
+            'faq':faq,
+            
+        }
+        return render(request, 'programs/formac/edit_faq.html', context)
+    
+    
+@login_required
+def ajx_delete_faq(request, faq_id):
+    if request.method == 'POST':
+        faq_id = request.POST.get('faq_id', '').strip()
+        if not faq_id.isdigit():
+            return JsonResponse({'deleted': 0})
+
+        try:
+            FAQ.objects.get(pk=faq_id).delete()
+            return JsonResponse({'deleted': 1})
+        except FAQ.DoesNotExist:
+            return JsonResponse({'deleted': 0})
+    else:
+        return JsonResponse({'deleted': 2})
+
+

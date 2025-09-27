@@ -307,16 +307,28 @@
                 {% endfor %}
 
             </div>
+    
         </section><!-- #services -->
-    {% else %}
-        <section id="services">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Preguntas frecuentes</h2>
-                    <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
-                </div>
+    {% endif %}
+    <section id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Preguntas frecuentes</h2>
+                <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+            </div>
 
-                <div class="row">
+            <div class="row">
+    {% if faqs %}
+            {%for faq in faqs %}
+                <div class="col-lg-6">
+                    <div class="box wow fadeInLeft">
+                        <div class="icon"><i class=" fa fa-question-circle"></i></div>
+                        <h4 class="title"><a href="">{{faq.title | slice:'7 :' }} </a></h4>
+                        <p class="description text-justify">{% autoescape off %}{{faq.content}}{% endautoescape %}</p>
+                    </div>
+                </div>
+            {% endfor %}
+            {% else %}     
 
                     <div class="col-lg-6">
                         <div class="box wow fadeInLeft">
@@ -354,9 +366,10 @@
                 </div>
 
             </div>
+    {% endif %}
         </section><!-- #services -->
 
-    {% endif %}
+    
 
 
 

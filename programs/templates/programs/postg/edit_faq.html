@@ -1,0 +1,120 @@
+{% extends 'programs/postg/postg_base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block cgc_content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-9">
+                    <h1>Editar FAQ</h1>
+                </div>
+                <div class="col-sm-3">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'postg:postg_home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Editar FAQ</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">FAQ</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form role="form" method="post" enctype="multipart/form-data" action="{% url 'postg:edit_faq' faq.id %}">
+                            {% csrf_token %}
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label for="inp_name">Título:</label>
+                                        <input class="form-control" id="inp_title" name="faq.title" placeholder="Título de la FAQ" value="{{ faq.title }}" maxlength="100" required></input>
+                                    </div>
+
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <textarea class="form-control textarea col-md-12" id="txt_faq_content"
+                                                    name="faq.content" placeholder="Cuerpo de la FAQ" rows="8" maxlength="4000" required >{{faq.content}}</textarea>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
+
+
+
+                    <!-- /.card -->
+
+                    <!-- Input addon -->
+                    <!-- /.card -->
+                    <!-- Horizontal Form -->
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+<!-- jQuery -->
+{% block extra_scripts %}
+    <!-- AdminLTE App -->
+
+    <script>
+        $(document).ready(function () {
+            $('#txt_faq_content').summernote({
+                lang: 'es-Es',
+                placeholder: 'Escriba el cuerpo de la FAQ aquí.',
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                dialogsInBody: true,
+                dialogsFade: true,
+                height: 300,
+                toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    {#['fontname', ['fontname']],#}
+                    {#['fontsize', ['fontsize']],#}
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']],
+                ],
+
+            });
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

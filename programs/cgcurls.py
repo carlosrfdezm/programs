@@ -90,7 +90,12 @@ urlpatterns = [
     path('thesis/list', login_required(views.ThesisListView.as_view()), name='cgc_thesis_list'),
     path('thesis/download', views.download_thesis, name='download_thesis'),
 
+    path('faq/<int:faq_id>/read', views.read_faq, name='read_faq'),
+    path('faq/<int:faq_id>/edit', views.edit_faq, name='edit_faq'),
+    path('faq/create', views.create_faq, name='create_faq'),
+    path('faq/list', views.faq_list, name='faq_list'),
 
+    path('faq/delete/<int:faq_id>/', views.ajx_delete_faq, name='ajx_delete_faq'),
 
 
 

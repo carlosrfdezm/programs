@@ -297,15 +297,26 @@
 
             </div>
         </section><!-- #services -->
-    {% else %}
-        <section id="services">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Preguntas frecuentes</h2>
-                    <p>Cualquier duda o pregunta adicional la puede enviar al Coordinador del Programa o en su defecto al Secretario del Comité Académico.</p>
+    {% endif %}
+    <section id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Preguntas frecuentes</h2>
+                <p>Cualquier duda o pregunta adicional la puede enviar a la Direccion de Formación.</p>
+            </div>
+                
+            <div class="row">
+    {% if faqs %}
+            {%for faq in faqs %}
+                <div class="col-lg-6">
+                    <div class="box wow fadeInLeft">
+                        <div class="icon"><i class=" fa fa-question-circle"></i></div>
+                        <h4 class="title"><a href="">{{faq.title | slice:'8 :' }} </a></h4>
+                        <p class="description text-justify">{% autoescape off %}{{faq.content}}{% endautoescape %}</p>
+                    </div>
                 </div>
-
-                <div class="row">
+            {% endfor %}
+            {% else %}        
 
                     <div class="col-lg-6">
                         <div class="box wow fadeInLeft">
@@ -343,9 +354,11 @@
                 </div>
 
             </div>
-        </section><!-- #services -->
 
-    {% endif %}
+    {% endif %}    
+    </section><!-- #services -->
+
+    
 
 
 

@@ -10,8 +10,8 @@ from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail, send_mass_mail
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.urls import reverse
@@ -23,7 +23,7 @@ from programas.settings import MEDIA_URL, MEDIA_ROOT
 from programs.models import Program, PhdStudent, Student, \
     ProgramMember, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, \
-    PostgMember, StudentFormationPlan
+    PostgMember, StudentFormationPlan, FAQ
 from programs.models import Document as PostgDoc
 
 
@@ -37,6 +37,7 @@ def index(request):
         'members':PostgMember.objects.all(),
         'programs': Program.objects.filter(type__in=['phd','msc','dip']).order_by('-type'),
         'public_docs': PostgDoc.objects.filter(is_public=True),
+        'faqs': FAQ.objects.filter(title__icontains='[postg]').order_by('-date')[:5],
     }
     try:
         director = PostgMember.objects.get(charge='Director')
@@ -1778,3 +1779,87 @@ def docx_postg_report(request, scope):
 
     except PostgMember.DoesNotExist:
         return error_500(request, 'Usted no es miembro de la Direccion de Posgrado')
+
+
+# Preguntas
+@login_required
+def create_faq(request):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+        
+    except PostgMember.DoesNotExist:
+        return error_500(request, None, 'Usted no está vinculado a ningún programa de formación.')
+
+    if request.method == 'POST':
+        faq = FAQ(
+            # program=program, 
+            title='[postg]'+ request.POST.get('faq.title', '').strip(),
+            content=request.POST.get('faq_content', '').strip()
+        )
+        if 'img_faq' in request.FILES:
+            faq.img = request.FILES['img_faq']
+        faq.save()
+        return redirect(reverse('postg:faq_list'))
+
+    context = {
+        
+        'member': postg_member
+    }
+    return render(request, 'programs/postg/create_faq.html', context)
+@login_required
+def faq_list(request):
+    faqs = FAQ.objects.filter(title__icontains='[postg]')
+    context={'faqs': faqs}
+            
+    return render(request, 'programs/postg/faq_list.html', context)
+
+@login_required
+def read_faq(request, faq_id):
+
+        context={
+            'faq': FAQ.objects.get(pk=faq_id)
+        }       
+        return render(request, 'programs/postg/read_faq.html', context)    
+
+
+@login_required
+def edit_faq(request, faq_id):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+        
+    except PostgMember.DoesNotExist:
+        return error_500(request, None, 'Usted no está vinculado a ningún programa de formación.')
+    faq = FAQ.objects.get(pk=faq_id)
+    if request.method == 'POST':
+        faq.title = request.POST['faq.title']
+        faq.content = request.POST['faq.content']
+        try:
+            faq.img = request.FILES['img_faq']
+        except:
+            pass
+        faq.save()
+        return HttpResponseRedirect(reverse('postg:read_faq', args=[faq_id]))
+    else:
+        context={
+            'member': postg_member,
+            'faq':faq,
+            
+        }
+        return render(request, 'programs/postg/edit_faq.html', context)
+    
+    
+@login_required
+def ajx_delete_faq(request, faq_id):
+    if request.method == 'POST':
+        faq_id = request.POST.get('faq_id', '').strip()
+        if not faq_id.isdigit():
+            return JsonResponse({'deleted': 0})
+
+        try:
+            FAQ.objects.get(pk=faq_id).delete()
+            return JsonResponse({'deleted': 1})
+        except FAQ.DoesNotExist:
+            return JsonResponse({'deleted': 0})
+    else:
+        return JsonResponse({'deleted': 2})
+

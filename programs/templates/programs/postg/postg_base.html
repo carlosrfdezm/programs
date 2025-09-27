@@ -222,6 +222,41 @@
 
                         </ul>
                     </li>
+
+                    <!-- Opciones de FAQ -->
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link" title="Preguntas Frecuentes (FAQ)">
+                            <i class="nav-icon fa fa-question-circle"></i> <!-- Icono de preguntas frecuentes -->
+                            <p>
+                                Preguntas Frecuentes
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <!-- Opción para crear una nueva FAQ -->
+                            {% if member %}
+                            <li class="nav-item">
+                                <a href="{% url 'postg:create_faq'  %}" class="nav-link">
+                                    <i class="fa fa-plus nav-icon"></i>
+                                    <p>Nueva FAQ</p>
+                                </a>
+                            </li>
+                            {% endif %}
+                            <!-- Opción para ver la lista de FAQs -->
+                            <li class="nav-item">
+                                <a href="{% url 'postg:faq_list'  %}" class="nav-link">
+                                    <i class="fa fa-list nav-icon"></i>
+                                    <p>Ver FAQs</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>    
+
+
+
+
+
+
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link" title="Actas de la CGC y CNGC">
                             <i class="nav-icon fas fa-history"></i>
