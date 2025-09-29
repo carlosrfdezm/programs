@@ -653,7 +653,7 @@ body.mobile-nav-active #mobile-nav-toggle {
 
 @media (max-width: 768px) {
   #services .box {
-    padding: 20px;
+    padding: 5px;
     min-height: 140px;
   }
   
