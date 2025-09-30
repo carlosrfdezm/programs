@@ -1,0 +1,236 @@
+{% extends 'programs/formac/formac_base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+
+{% block extra_css %}
+    <!-- Ionicons -->
+    {# <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css' %}"> #}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'programs/plugins/datatables-bs4/css/dataTables.bootstrap4.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'programs/dist/css/adminlte.min.css' %}">
+    <link rel="stylesheet" href="{% static 'programs/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+
+{% endblock %}
+
+{% block formac_content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-9">
+                    <h1>Noticias de {{ formac }}</h1>
+                </div>
+                <div class="col-sm-3">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'formac:formac_home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Noticias</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+
+                <!-- /.card -->
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Noticias publicadas</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            
+
+                            <tr>
+                                <th>Fecha</th>
+                                <th class="text-center">Título</th>
+                                <th></th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for new in news %}
+                                <tr id="tr_new_{{ new.id }}">
+                                    <td>{{ new.date|date:'Y-m-d' }} </td>
+                                    <td class="">
+                                        <p >{{ new.title|truncatewords:10 }}</p>
+                                    </td>
+
+
+
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <a class="btn btn-success btn-sm text-white" href="{% url 'formac:read_new' new.id %}" title="Ver"> <i class="fa fa-book-reader"></i></a>
+
+                                            
+                                                <a class="btn btn-warning btn-sm text-white" href="{% url 'formac:edit_new' new.id %}" title="Editar"> <i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-danger btn-sm text-white"  title="Eliminar" data-toggle="modal" data-target="#modal_rm_new_{{ new.id }}"><i class="fa fa-eraser"></i></a>
+                                            
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                <div class="modal fade" id="modal_rm_new_{{ new.id }}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Eliminar noticia</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <span class="text-danger"><i class="fa fa-exclamation-triangle fa-4x"></i></span>
+
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <p class="text-center">¿Seguro que desea eliminar esta noticia:<br><strong>{{ new.title|truncatewords:5 }}</strong>?<br>Esto no se puede deshacer&hellip;</p>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_rm_new_{{ new.id }}">Eliminar</button>
+                                            </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+
+                            {% endfor %}
+
+
+
+
+                            </tbody>
+                            <tfoot>
+                            {#                            <tr>#}
+                            {#                                <th>Nombre y apellidos</th>#}
+                            {#                                <th>Fecha solicitud</th>#}
+                            {#                                <th>Estado</th>#}
+                            {#                                <th class="text-center">Requisitos</th>#}
+                            {#                                <th></th>#}
+                            {#                            </tr>#}
+                            </tfoot>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        {% csrf_token %}
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+{% block extra_scripts %}
+    <!-- jQuery -->
+    <script src="{% static 'programs/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+    <!-- DataTables -->
+    <script src="{% static 'programs/plugins/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'programs/plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
+    <!-- page script -->
+    <script>
+        $(document).ready(function () {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000
+            });
+
+            var myTable= $("#example1").DataTable({
+                language: {
+                    url: '{% static "programs/plugins/datatables/Spanish.json" %}'
+                }});
+
+
+
+
+            {% for new in news %}
+                $('#btn_rm_new_{{ new.id }}').click(function () {
+                    var new_id={{ new.id }};
+                    var url = "{% url 'formac:ajx_delete_new' new.id %}";
+
+                    {#$('#modal_rm_line_{{ line.id }}').modal('hide');#}
+
+                    $.ajax({
+                        url : url,
+                        type : "POST", // http method
+                        data : {'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                            'new_id':new_id,
+                        }, // data sent with the post request
+
+                        // handle a successful response
+                        success : function(json) {
+
+                            if (json.deleted == 1) {
+
+                                var row = myTable.row( $('#tr_new_{{ new.id }}') );
+                                row.remove().draw();
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'Noticia eliminada exitosamente'
+                                });
+
+                            } else if(json.deleted == 0){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar la noticia seleccionada: error desconocido.'
+                                })
+
+                            }
+                            else if(json.deleted == 2){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar la noticia seleccionada: metodo incorrecto.'
+                                })
+
+                            }
+                            else if(json.deleted == 3){
+                                Toast.fire({
+                                    type: 'error',
+                                    title: 'No se ha podido eliminar la noticia seleccionada: usted no tiene privilegios.'
+                                })
+
+                            }
+                            console.log(json); // log the returned json to the console
+                            console.log("success"); // another sanity check
+
+
+
+
+                            {#$('#div_by_workshop').removeClass('hidden')#}
+
+                        },
+
+                        // handle a non-successful response
+                        error : function(xhr,errmsg,err) {
+                            Toast.fire({
+                                type: 'error',
+                                title: 'Uff, ha ocurrido algo desconocido.'
+                            })
+                        }
+                    });
+
+                });
+            {% endfor %}
+
+        });
+    </script>
+{% endblock %}

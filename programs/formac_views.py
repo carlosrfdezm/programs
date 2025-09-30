@@ -37,7 +37,7 @@ def index(request):
         'members':FormationMember.objects.all(),
         'programs': Program.objects.filter(type__in=['curs','coleg']).order_by('-type'),
         'public_docs': FormacDoc.objects.filter(is_public=True),
-        'news': New.objects.all().order_by('-date')[:5],
+        'news': New.objects.filter(title__icontains='[formac]').order_by('-date')[:5],
         'faqs': FAQ.objects.filter(title__icontains='[formac]').order_by('-date')[:5],
     }
     try:
@@ -1600,6 +1600,93 @@ def ajx_delete_faq(request, faq_id):
             FAQ.objects.get(pk=faq_id).delete()
             return JsonResponse({'deleted': 1})
         except FAQ.DoesNotExist:
+            return JsonResponse({'deleted': 0})
+    else:
+        return JsonResponse({'deleted': 2})
+    
+
+@login_required
+def create_new(request):
+    try:
+        formac_member = FormationMember.objects.get(user=request.user)
+        
+    except FormationMember.DoesNotExist:
+        
+        return error_500(request, None, 'Usted no está vinculado a ningún programa de formación.')
+    
+    if request.method == 'POST':
+            default_program = Program.objects.first()
+            new=New(
+                program=default_program,
+                title='[formac]'+ request.POST.get('new_title', '').strip(),
+                body=request.POST['new_body'],
+            )
+            try:
+                new.img = request.FILES['img_new']
+            except:
+                pass
+            new.save()
+            return redirect(reverse('formac:news_list'))
+
+    context = {
+                
+                'member': formac_member,
+            
+
+    }
+    return render(request, 'programs/formac/create_new.html', context)
+        
+@login_required
+def news_list(request):
+    new = New.objects.filter(title__icontains='[formac]')
+    context={'news': new}
+            
+    return render(request, 'programs/formac/news_list.html', context)
+
+@login_required
+def read_new(request, new_id):
+        context={
+            'new': New.objects.get(pk=new_id)
+        }       
+        return render(request, 'programs/formac/read_new.html', context)   
+
+
+@login_required
+def edit_new(request, new_id):
+    try:
+        formac_member = FormationMember.objects.get(user=request.user)
+        
+    except FormationMember.DoesNotExist:
+        return error_500(request, None, 'Usted no está vinculado a ningún programa de formación.')
+    new = New.objects.get(pk=new_id)
+    if request.method == 'POST':
+        new.title = request.POST['new_title']
+        new.body = request.POST['new_body']
+        try:
+            new.img = request.FILES['img_new']
+        except:
+            pass
+        new.save()
+        return HttpResponseRedirect(reverse('formac:read_new', args=[new_id]))
+    else:
+        context={
+            'member': formac_member,
+            'new':new,
+            
+        }
+        return render(request, 'programs/formac/edit_new.html', context)
+    
+@login_required
+def ajx_delete_new(request, new_id):
+    if request.method == 'POST':
+        new_id = request.POST.get('new_id', '').strip()
+        if not new_id.isdigit():
+            return JsonResponse({'deleted': 0})
+
+        try:
+            New.objects.get(pk=new_id).delete()
+            return JsonResponse({'deleted': 1})
+        except New.DoesNotExist:
             return JsonResponse({'deleted': 0})
     else:
         return JsonResponse({'deleted': 2})
