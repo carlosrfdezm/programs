@@ -1,0 +1,121 @@
+{% extends 'programs/cgc/cgc_base.html' %}
+{% load static %}
+{% load extra_tags %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block cgc_content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-9">
+                    <h1>Leer noticia</h1>
+                </div>
+                <div class="col-sm-3">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'cgc:cgc_home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Leer noticia</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Noticia</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <div class="alert alert-info">
+                                        <h4 class="text-center">{{ new.title }}</h4>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-10 offset-1">
+                                    {% autoescape off %}
+                                        <span class="text-sm">{{ new.date|date:'d-m-Y' }}</span>
+                                        <p>{{ new.body }}</p>
+
+                                    {% endautoescape %}
+                                </div>
+
+
+                            </div>
+
+
+
+                        </div>
+                        <!-- /.card-body -->
+
+
+
+                    </div>
+                    <!-- /.card -->
+
+
+
+                    <!-- /.card -->
+
+                    <!-- Input addon -->
+                    <!-- /.card -->
+                    <!-- Horizontal Form -->
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+<!-- jQuery -->
+{% block extra_scripts %}
+    <!-- AdminLTE App -->
+
+    <script>
+        $(document).ready(function () {
+            $('#txt_new_body').summernote({
+                lang: 'es-Es',
+                placeholder: 'Escriba el cuerpo de la noticia aquí.',
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+                dialogsInBody: true,
+                dialogsFade: true,
+                height: 200,
+                toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    {#['fontname', ['fontname']],#}
+                    {#['fontsize', ['fontsize']],#}
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                ],
+
+            });
+        });
+    </script>
+{% endblock %}
+</body>
+</html>

@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail, send_mass_mail
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -24,7 +24,7 @@ from programas.settings import MEDIA_URL, MEDIA_ROOT
 from programs.models import Program, ProgramInitRequirements, PhdStudent, Student, StudentInitRequirement, \
     ProgramMember, ProgramFinishRequirements, StudentFinishRequirement, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, CGC_Member, \
-    CGCBrief, CNGCBrief, CGCDocument, PhdStudentThesis, FAQ
+    CGCBrief, CNGCBrief, CGCDocument, PhdStudentThesis, FAQ, New
 from programs.templatetags.extra_tags import init_requirements_accomplished, finish_requirements_accomplished
 from programs.utils import user_is_program_cs, user_is_program_member, utils_send_email, user_is_program_student, \
     user_is_cgc_member, user_is_cgc_ps
@@ -46,6 +46,7 @@ def cgc_index(request):
                 'documents': CGCDocument.objects.filter(is_public=True),
                 'programs': Program.objects.filter(type='phd'),
                 'faqs': FAQ.objects.filter(title__icontains='[cgc]').order_by('-date')[:5],
+                'news': New.objects.filter(title__icontains='[cgc]').order_by('-date')[:5],
             }
 
         except ObjectDoesNotExist:
@@ -2684,6 +2685,92 @@ def ajx_delete_faq(request, faq_id):
             FAQ.objects.get(pk=faq_id).delete()
             return JsonResponse({'deleted': 1})
         except FAQ.DoesNotExist:
+            return JsonResponse({'deleted': 0})
+    else:
+        return JsonResponse({'deleted': 2})
+    
+@login_required
+def create_new(request):
+    try:
+        cgc_member = CGC_Member.objects.get(user=request.user)
+        
+    except CGC_Member.DoesNotExist:
+        
+        return error_500(request, None, 'Usted no está vinculado a ningún programa de formación.')
+    
+    if request.method == 'POST':
+            default_program = Program.objects.first()
+            new=New(
+                program=default_program,
+                title='[cgc]'+ request.POST.get('new_title', '').strip(),
+                body=request.POST['new_body'],
+            )
+            try:
+                new.img = request.FILES['img_new']
+            except:
+                pass
+            new.save()
+            return redirect(reverse('cgc:news_list'))
+
+    context = {
+                
+                'member': cgc_member,
+            
+
+    }
+    return render(request, 'programs/cgc/create_new.html', context)
+        
+@login_required
+def news_list(request):
+    new = New.objects.filter(title__icontains='[cgc]')
+    context={'news': new}
+            
+    return render(request, 'programs/cgc/news_list.html', context)
+
+@login_required
+def read_new(request, new_id):
+        context={
+            'new': New.objects.get(pk=new_id)
+        }       
+        return render(request, 'programs/cgc/read_new.html', context)   
+
+
+@login_required
+def edit_new(request, new_id):
+    try:
+        cgc_member = CGC_Member.objects.get(user=request.user)
+        
+    except CGC_Member.DoesNotExist:
+        return error_500(request, None, 'Usted no está vinculado a ningún programa de formación.')
+    new = New.objects.get(pk=new_id)
+    if request.method == 'POST':
+        new.title = request.POST['new_title']
+        new.body = request.POST['new_body']
+        try:
+            new.img = request.FILES['img_new']
+        except:
+            pass
+        new.save()
+        return HttpResponseRedirect(reverse('cgc:read_new', args=[new_id]))
+    else:
+        context={
+            'member': cgc_member,
+            'new':new,
+            
+        }
+        return render(request, 'programs/cgc/edit_new.html', context)
+    
+@login_required
+def ajx_delete_new(request, new_id):
+    if request.method == 'POST':
+        new_id = request.POST.get('new_id', '').strip()
+        if not new_id.isdigit():
+            return JsonResponse({'deleted': 0})
+
+        try:
+            New.objects.get(pk=new_id).delete()
+            return JsonResponse({'deleted': 1})
+        except New.DoesNotExist:
             return JsonResponse({'deleted': 0})
     else:
         return JsonResponse({'deleted': 2})
