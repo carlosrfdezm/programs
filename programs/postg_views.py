@@ -23,7 +23,7 @@ from programas.settings import MEDIA_URL, MEDIA_ROOT
 from programs.models import Program, PhdStudent, Student, \
     ProgramMember, InvestigationLine, PhdStudentTheme, \
     InvestigationProject, ProgramBackgrounds, MscStudent, ProgramEdition, MscStudentTheme, DipStudent, \
-    PostgMember, StudentFormationPlan, FAQ
+    PostgMember, StudentFormationPlan, FAQ, New
 from programs.models import Document as PostgDoc
 
 
@@ -38,6 +38,7 @@ def index(request):
         'programs': Program.objects.filter(type__in=['phd','msc','dip']).order_by('-type'),
         'public_docs': PostgDoc.objects.filter(is_public=True),
         'faqs': FAQ.objects.filter(title__icontains='[postg]').order_by('-date')[:5],
+        'news': New.objects.filter(title__icontains='[postg]').order_by('-date')[:5],
     }
     try:
         director = PostgMember.objects.get(charge='Director')
@@ -1859,6 +1860,92 @@ def ajx_delete_faq(request, faq_id):
             FAQ.objects.get(pk=faq_id).delete()
             return JsonResponse({'deleted': 1})
         except FAQ.DoesNotExist:
+            return JsonResponse({'deleted': 0})
+    else:
+        return JsonResponse({'deleted': 2})
+    
+@login_required
+def create_new(request):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+        
+    except PostgMember.DoesNotExist:
+        
+        return error_500(request, None, 'Usted no está vinculado a ningún programa de formación.')
+    
+    if request.method == 'POST':
+            default_program = Program.objects.first()
+            new=New(
+                program=default_program,
+                title='[postg]'+ request.POST.get('new_title', '').strip(),
+                body=request.POST['new_body'],
+            )
+            try:
+                new.img = request.FILES['img_new']
+            except:
+                pass
+            new.save()
+            return redirect(reverse('postg:news_list'))
+
+    context = {
+                
+                'member': postg_member,
+            
+
+    }
+    return render(request, 'programs/postg/create_new.html', context)
+        
+@login_required
+def news_list(request):
+    new = New.objects.filter(title__icontains='[postg]')
+    context={'news': new}
+            
+    return render(request, 'programs/postg/news_list.html', context)
+
+@login_required
+def read_new(request, new_id):
+        context={
+            'new': New.objects.get(pk=new_id)
+        }       
+        return render(request, 'programs/postg/read_new.html', context)   
+
+
+@login_required
+def edit_new(request, new_id):
+    try:
+        postg_member = PostgMember.objects.get(user=request.user)
+        
+    except PostgMember.DoesNotExist:
+        return error_500(request, None, 'Usted no está vinculado a ningún programa de formación.')
+    new = New.objects.get(pk=new_id)
+    if request.method == 'POST':
+        new.title = request.POST['new_title']
+        new.body = request.POST['new_body']
+        try:
+            new.img = request.FILES['img_new']
+        except:
+            pass
+        new.save()
+        return HttpResponseRedirect(reverse('postg:read_new', args=[new_id]))
+    else:
+        context={
+            'member': postg_member,
+            'new':new,
+            
+        }
+        return render(request, 'programs/postg/edit_new.html', context)
+    
+@login_required
+def ajx_delete_new(request, new_id):
+    if request.method == 'POST':
+        new_id = request.POST.get('new_id', '').strip()
+        if not new_id.isdigit():
+            return JsonResponse({'deleted': 0})
+
+        try:
+            New.objects.get(pk=new_id).delete()
+            return JsonResponse({'deleted': 1})
+        except New.DoesNotExist:
             return JsonResponse({'deleted': 0})
     else:
         return JsonResponse({'deleted': 2})

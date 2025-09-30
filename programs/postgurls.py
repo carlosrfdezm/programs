@@ -53,6 +53,12 @@ urlpatterns = [
     path('faq/list', views.faq_list, name='faq_list'),
 
     path('faq/delete/<int:faq_id>/', views.ajx_delete_faq, name='ajx_delete_faq'),
+    path('new/delete/<int:new_id>/', views.ajx_delete_new, name='ajx_delete_new'),
+
+    path('new/<int:new_id>/read', views.read_new, name='read_new'),
+    path('new/<int:new_id>/edit', views.edit_new, name='edit_new'),
+    path('new/create', views.create_new, name='create_new'),
+    path('news/list', views.news_list, name='news_list'),
 
 
 ]
